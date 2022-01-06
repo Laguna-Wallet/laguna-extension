@@ -18,6 +18,8 @@ import { FormikProps } from 'formik';
 import { useWizard } from 'react-use-wizard';
 import { useAccount } from 'context/AccountContext';
 import CloseIcon from 'assets/svgComponents/CloseIcon';
+import QRPopup from './QRPopup';
+import Header from 'pages/Wallet/Header';
 
 enum SendAccountFlowEnum {
   SendToTrustedContact = 'SendToTrustedContact',
@@ -35,25 +37,21 @@ type Props = {
   fee: string;
 };
 
+const handleShowAccountInput = (flow: string | undefined, address: string | undefined): boolean => {
+  if (!flow) return false;
+  if (flow === SendAccountFlowEnum.SendToAddress) return true;
+  if (flow === SendAccountFlowEnum.SendToAccount && address) return true;
+  if (flow === SendAccountFlowEnum.ScanQR && address) return true;
+
+  return false;
+};
+
 export default function SendToken({ state, dispatch, formik, flow, setFlow, fee }: Props) {
-  const { nextStep } = useWizard();
+  const { nextStep, previousStep } = useWizard();
   const account = useAccount();
+
   const [isAccountsPopupOpen, setIsAccountsPopupOpen] = useState<boolean>(false);
-
-  const handleShowAccountInput = (
-    flow: string | undefined,
-    address: string | undefined
-  ): boolean => {
-    if (!flow) return false;
-
-    if (flow === SendAccountFlowEnum.SendToAddress) return true;
-
-    if (flow === SendAccountFlowEnum.SendToAccount && address) return true;
-
-    if (flow === SendAccountFlowEnum.ScanQR && address) return true;
-
-    return false;
-  };
+  const [isQRPopupOpen, setIsQRPopupOpen] = useState<boolean>(false);
 
   const handleClick = (isValid: boolean) => {
     if (!isValid) return;
@@ -73,13 +71,24 @@ export default function SendToken({ state, dispatch, formik, flow, setFlow, fee 
 
   const handleCloseAccount = () => {
     setIsAccountsPopupOpen(false);
-    if (!formik.values.amount) {
+    if (!formik.values.address) {
       setFlow(undefined);
     }
   };
 
+  const handleClickQR = () => {
+    setFlow(SendAccountFlowEnum.ScanQR);
+    setIsQRPopupOpen(true);
+  };
+
+  const handleCloseQR = () => {
+    setIsQRPopupOpen(false);
+    setFlow(undefined);
+  };
+
   return (
     <Container>
+      <Header title={`SEND ${formik.values.selectedAsset?.chain}`} backAction={previousStep} />
       <Content>
         <ContentItem>
           <ContentItemTitle>Amount</ContentItemTitle>
@@ -139,7 +148,7 @@ export default function SendToken({ state, dispatch, formik, flow, setFlow, fee 
                 <Text>Accounts</Text>
               </SendTypeItem>
 
-              <SendTypeItem onClick={() => setFlow(SendAccountFlowEnum.ScanQR)}>
+              <SendTypeItem onClick={handleClickQR}>
                 <IconContainer>
                   <BarcodeIcon />
                 </IconContainer>
@@ -197,6 +206,8 @@ export default function SendToken({ state, dispatch, formik, flow, setFlow, fee 
           </AccountsSectionContent>
         </AccountsSection>
       )}
+
+      {isQRPopupOpen && <QRPopup handleCloseQR={handleCloseQR} />}
     </Container>
   );
 }

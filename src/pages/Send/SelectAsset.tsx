@@ -8,7 +8,7 @@ import { Dispatch, useEffect, useState } from 'react';
 import ChainItem from '../../pages/Wallet/ChainItem';
 import { useAccount } from 'context/AccountContext';
 import { getAssets } from 'utils/polkadot';
-import { Link } from 'react-chrome-extension-router';
+import { goTo, Link } from 'react-chrome-extension-router';
 import {
   SendTokenActions,
   SendTokenActionsEnum,
@@ -36,6 +36,7 @@ export default function SelectAsset({ state, dispatch, formik }: Props) {
 
   return (
     <Container bg={walletBG}>
+      <Header title="SELECT ASSET" backAction={() => goTo(Wallet)} />
       <Content>
         <HumbleInput
           id="id"

@@ -18,6 +18,7 @@ import walletBG from 'assets/imgs/walletBG.jpg';
 import { Link } from 'react-chrome-extension-router';
 import SelectAsset from 'pages/Send/SelectAsset';
 import Send from 'pages/Send/Send';
+import Receive from 'pages/Recieve/Receive';
 
 export default function Wallet() {
   const account = useAccount();
@@ -72,7 +73,7 @@ export default function Wallet() {
           <StyledLink component={Send}>
             <Button>Send</Button>
           </StyledLink>
-          <StyledLink component={SelectAsset}>
+          <StyledLink component={Receive}>
             <Button>Recieve</Button>
           </StyledLink>
         </Buttons>

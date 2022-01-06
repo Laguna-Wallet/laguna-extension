@@ -141,17 +141,12 @@ export default function Send() {
   const CalculateHeaderProps = ({ chain }: { chain?: string }) => {
     const { activeStep, previousStep } = useWizard();
 
-    if (activeStep === 0) return <Header title="SELECT ASSET" backAction={() => goTo(Wallet)} />;
-    if (activeStep === 1)
-      return <Header title={`SEND ${chain}`} backAction={() => previousStep()} />;
-    if (activeStep === 2) return <Header title="CONFIRM" backAction={() => previousStep()} />;
     return <Header />;
   };
 
   return (
     <Container>
-      <Wizard
-        header={<CalculateHeaderProps chain={formik?.values?.selectedAsset?.chain as string} />}>
+      <Wizard>
         <SelectAsset formik={formik} state={state} dispatch={dispatch} />
         <SendToken
           formik={formik}

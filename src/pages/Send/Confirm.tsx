@@ -66,6 +66,7 @@ export default function Confirm({ formik, fee, transfer }: Props) {
 
   return (
     <Container>
+      <Header title="CONFIRM" backAction={() => previousStep()} />
       <Content>
         <Text>
           I want to <br />
@@ -173,3 +174,6 @@ const InfoItem = styled.div`
     font-weight: 600;
   }
 `;
+function previousStep(): void {
+  throw new Error('Function not implemented.');
+}
