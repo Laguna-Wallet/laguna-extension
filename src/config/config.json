@@ -1,0 +1,4 @@
+{
+  "TEST_BLOCK": "wss://westend-rpc.polkadot.io",
+  "CHAIN_LIST": ["westend", "polkadot"]
+}
