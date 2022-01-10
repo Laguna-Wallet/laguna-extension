@@ -214,11 +214,12 @@ export async function getAssets(accountAddress: string): Promise<{
 }> {
   const networks = await getNetworks();
   let overallBalance = 0;
-  const assets = [];
+  const assets: Asset[] = [];
 
   for (let i = 0; i < networks.length; i++) {
     try {
       const { name, symbol, chain, node } = networks[i];
+      console.log('~ chain', chain);
 
       const api = await getApiInstance(chain);
 
@@ -232,9 +233,9 @@ export async function getAssets(accountAddress: string): Promise<{
         decimals
       );
 
-      if (!Number(formattedBalance)) break;
+      if (!Number(formattedBalance)) continue;
 
-      // Note fiat can become dynamic & grab info from storage.
+      // // Note fiat can become dynamic & grab info from storage.
       const { data } = await Price_Converter({
         chain,
         symbol,

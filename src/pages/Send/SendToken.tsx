@@ -129,7 +129,7 @@ export default function SendToken({ state, dispatch, formik, flow, setFlow, fee 
             <SendTypes>
               <SendTypeItem onClick={() => setFlow(SendAccountFlowEnum.SendToTrustedContact)}>
                 <IconContainer>
-                  <ContactsIcon />
+                  <ContactsIcon stroke="#ccc" />
                 </IconContainer>
                 <Text>Contacts</Text>
               </SendTypeItem>
@@ -150,7 +150,7 @@ export default function SendToken({ state, dispatch, formik, flow, setFlow, fee 
 
               <SendTypeItem onClick={handleClickQR}>
                 <IconContainer>
-                  <BarcodeIcon />
+                  <BarcodeIcon stroke="#ccc" />
                 </IconContainer>
                 <Text>Scan QR</Text>
               </SendTypeItem>
@@ -276,6 +276,12 @@ const SendTypeItem = styled.div`
   background-color: #f3f3f3;
   border-radius: 5.8px;
   cursor: pointer;
+  :nth-child(1) {
+    opacity: 0.6;
+  }
+  :nth-child(4) {
+    opacity: 0.6;
+  }
 `;
 
 const AddressContainer = styled.div``;

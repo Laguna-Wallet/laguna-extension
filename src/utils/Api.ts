@@ -20,7 +20,9 @@ export async function Account_Search(chain: string, address: string) {
 
 export async function Price_Converter({ chain, symbol, amount, fiat }: PriceConverter) {
   const data = await AXIOS_INSTANCE.get(
-    `    https://api.coingecko.com/api/v3/simple/price?ids=${['polkadot']}&vs_currencies=${fiat}`
+    `    https://api.coingecko.com/api/v3/simple/price?ids=${[
+      'polkadot,kusama'
+    ]}&vs_currencies=${fiat}`
   );
 
   return data;

@@ -41,7 +41,6 @@ export default function Confirm({ formik, fee, transfer }: Props) {
     const pair = keyring.getPair(account.getActiveAccount().address);
 
     pair.unlock('neodzeneodze');
-    console.log('~ pair', pair);
 
     // todo proper typing
     const api = await getApiInstance(formik?.values?.selectedAsset?.chain as string);
@@ -51,6 +50,8 @@ export default function Confirm({ formik, fee, transfer }: Props) {
     const txHash = await api.tx.balances
       .transfer(recoded, Number(formik.values.amount))
       .signAndSend(pair);
+
+    nextStep();
 
     // const transfer = await api.tx.balances.transfer(formik.values.address, 0.1);
 
@@ -94,11 +95,11 @@ export default function Confirm({ formik, fee, transfer }: Props) {
           {Number(formik.values.selectedAsset?.balance) - Number(formik.values.amount)}{' '}
           {formik.values.selectedAsset?.symbol}
         </BalanceInfo>
-        <SwipeAndConfirm />
+        {/* <SwipeAndConfirm /> */}
 
         <Button
           onClick={() => handleClick(formik)}
-          text="Preview"
+          text="Send"
           justify="center"
           Icon={<RightArrow width={23} fill="#fff" />}
         />
