@@ -125,6 +125,7 @@ const Container = styled.div<{ bg: string }>`
   background-image: ${({ bg }) => `url(${bg})`};
   background-size: cover;
   padding-top: 50px;
+  overflow: hidden;
 `;
 
 const Content = styled.div`

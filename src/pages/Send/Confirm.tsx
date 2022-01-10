@@ -16,7 +16,7 @@ import TransactionSent from './TransactionSent';
 import { goTo, Link } from 'react-chrome-extension-router';
 import { Formik, FormikProps } from 'formik';
 import { useAccount } from 'context/AccountContext';
-import { calculateSelectedTokenExchange, getApiInstance } from 'utils/polkadot';
+import { calculateSelectedTokenExchange, getApiInstance, recodeAddress } from 'utils/polkadot';
 import { useWizard } from 'react-use-wizard';
 import { useEffect, useState } from 'react';
 import keyring from '@polkadot/ui-keyring';
@@ -41,12 +41,15 @@ export default function Confirm({ formik, fee, transfer }: Props) {
     const pair = keyring.getPair(account.getActiveAccount().address);
 
     pair.unlock('neodzeneodze');
+    console.log('~ pair', pair);
 
     // todo proper typing
     const api = await getApiInstance(formik?.values?.selectedAsset?.chain as string);
+    const prefix = api.consts.system.ss58Prefix;
+    const recoded = recodeAddress(formik.values.address, prefix);
 
     const txHash = await api.tx.balances
-      .transfer(formik.values.address, Number(formik.values.amount))
+      .transfer(recoded, Number(formik.values.amount))
       .signAndSend(pair);
 
     // const transfer = await api.tx.balances.transfer(formik.values.address, 0.1);

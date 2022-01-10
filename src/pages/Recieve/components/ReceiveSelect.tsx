@@ -1,31 +1,35 @@
 import { FormikProps } from 'formik/dist/types';
 import { SendTokenFormikValues } from 'pages/Send/Send';
 import styled from 'styled-components';
+import { getApiInstance } from 'utils/polkadot';
 import { Asset } from 'utils/types';
 
 type Props = {
-  options: Asset[];
+  options: string[] | undefined;
+  selectedToken: string | undefined;
+  setSelectedToken: (token: string) => void;
+  selectedAsset: Asset | undefined;
 };
 
-export default function Select({ options }: Props) {
-  const handleChange = (e: any) => {
-    const asset = options.find(
-      (item) => item.symbol.toLowerCase() === e.target.value.toLowerCase()
-    );
+export default function Select({ options, selectedToken, setSelectedToken, selectedAsset }: Props) {
+  const handleChange = async (e: any) => {
+    // todo implement
   };
 
   return (
     <Container>
       <StyledSelect
-        defaultValue={selectedAsset?.symbol}
-        onChange={handleChange}
+        defaultValue={selectedToken}
+        onChange={(e) => handleChange(e)}
+        value={selectedToken}
         name="dots"
         id="dots">
-        {options.map((asset) => (
-          <StyledOption key={asset.symbol} value={asset.symbol}>
-            {asset.symbol.toUpperCase()}
-          </StyledOption>
-        ))}
+        {options &&
+          options.map((token) => (
+            <StyledOption key={token} value={selectedToken}>
+              {token.toUpperCase()} ({selectedAsset?.chain} Chain)
+            </StyledOption>
+          ))}
       </StyledSelect>
     </Container>
   );
@@ -41,7 +45,7 @@ const Container = styled.div`
 `;
 
 const StyledSelect = styled.select`
-  width: 70px;
+  width: 100%;
   height: 53px;
   border: 0;
   border-top-right-radius: 5px;

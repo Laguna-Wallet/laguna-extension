@@ -13,6 +13,9 @@ import { encryptPassword } from 'utils';
 import { useAccount } from 'context/AccountContext';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { formatBalance } from '@polkadot/util/format';
+import { decodeAddress, encodeAddress } from '@polkadot/keyring';
+import { MetadataDef } from '@polkadot/extension-inject/types';
+import settings from '@polkadot/ui-settings';
 
 // TODO appropriate typing
 
@@ -109,6 +112,15 @@ export async function importJson(
   } else {
     keyring.restoreAccount(json, password);
   }
+}
+
+// todo proper typing
+export function accountsTie({ address, genesisHash }: any): any {
+  const pair = keyring.getPair(address);
+
+  keyring.saveAccountMeta(pair, { ...pair.meta, genesisHash });
+
+  return keyring.getPair(address);
 }
 
 // todo proper typing
@@ -254,6 +266,13 @@ export async function getAssets(accountAddress: string): Promise<{
   console.log('successfully fetched');
 
   return { overallBalance, assets };
+}
+
+// todo proper typing
+// todo refactor
+export function recodeAddress(address: string, prefix: any): string {
+  const publicKey = decodeAddress(address);
+  return encodeAddress(publicKey, prefix);
 }
 
 // todo typing node is an enum

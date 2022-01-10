@@ -126,7 +126,6 @@ export default function Send() {
       if (!formik.values.selectedAsset || !formik.values.address) return;
 
       const api = await getApiInstance(formik.values.selectedAsset.chain);
-
       const transfer = await api.tx.balances.transfer(formik.values.address, 0.1);
 
       const { partialFee, weight } = await transfer.paymentInfo(formik.values.address);
@@ -137,12 +136,6 @@ export default function Send() {
 
     go();
   }, [formik.values.selectedAsset, formik.values.address, formik.values.amount]);
-
-  const CalculateHeaderProps = ({ chain }: { chain?: string }) => {
-    const { activeStep, previousStep } = useWizard();
-
-    return <Header />;
-  };
 
   return (
     <Container>
