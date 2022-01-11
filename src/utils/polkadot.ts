@@ -219,7 +219,6 @@ export async function getAssets(accountAddress: string): Promise<{
   for (let i = 0; i < networks.length; i++) {
     try {
       const { name, symbol, chain, node } = networks[i];
-      console.log('~ chain', chain);
 
       const api = await getApiInstance(chain);
 

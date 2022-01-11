@@ -121,7 +121,6 @@ const Container = styled.div<{ bg: string }>`
   background-color: #f1f1f1;
   box-sizing: border-box;
   position: relative;
-  position: relative;
   background-image: ${({ bg }) => `url(${bg})`};
   background-size: cover;
   padding-top: 50px;

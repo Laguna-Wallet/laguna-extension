@@ -21,7 +21,7 @@ export default function Popup({ children, onClose }: Props) {
 
 const Container = styled.div`
   width: 100%;
-  height: 100%;
+  height: 100vh;
   background: rgba(26, 26, 26, 0.7);
   position: absolute;
   top: 0;

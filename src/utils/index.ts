@@ -96,3 +96,9 @@ export async function convertUploadedFileToJson(
 export function encryptPassword({ password }: { password: string }) {
   return bcrypt.hashSync(password, bcrypt.genSaltSync());
 }
+
+export function truncateString(string: string) {
+  const part1 = string.slice(0, 4).concat('...');
+  const part2 = string.substring(string.length - 4, string.length);
+  return `${part1}${part2}`;
+}

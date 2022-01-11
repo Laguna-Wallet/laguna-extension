@@ -21,6 +21,7 @@ import { useWizard } from 'react-use-wizard';
 import { useEffect, useState } from 'react';
 import keyring from '@polkadot/ui-keyring';
 import Wallet from 'pages/Wallet/Wallet';
+import { truncateString } from 'utils';
 
 type Props = {
   formik: FormikProps<SendTokenFormikValues>;
@@ -30,7 +31,8 @@ type Props = {
 
 export default function Confirm({ formik, fee, transfer }: Props) {
   const account = useAccount();
-  const { nextStep } = useWizard();
+
+  const { nextStep, previousStep } = useWizard();
 
   const total = calculateSelectedTokenExchange(
     formik.values.amount,
@@ -74,8 +76,13 @@ export default function Confirm({ formik, fee, transfer }: Props) {
       <Content>
         <Text>
           I want to <br />
-          send <span>{formik.values.amount} DOT</span> <br /> from <span>SkyWalker</span> <br /> to{' '}
-          <span>{formik.values.address}</span>
+          send{' '}
+          <span>
+            {formik.values.amount} {formik.values.selectedAsset?.symbol}
+          </span>{' '}
+          <br /> from <span>SkyWalker</span> <br /> to{' '}
+          {/* <span>{truncateString(formik.values.address)}</span> */}
+          <span>{truncateString(formik.values.address)}</span>
         </Text>
 
         <Info>
@@ -136,9 +143,10 @@ const Text = styled.span`
   span {
     font-family: SFCompactDisplayRegular;
     font-size: 20px;
-    font-weight: 500;
+    font-weight: 600;
     color: #141414;
-    overflow-wrap: break-word;
+    overflow: hidden;
+    width: 50px;
   }
 `;
 
@@ -178,6 +186,3 @@ const InfoItem = styled.div`
     font-weight: 600;
   }
 `;
-function previousStep(): void {
-  throw new Error('Function not implemented.');
-}

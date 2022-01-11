@@ -1,5 +1,5 @@
 import DownArrowIcon from 'assets/svgComponents/DownArrowIcon';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import ButtonsIcon from 'assets/svgComponents/ButtonsIcon';
 import { Turn as Hamburger, Turn } from 'hamburger-react';
 import { ReactNode, useState } from 'react';
