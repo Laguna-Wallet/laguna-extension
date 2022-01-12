@@ -48,7 +48,7 @@ export default function Wallet() {
       setAssets(assets);
       setOverallBalance(overallBalance);
 
-      const networks = await getNetworks();
+      const networks = await (await getNetworks()).filter((network) => network.symbol !== 'wnd');
       setNetworks(networks);
     }
 

@@ -73,26 +73,8 @@ export default function Send() {
   // TODO GET REFETCH NETWORKS FROM STORAGE
   useEffect(() => {
     async function go() {
-      // const { assets } = await getAssets(account.getActiveAccount()?.address);
+      const { assets } = await getAssets(account.getActiveAccount()?.address);
 
-      const assets = [
-        {
-          balance: '0.0100',
-          calculatedPrice: 0,
-          chain: 'westend',
-          name: 'Polkadot',
-          price: 0,
-          symbol: 'wnd'
-        },
-        {
-          balance: '1.0000',
-          calculatedPrice: 29.63,
-          chain: 'polkadot',
-          name: 'Polkadot',
-          price: 29.63,
-          symbol: 'dot'
-        }
-      ];
       dispatch({ type: SendTokenActionsEnum.SET_ASSETS, payload: assets });
 
       if (!state.selectedAsset) {
