@@ -175,7 +175,10 @@ export default function SendToken({ state, dispatch, formik, flow, setFlow, fee 
 
       <BottomSection>
         <Info>
-          <span>Balance: {Number(formik?.values?.selectedAsset?.balance)} DOT</span>
+          <span>
+            Balance: {Number(formik?.values?.selectedAsset?.balance)}{' '}
+            {formik?.values?.selectedAsset?.symbol}
+          </span>
           <span>Estimated Fee: ${fee}</span>
         </Info>
         <Button
