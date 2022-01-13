@@ -11,9 +11,9 @@ import { useEffect } from 'react';
 import { testSaveToStorage } from 'utils/chrome';
 
 export default function SignUp() {
-  useEffect(() => {
-    testSaveToStorage({ key: 'hello', value: '1' });
-  }, []);
+  // useEffect(() => {
+  //   testSaveToStorage({ key: 'hello', value: '1' });
+  // }, []);
 
   return (
     <PageContainer>

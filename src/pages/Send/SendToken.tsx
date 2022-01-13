@@ -18,6 +18,8 @@ import { FormikProps } from 'formik';
 import { useWizard } from 'react-use-wizard';
 import { useAccount } from 'context/AccountContext';
 import CloseIcon from 'assets/svgComponents/CloseIcon';
+import QRPopup from './QRPopup';
+import Header from 'pages/Wallet/Header';
 
 enum SendAccountFlowEnum {
   SendToTrustedContact = 'SendToTrustedContact',
@@ -35,25 +37,21 @@ type Props = {
   fee: string;
 };
 
+const handleShowAccountInput = (flow: string | undefined, address: string | undefined): boolean => {
+  if (!flow) return false;
+  if (flow === SendAccountFlowEnum.SendToAddress) return true;
+  if (flow === SendAccountFlowEnum.SendToAccount && address) return true;
+  if (flow === SendAccountFlowEnum.ScanQR && address) return true;
+
+  return false;
+};
+
 export default function SendToken({ state, dispatch, formik, flow, setFlow, fee }: Props) {
-  const { nextStep } = useWizard();
+  const { nextStep, previousStep } = useWizard();
   const account = useAccount();
+
   const [isAccountsPopupOpen, setIsAccountsPopupOpen] = useState<boolean>(false);
-
-  const handleShowAccountInput = (
-    flow: string | undefined,
-    address: string | undefined
-  ): boolean => {
-    if (!flow) return false;
-
-    if (flow === SendAccountFlowEnum.SendToAddress) return true;
-
-    if (flow === SendAccountFlowEnum.SendToAccount && address) return true;
-
-    if (flow === SendAccountFlowEnum.ScanQR && address) return true;
-
-    return false;
-  };
+  const [isQRPopupOpen, setIsQRPopupOpen] = useState<boolean>(false);
 
   const handleClick = (isValid: boolean) => {
     if (!isValid) return;
@@ -73,13 +71,24 @@ export default function SendToken({ state, dispatch, formik, flow, setFlow, fee 
 
   const handleCloseAccount = () => {
     setIsAccountsPopupOpen(false);
-    if (!formik.values.amount) {
+    if (!formik.values.address) {
       setFlow(undefined);
     }
   };
 
+  const handleClickQR = () => {
+    setFlow(SendAccountFlowEnum.ScanQR);
+    setIsQRPopupOpen(true);
+  };
+
+  const handleCloseQR = () => {
+    setIsQRPopupOpen(false);
+    setFlow(undefined);
+  };
+
   return (
     <Container>
+      <Header title={`SEND ${formik.values.selectedAsset?.chain}`} backAction={previousStep} />
       <Content>
         <ContentItem>
           <ContentItemTitle>Amount</ContentItemTitle>
@@ -120,7 +129,7 @@ export default function SendToken({ state, dispatch, formik, flow, setFlow, fee 
             <SendTypes>
               <SendTypeItem onClick={() => setFlow(SendAccountFlowEnum.SendToTrustedContact)}>
                 <IconContainer>
-                  <ContactsIcon />
+                  <ContactsIcon stroke="#ccc" />
                 </IconContainer>
                 <Text>Contacts</Text>
               </SendTypeItem>
@@ -139,9 +148,9 @@ export default function SendToken({ state, dispatch, formik, flow, setFlow, fee 
                 <Text>Accounts</Text>
               </SendTypeItem>
 
-              <SendTypeItem onClick={() => setFlow(SendAccountFlowEnum.ScanQR)}>
+              <SendTypeItem onClick={handleClickQR}>
                 <IconContainer>
-                  <BarcodeIcon />
+                  <BarcodeIcon stroke="#ccc" />
                 </IconContainer>
                 <Text>Scan QR</Text>
               </SendTypeItem>
@@ -166,7 +175,10 @@ export default function SendToken({ state, dispatch, formik, flow, setFlow, fee 
 
       <BottomSection>
         <Info>
-          <span>Balance: {Number(formik?.values?.selectedAsset?.balance)} DOT</span>
+          <span>
+            Balance: {Number(formik?.values?.selectedAsset?.balance)}{' '}
+            {formik?.values?.selectedAsset?.symbol}
+          </span>
           <span>Estimated Fee: ${fee}</span>
         </Info>
         <Button
@@ -197,6 +209,8 @@ export default function SendToken({ state, dispatch, formik, flow, setFlow, fee 
           </AccountsSectionContent>
         </AccountsSection>
       )}
+
+      {isQRPopupOpen && <QRPopup handleCloseQR={handleCloseQR} />}
     </Container>
   );
 }
@@ -265,6 +279,12 @@ const SendTypeItem = styled.div`
   background-color: #f3f3f3;
   border-radius: 5.8px;
   cursor: pointer;
+  :nth-child(1) {
+    opacity: 0.6;
+  }
+  :nth-child(4) {
+    opacity: 0.6;
+  }
 `;
 
 const AddressContainer = styled.div``;

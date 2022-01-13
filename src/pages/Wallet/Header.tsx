@@ -1,5 +1,5 @@
 import DownArrowIcon from 'assets/svgComponents/DownArrowIcon';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import ButtonsIcon from 'assets/svgComponents/ButtonsIcon';
 import { Turn as Hamburger, Turn } from 'hamburger-react';
 import { ReactNode, useState } from 'react';
@@ -9,13 +9,15 @@ import { useAccount } from 'context/AccountContext';
 import Menu from 'components/Menu/Menu';
 import LeftArrowIcon from 'assets/svgComponents/LeftArrowIcon';
 import { Link } from 'react-chrome-extension-router';
+import CloseIcon from 'assets/svgComponents/CloseIcon';
 
 type Props = {
   title?: string;
   backAction?: () => void;
+  iconStyle?: 'Close' | 'LeftArrow';
 };
 
-export default function Header({ title, backAction }: Props) {
+export default function Header({ title, backAction, iconStyle }: Props) {
   const account = useAccount();
 
   const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false);
@@ -44,8 +46,9 @@ export default function Header({ title, backAction }: Props) {
       {title && (
         <TitleContainer>
           <LeftArrowContainer onClick={backAction}>
-            <LeftArrowIcon />
+            {iconStyle === 'Close' ? <CloseIcon stroke="#111" /> : <LeftArrowIcon />}
           </LeftArrowContainer>
+
           <Title>{title}</Title>
         </TitleContainer>
       )}

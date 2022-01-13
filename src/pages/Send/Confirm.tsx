@@ -16,11 +16,12 @@ import TransactionSent from './TransactionSent';
 import { goTo, Link } from 'react-chrome-extension-router';
 import { Formik, FormikProps } from 'formik';
 import { useAccount } from 'context/AccountContext';
-import { calculateSelectedTokenExchange, getApiInstance } from 'utils/polkadot';
+import { calculateSelectedTokenExchange, getApiInstance, recodeAddress } from 'utils/polkadot';
 import { useWizard } from 'react-use-wizard';
 import { useEffect, useState } from 'react';
 import keyring from '@polkadot/ui-keyring';
 import Wallet from 'pages/Wallet/Wallet';
+import { truncateString } from 'utils';
 
 type Props = {
   formik: FormikProps<SendTokenFormikValues>;
@@ -30,7 +31,8 @@ type Props = {
 
 export default function Confirm({ formik, fee, transfer }: Props) {
   const account = useAccount();
-  const { nextStep } = useWizard();
+
+  const { nextStep, previousStep } = useWizard();
 
   const total = calculateSelectedTokenExchange(
     formik.values.amount,
@@ -44,10 +46,14 @@ export default function Confirm({ formik, fee, transfer }: Props) {
 
     // todo proper typing
     const api = await getApiInstance(formik?.values?.selectedAsset?.chain as string);
+    const prefix = api.consts.system.ss58Prefix;
+    const recoded = recodeAddress(formik.values.address, prefix);
 
     const txHash = await api.tx.balances
-      .transfer(formik.values.address, Number(formik.values.amount))
+      .transfer(recoded, Number(formik.values.amount))
       .signAndSend(pair);
+
+    nextStep();
 
     // const transfer = await api.tx.balances.transfer(formik.values.address, 0.1);
 
@@ -66,11 +72,17 @@ export default function Confirm({ formik, fee, transfer }: Props) {
 
   return (
     <Container>
+      <Header title="CONFIRM" backAction={() => previousStep()} />
       <Content>
         <Text>
           I want to <br />
-          send <span>{formik.values.amount} DOT</span> <br /> from <span>SkyWalker</span> <br /> to{' '}
-          <span>{formik.values.address}</span>
+          send{' '}
+          <span>
+            {formik.values.amount} {formik.values.selectedAsset?.symbol}
+          </span>{' '}
+          <br /> from <span>SkyWalker</span> <br /> to{' '}
+          {/* <span>{truncateString(formik.values.address)}</span> */}
+          <span>{truncateString(formik.values.address)}</span>
         </Text>
 
         <Info>
@@ -90,11 +102,11 @@ export default function Confirm({ formik, fee, transfer }: Props) {
           {Number(formik.values.selectedAsset?.balance) - Number(formik.values.amount)}{' '}
           {formik.values.selectedAsset?.symbol}
         </BalanceInfo>
-        <SwipeAndConfirm />
+        {/* <SwipeAndConfirm /> */}
 
         <Button
           onClick={() => handleClick(formik)}
-          text="Preview"
+          text="Send"
           justify="center"
           Icon={<RightArrow width={23} fill="#fff" />}
         />
@@ -131,9 +143,10 @@ const Text = styled.span`
   span {
     font-family: SFCompactDisplayRegular;
     font-size: 20px;
-    font-weight: 500;
+    font-weight: 600;
     color: #141414;
-    overflow-wrap: break-word;
+    overflow: hidden;
+    width: 50px;
   }
 `;
 

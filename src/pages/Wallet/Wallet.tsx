@@ -18,6 +18,7 @@ import walletBG from 'assets/imgs/walletBG.jpg';
 import { Link } from 'react-chrome-extension-router';
 import SelectAsset from 'pages/Send/SelectAsset';
 import Send from 'pages/Send/Send';
+import Receive from 'pages/Recieve/Receive';
 
 export default function Wallet() {
   const account = useAccount();
@@ -47,7 +48,7 @@ export default function Wallet() {
       setAssets(assets);
       setOverallBalance(overallBalance);
 
-      const networks = await getNetworks();
+      const networks = await (await getNetworks()).filter((network) => network.symbol !== 'wnd');
       setNetworks(networks);
     }
 
@@ -72,7 +73,7 @@ export default function Wallet() {
           <StyledLink component={Send}>
             <Button>Send</Button>
           </StyledLink>
-          <StyledLink component={SelectAsset}>
+          <StyledLink component={Receive}>
             <Button>Recieve</Button>
           </StyledLink>
         </Buttons>
@@ -120,10 +121,10 @@ const Container = styled.div<{ bg: string }>`
   background-color: #f1f1f1;
   box-sizing: border-box;
   position: relative;
-  position: relative;
   background-image: ${({ bg }) => `url(${bg})`};
   background-size: cover;
   padding-top: 50px;
+  overflow: hidden;
 `;
 
 const Content = styled.div`

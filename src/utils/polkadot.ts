@@ -13,6 +13,9 @@ import { encryptPassword } from 'utils';
 import { useAccount } from 'context/AccountContext';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { formatBalance } from '@polkadot/util/format';
+import { decodeAddress, encodeAddress } from '@polkadot/keyring';
+import { MetadataDef } from '@polkadot/extension-inject/types';
+import settings from '@polkadot/ui-settings';
 
 // TODO appropriate typing
 
@@ -112,6 +115,15 @@ export async function importJson(
 }
 
 // todo proper typing
+export function accountsTie({ address, genesisHash }: any): any {
+  const pair = keyring.getPair(address);
+
+  keyring.saveAccountMeta(pair, { ...pair.meta, genesisHash });
+
+  return keyring.getPair(address);
+}
+
+// todo proper typing
 export async function getNetworks(): Promise<Network[]> {
   const networks: Network[] = [
     {
@@ -202,7 +214,7 @@ export async function getAssets(accountAddress: string): Promise<{
 }> {
   const networks = await getNetworks();
   let overallBalance = 0;
-  const assets = [];
+  const assets: Asset[] = [];
 
   for (let i = 0; i < networks.length; i++) {
     try {
@@ -220,9 +232,9 @@ export async function getAssets(accountAddress: string): Promise<{
         decimals
       );
 
-      if (!Number(formattedBalance)) break;
+      if (!Number(formattedBalance)) continue;
 
-      // Note fiat can become dynamic & grab info from storage.
+      // // Note fiat can become dynamic & grab info from storage.
       const { data } = await Price_Converter({
         chain,
         symbol,
@@ -254,6 +266,13 @@ export async function getAssets(accountAddress: string): Promise<{
   console.log('successfully fetched');
 
   return { overallBalance, assets };
+}
+
+// todo proper typing
+// todo refactor
+export function recodeAddress(address: string, prefix: any): string {
+  const publicKey = decodeAddress(address);
+  return encodeAddress(publicKey, prefix);
 }
 
 // todo typing node is an enum

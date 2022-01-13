@@ -9,28 +9,21 @@ import ChainItem from '../../pages/Wallet/ChainItem';
 import { useAccount } from 'context/AccountContext';
 import { getAssets } from 'utils/polkadot';
 import { goTo, Link } from 'react-chrome-extension-router';
-import {
-  SendTokenActions,
-  SendTokenActionsEnum,
-  SendTokenFormikValues,
-  SendTokenState
-} from './Send';
 import { Asset } from 'utils/types';
 import { useWizard } from 'react-use-wizard';
-import { FormikProps } from 'formik';
 
 type Props = {
-  state: SendTokenState;
-  dispatch: Dispatch<SendTokenActions>;
-  formik: FormikProps<SendTokenFormikValues>;
+  assets: Asset[];
+  selectedAsset: Asset | undefined;
+  setSelectedAsset: (asset: Asset) => void;
 };
 
-export default function SelectAsset({ state, dispatch, formik }: Props) {
+export default function SelectAsset({ assets, selectedAsset, setSelectedAsset }: Props) {
   const account = useAccount();
   const { nextStep } = useWizard();
 
   const handleClick = (asset: Asset) => {
-    formik.setFieldValue('selectedAsset', asset);
+    setSelectedAsset(asset);
     nextStep();
   };
 
@@ -41,7 +34,7 @@ export default function SelectAsset({ state, dispatch, formik }: Props) {
         <HumbleInput
           id="id"
           type="text"
-          value={state?.selectedAsset?.chain || ''}
+          value={''}
           onChange={(e: React.FormEvent<HTMLInputElement>) => {
             console.log('ura');
           }}
@@ -52,8 +45,8 @@ export default function SelectAsset({ state, dispatch, formik }: Props) {
           marginTop="20px"
         />
         <List>
-          {state?.assets &&
-            state?.assets.map((asset: Asset) => {
+          {assets &&
+            assets.map((asset: Asset) => {
               return (
                 <ChainItemContainer onClick={() => handleClick(asset)} key={asset.symbol}>
                   <ChainItem asset={asset} accountAddress={account.getActiveAccount()?.address} />
@@ -75,7 +68,6 @@ const Container = styled.div<{ bg: string }>`
   box-sizing: border-box;
   position: relative;
   position: relative;
-  background-image: ${({ bg }) => `url(${bg})`};
   background-size: cover;
   padding-top: 110px;
 `;

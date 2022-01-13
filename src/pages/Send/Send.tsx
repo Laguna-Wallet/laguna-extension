@@ -73,26 +73,8 @@ export default function Send() {
   // TODO GET REFETCH NETWORKS FROM STORAGE
   useEffect(() => {
     async function go() {
-      // const { assets } = await getAssets(account.getActiveAccount()?.address);
+      const { assets } = await getAssets(account.getActiveAccount()?.address);
 
-      const assets = [
-        {
-          balance: '0.0100',
-          calculatedPrice: 0,
-          chain: 'westend',
-          name: 'Polkadot',
-          price: 0,
-          symbol: 'wnd'
-        },
-        {
-          balance: '1.0000',
-          calculatedPrice: 29.63,
-          chain: 'polkadot',
-          name: 'Polkadot',
-          price: 29.63,
-          symbol: 'dot'
-        }
-      ];
       dispatch({ type: SendTokenActionsEnum.SET_ASSETS, payload: assets });
 
       if (!state.selectedAsset) {
@@ -126,7 +108,6 @@ export default function Send() {
       if (!formik.values.selectedAsset || !formik.values.address) return;
 
       const api = await getApiInstance(formik.values.selectedAsset.chain);
-
       const transfer = await api.tx.balances.transfer(formik.values.address, 0.1);
 
       const { partialFee, weight } = await transfer.paymentInfo(formik.values.address);
@@ -138,20 +119,9 @@ export default function Send() {
     go();
   }, [formik.values.selectedAsset, formik.values.address, formik.values.amount]);
 
-  const CalculateHeaderProps = ({ chain }: { chain?: string }) => {
-    const { activeStep, previousStep } = useWizard();
-
-    if (activeStep === 0) return <Header title="SELECT ASSET" backAction={() => goTo(Wallet)} />;
-    if (activeStep === 1)
-      return <Header title={`SEND ${chain}`} backAction={() => previousStep()} />;
-    if (activeStep === 2) return <Header title="CONFIRM" backAction={() => previousStep()} />;
-    return <Header />;
-  };
-
   return (
     <Container>
-      <Wizard
-        header={<CalculateHeaderProps chain={formik?.values?.selectedAsset?.chain as string} />}>
+      <Wizard>
         <SelectAsset formik={formik} state={state} dispatch={dispatch} />
         <SendToken
           formik={formik}
