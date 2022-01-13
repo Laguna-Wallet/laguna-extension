@@ -23,7 +23,7 @@ import { useFormik } from 'formik';
 import { sendTokenSchema } from 'utils/validations';
 import Wallet from 'pages/Wallet/Wallet';
 import keyring from '@polkadot/ui-keyring';
-import BN from 'bn.js';
+import BigNumber from 'bignumber.js';
 
 export type SendTokenState = {
   assets: Asset[];
@@ -110,20 +110,27 @@ export default function Send() {
 
       const api = await getApiInstance(formik.values.selectedAsset.chain);
 
-      const factor = new BN(10).pow(new BN(api.registry.chainDecimals));
-      const amount = new BN(1).mul(factor);
+      const factor = new BigNumber(10).pow(new BigNumber(api.registry.chainDecimals[0]));
+      //  new BN(10).pow(new BN(api.registry.chainDecimals));
+      const amount = new BigNumber(formik.values.amount).times(factor);
 
       const balance = await api.derive.balances.all(account.getActiveAccount().address);
-      const available = balance.availableBalance;
+      const available = balance.availableBalance.toNumber();
 
-      const transfer = await api.tx.balances.transfer(formik.values.address, amount);
+      console.log(amount.toNumber());
+
+      const transfer = await api.tx.balances.transfer(formik.values.address, amount.toNumber());
+
       const { partialFee, weight } = await transfer.paymentInfo(formik.values.address);
 
       const fees = partialFee.muln(110).divn(100);
-      const total = amount.add(fees).add(api.consts.balances.existentialDeposit);
+
+      const total = amount
+        .plus(fees.toNumber())
+        .plus(api.consts.balances.existentialDeposit.toNumber());
 
       if (total.gt(available)) {
-        console.error(`Cannot transfer ${amount} with ${available}`);
+        console.error(`Cannot transfer ${total} with ${available}`);
       }
 
       setFee(`${partialFee}`);
