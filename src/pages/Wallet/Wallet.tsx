@@ -31,7 +31,7 @@ export default function Wallet() {
   const [networks, setNetworks] = useState<any>([]);
   const [activeTab, setActiveTab] = useState<number>(1);
   const [data, setData] = useState<any>();
-  const [balanceLoading, setBalanceLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [overallBalance, setOverallBalance] = useState<number | undefined>(undefined);
 
   useEffect(() => {
@@ -39,6 +39,7 @@ export default function Wallet() {
 
     async function go() {
       // TODO proper typing
+      setLoading(true);
 
       const { overallBalance, assets }: any = await getAssets(activeAccount?.address);
       setAssets(assets);
@@ -46,6 +47,8 @@ export default function Wallet() {
 
       const networks = await (await getNetworks()).filter((network) => network.symbol !== 'wnd');
       setNetworks(networks);
+
+      setLoading(false);
     }
 
     if (activeAccount) {
@@ -53,6 +56,7 @@ export default function Wallet() {
     }
   }, [account.getActiveAccount()]);
 
+  console.log('~ loading', loading);
   return (
     <Container bg={walletBG}>
       <Header />
@@ -61,7 +65,10 @@ export default function Wallet() {
         <BalanceContainer>
           <span>Balance</span>
           <Balance>
-            <span> ${overallBalance || overallBalance === 0 ? overallBalance : '...'} </span>
+            <span>
+              {' '}
+              ${(overallBalance || overallBalance === 0) && !loading ? overallBalance : '...'}{' '}
+            </span>
             {/* <DailyChange>+ 8.88%</DailyChange> */}
           </Balance>
         </BalanceContainer>
@@ -84,23 +91,27 @@ export default function Wallet() {
             </ListHeaderItem>
           </ListHeader>
           <ListContentParent>
-            <ListContentChild>
-              {activeTab === 1
-                ? assets &&
-                  assets.map((asset: any) => {
-                    return (
-                      <ChainItem
-                        key={asset.chain}
-                        asset={asset}
-                        accountAddress={account.getActiveAccount()?.address}
-                      />
-                    );
-                  })
-                : networks &&
-                  networks.map((network: any) => {
-                    return <NetworkItem key={network.chain} network={network} />;
-                  })}
-            </ListContentChild>
+            {loading ? (
+              'Loading...'
+            ) : (
+              <ListContentChild>
+                {activeTab === 1
+                  ? assets &&
+                    assets.map((asset: any) => {
+                      return (
+                        <ChainItem
+                          key={asset.chain}
+                          asset={asset}
+                          accountAddress={account.getActiveAccount()?.address}
+                        />
+                      );
+                    })
+                  : networks &&
+                    networks.map((network: any) => {
+                      return <NetworkItem key={network.chain} network={network} />;
+                    })}
+              </ListContentChild>
+            )}
           </ListContentParent>
         </List>
       </Content>
