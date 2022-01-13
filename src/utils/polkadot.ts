@@ -52,6 +52,7 @@ export function getAccounts() {
 export function validateSeed(suri: string) {
   try {
     if (!suri) return;
+    
     const { phrase } = keyExtractSuri(suri);
 
     if (isHex(phrase)) {
@@ -74,23 +75,22 @@ export function validateSeed(suri: string) {
 
 // todo alter this function to createAccountFromSeed
 export function seedValidate(suri: string, type?: KeypairType) {
+  if (!suri) return false;
+
   const { phrase } = keyExtractSuri(suri);
 
-  if (isHex(phrase)) {
-    assert(isHex(phrase, 256), 'Hex seed needs to be 256-bits');
-  } else {
-    assert(
-      SEED_LENGTHS.includes(phrase.split(' ').length),
-      `Mnemonic needs to contain ${SEED_LENGTHS.join(', ')} words`
-    );
+  if (!isHex(phrase, 256)) throw new Error('Hex seed needs to be 256-bits');
 
-    assert(mnemonicValidate(phrase), 'Not a valid mnemonic seed');
-  }
+  if (!SEED_LENGTHS.includes(phrase.split(' ').length))
+    throw new Error(`Mnemonic needs to contain ${SEED_LENGTHS.join(', ')} words`);
+
+  if (!mnemonicValidate(phrase)) throw new Error('Not a valid mnemonic seed');
 
   // todo revise with sam
+  // todo move to separate function
   const password = '123123123';
-  const acc = keyring.addUri(suri, password, { name: 'test-name' });
-  return acc;
+  const account = keyring.addUri(suri, password, { name: 'test-name' });
+  return account;
 }
 
 export async function exportAll(password: string) {
