@@ -49,25 +49,21 @@ export default function Confirm({ formik, fee, transfer }: Props) {
     const prefix = api.consts.system.ss58Prefix;
     const recoded = recodeAddress(formik.values.address, prefix);
 
-    const txHash = await api.tx.balances
-      .transfer(recoded, Number(formik.values.amount))
-      .signAndSend(pair);
-
     nextStep();
 
-    // const transfer = await api.tx.balances.transfer(formik.values.address, 0.1);
+    const transfer = await api.tx.balances.transfer(formik.values.address, 0.1);
 
-    // const unsub = await transfer
-    //   .signAndSend(pair, ({ status }: any) => {
-    //     if (status.isInBlock) {
-    //       console.log(`Completed at block hash #${status.asInBlock.toString()}`);
-    //     } else {
-    //       console.log(`Current status: ${status.type}`);
-    //     }
-    //   })
-    //   .catch((error: any) => {
-    //     console.log(':( transaction failed', error);
-    //   });
+    const unsub = await transfer
+      .signAndSend(pair, ({ status }: any) => {
+        if (status.isInBlock) {
+          console.log(`Completed at block hash #${status.asInBlock.toString()}`);
+        } else {
+          console.log(`Current status: ${status.type}`);
+        }
+      })
+      .catch((error: any) => {
+        console.log(':( transaction failed', error);
+      });
   };
 
   return (
@@ -102,14 +98,15 @@ export default function Confirm({ formik, fee, transfer }: Props) {
           {Number(formik.values.selectedAsset?.balance) - Number(formik.values.amount)}{' '}
           {formik.values.selectedAsset?.symbol}
         </BalanceInfo>
-        {/* <SwipeAndConfirm /> */}
+        <SwipeAndConfirm handleConfirm={() => handleClick(formik)} />
 
-        <Button
+        {/* <Button
           onClick={() => handleClick(formik)}
           text="Send"
           justify="center"
           Icon={<RightArrow width={23} fill="#fff" />}
         />
+      */}
       </BottomSection>
     </Container>
   );

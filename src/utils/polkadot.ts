@@ -108,9 +108,9 @@ export async function importJson(
 ) {
   if (!json) return;
   if (isKeyringPairs$Json(json)) {
-    keyring.restoreAccounts(json, password);
+    return keyring.restoreAccounts(json, password);
   } else {
-    keyring.restoreAccount(json, password);
+    return keyring.restoreAccount(json, password);
   }
 }
 

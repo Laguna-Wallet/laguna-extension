@@ -34,10 +34,6 @@ export default function Wallet() {
   const [balanceLoading, setBalanceLoading] = useState<boolean>(false);
   const [overallBalance, setOverallBalance] = useState<number | undefined>(undefined);
 
-  // useEffect(() => {
-  //   setActiveAccount(keyring.getAccounts()[0]);
-  // }, []);
-
   useEffect(() => {
     const activeAccount = account.getActiveAccount();
 
