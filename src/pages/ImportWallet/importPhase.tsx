@@ -10,7 +10,7 @@ import Button from 'components/primitives/Button';
 import Input from 'components/primitives/Input';
 import Snackbar from 'components/Snackbar/Snackbar';
 import { useFormik } from 'formik';
-import { ReactNode, useCallback, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useWizard } from 'react-use-wizard';
 import styled from 'styled-components';
@@ -18,6 +18,7 @@ import { convertUploadedFileToJson } from 'utils';
 import { saveToStorage } from 'utils/chrome';
 import { importJson, seedValidate, validateSeed } from 'utils/polkadot';
 import { StorageKeys } from 'utils/types';
+import { validateSeedPhase } from 'utils/validations';
 
 export default function ImportPhase() {
   const { nextStep } = useWizard();
@@ -42,6 +43,7 @@ export default function ImportPhase() {
       password: '',
       file: undefined
     },
+    validate: validateSeedPhase,
     // validationSchema: welcomeBackSchema,
     onSubmit: async ({ seedPhase, file, password }) => {
       try {
@@ -57,25 +59,33 @@ export default function ImportPhase() {
         saveToStorage({ key: StorageKeys.SignedIn, value: 'true' });
         nextStep();
       } catch (err: any) {
+        // todo proper typing
         setIsSnackbarOpen(true);
         setSnackbarError(err.message);
       }
     }
   });
 
-  const isDisabled = (): boolean => {
-    if (validateSeed(formik.values.seedPhase) || acceptedFiles.length > 0) return false;
+  // todo refactor this function
+  const isDisabled = () => {
+    if (!validateSeed(formik.values.seedPhase) || !(acceptedFiles.length > 0)) return false;
     return true;
   };
 
   const fileUploaded = !!(acceptedFiles.length > 0);
-  const phaseSeeded = !!formik.values.seedPhase;
+
+  useEffect(() => {
+    if (formik.errors.seedPhase && !isSnackbarOpen) {
+      setIsSnackbarOpen(true);
+      setSnackbarError(formik.errors.seedPhase);
+    }
+  }, [formik.errors.seedPhase]);
 
   return (
     <Container>
       <Form onSubmit={formik.handleSubmit}>
         <DndContainer {...getRootProps()} role={'Box'}>
-          {!phaseSeeded && (
+          {!formik.values.seedPhase && (
             <FileUploadContainer>
               <input {...getInputProps()} />
               {fileUploaded ? (
@@ -98,9 +108,9 @@ export default function ImportPhase() {
               <Input
                 type="textarea"
                 id="seedPhase"
-                placeholder="  Enter your seed phrase, private key, Polkadot address or drag and drop a JSON backup file."
+                placeholder="Enter your seed phrase, private key, Polkadot address or drag and drop a JSON backup file."
                 onChange={formik.handleChange}
-                value={formik.values['seedPhase']}
+                value={formik.values.seedPhase}
                 height={'120px'}
                 fontSize="20px"
                 marginTop="20px"
@@ -139,7 +149,7 @@ export default function ImportPhase() {
           close={() => setIsSnackbarOpen(false)}
           type="error"
           left="0px"
-          bottom="120px">
+          bottom={formik.values.seedPhase ? '50px' : formik.values.file ? '120px' : '50px'}>
           <CloseIconContainer>
             <CloseIcon stroke="#111" />
           </CloseIconContainer>

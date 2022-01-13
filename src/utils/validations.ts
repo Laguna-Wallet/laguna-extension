@@ -1,4 +1,9 @@
+/* eslint-disable */
+
 import * as yup from 'yup';
+import { isHex } from '@polkadot/util';
+import { SEED_LENGTHS } from './types';
+import { mnemonicValidate } from '@polkadot/util-crypto';
 
 export const createPasswordSchema = yup.object({
   password: yup
@@ -42,3 +47,22 @@ export const sendTokenSchema = yup.object({
   // maybe todo check if it's a valid address
   address: yup.string().required('Please fill out this field')
 });
+
+export const validateSeedPhase = (values: any) => {
+  const errors: any = {};
+
+  if (!values.seedPhase) return {};
+
+  if (!mnemonicValidate(values.seedPhase)) {
+    errors.seedPhase = `Not a valid mnemonic seed`;
+  }
+
+  if (!SEED_LENGTHS.includes(values.seedPhase.split(' ').length)) {
+    errors.seedPhase = `Mnemonic needs to contain ${SEED_LENGTHS.join(', ')} words`;
+  }
+
+  if (/[!@#$%^&*(),.?":{}|<>]/g.test(values.seedPhase.toString())) {
+    errors.seedPhase = `Please remove special characters (!,#:*)`;
+  }
+  return errors;
+};

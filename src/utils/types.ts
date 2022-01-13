@@ -15,7 +15,7 @@ export enum ImportTypeEnum {
 export type ImportType = ImportTypeEnum.SEED | ImportTypeEnum.JSON;
 
 export const DEFAULT_TYPE: KeypairType = 'sr25519';
-export const SEED_LENGTHS = [12, 15, 18, 21, 24];
+export const SEED_LENGTHS = [12, 24];
 
 export enum StorageKeys {
   SignedIn = 'signed-in',
