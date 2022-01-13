@@ -1,12 +1,14 @@
 import { KeyringPair$Json } from '@polkadot/keyring/types';
 import { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
 import ActiveImportIcon from 'assets/svgComponents/ActiveImportIcon';
+import CloseIcon from 'assets/svgComponents/CloseIcon';
 import FileUploadIcon from 'assets/svgComponents/FileUploadIcon';
 import RightArrow from 'assets/svgComponents/RightArrow';
 import UploadFinishedIcon from 'assets/svgComponents/UploadFinishedIcon';
 import Dnd from 'components/Dnd/Dnd';
 import Button from 'components/primitives/Button';
 import Input from 'components/primitives/Input';
+import Snackbar from 'components/Snackbar/Snackbar';
 import { useFormik } from 'formik';
 import { ReactNode, useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
@@ -19,6 +21,8 @@ import { StorageKeys } from 'utils/types';
 
 export default function ImportPhase() {
   const { nextStep } = useWizard();
+  const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
+  const [snackbarError, setSnackbarError] = useState<string>('');
 
   const onDrop = useCallback(async (acceptedFile) => {
     const json = await convertUploadedFileToJson(acceptedFile);
@@ -40,14 +44,22 @@ export default function ImportPhase() {
     },
     // validationSchema: welcomeBackSchema,
     onSubmit: async ({ seedPhase, file, password }) => {
-      if (file) {
-        await importJson(file as KeyringPair$Json | KeyringPairs$Json | undefined, password);
-      } else {
-        seedValidate(seedPhase);
-      }
+      try {
+        if (file) {
+          const res = await importJson(
+            file as KeyringPair$Json | KeyringPairs$Json | undefined,
+            password
+          );
+        } else {
+          seedValidate(seedPhase);
+        }
 
-      saveToStorage({ key: StorageKeys.SignedIn, value: 'true' });
-      nextStep();
+        saveToStorage({ key: StorageKeys.SignedIn, value: 'true' });
+        nextStep();
+      } catch (err: any) {
+        setIsSnackbarOpen(true);
+        setSnackbarError(err.message);
+      }
     }
   });
 
@@ -122,6 +134,17 @@ export default function ImportPhase() {
           text="import"
           Icon={<RightArrow width={23} fill="#fff" />}
         />
+        <Snackbar
+          isOpen={isSnackbarOpen}
+          close={() => setIsSnackbarOpen(false)}
+          type="error"
+          left="0px"
+          bottom="120px">
+          <CloseIconContainer>
+            <CloseIcon stroke="#111" />
+          </CloseIconContainer>
+          <ErrorMessage>{snackbarError}</ErrorMessage>
+        </Snackbar>
 
         {/* <Input /> */}
       </Form>
@@ -226,4 +249,21 @@ const HelpButton = styled.div`
   span {
     margin-left: 5px;
   }
+`;
+
+const ErrorMessage = styled.div`
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  margin-left: 10px;
+`;
+
+const CloseIconContainer = styled.div`
+  width: 30px;
+  height: 25px;
+  background-color: #fff;
+  border-radius: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
