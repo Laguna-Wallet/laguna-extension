@@ -42,6 +42,7 @@ export default function Confirm({ formik, fee, transfer }: Props) {
   const handleClick = async (formik: FormikProps<SendTokenFormikValues>) => {
     const pair = keyring.getPair(account.getActiveAccount().address);
 
+    // todo dynamic password
     pair.unlock('neodzeneodze');
 
     // todo proper typing
@@ -49,10 +50,7 @@ export default function Confirm({ formik, fee, transfer }: Props) {
     const prefix = api.consts.system.ss58Prefix;
     const recoded = recodeAddress(formik.values.address, prefix);
 
-    nextStep();
-
-    const transfer = await api.tx.balances.transfer(formik.values.address, 0.1);
-
+    // Todo Proper handling
     const unsub = await transfer
       .signAndSend(pair, ({ status }: any) => {
         if (status.isInBlock) {
@@ -64,6 +62,8 @@ export default function Confirm({ formik, fee, transfer }: Props) {
       .catch((error: any) => {
         console.log(':( transaction failed', error);
       });
+
+    nextStep();
   };
 
   return (
