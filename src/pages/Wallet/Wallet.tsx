@@ -37,6 +37,9 @@ export default function Wallet() {
   useEffect(() => {
     const activeAccount = account.getActiveAccount();
 
+    const pair = keyring.getPair(activeAccount.address);
+    console.log('~ pair', pair);
+
     async function go() {
       // TODO proper typing
       setLoading(true);
@@ -56,7 +59,6 @@ export default function Wallet() {
     }
   }, [account.getActiveAccount()]);
 
-  console.log('~ loading', loading);
   return (
     <Container bg={walletBG}>
       <Header />

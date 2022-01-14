@@ -26,6 +26,10 @@ export default memo(function CongratsSecuringWallet() {
 
     const { pair, json } = generateKeyPair(passwordToSet, mnemonics.join(' '));
 
+    pair.unlock(passwordToSet);
+
+    keyring.saveAccount(pair);
+
     account.setJson(json);
 
     saveToStorage({ key: StorageKeys.SignedIn, value: 'true' });
