@@ -52,7 +52,7 @@ export default function SwipeAndConfirm({ handleConfirm }: Props) {
 
   const handleConfirmStatus = (confirmed: boolean, confirming: boolean) => {
     if (confirmed) return <span style={{ color: '#fff' }}>Confirmed</span>;
-    if (confirming) return <span style={{ color: '#fff' }}>Confirming</span>;
+    if (confirming) return <span style={{ color: '#fff' }}>Confirming...</span>;
 
     return (
       <>

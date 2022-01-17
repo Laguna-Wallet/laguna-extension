@@ -6,9 +6,16 @@ import SignUp from 'pages/SignUp/SignUp';
 import WelcomeBack from 'pages/WelcomeBack/WelcomeBack';
 import Wallet from 'pages/Wallet/Wallet';
 import { StorageKeys } from 'utils/types';
+import { useEffect } from 'react';
 
 function App() {
   const account = useAccount();
+
+  useEffect(() => {
+    chrome.runtime.onMessage.addListener((msg) => {
+      console.log('~ dalogaaaaaa', msg);
+    });
+  }, []);
 
   const handlePage = () => {
     const createdAccount = Boolean(getFromStorage(StorageKeys.SignedIn));
