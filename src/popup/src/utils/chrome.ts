@@ -23,10 +23,3 @@ export function clearFromStorage(key: string) {
   //   console.log('Value currently is ' + result.key);
   // });
 }
-
-export function testSaveToStorage({ key, value }: { key: string; value: string }) {
-  chrome.storage.local.set({ key: value }, function () {
-    console.log('Value is set to ' + value);
-  });
-  localStorage.setItem(key, value);
-}

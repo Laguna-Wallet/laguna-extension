@@ -1,0 +1,17 @@
+{
+  "manifest_version": 2,
+  "name": "HydrogenX Wallet",
+  "version": "1.0.0",
+  "description": "HydrogenX Polkadot Wallet",
+  "permissions": ["background", "storage", "notifications", "alarms"],
+  "browser_action": {
+    "default_popup": "popup/index.html",
+    "default_title": "HydrogenX Polkadot Wallet"
+  },
+  "icons": {},
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+  "content_security_policy": "script-src 'self' 'unsafe-eval' 'sha256-...='; object-src 'self'"
+}
