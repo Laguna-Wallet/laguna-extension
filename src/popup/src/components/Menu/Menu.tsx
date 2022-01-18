@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import styled from 'styled-components';
-import { Turn as Hamburger } from 'hamburger-react';
 import RightArrow from 'assets/svgComponents/RightArrow';
 import { Link } from 'react-chrome-extension-router';
 import ExportAllAccounts from 'pages/ExportAllAccounts/ExportAllAccounts';
@@ -9,6 +8,8 @@ import { LogoutIcon } from '@heroicons/react/outline';
 import WelcomeBack from 'pages/WelcomeBack/WelcomeBack';
 import { clearFromStorage, saveToStorage } from 'utils/chrome';
 import { StorageKeys } from 'utils/types';
+import AddressBook from 'pages/AddressBook/AddressBook';
+import MenuHeader from 'components/MenuHeader/MenuHeader';
 
 type Props = {
   onClose: () => void;
@@ -24,19 +25,8 @@ export default function Menu({ onClose }: Props) {
 
   return (
     <Container>
-      <Header>
-        <span>HYDROX</span>
-        <BurgerMenu onClick={onClose}>
-          <Hamburger toggled={isOpen} toggle={setOpen} size={20} color="#fff" />
-        </BurgerMenu>
-      </Header>
-      <User>
-        <IconContainer></IconContainer>
-        <Text>
-          <Name>Skywalker</Name>
-          <Address>H32x...3df</Address>
-        </Text>
-      </User>
+      <MenuHeader isOpen={isOpen} setOpen={setOpen} onClose={() => onClose()} showUser={true} />
+
       <List>
         <ListItem>
           <StyledLink component={ExportAllAccounts}>
@@ -45,7 +35,7 @@ export default function Menu({ onClose }: Props) {
           </StyledLink>
         </ListItem>
         <ListItem>
-          <StyledLink color={'#c1c1c154'} component={ExportAllAccounts}>
+          <StyledLink component={AddressBook}>
             <span>Address Book</span>
             <RightArrow width={25} />
           </StyledLink>
@@ -104,50 +94,6 @@ const Container = styled.div`
   z-index: 99999;
 `;
 
-const Header = styled.div`
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: #fff;
-  font-size: 13px;
-  font-family: 'Sequel100Wide55Wide';
-`;
-
-const BurgerMenu = styled.div``;
-
-const User = styled.div`
-  display: flex;
-  border-bottom: 1px solid #bbbbbb;
-  padding-bottom: 20px;
-  align-items: center;
-`;
-
-const Text = styled.div`
-  display: flex;
-  flex-direction: column;
-  text-align: left;
-  margin-left: 20px;
-  color: #fff;
-  font-family: 'Sequel100Wide55Wide';
-`;
-
-const Name = styled.div`
-  font-size: 23px;
-`;
-
-const Address = styled.div`
-  color: #8f8f8f;
-  font-size: 12px;
-`;
-
-const IconContainer = styled.div`
-  width: 67px;
-  height: 67px;
-  border-radius: 100%;
-  background-color: #ccc;
-`;
-
 const List = styled.div`
   width: 100%;
   height: 80%;
@@ -168,6 +114,9 @@ const ListItem = styled.div`
   pointer-events: none;
   :nth-child(1) {
     margin-top: 0;
+    pointer-events: inherit;
+  }
+  :nth-child(2) {
     pointer-events: inherit;
   }
 `;

@@ -28,10 +28,15 @@ type Props = {
 export default function SelectAsset({ state, dispatch, formik }: Props) {
   const account = useAccount();
   const { nextStep } = useWizard();
+  const [assetsFilter, setAssetsFilter] = useState<string>('');
 
   const handleClick = (asset: Asset) => {
     formik.setFieldValue('selectedAsset', asset);
     nextStep();
+  };
+
+  const handleRenderAssets = (assets: Asset[], assetsFilter: string) => {
+    return assets.filter((asset) => asset.name.toLowerCase().includes(assetsFilter.toLowerCase()));
   };
 
   return (
@@ -41,9 +46,9 @@ export default function SelectAsset({ state, dispatch, formik }: Props) {
         <HumbleInput
           id="id"
           type="text"
-          value={state?.selectedAsset?.chain || ''}
-          onChange={(e: React.FormEvent<HTMLInputElement>) => {
-            console.log('ura');
+          value={assetsFilter}
+          onChange={(e: any) => {
+            setAssetsFilter(e.target.value);
           }}
           bgColor={'#ececec'}
           borderColor={'#ececec'}
@@ -52,14 +57,20 @@ export default function SelectAsset({ state, dispatch, formik }: Props) {
           marginTop="20px"
         />
         <List>
-          {state?.assets &&
-            state?.assets.map((asset: Asset) => {
-              return (
-                <ChainItemContainer onClick={() => handleClick(asset)} key={asset.symbol}>
-                  <ChainItem asset={asset} accountAddress={account.getActiveAccount()?.address} />
-                </ChainItemContainer>
-              );
-            })}
+          {state?.assets
+            ? state?.assets.length === 0
+              ? 'no assets'
+              : handleRenderAssets(state?.assets, assetsFilter).map((asset: Asset) => {
+                  return (
+                    <ChainItemContainer onClick={() => handleClick(asset)} key={asset.symbol}>
+                      <ChainItem
+                        asset={asset}
+                        accountAddress={account.getActiveAccount()?.address}
+                      />
+                    </ChainItemContainer>
+                  );
+                })
+            : 'Loading...'}
         </List>
       </Content>
     </Container>

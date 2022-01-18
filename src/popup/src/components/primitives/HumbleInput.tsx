@@ -7,6 +7,7 @@ type InputProps = {
   placeholder?: string;
   label?: string;
   value: string;
+  color?: string;
   // Todo formik doesn't provides types, check for better solution
   onChange: any;
   error?: string | undefined;
@@ -39,7 +40,8 @@ export default function HumbleInput({
   textAlign,
   bgColor,
   hideErrorMsg,
-  autoFocus
+  autoFocus,
+  color
 }: InputProps) {
   return (
     <Container marginBottom={marginBottom}>
@@ -48,6 +50,7 @@ export default function HumbleInput({
         marginTop={marginTop}
         error={!!touched && !!error}
         bgColor={bgColor}
+        color={color}
         height={height}>
         {type === 'textarea' ? (
           <StyledTextarea
@@ -58,6 +61,7 @@ export default function HumbleInput({
             fontSize={fontSize}
             textAlign={textAlign}
             bgColor={bgColor}
+            color={color}
           />
         ) : (
           <StyledInput
@@ -69,6 +73,7 @@ export default function HumbleInput({
             fontSize={fontSize}
             bgColor={bgColor}
             autoFocus={!!autoFocus}
+            color={color}
           />
         )}
       </InputContainer>
@@ -103,7 +108,7 @@ const InputContainer = styled.div<{
   margin-top: ${({ marginTop }) => marginTop || marginTop};
 `;
 
-const StyledInput = styled.input<{ fontSize?: string; bgColor?: string }>`
+const StyledInput = styled.input<{ fontSize?: string; bgColor?: string; color?: string }>`
   width: 100%;
   height: 100%;
   border: none;
@@ -112,6 +117,8 @@ const StyledInput = styled.input<{ fontSize?: string; bgColor?: string }>`
   appearance: none;
   outline: none;
   background-color: ${({ bgColor }) => (bgColor ? bgColor : '#fff')};
+  color: ${({ color }) => (color ? color : '#fff')};
+
   &:focus {
     outline: none;
   }

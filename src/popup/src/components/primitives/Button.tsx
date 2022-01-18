@@ -7,6 +7,7 @@ type Props = {
   Icon?: any;
   text: string;
   bgColor?: string;
+  bgImage?: string;
   textColor?: string;
   justify?: string;
   type?: 'button' | 'submit' | 'reset' | undefined;
@@ -30,6 +31,7 @@ export default function Button({ Icon, text, bgColor = '#111', ...rest }: Props)
 const StyledButton = styled.button<{
   justify?: string;
   bgColor?: string;
+  bgImage?: string;
   disabled?: boolean;
   borderColor?: string;
   margin?: string;
@@ -47,6 +49,7 @@ const StyledButton = styled.button<{
   border-radius: 4px;
   font-family: ${({ fontFamily }) => fontFamily || 'SFCompactDisplayRegular'};
   font-size: ${({ fontSize }) => fontSize || '14px'};
+  background-image: ${({ bgImage }) => bgImage};
   background-color: ${({ disabled, bgColor }) => (disabled ? '#adadad' : bgColor)};
   /* pointer-events: ${({ disabled }) => (disabled ? 'none' : 'initial')}; */
   color: ${({ color }) => (color ? color : '#fff')};

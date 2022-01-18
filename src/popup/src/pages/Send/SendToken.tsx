@@ -20,6 +20,7 @@ import { useAccount } from 'context/AccountContext';
 import CloseIcon from 'assets/svgComponents/CloseIcon';
 import QRPopup from './QRPopup';
 import Header from 'pages/Wallet/Header';
+import BigNumber from 'bignumber.js';
 
 enum SendAccountFlowEnum {
   SendToTrustedContact = 'SendToTrustedContact',
@@ -35,6 +36,7 @@ type Props = {
   flow: string | undefined;
   setFlow: (flow: string | undefined) => void;
   fee: string;
+  loading: boolean;
 };
 
 const handleShowAccountInput = (flow: string | undefined, address: string | undefined): boolean => {
@@ -46,7 +48,7 @@ const handleShowAccountInput = (flow: string | undefined, address: string | unde
   return false;
 };
 
-export default function SendToken({ state, dispatch, formik, flow, setFlow, fee }: Props) {
+export default function SendToken({ state, dispatch, formik, flow, setFlow, fee, loading }: Props) {
   const { nextStep, previousStep } = useWizard();
   const account = useAccount();
 
@@ -99,10 +101,12 @@ export default function SendToken({ state, dispatch, formik, flow, setFlow, fee 
           <Price>
             <span>
               $
-              {calculateSelectedTokenExchange(
-                formik.values.amount,
-                formik.values?.selectedAsset?.price as number
-              )}
+              {new BigNumber(
+                calculateSelectedTokenExchange(
+                  formik.values.amount,
+                  formik.values?.selectedAsset?.price as number
+                )
+              ).toFixed(2)}
             </span>
             <ExchangeIconContainer>
               <ExchangeIcon />
@@ -179,7 +183,12 @@ export default function SendToken({ state, dispatch, formik, flow, setFlow, fee 
             Balance: {Number(formik?.values?.selectedAsset?.balance)}{' '}
             {formik?.values?.selectedAsset?.symbol}
           </span>
-          <span>Estimated Fee: ${fee}</span>
+          <span>
+            Estimated Fee:{' '}
+            {loading
+              ? '...'
+              : new BigNumber(fee).div(new BigNumber(10).pow(10)).toFixed(2).toString()}
+          </span>
         </Info>
         <Button
           text="Preview"

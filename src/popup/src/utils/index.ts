@@ -102,3 +102,7 @@ export function truncateString(string: string) {
   const part2 = string.substring(string.length - 4, string.length);
   return `${part1}${part2}`;
 }
+
+export function objectValuesToArray(obj: Record<string, string>): string[] {
+  return Object.values(obj).map((item) => item);
+}
