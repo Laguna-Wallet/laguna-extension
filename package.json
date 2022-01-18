@@ -12,7 +12,9 @@
     "build": "npm run build:background",
     "clean": "rm -rf dist && cpy manifest.json dist && cpy src/assets/* dist/assets",
     "prebuild": "npm run clean",
-    "prewatch": "npm run clean"
+    "prewatch": "npm run clean",
+    "drive-upload-dev": "node ./scripts/uploader.js environment=DEV ",
+    "drive-upload-prod": "node ./scripts/uploader.js environment=PROD"
   },
   "author": "",
   "license": "ISC",
@@ -31,5 +33,11 @@
     "typescript": "^4.5.4",
     "webpack": "^5.66.0",
     "webpack-cli": "^4.9.1"
+  },
+  "dependencies": {
+    "@actions/core": "^1.6.0",
+    "archiver": "^5.3.0",
+    "dotenv": "^14.2.0",
+    "googleapis": "^92.0.0"
   }
 }

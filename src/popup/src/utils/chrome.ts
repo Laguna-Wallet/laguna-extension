@@ -23,3 +23,9 @@ export function clearFromStorage(key: string) {
   //   console.log('Value currently is ' + result.key);
   // });
 }
+
+export function getFromChromeStorage(key: string) {
+  return chrome.storage.local.get(key, function (result) {
+    console.log('Value currently is ' + result);
+  });
+}

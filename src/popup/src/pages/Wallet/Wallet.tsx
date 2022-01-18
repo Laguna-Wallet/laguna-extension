@@ -19,28 +19,32 @@ import { Link } from 'react-chrome-extension-router';
 import SelectAsset from 'pages/Send/SelectAsset';
 import Send from 'pages/Send/Send';
 import Receive from 'pages/Recieve/Receive';
+import BigNumber from 'bignumber.js';
 
-export default function Wallet() {
+type Props = {
+  isMenuOpen?: boolean;
+};
+
+export default function Wallet({ isMenuOpen }: Props) {
   const account = useAccount();
-  // todo determine balance type
-  const [balance, setBalance] = useState<any>();
-  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
-  // const [activeAccount, setActiveAccount] = useState<any>();
-  // todo determine api type
   const [assets, setAssets] = useState<any>([]);
   const [networks, setNetworks] = useState<any>([]);
   const [activeTab, setActiveTab] = useState<number>(1);
-  const [data, setData] = useState<any>();
   const [loading, setLoading] = useState<boolean>(false);
   const [overallBalance, setOverallBalance] = useState<number | undefined>(undefined);
 
   useEffect(() => {
     const activeAccount = account.getActiveAccount();
 
-    const pair = keyring.getPair(activeAccount.address);
-    console.log('~ pair', pair);
-
     async function go() {
+      // const pair = keyring.getPair(activeAccount.address);
+      // pair.unlock('neodzeneodze');
+      // localStorage.setItem('unlocked', JSON.stringify(pair));
+      // keyring.saveAccount(pair);
+
+      // const gotPair = localStorage.getItem('unlocked');
+      // console.log('parsed', JSON.parse(gotPair as string));
+
       // TODO proper typing
       setLoading(true);
 
@@ -61,7 +65,7 @@ export default function Wallet() {
 
   return (
     <Container bg={walletBG}>
-      <Header />
+      <Header menuInitialOpenState={isMenuOpen} />
 
       <Content>
         <BalanceContainer>
@@ -69,7 +73,10 @@ export default function Wallet() {
           <Balance>
             <span>
               {' '}
-              ${(overallBalance || overallBalance === 0) && !loading ? overallBalance : '...'}{' '}
+              $
+              {(overallBalance || overallBalance === 0) && !loading
+                ? new BigNumber(overallBalance).toFixed(2)
+                : '...'}{' '}
             </span>
             {/* <DailyChange>+ 8.88%</DailyChange> */}
           </Balance>

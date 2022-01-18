@@ -1,7 +1,7 @@
 import './App.css';
 import ProductIntro from 'pages/ProductIntro/ProductIntro';
 import { useAccount } from 'context/AccountContext';
-import { getFromStorage } from 'utils/chrome';
+import { getFromChromeStorage, getFromStorage } from 'utils/chrome';
 import SignUp from 'pages/SignUp/SignUp';
 import WelcomeBack from 'pages/WelcomeBack/WelcomeBack';
 import Wallet from 'pages/Wallet/Wallet';
@@ -13,7 +13,8 @@ function App() {
 
   useEffect(() => {
     chrome.runtime.onMessage.addListener((msg) => {
-      console.log('~ dalogaaaaaa', msg);
+      console.log('~ logged', msg);
+      getFromChromeStorage(StorageKeys.TokenPrices);
     });
   }, []);
 

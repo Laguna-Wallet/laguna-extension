@@ -15,13 +15,14 @@ type Props = {
   title?: string;
   backAction?: () => void;
   iconStyle?: 'Close' | 'LeftArrow';
+  menuInitialOpenState?: boolean;
 };
 
-export default function Header({ title, backAction, iconStyle }: Props) {
+export default function Header({ title, backAction, iconStyle, menuInitialOpenState }: Props) {
   const account = useAccount();
 
   const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false);
-  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(menuInitialOpenState || false);
   const [isHamburgerOpen, setOpen] = useState<boolean>(false);
 
   return (
@@ -119,6 +120,7 @@ const TitleContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  text-transform: uppercase;
 `;
 
 const LeftArrowContainer = styled.div`

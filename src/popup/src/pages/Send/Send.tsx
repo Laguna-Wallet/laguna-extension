@@ -26,7 +26,7 @@ import keyring from '@polkadot/ui-keyring';
 import BigNumber from 'bignumber.js';
 
 export type SendTokenState = {
-  assets: Asset[];
+  assets: Asset[] | undefined;
   selectedAsset: Asset | undefined;
   amount: string;
 };
@@ -67,7 +67,7 @@ export default function Send() {
 
   const [state, dispatch] = useReducer(reducer, {
     selectedAsset: undefined,
-    assets: [],
+    assets: undefined,
     amount: ''
   });
 
@@ -103,11 +103,13 @@ export default function Send() {
 
   const [transfer, setTransfer] = useState<any>();
   const [fee, setFee] = useState<any>();
+  const [loading, setLoading] = useState<any>();
 
   useEffect(() => {
     async function go() {
       if (!formik.values.selectedAsset || !formik.values.address) return;
 
+      setLoading(true);
       const api = await getApiInstance(formik.values.selectedAsset.chain);
 
       const factor = new BigNumber(10).pow(new BigNumber(api.registry.chainDecimals[0]));
@@ -117,17 +119,16 @@ export default function Send() {
       const balance = await api.derive.balances.all(account.getActiveAccount().address);
       const available = balance.availableBalance.toNumber();
 
-      console.log(amount.toNumber());
-
       const transfer = await api.tx.balances.transfer(formik.values.address, amount.toNumber());
-
       const { partialFee, weight } = await transfer.paymentInfo(formik.values.address);
-
+ 
       const fees = partialFee.muln(110).divn(100);
 
       const total = amount
         .plus(fees.toNumber())
         .plus(api.consts.balances.existentialDeposit.toNumber());
+
+      console.log('~ total', `${total}`, available);
 
       if (total.gt(available)) {
         console.error(`Cannot transfer ${total} with ${available}`);
@@ -135,6 +136,7 @@ export default function Send() {
 
       setFee(`${partialFee}`);
       setTransfer(transfer);
+      setLoading(false);
     }
 
     go();
@@ -151,6 +153,7 @@ export default function Send() {
           state={state}
           dispatch={dispatch}
           fee={fee}
+          loading={loading}
         />
         <Confirm fee={fee} formik={formik} transfer={transfer} />
         <TransactionSent />

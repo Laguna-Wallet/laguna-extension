@@ -22,6 +22,7 @@ import { useEffect, useState } from 'react';
 import keyring from '@polkadot/ui-keyring';
 import Wallet from 'pages/Wallet/Wallet';
 import { truncateString } from 'utils';
+import BigNumber from 'bignumber.js';
 
 type Props = {
   formik: FormikProps<SendTokenFormikValues>;
@@ -83,7 +84,16 @@ export default function Confirm({ formik, fee, transfer }: Props) {
 
         <Info>
           <InfoItem>
-            Fee = <span>{fee} ($0.32)</span>
+            Fee ={' '}
+            <span>
+              {/* {new BigNumber(fee).div(new BigNumber(10).pow(10))}{' '} */}
+              {new BigNumber(
+                calculateSelectedTokenExchange(
+                  new BigNumber(fee).div(new BigNumber(10).pow(10)).toString(),
+                  formik.values?.selectedAsset?.price as number
+                )
+              ).toFixed(2)}{' '}
+            </span>
           </InfoItem>
 
           <InfoItem>
@@ -95,8 +105,9 @@ export default function Confirm({ formik, fee, transfer }: Props) {
       <BottomSection>
         <BalanceInfo>
           Remaining Balance:{' '}
-          {Number(formik.values.selectedAsset?.balance) - Number(formik.values.amount)}{' '}
-          {formik.values.selectedAsset?.symbol}
+          {/* {formik.values.selectedAsset?.balance &&
+            new BigNumber(Number(formik.values.selectedAsset?.balance))}{' '}
+          {formik.values.selectedAsset?.symbol} */}
         </BalanceInfo>
         <SwipeAndConfirm handleConfirm={() => handleClick(formik)} />
 

@@ -1,3 +1,4 @@
+import BigNumber from 'bignumber.js';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Account_Search, Price_Converter } from 'utils/Api';
@@ -22,7 +23,7 @@ export default function ChainItem({ asset, accountAddress }: Props) {
         <Title>
           {Number(asset?.balance) || 0} {asset.symbol}
         </Title>
-        <Value>${asset.calculatedPrice}</Value>
+        <Value>${new BigNumber(asset.calculatedPrice).toFixed(2)}</Value>
       </ListItemText>
     </Container>
   );

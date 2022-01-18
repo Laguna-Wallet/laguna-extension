@@ -1,4 +1,5 @@
-import { Retrieve_Coin_Prices } from "./utils"
+import { StorageKeys } from "./types"
+import { Retrieve_Coin_Prices, saveToStorage } from "./utils"
 
 chrome.runtime.onInstalled.addListener(async () => {
   console.log("onInstalled...")
@@ -6,14 +7,14 @@ chrome.runtime.onInstalled.addListener(async () => {
   chrome.alarms.create("refresh", { periodInMinutes: 1 })
 
   const price = await Retrieve_Coin_Prices()
+  saveToStorage(StorageKeys.TokenPrices, price)
 })
 
 // Update Prices
-chrome.alarms.onAlarm.addListener((alarm) => {
-  console.log(alarm.name) // refresh
-  console.log("Prices Updated !!!")
-
-  chrome.runtime.sendMessage({ msg: "hello there" })
+chrome.alarms.onAlarm.addListener(async (alarm) => {
+  const price = await Retrieve_Coin_Prices()
+  saveToStorage(StorageKeys.TokenPrices, price)
+  chrome.runtime.sendMessage({ msg: "Prices_updated" })
 })
 
 // const arrayData = await browser.runtime.sendMessage({type: 'get_array'});

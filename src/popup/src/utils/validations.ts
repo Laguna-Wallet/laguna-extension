@@ -48,6 +48,11 @@ export const sendTokenSchema = yup.object({
   address: yup.string().required('Please fill out this field')
 });
 
+export const addAddressSchema = yup.object({
+  addressName: yup.string().required('Please fill out this field'),
+  address: yup.string().required('Please fill out this field')
+});
+
 export const validateSeedPhase = (values: any) => {
   const errors: any = {};
 
