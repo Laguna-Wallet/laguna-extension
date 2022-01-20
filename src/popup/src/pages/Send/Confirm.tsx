@@ -45,7 +45,7 @@ export default function Confirm({ formik, fee, transfer }: Props) {
 
     // todo dynamic password
     pair.unlock('neodzeneodze');
-
+                  
     // todo proper typing
     const api = await getApiInstance(formik?.values?.selectedAsset?.chain as string);
     const prefix = api.consts.system.ss58Prefix;

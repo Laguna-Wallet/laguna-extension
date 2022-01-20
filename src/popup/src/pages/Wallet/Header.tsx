@@ -8,7 +8,6 @@ import Accounts from 'components/popups/Accounts';
 import { useAccount } from 'context/AccountContext';
 import Menu from 'components/Menu/Menu';
 import LeftArrowIcon from 'assets/svgComponents/LeftArrowIcon';
-import { Link } from 'react-chrome-extension-router';
 import CloseIcon from 'assets/svgComponents/CloseIcon';
 
 type Props = {
@@ -46,13 +45,15 @@ export default function Header({ title, backAction, iconStyle, menuInitialOpenSt
 
       {title && (
         <TitleContainer>
-          <LeftArrowContainer onClick={backAction}>
-            {iconStyle === 'Close' ? <CloseIcon stroke="#111" /> : <LeftArrowIcon />}
-          </LeftArrowContainer>
-
+          {backAction && (
+            <LeftArrowContainer onClick={backAction}>
+              {iconStyle === 'Close' ? <CloseIcon stroke="#111" /> : <LeftArrowIcon />}
+            </LeftArrowContainer>
+          )}
           <Title>{title}</Title>
         </TitleContainer>
       )}
+
       {isPopupOpen && (
         <Popup onClose={() => setIsPopupOpen(false)}>
           <Accounts setActiveAccount={account.saveActiveAccount} />

@@ -121,14 +121,12 @@ export default function Send() {
 
       const transfer = await api.tx.balances.transfer(formik.values.address, amount.toNumber());
       const { partialFee, weight } = await transfer.paymentInfo(formik.values.address);
- 
+
       const fees = partialFee.muln(110).divn(100);
 
       const total = amount
         .plus(fees.toNumber())
         .plus(api.consts.balances.existentialDeposit.toNumber());
-
-      console.log('~ total', `${total}`, available);
 
       if (total.gt(available)) {
         console.error(`Cannot transfer ${total} with ${available}`);

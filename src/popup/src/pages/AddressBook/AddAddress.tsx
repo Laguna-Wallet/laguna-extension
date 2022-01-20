@@ -29,9 +29,18 @@ type Props = {
   address?: string;
   memo?: string;
   edit?: boolean;
+  redirectedFromSend: boolean;
+  BackComponent: any;
 };
 
-export default function AddAddress({ addressName, address, memo, edit }: Props) {
+export default function AddAddress({
+  addressName,
+  address,
+  memo,
+  edit,
+  BackComponent,
+  redirectedFromSend
+}: Props) {
   const [isOpen, setOpen] = useState<boolean>(true);
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
   const [snackbarError, setSnackbarError] = useState<string>('');
@@ -68,7 +77,7 @@ export default function AddAddress({ addressName, address, memo, edit }: Props) 
       <MenuHeader
         isOpen={isOpen}
         setOpen={setOpen}
-        onClose={() => goTo(Wallet)}
+        onClose={() => goTo(BackComponent || Wallet)}
         title="Add Address"
       />
       <Content>
@@ -150,7 +159,7 @@ export default function AddAddress({ addressName, address, memo, edit }: Props) 
   );
 }
 
-const Container = styled.div`
+const Container = styled.div<{ redirectedFromSend?: boolean }>`
   width: 100%;
   height: 600px;
   display: flex;
@@ -161,7 +170,7 @@ const Container = styled.div`
   z-index: 999;
   padding: 15px 15px 40px 15px;
   box-sizing: border-box;
-  background-color: #111111;
+  background-color: ${({ redirectedFromSend }) => (redirectedFromSend ? '#fff' : '#111111')};
   z-index: 99999;
 `;
 

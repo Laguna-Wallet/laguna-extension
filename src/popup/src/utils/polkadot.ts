@@ -52,7 +52,7 @@ export function getAccounts() {
 export function validateSeed(suri: string) {
   try {
     if (!suri) return;
-    
+
     const { phrase } = keyExtractSuri(suri);
 
     if (isHex(phrase)) {
@@ -79,7 +79,7 @@ export function seedValidate(suri: string, type?: KeypairType) {
 
   const { phrase } = keyExtractSuri(suri);
 
-  if (!isHex(phrase, 256)) throw new Error('Hex seed needs to be 256-bits');
+  // if (!isHex(phrase, 256)) throw new Error('Hex seed needs to be 256-bits');
 
   if (!SEED_LENGTHS.includes(phrase.split(' ').length))
     throw new Error(`Mnemonic needs to contain ${SEED_LENGTHS.join(', ')} words`);
@@ -89,7 +89,7 @@ export function seedValidate(suri: string, type?: KeypairType) {
   // todo revise with sam
   // todo move to separate function
   const password = '123123123';
-  const account = keyring.addUri(suri, password, { name: 'test-name' });
+  const account = keyring.addUri(suri);
   return account;
 }
 

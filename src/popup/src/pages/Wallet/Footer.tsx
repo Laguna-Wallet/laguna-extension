@@ -1,20 +1,27 @@
 import ArrowsIcon from 'assets/svgComponents/ArrowsIcon';
 import LightingIcon from 'assets/svgComponents/LightingIcon';
 import WalletIcon from 'assets/svgComponents/WalletIcon';
+import Activity from 'pages/Activity/Activity';
+import { Link } from 'react-chrome-extension-router';
 import styled from 'styled-components';
+import Wallet from './Wallet';
 
-export default function Footer() {
+type Props = {
+  activeItem?: 'wallet' | 'activity';
+};
+
+export default function Footer({ activeItem }: Props) {
   return (
     <Container>
-      <FooterItem>
-        <WalletIcon /> <span> Wallet </span>
-      </FooterItem>
-      <FooterItem>
+      <StyledLink component={Wallet}>
+        <WalletIcon />
+      </StyledLink>
+      <StyledLink component={Wallet}>
         <ArrowsIcon />
-      </FooterItem>
-      <FooterItem>
+      </StyledLink>
+      <StyledLink component={Activity}>
         <LightingIcon />
-      </FooterItem>
+      </StyledLink>
     </Container>
   );
 }
@@ -31,8 +38,9 @@ const Container = styled.div`
   left: 0;
 `;
 
-const FooterItem = styled.div`
+const StyledLink = styled(Link)`
   color: #fff;
+  text-decoration: none;
   display: flex;
   align-items: center;
   cursor: pointer;

@@ -21,6 +21,7 @@ import CloseIcon from 'assets/svgComponents/CloseIcon';
 import QRPopup from './QRPopup';
 import Header from 'pages/Wallet/Header';
 import BigNumber from 'bignumber.js';
+import ContactsPopup from './ContactsPopup';
 
 enum SendAccountFlowEnum {
   SendToTrustedContact = 'SendToTrustedContact',
@@ -42,6 +43,7 @@ type Props = {
 const handleShowAccountInput = (flow: string | undefined, address: string | undefined): boolean => {
   if (!flow) return false;
   if (flow === SendAccountFlowEnum.SendToAddress) return true;
+  if (flow === SendAccountFlowEnum.SendToTrustedContact) return true;
   if (flow === SendAccountFlowEnum.SendToAccount && address) return true;
   if (flow === SendAccountFlowEnum.ScanQR && address) return true;
 
@@ -54,6 +56,7 @@ export default function SendToken({ state, dispatch, formik, flow, setFlow, fee,
 
   const [isAccountsPopupOpen, setIsAccountsPopupOpen] = useState<boolean>(false);
   const [isQRPopupOpen, setIsQRPopupOpen] = useState<boolean>(false);
+  const [isContactsPopupOpen, setIsContactsPopupOpen] = useState<boolean>(false);
 
   const handleClick = (isValid: boolean) => {
     if (!isValid) return;
@@ -61,6 +64,7 @@ export default function SendToken({ state, dispatch, formik, flow, setFlow, fee,
     // todo show error message
   };
 
+  // Todo revise if this can be refactored into single function
   const handleClickAccounts = () => {
     setIsAccountsPopupOpen(true);
     setFlow(SendAccountFlowEnum.SendToAddress);
@@ -86,6 +90,16 @@ export default function SendToken({ state, dispatch, formik, flow, setFlow, fee,
   const handleCloseQR = () => {
     setIsQRPopupOpen(false);
     setFlow(undefined);
+  };
+
+  const handleClickContacts = () => {
+    setFlow(SendAccountFlowEnum.SendToTrustedContact);
+    setIsContactsPopupOpen(true);
+  };
+
+  const handleCloseContacts = (address: string) => {
+    setIsContactsPopupOpen(false);
+    formik.setFieldValue('address', address);
   };
 
   return (
@@ -123,6 +137,7 @@ export default function SendToken({ state, dispatch, formik, flow, setFlow, fee,
               value={formik.values.address}
               onChange={formik.handleChange}
               bgColor="#f3f3f3"
+              color="#111"
               height="53px"
               marginTop="5px"
             />
@@ -131,9 +146,9 @@ export default function SendToken({ state, dispatch, formik, flow, setFlow, fee,
           <ContentItem>
             <ContentItemTitle>To</ContentItemTitle>
             <SendTypes>
-              <SendTypeItem onClick={() => setFlow(SendAccountFlowEnum.SendToTrustedContact)}>
+              <SendTypeItem onClick={handleClickContacts}>
                 <IconContainer>
-                  <ContactsIcon stroke="#ccc" />
+                  <ContactsIcon stroke="#111" />
                 </IconContainer>
                 <Text>Contacts</Text>
               </SendTypeItem>
@@ -154,7 +169,7 @@ export default function SendToken({ state, dispatch, formik, flow, setFlow, fee,
 
               <SendTypeItem onClick={handleClickQR}>
                 <IconContainer>
-                  <BarcodeIcon stroke="#ccc" />
+                  <BarcodeIcon stroke="#111" />
                 </IconContainer>
                 <Text>Scan QR</Text>
               </SendTypeItem>
@@ -220,6 +235,7 @@ export default function SendToken({ state, dispatch, formik, flow, setFlow, fee,
       )}
 
       {isQRPopupOpen && <QRPopup handleCloseQR={handleCloseQR} />}
+      {isContactsPopupOpen && <ContactsPopup handleCloseContacts={handleCloseContacts} />}
     </Container>
   );
 }
@@ -288,12 +304,6 @@ const SendTypeItem = styled.div`
   background-color: #f3f3f3;
   border-radius: 5.8px;
   cursor: pointer;
-  :nth-child(1) {
-    opacity: 0.6;
-  }
-  :nth-child(4) {
-    opacity: 0.6;
-  }
 `;
 
 const AddressContainer = styled.div``;
