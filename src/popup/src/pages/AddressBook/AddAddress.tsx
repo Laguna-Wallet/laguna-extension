@@ -88,6 +88,7 @@ export default function AddAddress({
     }
   });
 
+  // todo refactor backAction props would be enough
   const handleCancel = () => {
     if (redirectedFromSend) {
       backAction();
@@ -105,8 +106,17 @@ export default function AddAddress({
     }
   }, [formik.isSubmitting]);
 
+  const removeAddress = (address: string): void => {
+    keyring.forgetAddress(address);
+    if (redirectedFromSend) {
+      backAction();
+    } else {
+      goTo(AddressBook);
+    }
+  };
+
   return (
-    <Container>
+    <Container edit={edit}>
       <MenuHeader
         isOpen={isOpen}
         setOpen={setOpen}
@@ -180,7 +190,9 @@ export default function AddAddress({
               bgImage="linear-gradient(to right,#1cc3ce,#b9e260);"
             />
           </ButtonContainer>
-          {edit && <Remove>Remove This Address</Remove>}
+          {edit && address && (
+            <Remove onClick={() => removeAddress(address)}> Remove This Address</Remove>
+          )}
         </Form>
         <Snackbar
           isOpen={isSnackbarOpen}
@@ -194,7 +206,7 @@ export default function AddAddress({
   );
 }
 
-const Container = styled.div<{ redirectedFromSend?: boolean }>`
+const Container = styled.div<{ redirectedFromSend?: boolean; edit?: boolean }>`
   width: 100%;
   height: 600px;
   display: flex;
@@ -203,7 +215,7 @@ const Container = styled.div<{ redirectedFromSend?: boolean }>`
   top: 0;
   left: 0;
   z-index: 999;
-  padding: 15px;
+  padding: ${({ edit }) => (edit ? '15px' : '15px 15px 40px 15px')};
   box-sizing: border-box;
   background-color: ${({ redirectedFromSend }) => (redirectedFromSend ? '#fff' : '#111111')};
   z-index: 99999;
@@ -247,8 +259,9 @@ const ButtonContainer = styled.div`
 const Remove = styled.div`
   font-family: 'SFCompactDisplayRegular';
   font-size: 13.4px;
-  text-decoration: underline;
   color: #fff;
   cursor: pointer;
   margin-top: 12px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #fff;
 `;
