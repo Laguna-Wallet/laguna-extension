@@ -56,9 +56,13 @@ const handleShowAccountInput = (flow: string | undefined, address: string | unde
 
 export default function SendToken({ state, dispatch, formik, flow, setFlow, fee, loading }: Props) {
   const dispatchFromRedux = useDispatch();
-
   const { nextStep, previousStep } = useWizard();
   const account = useAccount();
+
+  // todo proper typing
+  const { address, selectedAsset, selectedAssetToken, amount } = useSelector(
+    (state: any) => state.sendToken
+  );
 
   const [isAccountsPopupOpen, setIsAccountsPopupOpen] = useState<boolean>(false);
   const [isQRPopupOpen, setIsQRPopupOpen] = useState<boolean>(false);
@@ -108,12 +112,6 @@ export default function SendToken({ state, dispatch, formik, flow, setFlow, fee,
     setIsContactsPopupOpen(false);
     dispatchFromRedux(changeAddress(address));
   };
-
-  // todo proper typing
-  const address = useSelector((state: any) => state.sendToken.address);
-  const selectedAsset = useSelector((state: any) => state.sendToken.selectedAsset);
-  const selectedAssetToken = useSelector((state: any) => state.sendToken.selectedAssetToken);
-  const amount = useSelector((state: any) => state.sendToken.amount);
 
   return (
     <Container>

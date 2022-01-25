@@ -17,35 +17,29 @@ import {
 } from './Send';
 import { Asset } from 'utils/types';
 import { useWizard } from 'react-use-wizard';
-import { FormikProps } from 'formik';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import { selectAsset } from 'redux/actions';
 
 type Props = {
   state: SendTokenState;
-  dispatch: Dispatch<SendTokenActions>;
-  formik: FormikProps<SendTokenFormikValues>;
 };
 
-export default function SelectAsset({ state, dispatch, formik }: Props) {
+export default function SelectAsset({ state }: Props) {
   const account = useAccount();
-  const dispatchFromRedux = useDispatch();
+  const dispatch = useDispatch();
+
   const { nextStep } = useWizard();
   const [assetsFilter, setAssetsFilter] = useState<string>('');
 
   const handleClick = (asset: Asset) => {
-    // formik.setFieldValue('selectedAsset', asset);
-    dispatchFromRedux(selectAsset(asset));
+    dispatch(selectAsset(asset));
     nextStep();
   };
 
-  const handleRenderAssets = (assets: Asset[], assetsFilter: string) => {
+  const renderAssets = (assets: Asset[], assetsFilter: string) => {
     return assets.filter((asset) => asset.name.toLowerCase().includes(assetsFilter.toLowerCase()));
   };
-
-  // todo proper typing
-  // const selectedAsset = useSelector((state: any) => state.sendToken.selectedAsset);
 
   return (
     <Container bg={walletBG}>
@@ -68,7 +62,7 @@ export default function SelectAsset({ state, dispatch, formik }: Props) {
           {state?.assets
             ? state?.assets.length === 0
               ? 'no assets'
-              : handleRenderAssets(state?.assets, assetsFilter).map((asset: Asset) => {
+              : renderAssets(state?.assets, assetsFilter).map((asset: Asset) => {
                   return (
                     <ChainItemContainer onClick={() => handleClick(asset)} key={asset.symbol}>
                       <ChainItem

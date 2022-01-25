@@ -104,7 +104,7 @@ export default function Send({ initialIsContactsPopupOpen }: Props) {
     ]
   });
 
-  // TODO GET REFETCH NETWORKS FROM STORAGE
+  // TODO REFETCH NETWORKS FROM STORAGE
   useEffect(() => {
     async function go() {
       const { assets } = await getAssets(account.getActiveAccount()?.address);
@@ -181,7 +181,7 @@ export default function Send({ initialIsContactsPopupOpen }: Props) {
   return (
     <Container>
       <Wizard>
-        <SelectAsset formik={formik} state={state} dispatch={dispatch} />
+        <SelectAsset state={state} />
         <SendToken
           formik={formik}
           flow={flow}

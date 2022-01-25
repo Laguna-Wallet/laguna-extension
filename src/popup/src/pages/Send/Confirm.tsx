@@ -10,11 +10,10 @@ import ContactsIcon from 'assets/svgComponents/ContactsIcon';
 import HumbleInput from 'components/primitives/HumbleInput';
 import Button from 'components/primitives/Button';
 import RightArrow from 'assets/svgComponents/RightArrow';
-import Send, { SendTokenFormikValues } from './Send';
+import Send from './Send';
 import SwipeAndConfirm from 'components/primitives/SwipeAndConfirm';
 import TransactionSent from './TransactionSent';
 import { goTo, Link } from 'react-chrome-extension-router';
-import { Formik, FormikProps } from 'formik';
 import { useAccount } from 'context/AccountContext';
 import { calculateSelectedTokenExchange, getApiInstance, recodeAddress } from 'utils/polkadot';
 import { useWizard } from 'react-use-wizard';
@@ -27,12 +26,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setBlockHash } from 'redux/actions';
 
 type Props = {
-  formik: FormikProps<SendTokenFormikValues>;
   fee: string;
   transfer: any;
 };
 
-export default function Confirm({ formik, fee, transfer }: Props) {
+export default function Confirm({ fee, transfer }: Props) {
   const account = useAccount();
   const reduxSendTokenState = useSelector((state: any) => state.sendToken);
   const dispatch = useDispatch();
@@ -44,7 +42,7 @@ export default function Confirm({ formik, fee, transfer }: Props) {
     reduxSendTokenState.selectedAsset.price
   );
 
-  const handleClick = async (formik: FormikProps<SendTokenFormikValues>) => {
+  const handleClick = async () => {
     const pair = keyring.getPair(account.getActiveAccount().address);
 
     // todo dynamic password
@@ -83,7 +81,6 @@ export default function Confirm({ formik, fee, transfer }: Props) {
           </span>{' '}
           {/* todo actual name of the wallet */}
           <br /> from <span>SkyWalker</span> <br /> to{' '}
-          {/* <span>{truncateString(formik.values.address)}</span> */}
           <span>{truncateString(reduxSendTokenState.address)}</span>
         </Text>
 
@@ -111,21 +108,8 @@ export default function Confirm({ formik, fee, transfer }: Props) {
       </Content>
 
       <BottomSection>
-        <BalanceInfo>
-          Remaining Balance:{' '}
-          {/* {formik.values.selectedAsset?.balance &&
-            new BigNumber(Number(formik.values.selectedAsset?.balance))}{' '}
-          {formik.values.selectedAsset?.symbol} */}
-        </BalanceInfo>
-        <SwipeAndConfirm handleConfirm={() => handleClick(formik)} />
-
-        {/* <Button
-          onClick={() => handleClick(formik)}
-          text="Send"
-          justify="center"
-          Icon={<RightArrow width={23} fill="#fff" />}
-        />
-      */}
+        <BalanceInfo>Remaining Balance: </BalanceInfo>
+        <SwipeAndConfirm handleConfirm={() => handleClick()} />
       </BottomSection>
     </Container>
   );
