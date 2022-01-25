@@ -4,34 +4,37 @@ import styled from 'styled-components';
 import { Asset } from 'utils/types';
 
 type Props = {
-  options: Asset[];
-  formik: FormikProps<SendTokenFormikValues>;
+  options: string[];
+  token: string;
+  onChangeToken: (token: string) => void;
+  amount: string;
+  onChangeAmount: (amount: string) => void;
+  defaultValue: string;
 };
 
-export default function Select({ options, formik }: Props) {
+export default function SelectTokenAndMount({
+  amount,
+  onChangeAmount,
+  token,
+  onChangeToken,
+  options,
+  defaultValue
+}: Props) {
   const handleChange = (e: any) => {
-    const asset = options.find(
-      (item) => item.symbol.toLowerCase() === e.target.value.toLowerCase()
-    );
-
-    formik.setFieldValue('selectedAsset', asset);
+    onChangeToken(e.target.value);
   };
 
   return (
     <Container>
       <StyledInput
-        value={formik.values.amount}
-        onChange={(e) => formik.setFieldValue('amount', e.target.value)}
+        value={amount}
+        onChange={(e) => onChangeAmount(e.target.value)}
         placeholder="Enter Amount"
       />
-      <StyledSelect
-        defaultValue={formik?.values?.selectedAsset?.symbol}
-        onChange={handleChange}
-        name="dots"
-        id="dots">
-        {options.map((asset) => (
-          <StyledOption key={asset.symbol} value={asset.symbol}>
-            {asset.symbol.toUpperCase()}
+      <StyledSelect defaultValue={defaultValue} onChange={handleChange} name="dots" id="dots">
+        {options.map((symbol) => (
+          <StyledOption key={symbol} value={symbol}>
+            {symbol.toUpperCase()}
           </StyledOption>
         ))}
       </StyledSelect>

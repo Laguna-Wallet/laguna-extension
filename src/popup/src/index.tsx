@@ -8,6 +8,8 @@ import { cryptoWaitReady } from '@polkadot/util-crypto';
 import { Router } from 'react-chrome-extension-router';
 import GlobalStyles from './global.styles';
 import { AccountProvider } from 'context/AccountContext';
+import { Provider } from 'react-redux';
+import store from 'redux/store';
 
 cryptoWaitReady().then(() => {
   // load all available addresses and accounts
@@ -16,12 +18,14 @@ cryptoWaitReady().then(() => {
   ReactDOM.render(
     <React.StrictMode>
       <React.StrictMode>
-        <AccountProvider>
-          <Router>
-            <GlobalStyles />
-            <App />
-          </Router>
-        </AccountProvider>
+        <Provider store={store}>
+          <AccountProvider>
+            <Router>
+              <GlobalStyles />
+              <App />
+            </Router>
+          </AccountProvider>
+        </Provider>
       </React.StrictMode>
       ,
     </React.StrictMode>,

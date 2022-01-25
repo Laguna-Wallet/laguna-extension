@@ -7,8 +7,16 @@ import Wallet from 'pages/Wallet/Wallet';
 import { Link } from 'react-chrome-extension-router';
 import styled from 'styled-components';
 import bg from '../../assets/imgs/transaction-sent.png';
+import { useSelector } from 'react-redux';
 
 export default function TransactionSent() {
+  // todo proper typing
+  const blockHash = useSelector((state: any) => state.sendToken.blockHash);
+
+  const onClick = () => {
+    chrome.windows.create({ url: `https://polkadot.js.org/apps/#/explorer/query/${blockHash}` });
+  };
+
   return (
     <Container>
       <Content>
@@ -19,6 +27,7 @@ export default function TransactionSent() {
       </Content>
       <ButtonsContainer>
         <Button
+          onClick={onClick}
           text="View on Blockchain"
           Icon={<RightArrow width={23} />}
           bgColor="#e2e2e2"

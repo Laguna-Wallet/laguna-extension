@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { goTo, Link } from 'react-chrome-extension-router';
 import { calculateSelectedTokenExchange, getAccounts, getApiInstance } from 'utils/polkadot';
 import { Dispatch, useEffect, useState } from 'react';
-import Select from 'components/primitives/Select';
+import Select from 'pages/Send/SelectTokenAndAmount';
 import ContactsIcon from 'assets/svgComponents/ContactsIcon';
 import WalletIcon from 'assets/svgComponents/WalletIcon';
 import BarcodeIcon from 'assets/svgComponents/BarcodeIcon';
@@ -21,6 +21,11 @@ import CloseIcon from 'assets/svgComponents/CloseIcon';
 import QRPopup from './QRPopup';
 import Header from 'pages/Wallet/Header';
 import BigNumber from 'bignumber.js';
+import ContactsPopup from './ContactsPopup';
+
+import { useDispatch } from 'react-redux';
+import { changeAddress, changeAmount, selectAssetToken } from 'redux/actions';
+import { useSelector } from 'react-redux';
 
 enum SendAccountFlowEnum {
   SendToTrustedContact = 'SendToTrustedContact',
@@ -42,6 +47,7 @@ type Props = {
 const handleShowAccountInput = (flow: string | undefined, address: string | undefined): boolean => {
   if (!flow) return false;
   if (flow === SendAccountFlowEnum.SendToAddress) return true;
+  if (flow === SendAccountFlowEnum.SendToTrustedContact) return true;
   if (flow === SendAccountFlowEnum.SendToAccount && address) return true;
   if (flow === SendAccountFlowEnum.ScanQR && address) return true;
 
@@ -49,18 +55,23 @@ const handleShowAccountInput = (flow: string | undefined, address: string | unde
 };
 
 export default function SendToken({ state, dispatch, formik, flow, setFlow, fee, loading }: Props) {
+  const dispatchFromRedux = useDispatch();
+
   const { nextStep, previousStep } = useWizard();
   const account = useAccount();
 
   const [isAccountsPopupOpen, setIsAccountsPopupOpen] = useState<boolean>(false);
   const [isQRPopupOpen, setIsQRPopupOpen] = useState<boolean>(false);
+  const [isContactsPopupOpen, setIsContactsPopupOpen] = useState<boolean>(false);
 
   const handleClick = (isValid: boolean) => {
+    console.log('~ isValid', isValid);
     if (!isValid) return;
     nextStep();
     // todo show error message
   };
 
+  // Todo revise if this can be refactored into single function
   const handleClickAccounts = () => {
     setIsAccountsPopupOpen(true);
     setFlow(SendAccountFlowEnum.SendToAddress);
@@ -88,16 +99,38 @@ export default function SendToken({ state, dispatch, formik, flow, setFlow, fee,
     setFlow(undefined);
   };
 
+  const handleClickContacts = () => {
+    setFlow(SendAccountFlowEnum.SendToTrustedContact);
+    setIsContactsPopupOpen(true);
+  };
+
+  const handleCloseContacts = (address: string) => {
+    setIsContactsPopupOpen(false);
+    dispatchFromRedux(changeAddress(address));
+  };
+
+  // todo proper typing
+  const address = useSelector((state: any) => state.sendToken.address);
+  const selectedAsset = useSelector((state: any) => state.sendToken.selectedAsset);
+  const selectedAssetToken = useSelector((state: any) => state.sendToken.selectedAssetToken);
+  const amount = useSelector((state: any) => state.sendToken.amount);
+
   return (
     <Container>
-      <Header title={`SEND ${formik.values.selectedAsset?.chain}`} backAction={previousStep} />
+      <Header title={`SEND ${selectedAsset?.chain}`} backAction={previousStep} />
       <Content>
         <ContentItem>
           <ContentItemTitle>Amount</ContentItemTitle>
-          {state?.assets && (
-            // todo refactor: pass State And Dispatch
-            <Select formik={formik} options={state?.assets} />
-          )}
+
+          {/* todo make so that options were with multiple tokens  */}
+          <Select
+            token={selectedAssetToken}
+            onChangeToken={(token: string) => dispatchFromRedux(selectAssetToken(token))}
+            amount={amount}
+            onChangeAmount={(amount: string) => dispatchFromRedux(changeAmount(amount))}
+            options={[selectedAsset.symbol]}
+            defaultValue={selectedAsset.symbol}
+          />
           <Price>
             <span>
               $
@@ -120,9 +153,10 @@ export default function SendToken({ state, dispatch, formik, flow, setFlow, fee,
               id="address"
               placeholder="Address"
               type="text"
-              value={formik.values.address}
-              onChange={formik.handleChange}
+              value={address}
+              onChange={(e: any) => dispatchFromRedux(changeAddress(e.target.value))}
               bgColor="#f3f3f3"
+              color="#111"
               height="53px"
               marginTop="5px"
             />
@@ -131,9 +165,9 @@ export default function SendToken({ state, dispatch, formik, flow, setFlow, fee,
           <ContentItem>
             <ContentItemTitle>To</ContentItemTitle>
             <SendTypes>
-              <SendTypeItem onClick={() => setFlow(SendAccountFlowEnum.SendToTrustedContact)}>
+              <SendTypeItem onClick={handleClickContacts}>
                 <IconContainer>
-                  <ContactsIcon stroke="#ccc" />
+                  <ContactsIcon stroke="#111" />
                 </IconContainer>
                 <Text>Contacts</Text>
               </SendTypeItem>
@@ -154,7 +188,7 @@ export default function SendToken({ state, dispatch, formik, flow, setFlow, fee,
 
               <SendTypeItem onClick={handleClickQR}>
                 <IconContainer>
-                  <BarcodeIcon stroke="#ccc" />
+                  <BarcodeIcon stroke="#111" />
                 </IconContainer>
                 <Text>Scan QR</Text>
               </SendTypeItem>
@@ -180,22 +214,17 @@ export default function SendToken({ state, dispatch, formik, flow, setFlow, fee,
       <BottomSection>
         <Info>
           <span>
-            Balance: {Number(formik?.values?.selectedAsset?.balance)}{' '}
-            {formik?.values?.selectedAsset?.symbol}
+            Balance: {new BigNumber(selectedAsset.balance).toFixed(2)}{' '}
+            {selectedAsset?.symbol.toUpperCase()}
           </span>
-          <span>
-            Estimated Fee:{' '}
-            {loading
-              ? '...'
-              : new BigNumber(fee).div(new BigNumber(10).pow(10)).toFixed(2).toString()}
-          </span>
+          <span>Estimated Fee: {loading ? '...' : new BigNumber(fee).toFixed(3)}</span>
         </Info>
         <Button
           text="Preview"
           justify="center"
           Icon={<RightArrow width={23} fill="#fff" />}
-          disabled={!formik.isValid}
-          onClick={() => handleClick(formik.isValid)}
+          disabled={!address || !selectedAsset || !amount}
+          onClick={() => handleClick(address && selectedAsset && amount)}
         />
       </BottomSection>
 
@@ -220,6 +249,7 @@ export default function SendToken({ state, dispatch, formik, flow, setFlow, fee,
       )}
 
       {isQRPopupOpen && <QRPopup handleCloseQR={handleCloseQR} />}
+      {isContactsPopupOpen && <ContactsPopup handleCloseContacts={handleCloseContacts} />}
     </Container>
   );
 }
@@ -288,12 +318,6 @@ const SendTypeItem = styled.div`
   background-color: #f3f3f3;
   border-radius: 5.8px;
   cursor: pointer;
-  :nth-child(1) {
-    opacity: 0.6;
-  }
-  :nth-child(4) {
-    opacity: 0.6;
-  }
 `;
 
 const AddressContainer = styled.div``;

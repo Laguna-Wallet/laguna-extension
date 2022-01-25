@@ -18,6 +18,9 @@ import {
 import { Asset } from 'utils/types';
 import { useWizard } from 'react-use-wizard';
 import { FormikProps } from 'formik';
+import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
+import { selectAsset } from 'redux/actions';
 
 type Props = {
   state: SendTokenState;
@@ -27,17 +30,22 @@ type Props = {
 
 export default function SelectAsset({ state, dispatch, formik }: Props) {
   const account = useAccount();
+  const dispatchFromRedux = useDispatch();
   const { nextStep } = useWizard();
   const [assetsFilter, setAssetsFilter] = useState<string>('');
 
   const handleClick = (asset: Asset) => {
-    formik.setFieldValue('selectedAsset', asset);
+    // formik.setFieldValue('selectedAsset', asset);
+    dispatchFromRedux(selectAsset(asset));
     nextStep();
   };
 
   const handleRenderAssets = (assets: Asset[], assetsFilter: string) => {
     return assets.filter((asset) => asset.name.toLowerCase().includes(assetsFilter.toLowerCase()));
   };
+
+  // todo proper typing
+  // const selectedAsset = useSelector((state: any) => state.sendToken.selectedAsset);
 
   return (
     <Container bg={walletBG}>

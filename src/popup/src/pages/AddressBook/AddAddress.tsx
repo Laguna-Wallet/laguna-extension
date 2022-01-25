@@ -17,6 +17,8 @@ import CloseIcon from 'assets/svgComponents/CloseIcon';
 import { objectValuesToArray } from 'utils';
 import keyring from '@polkadot/ui-keyring';
 import AddressBook from './AddressBook';
+import AddressPencilIcon from 'assets/svgComponents/AddressPencilIcon';
+import { addressExists, isValidAddressPolkadotAddress } from 'utils/polkadot';
 
 type AddAddressFormikValues = {
   addressName: string;
@@ -29,9 +31,20 @@ type Props = {
   address?: string;
   memo?: string;
   edit?: boolean;
+  redirectedFromSend?: boolean;
+  backAction?: any;
+  closeAction: () => void;
 };
 
-export default function AddAddress({ addressName, address, memo, edit }: Props) {
+export default function AddAddress({
+  addressName,
+  address,
+  memo,
+  edit,
+  backAction,
+  closeAction,
+  redirectedFromSend
+}: Props) {
   const [isOpen, setOpen] = useState<boolean>(true);
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
   const [snackbarError, setSnackbarError] = useState<string>('');
@@ -45,14 +58,43 @@ export default function AddAddress({ addressName, address, memo, edit }: Props) 
 
     validationSchema: addAddressSchema,
     onSubmit: ({ address: newAddress, addressName: newAddressName, memo: newMemo }) => {
+      // if(address is correct address)
+      // Snackbar
+
+      const isValidAddress = isValidAddressPolkadotAddress(newAddress);
+      if (!isValidAddress) {
+        setIsSnackbarOpen(true);
+        setSnackbarError('Enter correct address');
+        return;
+      }
+
+      if (addressExists(newAddress)) {
+        setIsSnackbarOpen(true);
+        setSnackbarError('Address already exists');
+        return;
+      }
+
       if (edit && address) {
         keyring.forgetAddress(address);
       }
 
       keyring.saveAddress(newAddress, { addressName: newAddressName, memo: newMemo });
-      goTo(AddressBook);
+
+      if (redirectedFromSend) {
+        backAction();
+      } else {
+        goTo(AddressBook);
+      }
     }
   });
+
+  const handleCancel = () => {
+    if (redirectedFromSend) {
+      backAction();
+    } else {
+      goTo(AddressBook);
+    }
+  };
 
   useEffect(() => {
     const errorsArray: string[] = objectValuesToArray(formik.errors);
@@ -68,13 +110,17 @@ export default function AddAddress({ addressName, address, memo, edit }: Props) 
       <MenuHeader
         isOpen={isOpen}
         setOpen={setOpen}
-        onClose={() => goTo(Wallet)}
-        title="Add Address"
+        onClose={() => closeAction()}
+        title={`${edit ? 'Edit' : 'Add'} Address`}
       />
       <Content>
         <Form onSubmit={formik.handleSubmit}>
           <PlusIconContainer>
-            <PlusIcon width={46} stroke="#999999" />
+            {edit ? (
+              <AddressPencilIcon width={46} stroke="#999999" />
+            ) : (
+              <PlusIcon width={46} stroke="#999999" />
+            )}
           </PlusIconContainer>
           {/* addressName address memo */}
           <HumbleInput
@@ -118,6 +164,7 @@ export default function AddAddress({ addressName, address, memo, edit }: Props) 
 
           <ButtonContainer>
             <Button
+              onClick={handleCancel}
               text="Cancel"
               bgColor="#fff"
               color="#111"
@@ -133,24 +180,21 @@ export default function AddAddress({ addressName, address, memo, edit }: Props) 
               bgImage="linear-gradient(to right,#1cc3ce,#b9e260);"
             />
           </ButtonContainer>
+          {edit && <Remove>Remove This Address</Remove>}
         </Form>
         <Snackbar
           isOpen={isSnackbarOpen}
           close={() => setIsSnackbarOpen(false)}
+          message={snackbarError}
           type="error"
           left="0px"
-          bottom="52px">
-          <CloseIconContainer>
-            <CloseIcon stroke="#111" />
-          </CloseIconContainer>
-          <ErrorMessage>{snackbarError}</ErrorMessage>
-        </Snackbar>
+          bottom="52px"></Snackbar>
       </Content>
     </Container>
   );
 }
 
-const Container = styled.div`
+const Container = styled.div<{ redirectedFromSend?: boolean }>`
   width: 100%;
   height: 600px;
   display: flex;
@@ -159,9 +203,9 @@ const Container = styled.div`
   top: 0;
   left: 0;
   z-index: 999;
-  padding: 15px 15px 40px 15px;
+  padding: 15px;
   box-sizing: border-box;
-  background-color: #111111;
+  background-color: ${({ redirectedFromSend }) => (redirectedFromSend ? '#fff' : '#111111')};
   z-index: 99999;
 `;
 
@@ -200,19 +244,11 @@ const ButtonContainer = styled.div`
   margin-top: auto;
 `;
 
-const ErrorMessage = styled.div`
+const Remove = styled.div`
+  font-family: 'SFCompactDisplayRegular';
+  font-size: 13.4px;
+  text-decoration: underline;
   color: #fff;
-  font-size: 13px;
-  font-weight: 600;
-  margin-left: 5px;
-`;
-
-const CloseIconContainer = styled.div`
-  width: 24px;
-  height: 24px;
-  background-color: #fff;
-  border-radius: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  cursor: pointer;
+  margin-top: 12px;
 `;

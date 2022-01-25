@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import walletBG from 'assets/imgs/walletBG.jpg';
 import Header from 'pages/Wallet/Header';
 import SelectAsset from './SelectAsset';
-import Select from 'components/primitives/Select';
+import Select from 'pages/Send/SelectTokenAndAmount';
 import BarcodeIcon from 'assets/svgComponents/BarcodeIcon';
 import SharpIcon from 'assets/svgComponents/SharpIcon';
 import WalletIcon from 'assets/svgComponents/WalletIcon';
@@ -23,6 +23,8 @@ import keyring from '@polkadot/ui-keyring';
 import Wallet from 'pages/Wallet/Wallet';
 import { truncateString } from 'utils';
 import BigNumber from 'bignumber.js';
+import { useDispatch, useSelector } from 'react-redux';
+import { setBlockHash } from 'redux/actions';
 
 type Props = {
   formik: FormikProps<SendTokenFormikValues>;
@@ -32,12 +34,14 @@ type Props = {
 
 export default function Confirm({ formik, fee, transfer }: Props) {
   const account = useAccount();
+  const reduxSendTokenState = useSelector((state: any) => state.sendToken);
+  const dispatch = useDispatch();
 
   const { nextStep, previousStep } = useWizard();
 
   const total = calculateSelectedTokenExchange(
-    formik.values.amount,
-    formik.values?.selectedAsset?.price as number
+    reduxSendTokenState.amount,
+    reduxSendTokenState.selectedAsset.price
   );
 
   const handleClick = async (formik: FormikProps<SendTokenFormikValues>) => {
@@ -47,15 +51,17 @@ export default function Confirm({ formik, fee, transfer }: Props) {
     pair.unlock('neodzeneodze');
 
     // todo proper typing
-    const api = await getApiInstance(formik?.values?.selectedAsset?.chain as string);
-    const prefix = api.consts.system.ss58Prefix;
-    const recoded = recodeAddress(formik.values.address, prefix);
+    // const api = await getApiInstance(reduxSendTokenState.selectedAsset.chain as string);
+    // const prefix = api.consts.system.ss58Prefix;
+    // const recoded = recodeAddress(reduxSendTokenState.address, prefix);
 
     // Todo Proper handling
     const unsub = await transfer
       .signAndSend(pair, ({ status }: any) => {
         if (status.isInBlock) {
           console.log(`Completed at block hash #${status.asInBlock.toString()}`);
+          dispatch(setBlockHash(status.asInBlock.toString()));
+          nextStep();
         } else {
           console.log(`Current status: ${status.type}`);
         }
@@ -63,8 +69,6 @@ export default function Confirm({ formik, fee, transfer }: Props) {
       .catch((error: any) => {
         console.log(':( transaction failed', error);
       });
-
-    nextStep();
   };
 
   return (
@@ -75,11 +79,12 @@ export default function Confirm({ formik, fee, transfer }: Props) {
           I want to <br />
           send{' '}
           <span>
-            {formik.values.amount} {formik.values.selectedAsset?.symbol}
+            {reduxSendTokenState.amount} {reduxSendTokenState?.selectedToken}
           </span>{' '}
+          {/* todo actual name of the wallet */}
           <br /> from <span>SkyWalker</span> <br /> to{' '}
           {/* <span>{truncateString(formik.values.address)}</span> */}
-          <span>{truncateString(formik.values.address)}</span>
+          <span>{truncateString(reduxSendTokenState.address)}</span>
         </Text>
 
         <Info>
@@ -87,17 +92,20 @@ export default function Confirm({ formik, fee, transfer }: Props) {
             Fee ={' '}
             <span>
               {/* {new BigNumber(fee).div(new BigNumber(10).pow(10))}{' '} */}
+              {new BigNumber(fee).toFixed(3) || '...'} {reduxSendTokenState.selectedAsset.symbol}
+              ($
               {new BigNumber(
                 calculateSelectedTokenExchange(
                   new BigNumber(fee).div(new BigNumber(10).pow(10)).toString(),
-                  formik.values?.selectedAsset?.price as number
+                  reduxSendTokenState?.selectedAsset?.price as number
                 )
-              ).toFixed(2)}{' '}
+              ).toFixed(2)}
+              )
             </span>
           </InfoItem>
 
           <InfoItem>
-            Total = <span> ${total}</span>
+            Total = <span> ${total || total === 0 ? total : '...'}</span>
           </InfoItem>
         </Info>
       </Content>
