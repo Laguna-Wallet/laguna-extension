@@ -16,7 +16,7 @@ type Props = {
   isMenuOpen?: boolean;
 };
 
-export default function AccountInfo({}: Props) {
+export default function AccountInfo() {
   return (
     <Container>
       <ContentItem>

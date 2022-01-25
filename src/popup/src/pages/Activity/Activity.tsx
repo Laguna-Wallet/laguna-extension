@@ -14,19 +14,19 @@ type Props = {
   isMenuOpen?: boolean;
 };
 
-export default function Activity({}: Props) {
+export default function Activity() {
   const account = useAccount();
 
-  useEffect(() => {
-    async function go() {
-      //   const api = await getApiInstance('westend');
-      //   console.log('~ api', api);
-      //   const blocks = api.query.transactionStorage.blockTransactions;
-      //   console.log(blocks);
-    }
+  // useEffect(() => {
+  // async function go() {
+  //   const api = await getApiInstance('westend');
+  //   console.log('~ api', api);
+  //   const blocks = api.query.transactionStorage.blockTransactions;
+  //   console.log(blocks);
+  // }
 
-    go();
-  }, []);
+  // go();
+  // }, []);
 
   return (
     <Container bg={walletBG}>

@@ -13,7 +13,6 @@ import AddAddress from './AddAddress';
 
 export default function AddressBook() {
   const [isOpen, setOpen] = useState<boolean>(true);
-
   const [addresses, setAddresses] = useState<any[] | undefined>(undefined);
 
   useEffect(() => {
@@ -61,7 +60,7 @@ export default function AddressBook() {
           </AddressesContainer>
         )}
 
-        <StyledLink component={AddAddress}>
+        <StyledLink component={AddAddress} props={{ closeAction: () => goTo(AddressBook) }}>
           <Button
             text="Add Address"
             Icon={<PlusIcon width={17} />}

@@ -11,15 +11,17 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-chrome-extension-router';
 import styled from 'styled-components';
 import { truncateString } from 'utils';
+import Send from './Send';
 import SendToken from './SendToken';
 
 type Props = {
   handleCloseContacts: (address: string) => void;
 };
 
-export default function QRPopup({ handleCloseContacts }: Props) {
+export default function ContactsPopup({ handleCloseContacts }: Props) {
   const [addresses, setAddresses] = useState<any[] | undefined>(undefined);
   const [filter, setFilter] = useState<string>('');
+  const [isAddAddressOpen, setIsAddAddressOpen] = useState<boolean>(false);
 
   useEffect(() => {
     // todo proper typing
@@ -30,7 +32,7 @@ export default function QRPopup({ handleCloseContacts }: Props) {
     });
 
     setAddresses(addresses);
-  }, []);
+  }, [isAddAddressOpen]);
 
   // todo proper typing
   const handleRenderAssets = (addresses: any[], filterWord: string) => {
@@ -42,39 +44,41 @@ export default function QRPopup({ handleCloseContacts }: Props) {
   return (
     <Container>
       <Header title="Choose Contact" iconStyle="Close" />
-      <Content>
-        <HumbleInput
-          type="text"
-          placeholder="search"
-          id="search"
-          height="40px"
-          bgColor="#f3f3f3"
-          color="#111"
-          value={filter}
-          onChange={(e: any) => setFilter(e.target.value)}
-        />
-        {addresses?.length === 0 ? (
-          <>
-            <AddressBookContainer>
-              <AddressBookIcon />
-            </AddressBookContainer>
-            <Text>No Addresses</Text>
-          </>
-        ) : (
-          <AddressesContainer>
-            {addresses &&
-              handleRenderAssets(addresses, filter).map((address) => (
-                <AddressComponent onClick={() => handleCloseContacts(address.address)}>
-                  <Text>
-                    {address.addressName}({truncateString(address.address)}){' '}
-                  </Text>
-                  <AlternateEmail stroke="#111" />
-                </AddressComponent>
-              ))}
-          </AddressesContainer>
-        )}
+      <InnerContainer>
+        <Content>
+          <HumbleInput
+            type="text"
+            placeholder="search"
+            id="search"
+            height="40px"
+            bgColor="#f3f3f3"
+            color="#111"
+            value={filter}
+            onChange={(e: any) => setFilter(e.target.value)}
+          />
+          {addresses?.length === 0 ? (
+            <>
+              <AddressBookContainer>
+                <AddressBookIcon />
+              </AddressBookContainer>
+              <Text>No Addresses</Text>
+            </>
+          ) : (
+            <AddressesContainer>
+              {addresses &&
+                handleRenderAssets(addresses, filter).map((address) => (
+                  <AddressComponent
+                    key={address.address}
+                    onClick={() => handleCloseContacts(address.address)}>
+                    <Text>
+                      {address.addressName}({truncateString(address.address)}){' '}
+                    </Text>
+                    <AlternateEmail stroke="#111" />
+                  </AddressComponent>
+                ))}
+            </AddressesContainer>
+          )}
 
-        <StyledLink component={AddAddress} props={{ BackComponent: SendToken }}>
           <Button
             text="Add Address"
             Icon={<PlusIcon width={17} />}
@@ -83,9 +87,19 @@ export default function QRPopup({ handleCloseContacts }: Props) {
             color="#111"
             justify="center"
             margin="auto 0 0 0"
+            onClick={() => setIsAddAddressOpen(true)}
           />
-        </StyledLink>
-      </Content>
+        </Content>
+        {isAddAddressOpen && (
+          <AddAddressPopupContainer>
+            <AddAddress
+              closeAction={() => setIsAddAddressOpen(false)}
+              redirectedFromSend={true}
+              backAction={() => setIsAddAddressOpen(false)}
+            />
+          </AddAddressPopupContainer>
+        )}
+      </InnerContainer>
     </Container>
   );
 }
@@ -97,26 +111,28 @@ const Container = styled.div<{ bg?: string }>`
   flex-direction: column;
   justify-content: space-between;
   background-color: #fff;
-  box-sizing: border-box;
-  position: relative;
-  position: relative;
   background-image: ${({ bg }) => `url(${bg})`};
   background-size: cover;
   padding-bottom: 38px;
-  padding-top: 180px;
   position: absolute;
   top: 0;
   z-index: 100;
-  box-sizing: border-box;
+`;
+
+const InnerContainer = styled.div`
+  width: 100%;
+  height: 100%;
+  position: relative;
 `;
 
 const Content = styled.div`
   width: 100%;
   height: 100%;
+  padding: 180px 15px 38px 15px;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 0 15px;
   box-sizing: border-box;
 `;
 
@@ -151,10 +167,11 @@ const AddressComponent = styled.div`
   cursor: pointer;
 `;
 
-const StyledLink = styled(Link)`
-  text-decoration: none;
+const AddAddressPopupContainer = styled.div`
   width: 100%;
-  margin-top: auto;
+  height: 100%;
+  position: absolute;
+  top: 0;
 `;
 
 const Text = styled.div`

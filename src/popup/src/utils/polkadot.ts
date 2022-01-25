@@ -1,6 +1,6 @@
 import { keyExtractSuri, mnemonicValidate, randomAsHex } from '@polkadot/util-crypto';
 import { KeypairType } from '@polkadot/util-crypto/types';
-import { assert, isHex, u8aToString } from '@polkadot/util';
+import { assert, hexToU8a, isHex, u8aToString } from '@polkadot/util';
 import { Asset, Network, SEED_LENGTHS, StorageKeys } from './types';
 import { KeyringPair$Json } from '@polkadot/keyring/types';
 import { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
@@ -91,6 +91,24 @@ export function seedValidate(suri: string, type?: KeypairType) {
   const password = '123123123';
   const account = keyring.addUri(suri);
   return account;
+}
+
+// todo proper typing for string
+export function isValidAddressPolkadotAddress(address: string): boolean {
+  try {
+    encodeAddress(isHex(address) ? hexToU8a(address) : decodeAddress(address));
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+
+export function addressExists(address: string): boolean {
+  const addresses = keyring.getAddresses();
+  const filtered = addresses.filter((item) => item.address === address);
+  if (filtered.length > 0) return true;
+
+  return false;
 }
 
 export async function exportAll(password: string) {
