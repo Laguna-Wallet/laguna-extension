@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import walletBG from 'assets/imgs/walletBG.jpg';
 import Header from 'pages/Wallet/Header';
 import SelectAsset from './SelectAsset';
-import Select from 'pages/Send/SelectTokenAndAmount';
+import Select from 'pages/Send/TokenAndAmountSelect';
 import BarcodeIcon from 'assets/svgComponents/BarcodeIcon';
 import SharpIcon from 'assets/svgComponents/SharpIcon';
 import WalletIcon from 'assets/svgComponents/WalletIcon';
@@ -17,7 +17,7 @@ import { goTo, Link } from 'react-chrome-extension-router';
 import { useAccount } from 'context/AccountContext';
 import { calculateSelectedTokenExchange, getApiInstance, recodeAddress } from 'utils/polkadot';
 import { useWizard } from 'react-use-wizard';
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import keyring from '@polkadot/ui-keyring';
 import Wallet from 'pages/Wallet/Wallet';
 import { truncateString } from 'utils';
@@ -29,10 +29,15 @@ type Props = {
   fee: string;
   transfer: any;
 };
-
-export default function Confirm({ fee, transfer }: Props) {
+function Confirm({ fee, transfer }: Props) {
   const account = useAccount();
   const reduxSendTokenState = useSelector((state: any) => state.sendToken);
+
+  const form = useSelector((state: any) => state);
+
+  console.count('rerender');
+  console.log('~ stateiii', form);
+
   const dispatch = useDispatch();
 
   const { nextStep, previousStep } = useWizard();
@@ -114,6 +119,8 @@ export default function Confirm({ fee, transfer }: Props) {
     </Container>
   );
 }
+
+export default memo(Confirm);
 
 const Container = styled.div<{ bg?: string }>`
   width: 100%;

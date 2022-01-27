@@ -8,9 +8,9 @@ import SecureWallet from './SecureWallet/SecureWallet';
 
 export default function CreateAccount() {
   const account = useAccount();
-
   const encoded = account.getEncryptedPassword();
 
+  
   return (
     <PageContainer>
       <Wizard header={<WizardStepHeader />}>

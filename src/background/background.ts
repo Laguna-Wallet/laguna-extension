@@ -1,23 +1,30 @@
-import { StorageKeys } from "./types"
-import { Retrieve_Coin_Prices, saveToStorage } from "./utils"
+import { Messages, StorageKeys } from "./types"
+import { Retrieve_Coin_Infos, Retrieve_Coin_Prices, saveToStorage } from "./utils"
 
 chrome.runtime.onInstalled.addListener(async () => {
   console.log("onInstalled...")
-  // create alarm after extension is installed / upgraded
+
+  const prices = await Retrieve_Coin_Prices()
+  chrome.runtime.sendMessage({ type: Messages.PriceUpdated, payload: JSON.stringify(prices) })
+  saveToStorage({ key: StorageKeys.TokenPrices, value: JSON.stringify(prices) })
+  console.log("Prices injected...")
+
+  const Infos = await Retrieve_Coin_Infos()
+  chrome.runtime.sendMessage({ type: Messages.CoinInfoUpdated, payload: JSON.stringify(Infos) })
+  saveToStorage({ key: StorageKeys.TokenInfos, value: JSON.stringify(Infos) })
+  console.log("info injected...")
+
   chrome.alarms.create("refresh", { periodInMinutes: 1 })
-
-  const price = await Retrieve_Coin_Prices()
-  saveToStorage(StorageKeys.TokenPrices, price)
 })
 
-// Update Prices
 chrome.alarms.onAlarm.addListener(async (alarm) => {
-  const price = await Retrieve_Coin_Prices()
-  saveToStorage(StorageKeys.TokenPrices, price)
-  chrome.runtime.sendMessage({ msg: "Prices_updated" })
-})
+  // coin prices
+  const prices = await Retrieve_Coin_Prices()
+  chrome.runtime.sendMessage({ type: Messages.PriceUpdated, payload: JSON.stringify(prices) })
+  saveToStorage({ key: StorageKeys.TokenPrices, value: JSON.stringify(prices) })
 
-// const arrayData = await browser.runtime.sendMessage({type: 'get_array'});
-// browser.runtime.onMessage.addListener(data => {
-//  if (data.type === 'get_array') return Promise.resolve([1, 2, 3, 4]);
-// });
+  // coin info
+  const Infos = await Retrieve_Coin_Infos()
+  chrome.runtime.sendMessage({ type: Messages.CoinInfoUpdated, payload: JSON.stringify(Infos) })
+  saveToStorage({ key: StorageKeys.TokenInfos, value: JSON.stringify(Infos) })
+})

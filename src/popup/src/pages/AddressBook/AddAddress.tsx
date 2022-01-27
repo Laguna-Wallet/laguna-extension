@@ -17,7 +17,7 @@ import CloseIcon from 'assets/svgComponents/CloseIcon';
 import { objectValuesToArray } from 'utils';
 import keyring from '@polkadot/ui-keyring';
 import AddressBook from './AddressBook';
-import AddressPencilIcon from 'assets/svgComponents/AddressPencilIcon';
+import AddressPencilIcon from 'assets/svgComponents/PencilIcon';
 import { addressExists, isValidAddressPolkadotAddress } from 'utils/polkadot';
 
 type AddAddressFormikValues = {

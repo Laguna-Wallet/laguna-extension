@@ -1,13 +1,12 @@
-import styled from 'styled-components';
-import { ApiPromise, WsProvider } from '@polkadot/api';
 import { useEffect, useState } from 'react';
+import styled from 'styled-components';
+import { ApiPromise, WsProvider, Keyring } from '@polkadot/api';
 import Config from 'config/config.json';
 import Header from './Header';
 import Footer from './Footer';
 import { useAccount } from 'context/AccountContext';
 import Accounts from 'components/popups/Accounts';
 import Popup from 'components/Popup/Popup';
-import keyring from '@polkadot/ui-keyring';
 import Menu from 'components/Menu/Menu';
 import ChainItem from './ChainItem';
 import config from 'config/config.json';
@@ -20,6 +19,8 @@ import SelectAsset from 'pages/Send/SelectAsset';
 import Send from 'pages/Send/Send';
 import Receive from 'pages/Recieve/Receive';
 import BigNumber from 'bignumber.js';
+import keyringUI from '@polkadot/ui-keyring';
+import { useSelector } from 'react-redux';
 
 type Props = {
   isMenuOpen?: boolean;
@@ -33,28 +34,27 @@ export default function Wallet({ isMenuOpen }: Props) {
   const [loading, setLoading] = useState<boolean>(false);
   const [overallBalance, setOverallBalance] = useState<number | undefined>(undefined);
 
+  const { prices, infos } = useSelector((state: any) => state.wallet);
+
+  const handleActiveTab = (activeTab: number): void => {
+    if (loading) {
+      setLoading(false);
+    }
+    setActiveTab(activeTab);
+  };
+
   useEffect(() => {
     const activeAccount = account.getActiveAccount();
 
     async function go() {
-      // const pair = keyring.getPair(activeAccount.address);
-      // pair.unlock('neodzeneodze');
-      // localStorage.setItem('unlocked', JSON.stringify(pair));
-      // keyring.saveAccount(pair);
-
-      // const gotPair = localStorage.getItem('unlocked');
-      // console.log('parsed', JSON.parse(gotPair as string));
-
-      // TODO proper typing
       setLoading(true);
-
-      const { overallBalance, assets }: any = await getAssets(activeAccount?.address);
+      const { overallBalance, assets }: any = await getAssets(
+        activeAccount?.address,
+        prices,
+        infos
+      );
       setAssets(assets);
       setOverallBalance(overallBalance);
-
-      const networks = await (await getNetworks()).filter((network) => network.symbol !== 'wnd');
-      setNetworks(networks);
-
       setLoading(false);
     }
 
@@ -62,6 +62,14 @@ export default function Wallet({ isMenuOpen }: Props) {
       go();
     }
   }, [account.getActiveAccount()]);
+
+  useEffect(() => {
+    const networks = getNetworks(prices, infos).filter((network) => network.symbol !== 'wnd');
+    setNetworks(networks);
+  }, [prices, infos]);
+
+  const state = useSelector((state: any) => state);
+  console.log('~ state', state);
 
   return (
     <Container bg={walletBG}>
@@ -92,10 +100,10 @@ export default function Wallet({ isMenuOpen }: Props) {
 
         <List>
           <ListHeader>
-            <ListHeaderItem onClick={() => setActiveTab(1)} index={1} active={activeTab}>
+            <ListHeaderItem onClick={() => handleActiveTab(1)} index={1} active={activeTab}>
               ASSETS
             </ListHeaderItem>
-            <ListHeaderItem onClick={() => setActiveTab(2)} index={2} active={activeTab}>
+            <ListHeaderItem onClick={() => handleActiveTab(2)} index={2} active={activeTab}>
               NETWORKS
             </ListHeaderItem>
           </ListHeader>

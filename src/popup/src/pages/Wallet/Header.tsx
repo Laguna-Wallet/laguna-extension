@@ -30,7 +30,7 @@ export default function Header({ title, backAction, iconStyle, menuInitialOpenSt
       <Content>
         <UserContainer>
           <Avatar />
-          <UserName>SkyWalker</UserName>
+          <UserName>{account.getActiveAccount().meta.name}</UserName>
           <DownIconContainer onClick={() => setIsPopupOpen(true)}>
             <DownArrowIcon />
           </DownIconContainer>

@@ -1,4 +1,5 @@
 import BigNumber from 'bignumber.js';
+import NetworkIcons from 'components/primitives/NetworkIcons';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Account_Search, Price_Converter } from 'utils/Api';
@@ -14,7 +15,9 @@ type Props = {
 export default function ChainItem({ asset, accountAddress }: Props) {
   return (
     <Container>
-      <ListItemIcon></ListItemIcon>
+      <ListItemIcon>
+        <NetworkIcons chain={asset.chain} />
+      </ListItemIcon>
       <ListItemText>
         <Title>{asset.name}</Title>
         <Tag>{asset.chain}</Tag>

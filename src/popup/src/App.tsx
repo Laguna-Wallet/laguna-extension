@@ -7,15 +7,19 @@ import WelcomeBack from 'pages/WelcomeBack/WelcomeBack';
 import Wallet from 'pages/Wallet/Wallet';
 import { StorageKeys } from 'utils/types';
 import { useEffect } from 'react';
+import { MessageListener } from 'utils/messageListener';
+import { useDispatch } from 'react-redux';
 
 function App() {
   const account = useAccount();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     chrome.runtime.onMessage.addListener((msg) => {
-      console.log('~ logged', msg);
-      getFromChromeStorage(StorageKeys.TokenPrices);
+      MessageListener(msg, dispatch);
     });
+
+    // todo unsubscribe
   }, []);
 
   const handlePage = () => {

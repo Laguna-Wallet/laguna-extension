@@ -10,7 +10,6 @@ export const sendTokenReducer = (state: any = {}, action: any) => {
       return { ...state, selectedAssetToken: action.payload.selectedAssetToken };
     case 'SET_BLOCK_HASH':
       return { ...state, blockHash: action.payload.blockHash };
-
     default:
       return state;
   }

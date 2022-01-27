@@ -22,7 +22,8 @@ export enum StorageKeys {
   Encoded = 'encoded',
   LoggedOut = 'logged-out',
   ActiveAccount = 'active-account',
-  TokenPrices = 'token-prices'
+  TokenPrices = 'token-prices',
+  TokenInfos = 'token-infos'
 }
 
 //==============================================================================
@@ -46,8 +47,20 @@ export interface Asset {
   price: number;
 }
 
-// SHARED
+export type Prices = Record<string, Record<string, number>>;
 
+//==============================================================================
+// Messaging
+//==============================================================================
+
+export enum Messages {
+  PriceUpdated = 'PRICES_UPDATED',
+  CoinInfoUpdated = 'COIN_INFO_UPDATED'
+}
+
+//==============================================================================
+// SHARED
+//==============================================================================
 export interface SelectType {
   value: string;
   name: string;
