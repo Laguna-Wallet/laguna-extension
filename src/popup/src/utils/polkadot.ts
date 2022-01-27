@@ -1,13 +1,13 @@
 import { keyExtractSuri, mnemonicValidate, randomAsHex } from '@polkadot/util-crypto';
 import { KeypairType } from '@polkadot/util-crypto/types';
 import { assert, hexToU8a, isHex, u8aToString } from '@polkadot/util';
-import { Asset, Network, SEED_LENGTHS, StorageKeys } from './types';
+import { Asset, Network, Prices, SEED_LENGTHS, StorageKeys } from './types';
 import { KeyringPair$Json } from '@polkadot/keyring/types';
 import { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
 import keyring from '@polkadot/ui-keyring';
 import { selectableNetworks } from '@polkadot/networks';
 import { Account_Search, getCoinInfo, Price_Converter } from './Api';
-import { getFromStorage } from './chrome';
+import { getFromStorage, saveToStorage } from './chrome';
 import bcrypt from 'bcryptjs';
 import { encryptPassword } from 'utils';
 import { useAccount } from 'context/AccountContext';
@@ -135,14 +135,19 @@ export async function importJson(
 // todo proper typing
 export function accountsTie({ address, genesisHash }: any): any {
   const pair = keyring.getPair(address);
-
   keyring.saveAccountMeta(pair, { ...pair.meta, genesisHash });
-
   return keyring.getPair(address);
 }
 
+export function addAccountMeta(address: string, obj: Record<string, any>): any {
+  const pair = keyring.getPair(address);
+  keyring.saveAccountMeta(pair, { ...pair.meta, ...obj });
+  const newPair = keyring.getPair(address);
+  return newPair;
+}
+
 // todo proper typing
-export async function getNetworks(): Promise<Network[]> {
+export function getNetworks(prices: Prices, tokenInfos: Network[]): Network[] {
   const networks: Network[] = [
     {
       name: 'Polkadot',
@@ -199,11 +204,7 @@ export async function getNetworks(): Promise<Network[]> {
     // }
   ];
 
-  // todo typing
-  const { data } = (await getCoinInfo({ chains: ['polkadot', 'kusama'] })) as any;
-
-  // todo typing
-  const ht = data.reduce((acc: any, item: any) => {
+  const ht = tokenInfos.reduce((acc: any, item: any) => {
     acc[item.symbol] = item;
     return acc;
   }, {});
@@ -226,11 +227,15 @@ export async function getNetworks(): Promise<Network[]> {
 
 // Todo refactor
 // Todo Appropriate Typing
-export async function getAssets(accountAddress: string): Promise<{
+export async function getAssets(
+  accountAddress: string,
+  prices: Prices,
+  tokenInfos: Network[]
+): Promise<{
   overallBalance: number;
   assets: Asset[];
 }> {
-  const networks = await getNetworks();
+  const networks = await getNetworks(prices, tokenInfos);
   let overallBalance = 0;
   const assets: Asset[] = [];
 

@@ -17,7 +17,6 @@ export async function Account_Search(chain: string, address: string) {
     key: address
   });
 }
-
 export async function Price_Converter({ chain, symbol, amount, fiat }: PriceConverter) {
   const data = await AXIOS_INSTANCE.get(
     `    https://api.coingecko.com/api/v3/simple/price?ids=${[

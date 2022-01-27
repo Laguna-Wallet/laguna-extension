@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import walletBG from 'assets/imgs/walletBG.jpg';
 import Header from 'pages/Wallet/Header';
 import SelectAsset from './SelectAsset';
-import Select from 'pages/Send/SelectTokenAndAmount';
+import Select from 'pages/Send/TokenAndAmountSelect';
 import BarcodeIcon from 'assets/svgComponents/BarcodeIcon';
 import SharpIcon from 'assets/svgComponents/SharpIcon';
 import WalletIcon from 'assets/svgComponents/WalletIcon';
@@ -59,6 +59,8 @@ export default function Send({ initialIsContactsPopupOpen }: Props) {
   const account = useAccount();
   const [flow, setFlow] = useState<string | undefined>(undefined);
 
+  const { prices, infos } = useSelector((state: any) => state.wallet);
+
   // TODO Revise maybe useReducer is not needed or maybe stick to it and remove Formik
   function reducer(state: SendTokenState, action: SendTokenActions): SendTokenState {
     switch (action.type) {
@@ -104,10 +106,10 @@ export default function Send({ initialIsContactsPopupOpen }: Props) {
     ]
   });
 
-  // TODO GET REFETCH NETWORKS FROM STORAGE
+  // TODO REFETCH NETWORKS FROM STORAGE
   useEffect(() => {
     async function go() {
-      const { assets } = await getAssets(account.getActiveAccount()?.address);
+      const { assets } = await getAssets(account.getActiveAccount()?.address, prices, infos);
 
       dispatch({ type: SendTokenActionsEnum.SET_ASSETS, payload: assets });
 
@@ -181,7 +183,7 @@ export default function Send({ initialIsContactsPopupOpen }: Props) {
   return (
     <Container>
       <Wizard>
-        <SelectAsset formik={formik} state={state} dispatch={dispatch} />
+        <SelectAsset state={state} />
         <SendToken
           formik={formik}
           flow={flow}
@@ -191,7 +193,7 @@ export default function Send({ initialIsContactsPopupOpen }: Props) {
           fee={fee}
           loading={loading}
         />
-        <Confirm fee={fee} formik={formik} transfer={transfer} />
+        <Confirm fee={fee} transfer={transfer} />
         <TransactionSent />
       </Wizard>
     </Container>

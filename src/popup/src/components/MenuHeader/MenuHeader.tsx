@@ -3,6 +3,14 @@ import { Turn as Hamburger } from 'hamburger-react';
 import LeftArrowIcon from 'assets/svgComponents/LeftArrowIcon';
 import Wallet from 'pages/Wallet/Wallet';
 import { goTo } from 'react-chrome-extension-router';
+import { useAccount } from 'context/AccountContext';
+import { truncateString } from 'utils';
+import { useRef, useState } from 'react';
+import { PencilAltIcon, PencilIcon } from '@heroicons/react/outline';
+import useOutsideClick from 'hooks/useOutsideClick';
+import { addAccountMeta } from 'utils/polkadot';
+import { saveToStorage } from 'utils/chrome';
+import { StorageKeys } from 'utils/types';
 
 type Props = {
   isOpen: boolean;
@@ -14,6 +22,31 @@ type Props = {
 };
 
 export default function MenuHeader({ isOpen, setOpen, showUser, onClose, title }: Props) {
+  const account = useAccount();
+  const [name, setName] = useState(account.getActiveAccount()?.meta?.name);
+  const [editMode, setEditMode] = useState<boolean>(false);
+
+  const address = account.getActiveAccount().address;
+
+  const editAccount = () => {
+    setEditMode(false);
+    const newAccount = addAccountMeta(address, { name });
+    account.saveActiveAccount(newAccount);
+  };
+
+  const inputRef = useOutsideClick(() => {
+    if (editMode) {
+      editAccount();
+    }
+  });
+
+  const handleKeyPress = (e: any) => {
+    console.log(e);
+    if (e.key === 'Enter' || e.keyCode === 13) {
+      editAccount();
+    }
+  };
+
   return (
     <Container>
       <Header>
@@ -34,8 +67,25 @@ export default function MenuHeader({ isOpen, setOpen, showUser, onClose, title }
         <User>
           <IconContainer></IconContainer>
           <Text>
-            <Name>Skywalker</Name>
-            <Address>H32x...3df</Address>
+            <Name>
+              <NameInput
+                ref={inputRef}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                readOnly={!editMode}
+                onKeyDown={(e) => {
+                  handleKeyPress(e);
+                }}
+              />
+              <PencilIconContainer
+                onClick={() => {
+                  setEditMode(true);
+                  inputRef && inputRef?.current?.focus();
+                }}>
+                <PencilIcon width={15} />
+              </PencilIconContainer>
+            </Name>
+            <Address>{truncateString(address)}</Address>
           </Text>
         </User>
       )}
@@ -74,10 +124,27 @@ const Text = styled.div`
   margin-left: 20px;
   color: #fff;
   font-family: 'Sequel100Wide55Wide';
+  flex: 1;
 `;
 
 const Name = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const NameInput = styled.input`
+  width: 200px;
+  background-color: transparent;
+  color: #fff;
   font-size: 23px;
+  font-family: 'Sequel100Wide55Wide';
+  border: 0;
+  outline: 0;
+`;
+
+const PencilIconContainer = styled.div`
+  cursor: pointer;
 `;
 
 const Address = styled.div`

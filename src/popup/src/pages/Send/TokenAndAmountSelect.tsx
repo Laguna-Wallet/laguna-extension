@@ -12,7 +12,7 @@ type Props = {
   defaultValue: string;
 };
 
-export default function SelectTokenAndMount({
+export default function TokenAndAmountSelect({
   amount,
   onChangeAmount,
   token,

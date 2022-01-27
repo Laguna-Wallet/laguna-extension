@@ -41,8 +41,8 @@ export const exportAccountSchema = yup.object({
     .required('Please fill out this field')
 });
 
-export const sendTokenSchema = yup.object({
-  amount: yup.string().required('Please fill out this field'),
+export const sendTokenSchema = yup.object().shape({
+  amount: yup.number().required('Please fill out this field'),
   selectedAsset: yup.object().required('Asset should be chosen'),
   // maybe todo check if it's a valid address
   address: yup.string().required('Please fill out this field')

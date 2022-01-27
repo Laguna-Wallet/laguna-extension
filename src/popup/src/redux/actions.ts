@@ -35,3 +35,18 @@ export function selectAssetToken(selectedAssetToken: string) {
     payload: { selectedAssetToken }
   };
 }
+
+// wallet
+export function changePrices(prices: Record<string, number>) {
+  return {
+    type: 'CHANGE_PRICES',
+    payload: { prices }
+  };
+}
+
+export function changeInfo(infos: Record<string, number>) {
+  return {
+    type: 'CHANGE_INFOS',
+    payload: { infos }
+  };
+}

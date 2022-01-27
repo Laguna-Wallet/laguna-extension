@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { goTo, Link } from 'react-chrome-extension-router';
 import { calculateSelectedTokenExchange, getAccounts, getApiInstance } from 'utils/polkadot';
 import { Dispatch, useEffect, useState } from 'react';
-import Select from 'pages/Send/SelectTokenAndAmount';
+import TokenAndAmountSelect from 'pages/Send/TokenAndAmountSelect';
 import ContactsIcon from 'assets/svgComponents/ContactsIcon';
 import WalletIcon from 'assets/svgComponents/WalletIcon';
 import BarcodeIcon from 'assets/svgComponents/BarcodeIcon';
@@ -22,10 +22,35 @@ import QRPopup from './QRPopup';
 import Header from 'pages/Wallet/Header';
 import BigNumber from 'bignumber.js';
 import ContactsPopup from './ContactsPopup';
+import { sendTokenSchema } from 'utils/validations';
+import { validator } from 'utils/validator';
 
 import { useDispatch } from 'react-redux';
 import { changeAddress, changeAmount, selectAssetToken } from 'redux/actions';
 import { useSelector } from 'react-redux';
+import { Field, reduxForm } from 'redux-form';
+
+const validate = (values: any) => {
+  const errors: any = {};
+  if (!values.username) {
+    errors.username = 'Required';
+  } else if (values.username.length > 15) {
+    errors.username = 'Must be 15 characters or less';
+  }
+  if (!values.email) {
+    errors.email = 'Required';
+  } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
+    errors.email = 'Invalid email address';
+  }
+  if (!values.age) {
+    errors.age = 'Required';
+  } else if (isNaN(Number(values.age))) {
+    errors.age = 'Must be a number';
+  } else if (Number(values.age) < 18) {
+    errors.age = 'Sorry, you must be at least 18 years old';
+  }
+  return errors;
+};
 
 enum SendAccountFlowEnum {
   SendToTrustedContact = 'SendToTrustedContact',
@@ -34,14 +59,17 @@ enum SendAccountFlowEnum {
   ScanQR = 'ScanQR'
 }
 
+// todo handleSubmit Typing
 type Props = {
   state: SendTokenState;
-  dispatch: Dispatch<SendTokenActions>;
+  dispatch: any;
   formik: FormikProps<SendTokenFormikValues>;
   flow: string | undefined;
   setFlow: (flow: string | undefined) => void;
   fee: string;
   loading: boolean;
+  handleSubmit?: any;
+  error?: any;
 };
 
 const handleShowAccountInput = (flow: string | undefined, address: string | undefined): boolean => {
@@ -54,18 +82,31 @@ const handleShowAccountInput = (flow: string | undefined, address: string | unde
   return false;
 };
 
-export default function SendToken({ state, dispatch, formik, flow, setFlow, fee, loading }: Props) {
+function SendToken({
+  state,
+  dispatch,
+  formik,
+  flow,
+  setFlow,
+  fee,
+  loading,
+  handleSubmit,
+  error
+}: Props) {
   const dispatchFromRedux = useDispatch();
-
   const { nextStep, previousStep } = useWizard();
   const account = useAccount();
+
+  // todo proper typing
+  const { address, selectedAsset, selectedAssetToken, amount } = useSelector(
+    (state: any) => state.sendToken
+  );
 
   const [isAccountsPopupOpen, setIsAccountsPopupOpen] = useState<boolean>(false);
   const [isQRPopupOpen, setIsQRPopupOpen] = useState<boolean>(false);
   const [isContactsPopupOpen, setIsContactsPopupOpen] = useState<boolean>(false);
 
   const handleClick = (isValid: boolean) => {
-    console.log('~ isValid', isValid);
     if (!isValid) return;
     nextStep();
     // todo show error message
@@ -109,124 +150,141 @@ export default function SendToken({ state, dispatch, formik, flow, setFlow, fee,
     dispatchFromRedux(changeAddress(address));
   };
 
-  // todo proper typing
-  const address = useSelector((state: any) => state.sendToken.address);
-  const selectedAsset = useSelector((state: any) => state.sendToken.selectedAsset);
-  const selectedAssetToken = useSelector((state: any) => state.sendToken.selectedAssetToken);
-  const amount = useSelector((state: any) => state.sendToken.amount);
+  const submit = (values: any) => {
+    console.log('~ values', values);
+    // nextStep();
+  };
 
   return (
     <Container>
       <Header title={`SEND ${selectedAsset?.chain}`} backAction={previousStep} />
-      <Content>
-        <ContentItem>
-          <ContentItemTitle>Amount</ContentItemTitle>
-
-          {/* todo make so that options were with multiple tokens  */}
-          <Select
-            token={selectedAssetToken}
-            onChangeToken={(token: string) => dispatchFromRedux(selectAssetToken(token))}
-            amount={amount}
-            onChangeAmount={(amount: string) => dispatchFromRedux(changeAmount(amount))}
-            options={[selectedAsset.symbol]}
-            defaultValue={selectedAsset.symbol}
-          />
-          <Price>
-            <span>
-              $
-              {new BigNumber(
-                calculateSelectedTokenExchange(
-                  formik.values.amount,
-                  formik.values?.selectedAsset?.price as number
-                )
-              ).toFixed(2)}
-            </span>
-            <ExchangeIconContainer>
-              <ExchangeIcon />
-            </ExchangeIconContainer>
-          </Price>
-        </ContentItem>
-        {handleShowAccountInput(flow, formik.values.address) ? (
+      <form onSubmit={handleSubmit(submit)}>
+        <Content>
           <ContentItem>
-            <AddressContainer>To</AddressContainer>
-            <HumbleInput
-              id="address"
-              placeholder="Address"
+            <ContentItemTitle>Amount</ContentItemTitle>
+            {/* todo make so that options were with multiple tokens  */}
+            {/*  input, label, type, meta: { touched, error, warning } */}
+            <Field
+              name="username"
               type="text"
-              value={address}
-              onChange={(e: any) => dispatchFromRedux(changeAddress(e.target.value))}
+              label="Username"
+              component={({ input, label, type, meta: { touched, error, warning } }: any) => (
+                <SelectContainer>
+                  <StyledInput placeholder="Enter Amount" type {...input} />
+                  {/* <StyledSelect
+                    defaultValue={defaultValue}
+                    onChange={handleChange}
+                    name="dots"
+                    id="dots">
+                    {options.map((symbol) => (
+                      <StyledOption key={symbol} value={symbol}>
+                        {symbol.toUpperCase()}
+                      </StyledOption>
+                    ))}
+                  </StyledSelect> */}
+                </SelectContainer>
+              )}
+            />
+            {/* Field, */}
+
+            <Price>
+              <span>
+                $
+                {new BigNumber(
+                  calculateSelectedTokenExchange(
+                    formik.values.amount,
+                    formik.values?.selectedAsset?.price as number
+                  )
+                ).toFixed(2)}
+              </span>
+              <ExchangeIconContainer>
+                <ExchangeIcon />
+              </ExchangeIconContainer>
+            </Price>
+          </ContentItem>
+          {handleShowAccountInput(flow, formik.values.address) ? (
+            <ContentItem>
+              <AddressContainer>To</AddressContainer>
+              <HumbleInput
+                id="address"
+                placeholder="Address"
+                type="text"
+                value={address}
+                onChange={(e: any) => dispatchFromRedux(changeAddress(e.target.value))}
+                bgColor="#f3f3f3"
+                color="#111"
+                height="53px"
+                marginTop="5px"
+              />
+            </ContentItem>
+          ) : (
+            <ContentItem>
+              <ContentItemTitle>To</ContentItemTitle>
+              <SendTypes>
+                <SendTypeItem onClick={handleClickContacts}>
+                  <IconContainer>
+                    <ContactsIcon stroke="#111" />
+                  </IconContainer>
+                  <Text>Contacts</Text>
+                </SendTypeItem>
+
+                <SendTypeItem onClick={() => setFlow(SendAccountFlowEnum.SendToAddress)}>
+                  <IconContainer>
+                    <SharpIcon />
+                  </IconContainer>
+                  <Text>Address</Text>
+                </SendTypeItem>
+
+                <SendTypeItem onClick={handleClickAccounts}>
+                  <IconContainer>
+                    <WalletIcon stroke="#111" />
+                  </IconContainer>
+                  <Text>Accounts</Text>
+                </SendTypeItem>
+
+                <SendTypeItem onClick={handleClickQR}>
+                  <IconContainer>
+                    <BarcodeIcon stroke="#111" />
+                  </IconContainer>
+                  <Text>Scan QR</Text>
+                </SendTypeItem>
+              </SendTypes>
+            </ContentItem>
+          )}
+
+          <ContentItem>
+            <ContentItemTitle>Add Note</ContentItemTitle>
+            <HumbleInput
+              id="note"
+              placeholder="Enter note here"
+              type="text"
+              value={formik.values.note}
+              onChange={formik.handleChange}
               bgColor="#f3f3f3"
-              color="#111"
               height="53px"
               marginTop="5px"
             />
           </ContentItem>
-        ) : (
-          <ContentItem>
-            <ContentItemTitle>To</ContentItemTitle>
-            <SendTypes>
-              <SendTypeItem onClick={handleClickContacts}>
-                <IconContainer>
-                  <ContactsIcon stroke="#111" />
-                </IconContainer>
-                <Text>Contacts</Text>
-              </SendTypeItem>
+        </Content>
 
-              <SendTypeItem onClick={() => setFlow(SendAccountFlowEnum.SendToAddress)}>
-                <IconContainer>
-                  <SharpIcon />
-                </IconContainer>
-                <Text>Address</Text>
-              </SendTypeItem>
-
-              <SendTypeItem onClick={handleClickAccounts}>
-                <IconContainer>
-                  <WalletIcon stroke="#111" />
-                </IconContainer>
-                <Text>Accounts</Text>
-              </SendTypeItem>
-
-              <SendTypeItem onClick={handleClickQR}>
-                <IconContainer>
-                  <BarcodeIcon stroke="#111" />
-                </IconContainer>
-                <Text>Scan QR</Text>
-              </SendTypeItem>
-            </SendTypes>
-          </ContentItem>
-        )}
-
-        <ContentItem>
-          <ContentItemTitle>Add Note</ContentItemTitle>
-          <HumbleInput
-            id="note"
-            placeholder="Enter note here"
-            type="text"
-            value={formik.values.note}
-            onChange={formik.handleChange}
-            bgColor="#f3f3f3"
-            height="53px"
-            marginTop="5px"
+        <BottomSection>
+          <Info>
+            <span>
+              Balance: {new BigNumber(selectedAsset.balance).toFixed(2)}{' '}
+              {selectedAsset?.symbol.toUpperCase()}
+            </span>
+            <span>Estimated Fee: {loading ? '...' : new BigNumber(fee).toFixed(3)}</span>
+          </Info>
+          <Button
+            type="submit"
+            text="Preview1"
+            justify="center"
+            Icon={<RightArrow width={23} fill="#fff" />}
+            // disabled={!address || !selectedAsset || !amount}
+            // onClick={() => handleClick(address && selectedAsset && amount)}
           />
-        </ContentItem>
-      </Content>
-
-      <BottomSection>
-        <Info>
-          <span>
-            Balance: {new BigNumber(selectedAsset.balance).toFixed(2)}{' '}
-            {selectedAsset?.symbol.toUpperCase()}
-          </span>
-          <span>Estimated Fee: {loading ? '...' : new BigNumber(fee).toFixed(3)}</span>
-        </Info>
-        <Button
-          text="Preview"
-          justify="center"
-          Icon={<RightArrow width={23} fill="#fff" />}
-          disabled={!address || !selectedAsset || !amount}
-          onClick={() => handleClick(address && selectedAsset && amount)}
-        />
-      </BottomSection>
+        </BottomSection>
+      </form>
 
       {isAccountsPopupOpen && (
         <AccountsSection>
@@ -254,6 +312,12 @@ export default function SendToken({ state, dispatch, formik, flow, setFlow, fee,
   );
 }
 
+export default reduxForm<Record<string, unknown>, Props>({
+  form: 'sendToken',
+  validate,
+  destroyOnUnmount: false
+})(SendToken);
+
 const Container = styled.div<{ bg?: string }>`
   width: 100%;
   height: 100%;
@@ -277,6 +341,50 @@ const Content = styled.div`
 const ContentItem = styled.div`
   margin-top: 15px;
 `;
+
+const SelectContainer = styled.div`
+  width: 100%;
+  display: flex;
+  margin-top: 5px;
+  padding: 0 10px;
+  background-color: #f3f3f3;
+  box-sizing: border-box;
+`;
+
+const StyledInput = styled.input`
+  width: 100%;
+  height: 53px;
+  border: 0;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  background-color: #f3f3f3;
+  color: #898989;
+  font-family: 'SFCompactDisplayRegular';
+  font-size: 16px;
+
+  &:focus {
+    outline: none;
+  }
+`;
+
+const StyledSelect = styled.select`
+  width: 70px;
+  height: 53px;
+  border: 0;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  background-color: #f3f3f3;
+  font-size: 16px;
+  font-weight: 600;
+  color: #141414;
+  font-family: 'SFCompactDisplayRegular';
+
+  &:focus {
+    outline: none;
+  }
+`;
+
+const StyledOption = styled.option``;
 
 const Price = styled.div`
   width: 100%;

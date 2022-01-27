@@ -1,3 +1,4 @@
+import NetworkIcons from 'components/primitives/NetworkIcons';
 import styled from 'styled-components';
 
 type Props = {
@@ -7,7 +8,9 @@ type Props = {
 export default function NetworkItem({ network }: Props) {
   return (
     <Container>
-      <ListItemIcon></ListItemIcon>
+      <ListItemIcon>
+        <NetworkIcons chain={network.chain} />
+      </ListItemIcon>
       <ListItemText>
         <Title>{network.chain}</Title>
         <Tag>1 Asset</Tag>
