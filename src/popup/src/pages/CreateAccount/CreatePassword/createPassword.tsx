@@ -41,7 +41,7 @@ function CreatePassword() {
       setIsSnackbarOpen(true);
     }
   };
-
+  
   return (
     <Container>
       <Form onSubmit={handleSubmit}>

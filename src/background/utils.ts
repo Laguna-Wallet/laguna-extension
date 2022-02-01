@@ -1,21 +1,62 @@
-export async function Retrieve_Coin_Prices() {
-  const data = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=polkadot,kusama&vs_currencies=usd")
-  const json = await data.json()
-  return json
-}
+import { decodeAddress, encodeAddress } from "@polkadot/keyring"
+import { hexToU8a, isHex } from "@polkadot/util"
 
-export async function Retrieve_Coin_Infos() {
-  const data = await fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=polkadot,kusama&order=market_cap_desc&per_page=100&page=1&sparkline=false`)
-  const json = await data.json()
-  return json
+export function saveToChromeStorage(key: string, value: string) {
+  chrome.storage.local.set({ key: value }, function () {
+    console.log("Value is set to " + JSON.stringify(value))
+  })
 }
 
 export function saveToStorage({ key, value }: { key: string; value: string }) {
   localStorage.setItem(key, value)
 }
 
-export function saveToChromeStorage(key: string, value: string) {
-  chrome.storage.local.set({ key: value }, function () {
-    console.log("Value is set to " + JSON.stringify(value))
-  })
+export function getAccountAddresses() {
+  try {
+    const local = localStorage
+    const accountAddresses: string[] = []
+
+    for (var key in local) {
+      if (key.startsWith("account")) {
+        const account = localStorage.getItem(key)
+        const parsed = JSON.parse(account)
+
+        if (isValidAddressPolkadotAddress(parsed.address)) {
+          accountAddresses.push(parsed.address)
+        }
+      }
+    }
+
+    return accountAddresses
+  } catch (err) {
+    console.warn(err)
+  }
+}
+
+export function isValidAddressPolkadotAddress(address: string): boolean {
+  try {
+    encodeAddress(isHex(address) ? hexToU8a(address) : decodeAddress(address))
+    return true
+  } catch (error) {
+    return false
+  }
+}
+
+export function executeTemporarily(callback: () => void, milliseconds: number) {
+  let keepGoing = true
+
+  setTimeout(function () {
+    keepGoing = false
+  }, milliseconds)
+
+  function Loop() {
+    setTimeout(async function () {
+      await callback()
+      if (keepGoing) {
+        Loop()
+      }
+    }, 3000)
+  }
+
+  Loop()
 }

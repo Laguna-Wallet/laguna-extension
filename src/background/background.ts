@@ -1,5 +1,6 @@
 import { Messages, StorageKeys } from "./types"
-import { Retrieve_Coin_Infos, Retrieve_Coin_Prices, saveToStorage } from "./utils"
+import { fetchAccountsBalances, fetchAccountsData, networkConnectors, Retrieve_Coin_Infos, Retrieve_Coin_Prices } from "./api"
+import { saveToStorage } from "./utils"
 
 chrome.runtime.onInstalled.addListener(async () => {
   console.log("onInstalled...")
@@ -15,6 +16,14 @@ chrome.runtime.onInstalled.addListener(async () => {
   console.log("info injected...")
 
   chrome.alarms.create("refresh", { periodInMinutes: 1 })
+
+  chrome.alarms.create("refetch-account-balances", { periodInMinutes: 3 })
+
+  await fetchAccountsBalances()
+})
+
+chrome.runtime.onStartup.addListener(function () {
+  console.log("open")
 })
 
 chrome.alarms.onAlarm.addListener(async (alarm) => {
@@ -27,4 +36,8 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
   const Infos = await Retrieve_Coin_Infos()
   chrome.runtime.sendMessage({ type: Messages.CoinInfoUpdated, payload: JSON.stringify(Infos) })
   saveToStorage({ key: StorageKeys.TokenInfos, value: JSON.stringify(Infos) })
+
+  if (alarm.name === "refetch-account-balances") {
+    await fetchAccountsBalances()
+  }
 })

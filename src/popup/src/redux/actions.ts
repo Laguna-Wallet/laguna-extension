@@ -50,3 +50,10 @@ export function changeInfo(infos: Record<string, number>) {
     payload: { infos }
   };
 }
+
+export function changeAccountsBalances(accountsBalances: Record<string, number>) {
+  return {
+    type: 'CHANGE_ACCOUNTS_BALANCES',
+    payload: { accountsBalances }
+  };
+}

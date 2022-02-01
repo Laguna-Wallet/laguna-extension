@@ -106,10 +106,21 @@ export default function Send({ initialIsContactsPopupOpen }: Props) {
     ]
   });
 
+  const { accountBalances } = useSelector((state: any) => state.wallet);
+  // todo proper typing
+  const currentAccountBalance = accountBalances.find(
+    (balances: any) => balances.address === account.getActiveAccount().address
+  );
+
   // TODO REFETCH NETWORKS FROM STORAGE
   useEffect(() => {
     async function go() {
-      const { assets } = await getAssets(account.getActiveAccount()?.address, prices, infos);
+      const { assets } = await getAssets(
+        account.getActiveAccount()?.address,
+        prices,
+        infos,
+        currentAccountBalance
+      );
 
       dispatch({ type: SendTokenActionsEnum.SET_ASSETS, payload: assets });
 
