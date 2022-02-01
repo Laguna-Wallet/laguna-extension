@@ -16,6 +16,7 @@ import { formatBalance } from '@polkadot/util/format';
 import { decodeAddress, encodeAddress } from '@polkadot/keyring';
 import { MetadataDef } from '@polkadot/extension-inject/types';
 import settings from '@polkadot/ui-settings';
+import BigNumber from 'bignumber.js';
 
 // TODO appropriate typing
 
@@ -148,6 +149,8 @@ export function addAccountMeta(address: string, obj: Record<string, any>): any {
 
 // todo proper typing
 export function getNetworks(prices: Prices, tokenInfos: Network[]): Network[] {
+  if (!prices || !tokenInfos) return [];
+
   const networks: Network[] = [
     {
       name: 'Polkadot',
@@ -230,11 +233,17 @@ export function getNetworks(prices: Prices, tokenInfos: Network[]): Network[] {
 export async function getAssets(
   accountAddress: string,
   prices: Prices,
-  tokenInfos: Network[]
-): Promise<{
-  overallBalance: number;
-  assets: Asset[];
-}> {
+  tokenInfos: Network[],
+  balances: any
+): Promise<
+  | {
+      overallBalance: number;
+      assets: Asset[];
+    }
+  | []
+> {
+  if (!balances) return [];
+
   const networks = await getNetworks(prices, tokenInfos);
   let overallBalance = 0;
   const assets: Asset[] = [];
@@ -243,42 +252,22 @@ export async function getAssets(
     try {
       const { name, symbol, chain, node } = networks[i];
 
-      const api = await getApiInstance(chain);
+      const balance = balances?.balances[chain];
+      const price = prices[chain]?.usd;
 
-      const { nonce, data: balance } = await api.query.system.account(accountAddress);
-
-      const decimals = await api.registry.chainDecimals[0];
-
-      const formattedBalance = formatBalance(
-        balance.toJSON().free as number,
-        { withSi: false, forceUnit: '-' },
-        decimals
-      );
-
-      if (!Number(formattedBalance)) continue;
-
-      // // Note fiat can become dynamic & grab info from storage.
-      const { data } = await Price_Converter({
-        chain,
-        symbol,
-        amount: String(Number(formattedBalance)),
-        fiat: 'USD'
-      });
-
-      const price = data[chain]?.usd || 0;
-      // const price = 0;
-      const calculatedPrice = Number(formattedBalance) * price;
+      // todo rename calculatedBalance
+      const calculatedPrice = new BigNumber(balance).multipliedBy(price);
 
       if (price) {
-        overallBalance += calculatedPrice;
+        overallBalance += calculatedPrice.toNumber();
       }
 
       assets.push({
-        balance: formattedBalance,
+        balance,
         name,
         symbol,
         chain,
-        calculatedPrice,
+        calculatedPrice: calculatedPrice.toNumber(),
         price
       });
     } catch (err) {
@@ -305,7 +294,7 @@ export async function getApiInstance(node: string) {
 
   // todo put this into env
   const wsProvider = new WsProvider(
-    `wss://${node}.api.onfinality.io/rpc?apikey=0dcf3660-e510-4df3-b9d2-bba6b16e3ae9`
+    `wss://${node}.api.onfinality.io/ws?apikey=0dcf3660-e510-4df3-b9d2-bba6b16e3ae9`
   );
 
   return await ApiPromise.create({ provider: wsProvider });

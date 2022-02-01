@@ -5,13 +5,11 @@ import { PageContainer } from 'components/ui';
 import { useWizard } from 'react-use-wizard';
 import styled from 'styled-components';
 
-export function MnemonicsDescription({ onClick }: any) {
-  const { nextStep, previousStep, isLoading, activeStep, isLastStep, isFirstStep } = useWizard();
+type Props = {
+  onClose: () => void;
+};
 
-  const handleClick = () => {
-    nextStep();
-  };
-
+export function MnemonicsDescription({ onClose }: Props) {
   return (
     <Container>
       <MainContent>
@@ -31,7 +29,7 @@ export function MnemonicsDescription({ onClick }: any) {
           </Description>
         </TopContent>
         <ButtonContainer>
-          <Button onClick={handleClick} text={'I Understand'} justify="center" />
+          <Button onClick={onClose} text={'I Understand'} justify="center" />
         </ButtonContainer>
       </MainContent>
     </Container>

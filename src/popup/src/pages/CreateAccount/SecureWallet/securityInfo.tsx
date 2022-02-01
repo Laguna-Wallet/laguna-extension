@@ -7,7 +7,7 @@ type Props = {
 };
 
 export default function SecurityInfo({ securityType }: Props) {
-  if (!securityType) return <></>;
-  if (securityType === SecurityOptionsEnum.Secured) return <MnemonicsDescription />;
-  return <ConfirmSecuritySkip />;
+  // if (!securityType) return <></>;
+  // if (securityType === SecurityOptionsEnum.Secured) return <MnemonicsDescription />;
+  // return <ConfirmSecuritySkip />;
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { ApiPromise, WsProvider, Keyring } from '@polkadot/api';
 import Config from 'config/config.json';
@@ -11,15 +11,15 @@ import Menu from 'components/Menu/Menu';
 import ChainItem from './ChainItem';
 import config from 'config/config.json';
 import { Account_Search } from 'utils/Api';
-import { getAssets, getNetworks } from 'utils/polkadot';
+import { getApiInstance, getAssets, getNetworks } from 'utils/polkadot';
 import NetworkItem from './NetworkItem';
 import walletBG from 'assets/imgs/walletBG.jpg';
-import { Link } from 'react-chrome-extension-router';
+import { goTo, Link } from 'react-chrome-extension-router';
 import SelectAsset from 'pages/Send/SelectAsset';
 import Send from 'pages/Send/Send';
 import Receive from 'pages/Recieve/Receive';
 import BigNumber from 'bignumber.js';
-import keyringUI from '@polkadot/ui-keyring';
+import keyring from '@polkadot/ui-keyring';
 import { useSelector } from 'react-redux';
 
 type Props = {
@@ -34,7 +34,15 @@ export default function Wallet({ isMenuOpen }: Props) {
   const [loading, setLoading] = useState<boolean>(false);
   const [overallBalance, setOverallBalance] = useState<number | undefined>(undefined);
 
-  const { prices, infos } = useSelector((state: any) => state.wallet);
+  const { prices, infos, accountsBalances } = useSelector((state: any) => state.wallet);
+
+  // todo proper typing
+
+  const currentAccountBalance =
+    accountsBalances &&
+    accountsBalances.find(
+      (balances: any) => balances.address === account.getActiveAccount().address
+    );
 
   const handleActiveTab = (activeTab: number): void => {
     if (loading) {
@@ -51,25 +59,26 @@ export default function Wallet({ isMenuOpen }: Props) {
       const { overallBalance, assets }: any = await getAssets(
         activeAccount?.address,
         prices,
-        infos
+        infos,
+        currentAccountBalance
       );
       setAssets(assets);
       setOverallBalance(overallBalance);
       setLoading(false);
     }
 
-    if (activeAccount) {
+    if (activeAccount && currentAccountBalance) {
       go();
     }
-  }, [account.getActiveAccount()]);
+  }, [account.getActiveAccount(), currentAccountBalance]);
 
+  console.log('~ assets', assets);
   useEffect(() => {
     const networks = getNetworks(prices, infos).filter((network) => network.symbol !== 'wnd');
     setNetworks(networks);
   }, [prices, infos]);
 
   const state = useSelector((state: any) => state);
-  console.log('~ state', state);
 
   return (
     <Container bg={walletBG}>

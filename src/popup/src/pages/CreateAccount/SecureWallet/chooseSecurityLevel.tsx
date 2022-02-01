@@ -1,8 +1,11 @@
 import ArrowSmRightIcon from '@heroicons/react/outline/ArrowSmRightIcon';
 import RightArrow from 'assets/svgComponents/RightArrow';
+import { ConfirmSecuritySkip } from 'components/popups/ConfirmSecuritySkip';
+import { MnemonicsDescription } from 'components/popups/MnemonicsDescription';
 import Button from 'components/primitives/Button';
 import { PageContainer } from 'components/ui';
 import { useState } from 'react';
+import { useWizard } from 'react-use-wizard';
 import styled from 'styled-components';
 import { SecurityOptions, SecurityOptionsEnum } from 'utils/types';
 import SecurityInfo from './securityInfo';
@@ -10,28 +13,31 @@ import PopupContainer from './securityInfo';
 
 export default function ChooseSecurityLevel() {
   const [securityType, setSecurityType] = useState<SecurityOptions>(undefined);
+  const { nextStep } = useWizard();
 
-  const handleClick = (level: SecurityOptions) => {
-    setSecurityType(level);
-  };
+  const [isMnemonicDescriptionOpen, setIsMnemonicDescriptionOpen] = useState<boolean>();
+  const [isConfirmSkipOpen, setConfirmSkipOpen] = useState<boolean>();
 
   return (
     <Container>
-      <SecurityInfo securityType={securityType} />
+      {isMnemonicDescriptionOpen && (
+        <MnemonicsDescription onClose={() => setIsMnemonicDescriptionOpen(false)} />
+      )}
+      {isConfirmSkipOpen && <ConfirmSecuritySkip />}
+
       <Title>SECURE YOUR WALLET</Title>
       <IconContainer>
         <Icon></Icon>
       </IconContainer>
-      <TextContainer className="mt-10 text-base">
-        <span>
-          To secure your wallet you will be given a <span className="underline"> seed phrase.</span>{' '}
-          Store this in a safe place. Its the only way to recover your wallet if you get locked out
-          of the app or get a new device.
-        </span>
+      <TextContainer>
+        To secure your wallet you&apos ll be given a 12 word{' '}
+        <span onClick={() => setIsMnemonicDescriptionOpen(true)}>Mnemonic seed phrase.</span> Store
+        this in a safe place. It's the only way to recover your wallet if you get locked out or get
+        a new device.
       </TextContainer>
       <Buttons>
         <Button
-          onClick={() => handleClick(SecurityOptionsEnum.None)}
+          onClick={() => setConfirmSkipOpen(true)}
           Icon={<RightArrow width={23} />}
           text={'Remind me Later'}
           borderColor="#ececec"
@@ -39,7 +45,7 @@ export default function ChooseSecurityLevel() {
           color={'#111'}
         />
         <Button
-          onClick={() => handleClick(SecurityOptionsEnum.Secured)}
+          onClick={() => nextStep()}
           Icon={<RightArrow width={23} fill="#fff" />}
           text={'Start'}
           margin="14px 0px 0px 0px"
@@ -80,11 +86,18 @@ const Icon = styled.div`
 `;
 
 const TextContainer = styled.div`
-  margin-top: 60px;
+  font-size: 16px;
+  margin-top: auto;
   font-family: 'SFCompactDisplayRegular';
   color: #767e93;
+  line-height: 1.45;
+
+  span {
+    cursor: pointer;
+    color: #111;
+  }
 `;
 
 const Buttons = styled.div`
-  margin-top: auto;
+  /* margin-top: auto; */
 `;

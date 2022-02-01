@@ -1,10 +1,11 @@
 const { CheckerPlugin } = require("awesome-typescript-loader")
 const { optimize } = require("webpack")
-const { join } = require("path")
+const { join, resolve } = require("path")
 let prodPlugins = []
 if (process.env.NODE_ENV === "production") {
   prodPlugins.push(new optimize.AggressiveMergingPlugin())
 }
+
 module.exports = {
   mode: process.env.NODE_ENV,
   devtool: "inline-source-map",
@@ -20,7 +21,9 @@ module.exports = {
       {
         exclude: /node_modules/,
         test: /\.ts?$/,
-        use: 'awesome-typescript-loader?{configFileName: "tsconfig.json"}',
+        use: "ts-loader",
+
+        // use: 'awesome-typescript-loader?{configFileName: "tsconfig.json"}',
       },
     ],
   },

@@ -1,4 +1,4 @@
-import { changeInfo, changePrices } from 'redux/actions';
+import { changeAccountsBalances, changeInfo, changePrices } from 'redux/actions';
 import { saveToStorage } from './chrome';
 import { Messages, StorageKeys } from './types';
 
@@ -18,6 +18,9 @@ export function MessageListener(message: Message, dispatch: any) {
     case Messages.CoinInfoUpdated:
       updateCoinInfo(message, dispatch);
       break;
+    case Messages.AccountsBalanceUpdated:
+      updateAccountsBalances(message, dispatch);
+      break;
     default:
       return;
   }
@@ -31,4 +34,9 @@ function updatePrice(message: PriceUpdateMessage, dispatch: any) {
 function updateCoinInfo(message: PriceUpdateMessage, dispatch: any) {
   dispatch(changeInfo(JSON.parse(message.payload)));
   saveToStorage({ key: StorageKeys.TokenInfos, value: message.payload });
+}
+
+function updateAccountsBalances(message: PriceUpdateMessage, dispatch: any) {
+  dispatch(changeAccountsBalances(JSON.parse(message.payload)));
+  saveToStorage({ key: StorageKeys.AccountBalances, value: message.payload });
 }
