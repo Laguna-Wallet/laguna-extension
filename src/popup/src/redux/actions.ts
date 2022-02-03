@@ -57,3 +57,10 @@ export function changeAccountsBalances(accountsBalances: Record<string, number>)
     payload: { accountsBalances }
   };
 }
+
+export function changeTransactions(transactions: Record<string, number>) {
+  return {
+    type: 'CHANGE_TRANSACTIONS',
+    payload: { transactions }
+  };
+}

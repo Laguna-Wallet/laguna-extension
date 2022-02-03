@@ -1,6 +1,6 @@
 import { chains, Messages, StorageKeys } from "./types"
 import { ApiPromise, WsProvider } from "@polkadot/api"
-import { executeTemporarily, getAccountAddresses, saveToStorage } from "./utils"
+import { executeTemporarily, getAccountAddresses, saveToStorage, transformTransfers } from "./utils"
 import { formatBalance } from "@polkadot/util/format"
 
 export async function Retrieve_Coin_Prices() {
@@ -37,9 +37,6 @@ export async function fetchAccountsBalances() {
   } catch (err) {
     console.log("err", err)
   }
-  //   setInterval(async () => {
-  //     await fetchAccountsData(apis)
-  //   }, 1000)
 }
 
 export async function fetchAccountsData(apis: any[]) {
@@ -71,7 +68,6 @@ export async function fetchAccountData(address, apis: any[]) {
 
     const balancesObj = freeBalances.reduce((acc, balance, index) => {
       acc[chains[index]] = balance
-
       return acc
     }, {})
 
@@ -79,4 +75,71 @@ export async function fetchAccountData(address, apis: any[]) {
   } catch (err) {
     console.log("err", err)
   }
+}
+
+export async function fetchAccountsTransactions() {
+  const addresses = getAccountAddresses()
+  let result_obj = {}
+
+  let results = []
+  let retrieved_count = 0
+  let page = 0
+  let accountTransfers = []
+  for (let i = 0; i < addresses.length; i++) {
+    for (let j = 0; j < chains.length; j++) {
+      console.log("~ chains", chains[j])
+      await timer(500)
+
+      const res = await fetchTransactions(addresses[i], chains[j], page)
+
+      if (!res?.data?.transfers) continue
+
+      results = [...res?.data?.transfers]
+      retrieved_count = res?.data?.count
+      page++
+
+      while (results.length < retrieved_count) {
+        await timer(500)
+        const data = await fetchTransactions(addresses[i], chains[j], page)
+        results = [...results, ...data?.data?.transfers]
+        page++
+      }
+
+      retrieved_count = 0
+      page = 0
+
+      result_obj[addresses[i]] = result_obj[addresses[i]] ? [...result_obj[addresses[i]], ...transformTransfers(results, chains[j])] : transformTransfers(results, chains[j])
+
+      results = []
+    }
+  }
+
+  console.log("transactions fetched")
+
+  chrome.runtime.sendMessage({ type: Messages.TransactionsUpdated, payload: JSON.stringify(result_obj) })
+  saveToStorage({ key: StorageKeys.Transactions, value: JSON.stringify(result_obj) })
+
+  setTimeout(() => {
+    fetchAccountsTransactions()
+  }, 1000)
+}
+
+export async function fetchTransactions(address: string, chain: string, page: number) {
+  console.log("~ page", page)
+  const res = await fetch(`https://${chain}.api.subscan.io/api/scan/transfers`, {
+    method: "POST",
+    mode: "cors",
+    cache: "no-cache",
+    credentials: "same-origin",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ address, row: 30, page }),
+  })
+
+  return await res.json()
+}
+
+function timer(ms) {
+  return new Promise((res) => setTimeout(res, ms))
 }

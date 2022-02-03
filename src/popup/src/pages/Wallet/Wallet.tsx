@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { ApiPromise, WsProvider, Keyring } from '@polkadot/api';
 import Config from 'config/config.json';
@@ -37,7 +37,6 @@ export default function Wallet({ isMenuOpen }: Props) {
   const { prices, infos, accountsBalances } = useSelector((state: any) => state.wallet);
 
   // todo proper typing
-
   const currentAccountBalance =
     accountsBalances &&
     accountsBalances.find(
@@ -51,17 +50,13 @@ export default function Wallet({ isMenuOpen }: Props) {
     setActiveTab(activeTab);
   };
 
-  useEffect(() => {
-    const activeAccount = account.getActiveAccount();
+  const activeAccount = useCallback(account.getActiveAccount(), [account]);
 
+  useEffect(() => {
     async function go() {
       setLoading(true);
-      const { overallBalance, assets }: any = await getAssets(
-        activeAccount?.address,
-        prices,
-        infos,
-        currentAccountBalance
-      );
+      const { overallBalance, assets }: any = await getAssets(prices, infos, currentAccountBalance);
+
       setAssets(assets);
       setOverallBalance(overallBalance);
       setLoading(false);
@@ -70,9 +65,8 @@ export default function Wallet({ isMenuOpen }: Props) {
     if (activeAccount && currentAccountBalance) {
       go();
     }
-  }, [account.getActiveAccount(), currentAccountBalance]);
+  }, [activeAccount, currentAccountBalance]);
 
-  console.log('~ assets', assets);
   useEffect(() => {
     const networks = getNetworks(prices, infos).filter((network) => network.symbol !== 'wnd');
     setNetworks(networks);
@@ -122,7 +116,7 @@ export default function Wallet({ isMenuOpen }: Props) {
             ) : (
               <ListContentChild>
                 {activeTab === 1
-                  ? assets &&
+                  ? assets.length > 0 &&
                     assets.map((asset: any) => {
                       return (
                         <ChainItem

@@ -30,10 +30,10 @@ export default function ChooseSecurityLevel() {
         <Icon></Icon>
       </IconContainer>
       <TextContainer>
-        To secure your wallet you&apos ll be given a 12 word{' '}
+        To secure your wallet you&apos;ll be given a 12 word{' '}
         <span onClick={() => setIsMnemonicDescriptionOpen(true)}>Mnemonic seed phrase.</span> Store
-        this in a safe place. It's the only way to recover your wallet if you get locked out or get
-        a new device.
+        this in a safe place. It&apos;s the only way to recover your wallet if you get locked out or
+        get a new device.
       </TextContainer>
       <Buttons>
         <Button

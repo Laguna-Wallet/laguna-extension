@@ -31,8 +31,9 @@ export default function AddressBook() {
       <MenuHeader
         isOpen={isOpen}
         setOpen={setOpen}
-        onClose={() => goTo(Wallet)}
         title="Address Book"
+        onClose={() => goTo(Wallet)}
+        backAction={() => goTo(Wallet, { isMenuOpen: true })}
       />
       <Content>
         {addresses?.length === 0 ? (
@@ -48,7 +49,7 @@ export default function AddressBook() {
               <StyledLink
                 key={address.address}
                 component={AddAddress}
-                props={{ edit: true, ...address }}>
+                props={{ edit: true, closeAction: () => goTo(Wallet), ...address }}>
                 <AddressComponent>
                   <Text>
                     {address.addressName}({truncateString(address.address)}){' '}
@@ -60,7 +61,7 @@ export default function AddressBook() {
           </AddressesContainer>
         )}
 
-        <StyledLink component={AddAddress} props={{ closeAction: () => goTo(AddressBook) }}>
+        <StyledLink component={AddAddress} props={{ closeAction: () => goTo(Wallet) }}>
           <Button
             text="Add Address"
             Icon={<PlusIcon width={17} />}

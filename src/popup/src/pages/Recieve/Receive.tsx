@@ -5,50 +5,35 @@ import { Wizard } from 'react-use-wizard';
 import SelectAsset from './SelectAsset';
 import { useEffect, useState } from 'react';
 import RecieveToken from './RecieveToken';
-import { accountsTie, getApiInstance, recodeAddress } from 'utils/polkadot';
+import { accountsTie, getApiInstance, getAssets, recodeAddress } from 'utils/polkadot';
+import { useSelector } from 'react-redux';
 
 export default function Receive() {
   const account = useAccount();
   const activeAccount = account.getActiveAccount();
-  const [assets, setAssets] = useState<Asset[]>([
-    {
-      balance: '0.0100',
-      calculatedPrice: 0,
-      chain: 'westend',
-      name: 'Polkadot',
-      price: 0,
-      symbol: 'wnd'
-    },
-    {
-      balance: '1.0000',
-      calculatedPrice: 29.63,
-      chain: 'polkadot',
-      name: 'Polkadot',
-      price: 29.63,
-      symbol: 'dot'
-    },
-    {
-      balance: '1.0000',
-      calculatedPrice: 29.63,
-      chain: 'kusama',
-      name: 'Kusama',
-      price: 29.63,
-      symbol: 'ksm'
+  const [assets, setAssets] = useState<Asset[]>([]);
+
+  const { prices, infos } = useSelector((state: any) => state.wallet);
+
+  const { accountsBalances } = useSelector((state: any) => state.wallet);
+  // todo proper typing
+  const currentAccountBalance =
+    accountsBalances &&
+    accountsBalances.find(
+      (balances: any) => balances.address === account.getActiveAccount().address
+    );
+
+  // TODO REFETCH NETWORKS FROM STORAGE
+  useEffect(() => {
+    async function go() {
+      const { assets }: any = await getAssets(prices, infos, currentAccountBalance);
+      console.log('~ assets', assets);
+      setAssets(assets);
     }
-  ]);
 
-  // useEffect(() => {
-  //   async function go() {
-  //     // TODO proper typing
-  //     const { assets }: any = await getAssets(activeAccount?.address);
-  //     setAssets(assets);
-  //     setSelectedAsset(assets[0]);
-  //   }
+    go();
+  }, []);
 
-  //   if (activeAccount) {
-  //     go();
-  //   }
-  // }, [account.getActiveAccount()]);
   const [selectedAsset, setSelectedAsset] = useState<Asset>();
   const [recoded, setRecoded] = useState<string>('');
   useEffect(() => {

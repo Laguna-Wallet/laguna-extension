@@ -24,6 +24,7 @@ import { truncateString } from 'utils';
 import BigNumber from 'bignumber.js';
 import { useDispatch, useSelector } from 'react-redux';
 import { setBlockHash } from 'redux/actions';
+import { formValueSelector, getFormValues } from 'redux-form';
 
 type Props = {
   fee: string;
@@ -31,32 +32,24 @@ type Props = {
 };
 function Confirm({ fee, transfer }: Props) {
   const account = useAccount();
-  const reduxSendTokenState = useSelector((state: any) => state.sendToken);
-
-  const form = useSelector((state: any) => state);
-
-  console.count('rerender');
-  console.log('~ stateiii', form);
-
   const dispatch = useDispatch();
+  const { address, amount, token } = useSelector((state: any) => state.form.sendToken.values);
+  const selectedAsset = useSelector((state: any) => state.sendToken.selectedAsset);
+  console.log('~ selectedToken', selectedAsset);
+
+  const { prices } = useSelector((state: any) => state.wallet);
+
+  const price = prices[selectedAsset.name.toLowerCase()].usd;
 
   const { nextStep, previousStep } = useWizard();
 
-  const total = calculateSelectedTokenExchange(
-    reduxSendTokenState.amount,
-    reduxSendTokenState.selectedAsset.price
-  );
+  const total = calculateSelectedTokenExchange(amount, price);
 
   const handleClick = async () => {
     const pair = keyring.getPair(account.getActiveAccount().address);
 
     // todo dynamic password
     pair.unlock('neodzeneodze');
-
-    // todo proper typing
-    // const api = await getApiInstance(reduxSendTokenState.selectedAsset.chain as string);
-    // const prefix = api.consts.system.ss58Prefix;
-    // const recoded = recodeAddress(reduxSendTokenState.address, prefix);
 
     // Todo Proper handling
     const unsub = await transfer
@@ -82,11 +75,10 @@ function Confirm({ fee, transfer }: Props) {
           I want to <br />
           send{' '}
           <span>
-            {reduxSendTokenState.amount} {reduxSendTokenState?.selectedToken}
+            {amount} {token}
           </span>{' '}
           {/* todo actual name of the wallet */}
-          <br /> from <span>SkyWalker</span> <br /> to{' '}
-          <span>{truncateString(reduxSendTokenState.address)}</span>
+          <br /> from <span>SkyWalker</span> <br /> to <span>{truncateString(address)}</span>
         </Text>
 
         <Info>
@@ -94,12 +86,12 @@ function Confirm({ fee, transfer }: Props) {
             Fee ={' '}
             <span>
               {/* {new BigNumber(fee).div(new BigNumber(10).pow(10))}{' '} */}
-              {new BigNumber(fee).toFixed(3) || '...'} {reduxSendTokenState.selectedAsset.symbol}
+              {new BigNumber(fee).toFixed(3) || '...'} {token}
               ($
               {new BigNumber(
                 calculateSelectedTokenExchange(
                   new BigNumber(fee).div(new BigNumber(10).pow(10)).toString(),
-                  reduxSendTokenState?.selectedAsset?.price as number
+                  price as number
                 )
               ).toFixed(2)}
               )

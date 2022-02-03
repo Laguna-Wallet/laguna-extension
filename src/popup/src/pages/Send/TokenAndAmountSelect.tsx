@@ -1,46 +1,51 @@
 import { FormikProps } from 'formik/dist/types';
-import { SendTokenFormikValues } from 'pages/Send/Send';
+import { Field } from 'redux-form';
 import styled from 'styled-components';
 import { Asset } from 'utils/types';
 
 type Props = {
-  options: string[];
-  token: string;
-  onChangeToken: (token: string) => void;
-  amount: string;
-  onChangeAmount: (amount: string) => void;
-  defaultValue: string;
+  tokens: string[];
 };
 
-export default function TokenAndAmountSelect({
-  amount,
-  onChangeAmount,
-  token,
-  onChangeToken,
-  options,
-  defaultValue
-}: Props) {
-  const handleChange = (e: any) => {
-    onChangeToken(e.target.value);
-  };
-
+export default function TokenAndAmountSelect({ tokens }: Props) {
   return (
     <Container>
-      <StyledInput
-        value={amount}
-        onChange={(e) => onChangeAmount(e.target.value)}
-        placeholder="Enter Amount"
-      />
-      <StyledSelect defaultValue={defaultValue} onChange={handleChange} name="dots" id="dots">
-        {options.map((symbol) => (
+      <Field name="amount" type="text" label="amount" component={Input} />
+      <Field name="token" label="token" options={tokens} component={renderSelect} />
+    </Container>
+  );
+}
+
+const renderSelect = (props: any) => {
+  return (
+    <StyledSelect
+      name={props?.input?.name}
+      value={props?.input?.value || props.options[0]}
+      onChange={props?.input?.onChange}
+      onBlur={() => props?.input?.onBlur(props?.input?.value)}>
+      {props?.options &&
+        props?.options.map((symbol: string) => (
           <StyledOption key={symbol} value={symbol}>
             {symbol.toUpperCase()}
           </StyledOption>
         ))}
-      </StyledSelect>
-    </Container>
+    </StyledSelect>
+    // <StyledSelect
+    //   {...props.input}
+    //   onBlur={() => {
+    //     props.input.onBlur(props.input.value);
+    //   }}
+    //   options={props.options}
+    //   placeholder={props.label}
+    //   resetValue={props.meta.initial}
+    //   simpleValue
+    // />
   );
-}
+};
+
+const Input = ({ input: { value, onChange } }: any) => (
+  <StyledInput value={value} onChange={onChange} placeholder="Enter Amount" />
+);
 
 const Container = styled.div`
   width: 100%;

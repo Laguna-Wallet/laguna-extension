@@ -60,3 +60,16 @@ export function executeTemporarily(callback: () => void, milliseconds: number) {
 
   Loop()
 }
+
+export function transformTransfers(transfers: any[], chain: string) {
+  return transfers.map((transfer) => ({
+    chain,
+    amount: transfer?.amount,
+    fee: transfer?.fee,
+    from: transfer?.from,
+    to: transfer?.to,
+    nonce: transfer?.nonce,
+    hash: transfer?.hash,
+    timestamp: transfer?.block_timestamp,
+  }))
+}

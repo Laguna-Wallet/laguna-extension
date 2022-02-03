@@ -24,7 +24,8 @@ export enum StorageKeys {
   ActiveAccount = 'active-account',
   TokenPrices = 'token-prices',
   TokenInfos = 'token-infos',
-  AccountBalances = 'account-balances'
+  AccountBalances = 'account-balances',
+  Transactions = 'transactions'
 }
 
 //==============================================================================
@@ -57,7 +58,8 @@ export type Prices = Record<string, Record<string, number>>;
 export enum Messages {
   PriceUpdated = 'PRICES_UPDATED',
   CoinInfoUpdated = 'COIN_INFO_UPDATED',
-  AccountsBalanceUpdated = 'ACCOUNTS_BALANCE_UPDATED'
+  AccountsBalanceUpdated = 'ACCOUNTS_BALANCE_UPDATED',
+  TransactionsUpdated = 'TRANSACTIONS_UPDATED'
 }
 
 //==============================================================================

@@ -1,5 +1,4 @@
 import { FormikProps } from 'formik/dist/types';
-import { SendTokenFormikValues } from 'pages/Send/Send';
 import styled from 'styled-components';
 import { getApiInstance } from 'utils/polkadot';
 import { Asset } from 'utils/types';

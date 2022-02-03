@@ -9,24 +9,71 @@ import { getApiInstance } from 'utils/polkadot';
 import { useEffect } from 'react';
 import ThreeDotsIcon from 'assets/svgComponents/ThreeDotsIcon';
 import ActivityInfo from './ActivityInfo';
+import { useSelector } from 'react-redux';
+import { FixedSizeList as List } from 'react-window';
+import { truncateString } from 'utils';
+import { format, compareAsc } from 'date-fns';
+import RightArrow from 'assets/svgComponents/RightArrow';
+import { PlusIcon } from '@heroicons/react/outline';
+import PolkadotLogoIcon from 'assets/svgComponents/PolkadotLogoIcon';
+import KusamaLogoIcon from 'assets/svgComponents/KusamaLogoIcon';
+import KusamaIcon from 'assets/svgComponents/KusamaIcon';
 
 type Props = {
   isMenuOpen?: boolean;
 };
 
+const Row = ({ transaction }: any) => {
+  const account = useAccount();
+
+  const isSent = (accountAddress: string, from: string) => {
+    if (accountAddress === from) return true;
+    return false;
+  };
+
+  const currAccountAddress = account.getActiveAccount().address;
+
+  return (
+    <ActivityItem>
+      <StyledLink component={ActivityInfo} props={{ transaction }}>
+        <Icon>
+          {handleIcons(transaction.chain)}
+          {isSent(currAccountAddress, transaction.from) ? (
+            <IconContainer bgColor="#0324ff">
+              <RightArrow width={15} stroke="#fff" />
+            </IconContainer>
+          ) : (
+            <IconContainer bgColor="#b9e260">
+              <PlusIcon width={15} stroke="#fff" />
+            </IconContainer>
+          )}
+        </Icon>
+        <Info>
+          <InfoTop>{transaction.amount} </InfoTop>
+          <InfoBottom>
+            {truncateString(transaction.to)}
+            {'  '} {format(new Date(transaction.timestamp), 'dd MMM yyyy')}
+          </InfoBottom>
+        </Info>
+        <Actions>
+          <ThreeDotsIcon />
+        </Actions>
+      </StyledLink>
+    </ActivityItem>
+  );
+};
+
 export default function Activity() {
   const account = useAccount();
 
-  // useEffect(() => {
-  // async function go() {
-  //   const api = await getApiInstance('westend');
-  //   console.log('~ api', api);
-  //   const blocks = api.query.transactionStorage.blockTransactions;
-  //   console.log(blocks);
-  // }
+  const wallet = useSelector((state: any) => state.wallet);
+  const transactions = wallet?.transactions[account.getActiveAccount().address];
 
-  // go();
-  // }, []);
+  const sortedTransactions =
+    transactions &&
+    transactions.sort(
+      (a: any, b: any) => (new Date(b.timestamp) as any) - (new Date(a.timestamp) as any)
+    );
 
   return (
     <Container bg={walletBG}>
@@ -34,24 +81,30 @@ export default function Activity() {
 
       <Content>
         <ActivityItemsContainer>
-          <ActivityItem>
-            <StyledLink component={ActivityInfo}>
-              <Icon></Icon>
-              <Info>
-                <InfoTop>33.11 Dot</InfoTop>
-                <InfoBottom>to H32x...3Df</InfoBottom>
-              </Info>
-              <Actions>
-                <ThreeDotsIcon />
-              </Actions>
-            </StyledLink>
-          </ActivityItem>
+          {sortedTransactions.map((transaction: any) => {
+            return <Row key={transaction.hex} transaction={transaction} />;
+          })}
         </ActivityItemsContainer>
       </Content>
 
       <Footer activeItem="activity" />
     </Container>
   );
+}
+
+function handleIcons(chain: any) {
+  switch (chain) {
+    case 'westend':
+      return <PolkadotLogoIcon width={20} height={20} />;
+      break;
+    case 'polkadot':
+      return <PolkadotLogoIcon width={20} height={20} />;
+      break;
+    case 'kusama':
+      return <KusamaLogoIcon fill="#111" stroke="#111" />;
+      break;
+    default:
+  }
 }
 
 const Container = styled.div<{ bg: string }>`
@@ -69,8 +122,9 @@ const Container = styled.div<{ bg: string }>`
 `;
 
 const Content = styled.div`
-  display: flex;
   width: 100%;
+  height: 100%;
+  display: flex;
   flex-direction: column;
   padding: 15px;
   box-sizing: border-box;
@@ -78,9 +132,13 @@ const Content = styled.div`
 
 const ActivityItemsContainer = styled.div`
   width: 100%;
+  height: 100%;
+  overflow: scroll;
+  height: auto;
   display: flex;
   flex-direction: column;
   margin-top: 75px;
+  padding-bottom: 20px;
 `;
 
 const ActivityItem = styled.div`
@@ -89,6 +147,7 @@ const ActivityItem = styled.div`
   background-color: #fff;
   border-radius: 4px;
   cursor: pointer;
+  margin-top: 10px;
 `;
 
 const StyledLink = styled(Link)`
@@ -106,6 +165,23 @@ const Icon = styled.div`
   height: 36px;
   border-radius: 100%;
   background-color: #eeeeee;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const IconContainer = styled.div<{ bgColor?: string }>`
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 100%;
+  background-color: ${({ bgColor }) => bgColor};
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
 `;
 
 const Info = styled.span`
@@ -121,6 +197,7 @@ const InfoTop = styled.span`
 `;
 
 const InfoBottom = styled.div`
+  font-weight: 500;
   font-size: 12px;
   color: #757575;
 `;

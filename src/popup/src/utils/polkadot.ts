@@ -231,7 +231,6 @@ export function getNetworks(prices: Prices, tokenInfos: Network[]): Network[] {
 // Todo refactor
 // Todo Appropriate Typing
 export async function getAssets(
-  accountAddress: string,
   prices: Prices,
   tokenInfos: Network[],
   balances: any
@@ -244,7 +243,8 @@ export async function getAssets(
 > {
   if (!balances) return [];
 
-  const networks = await getNetworks(prices, tokenInfos);
+  const networks = getNetworks(prices, tokenInfos);
+
   let overallBalance = 0;
   const assets: Asset[] = [];
 
@@ -253,6 +253,9 @@ export async function getAssets(
       const { name, symbol, chain, node } = networks[i];
 
       const balance = balances?.balances[chain];
+
+      if (!balance) continue;
+
       const price = prices[chain]?.usd;
 
       // todo rename calculatedBalance
@@ -274,8 +277,6 @@ export async function getAssets(
       console.log('err', err);
     }
   }
-
-  console.log('successfully fetched');
 
   return { overallBalance, assets };
 }
