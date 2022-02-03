@@ -11,12 +11,33 @@ import ThreeDotsIcon from 'assets/svgComponents/ThreeDotsIcon';
 import ActivityInfo from './ActivityInfo';
 import CloseIcon from 'assets/svgComponents/CloseIcon';
 import Activity from './Activity';
+import { truncateString } from 'utils';
+import BigNumber from 'bignumber.js';
+import { useSelector } from 'react-redux';
 
 type Props = {
-  isMenuOpen?: boolean;
+  transaction?: any;
 };
 
-export default function AccountInfo() {
+export default function AccountInfo({ transaction }: Props) {
+  // amount: "1"
+  // chain: "westend"
+  // fee: "15900001486"
+  // from: "5HpLdCTNBQDjFomqpG2XWadgB4zHTuqQqNHhUyYbett7k1RR"
+  // hash: "0xdbc210c697103c771793c1238f4c948af93a237f5a5dfbc89ce434f5b29afe5b"
+  // nonce: "5GKLCbq6FPC9ZP8z36SHKzTYGVwuvp44h2U5dnLovTFVbJiV"
+  // timestamp: 1643647704
+  // to: "5GKLCbq6FPC9ZP8z36SHKzTYGVwuvp44h2U5dnLovTFVbJiV"
+
+  const { from, to, nonce, amount, fee, chain, hash } = transaction;
+  console.log('~ hash', hash);
+  const prices = useSelector((state: any) => state.wallet.prices);
+  const price = prices[chain];
+
+  const onClick = (hash: any) => {
+    chrome.windows.create({ url: `https://polkadot.js.org/apps/#/explorer/query/${hash}` });
+  };
+
   return (
     <Container>
       <ContentItem>
@@ -28,20 +49,28 @@ export default function AccountInfo() {
         </Title>
         <Row>
           <RowLeft>Status</RowLeft>
-          <RowRight>View on Polkadot explorer</RowRight>
+          <RowRight style={{ cursor: 'pointer' }} onClick={() => onClick(hash)}>
+            View on Polkadot explorer
+          </RowRight>
         </Row>
         <Row>
           <RowLeft>Confirmed</RowLeft>
-          <RowRight>Copy Transaction ID</RowRight>
+          <RowRight
+            style={{ cursor: 'pointer' }}
+            onClick={() => {
+              navigator.clipboard.writeText(hash);
+            }}>
+            Copy Transaction ID
+          </RowRight>
         </Row>
         <Row>
           <Direction>
             <span>From</span>
-            <Address>T66z...8luK</Address>
+            <Address>{truncateString(from)}</Address>
           </Direction>
           <Direction>
             <span>To</span>
-            <Address>T66z...8luK</Address>
+            <Address>{truncateString(to)}</Address>
           </Direction>
         </Row>
       </ContentItem>
@@ -52,21 +81,24 @@ export default function AccountInfo() {
         </Title>
         <Row>
           <RowLeft>Nonce</RowLeft>
-          <RowRight>18</RowRight>
+          <RowRight>{nonce}</RowRight>
         </Row>
         <Row>
           <RowLeft>Amount</RowLeft>
-          <RowRight>2.03 DOT</RowRight>
+          <RowRight>{amount}</RowRight>
         </Row>
         <Row>
           <RowLeft>Gas Fee</RowLeft>
-          <RowRight>0.001 DOT</RowRight>
+          <RowRight>{fee}</RowRight>
         </Row>
         <Row>
           <RowLeft> Total</RowLeft>
           <RowRight>
             <TotalValue>
-              <span>2.03 DOT</span> <span>$112.21 USD</span>
+              <span>{new BigNumber(amount).plus(fee).toNumber()} DOT</span>{' '}
+              <span>
+                {price && price} {new BigNumber(amount).plus(fee).toNumber()}USD
+              </span>
             </TotalValue>
           </RowRight>
         </Row>

@@ -11,6 +11,7 @@ import useOutsideClick from 'hooks/useOutsideClick';
 import { addAccountMeta } from 'utils/polkadot';
 import { saveToStorage } from 'utils/chrome';
 import { StorageKeys } from 'utils/types';
+import AddressBook from 'pages/AddressBook/AddressBook';
 
 type Props = {
   isOpen: boolean;
@@ -21,7 +22,14 @@ type Props = {
   backAction?: () => void;
 };
 
-export default function MenuHeader({ isOpen, setOpen, showUser, onClose, title }: Props) {
+export default function MenuHeader({
+  isOpen,
+  setOpen,
+  showUser,
+  onClose,
+  title,
+  backAction
+}: Props) {
   const account = useAccount();
   const [name, setName] = useState(account.getActiveAccount()?.meta?.name);
   const [editMode, setEditMode] = useState<boolean>(false);
@@ -57,7 +65,7 @@ export default function MenuHeader({ isOpen, setOpen, showUser, onClose, title }
       </Header>
       {title && (
         <Title>
-          <LeftArrowContainer onClick={() => goTo(Wallet, { isMenuOpen: true })}>
+          <LeftArrowContainer onClick={backAction}>
             <LeftArrowIcon width={30} stroke="#fff" />
           </LeftArrowContainer>
           <TitleText>{title}</TitleText>

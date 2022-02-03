@@ -1,31 +1,24 @@
-import Header from 'pages/Wallet/Header';
+import { useState } from 'react';
 import styled from 'styled-components';
+
+import Header from 'pages/Wallet/Header';
 import walletBG from 'assets/imgs/walletBG.jpg';
 import Wallet from 'pages/Wallet/Wallet';
 import HumbleInput from 'components/primitives/HumbleInput';
-import { Dispatch, useEffect, useState } from 'react';
 // Todo Move ChainItem Into Shared
 import ChainItem from '../../pages/Wallet/ChainItem';
 import { useAccount } from 'context/AccountContext';
-import { getAssets } from 'utils/polkadot';
-import { goTo, Link } from 'react-chrome-extension-router';
-import {
-  SendTokenActions,
-  SendTokenActionsEnum,
-  SendTokenFormikValues,
-  SendTokenState
-} from './Send';
+import { goTo } from 'react-chrome-extension-router';
 import { Asset } from 'utils/types';
 import { useWizard } from 'react-use-wizard';
-import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import { selectAsset } from 'redux/actions';
 
 type Props = {
-  state: SendTokenState;
+  assets: undefined | Asset[];
 };
 
-export default function SelectAsset({ state }: Props) {
+export default function SelectAsset({ assets }: Props) {
   const account = useAccount();
   const dispatch = useDispatch();
 
@@ -59,10 +52,10 @@ export default function SelectAsset({ state }: Props) {
           marginTop="20px"
         />
         <List>
-          {state?.assets
-            ? state?.assets.length === 0
+          {assets
+            ? assets.length === 0
               ? 'no assets'
-              : renderAssets(state?.assets, assetsFilter).map((asset: Asset) => {
+              : renderAssets(assets, assetsFilter).map((asset: Asset) => {
                   return (
                     <ChainItemContainer onClick={() => handleClick(asset)} key={asset.symbol}>
                       <ChainItem

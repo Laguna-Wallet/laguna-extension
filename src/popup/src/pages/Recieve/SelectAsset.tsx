@@ -21,10 +21,15 @@ type Props = {
 export default function SelectAsset({ assets, selectedAsset, setSelectedAsset }: Props) {
   const account = useAccount();
   const { nextStep } = useWizard();
+  const [assetsFilter, setAssetsFilter] = useState<string>('');
 
   const handleClick = (asset: Asset) => {
     setSelectedAsset(asset);
     nextStep();
+  };
+
+  const renderAssets = (assets: Asset[], assetsFilter: string) => {
+    return assets.filter((asset) => asset.name.toLowerCase().includes(assetsFilter.toLowerCase()));
   };
 
   return (
@@ -34,9 +39,9 @@ export default function SelectAsset({ assets, selectedAsset, setSelectedAsset }:
         <HumbleInput
           id="id"
           type="text"
-          value={''}
-          onChange={(e: React.FormEvent<HTMLInputElement>) => {
-            console.log('ura');
+          value={assetsFilter}
+          onChange={(e: any) => {
+            setAssetsFilter(e.target.value);
           }}
           bgColor={'#ececec'}
           borderColor={'#ececec'}

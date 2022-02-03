@@ -68,7 +68,7 @@ export default function AddAddress({
         return;
       }
 
-      if (addressExists(newAddress)) {
+      if (!edit && addressExists(newAddress)) {
         setIsSnackbarOpen(true);
         setSnackbarError('Address already exists');
         return;
@@ -120,8 +120,9 @@ export default function AddAddress({
       <MenuHeader
         isOpen={isOpen}
         setOpen={setOpen}
-        onClose={() => closeAction()}
         title={`${edit ? 'Edit' : 'Add'} Address`}
+        onClose={closeAction}
+        backAction={() => goTo(AddressBook)}
       />
       <Content>
         <Form onSubmit={formik.handleSubmit}>

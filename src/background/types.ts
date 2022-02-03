@@ -6,12 +6,14 @@ export enum StorageKeys {
   TokenPrices = "token-prices",
   TokenInfos = "token-infos",
   AccountBalances = "account-balances",
+  Transactions = "transactions",
 }
 
 export enum Messages {
   PriceUpdated = "PRICES_UPDATED",
   CoinInfoUpdated = "COIN_INFO_UPDATED",
   AccountsBalanceUpdated = "ACCOUNTS_BALANCE_UPDATED",
+  TransactionsUpdated = "TRANSACTIONS_UPDATED",
 }
 
 export const chains = ["westend", "polkadot", "kusama"]

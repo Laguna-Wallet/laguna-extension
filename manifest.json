@@ -3,7 +3,7 @@
   "name": "HydrogenX Wallet",
   "version": "1.0.0",
   "description": "HydrogenX Polkadot Wallet",
-  "permissions": ["background", "storage", "notifications", "alarms"],
+  "permissions": ["background", "storage", "notifications", "alarms", "clipboardRead"],
   "browser_action": {
     "default_popup": "popup/index.html",
     "default_title": "HydrogenX Polkadot Wallet"

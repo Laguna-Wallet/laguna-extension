@@ -1,4 +1,5 @@
 import ErrorIcon from 'assets/svgComponents/ErrorIcon';
+import { useRef } from 'react';
 import styled from 'styled-components/macro';
 
 type InputProps = {
@@ -21,6 +22,7 @@ type InputProps = {
   bgColor?: string;
   hideErrorMsg?: boolean;
   autoFocus?: boolean;
+  input?: any;
 };
 
 export default function HumbleInput({
@@ -41,8 +43,11 @@ export default function HumbleInput({
   bgColor,
   hideErrorMsg,
   autoFocus,
-  color
+  color,
+  input
 }: InputProps) {
+  const inputRef = useRef<any>(null);
+
   return (
     <Container marginBottom={marginBottom}>
       <InputContainer
@@ -55,8 +60,8 @@ export default function HumbleInput({
         {type === 'textarea' ? (
           <StyledTextarea
             id={id}
-            value={value}
-            onChange={onChange}
+            value={value || input?.value}
+            onChange={onChange || input?.onChange}
             placeholder={placeholder}
             fontSize={fontSize}
             textAlign={textAlign}
@@ -64,17 +69,31 @@ export default function HumbleInput({
             color={color}
           />
         ) : (
-          <StyledInput
-            id={id}
-            value={value}
-            onChange={onChange}
-            type={type}
-            placeholder={placeholder}
-            fontSize={fontSize}
-            bgColor={bgColor}
-            autoFocus={!!autoFocus}
-            color={color}
-          />
+          <>
+            <StyledInput
+              ref={inputRef}
+              id={id}
+              value={value || input?.value}
+              onChange={onChange || input?.onChange}
+              type={type}
+              placeholder={placeholder}
+              fontSize={fontSize}
+              bgColor={bgColor}
+              autoFocus={!!autoFocus}
+              color={color}
+            />
+            {/* <Paste
+              onClick={async () => {
+                try {
+                  const text = await navigator.clipboard.readText();
+                  console.log('~ text', text);
+                } catch (err) {
+                  console.log('err', err);
+                }
+              }}>
+              Paste
+            </Paste> */}
+          </>
         )}
       </InputContainer>
     </Container>
@@ -117,7 +136,7 @@ const StyledInput = styled.input<{ fontSize?: string; bgColor?: string; color?: 
   appearance: none;
   outline: none;
   background-color: ${({ bgColor }) => (bgColor ? bgColor : '#fff')};
-  color: ${({ color }) => (color ? color : '#fff')};
+  color: ${({ color }) => (color ? color : '#111')};
 
   &:focus {
     outline: none;
@@ -142,6 +161,8 @@ const StyledTextarea = styled.textarea<{
   font-size: 20px;
   font-family: 'SFCompactDisplayRegular';
 `;
+
+const Paste = styled.div``;
 
 const ErrorContainer = styled.div`
   display: flex;

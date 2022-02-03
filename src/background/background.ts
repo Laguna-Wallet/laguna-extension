@@ -1,5 +1,5 @@
 import { Messages, StorageKeys } from "./types"
-import { fetchAccountsBalances, fetchAccountsData, networkConnectors, Retrieve_Coin_Infos, Retrieve_Coin_Prices } from "./api"
+import { fetchAccountsBalances, fetchAccountsData, fetchAccountsTransactions, networkConnectors, Retrieve_Coin_Infos, Retrieve_Coin_Prices } from "./api"
 import { saveToStorage } from "./utils"
 
 chrome.runtime.onInstalled.addListener(async () => {
@@ -19,7 +19,9 @@ chrome.runtime.onInstalled.addListener(async () => {
 
   chrome.alarms.create("refetch-account-balances", { periodInMinutes: 3 })
 
-  await fetchAccountsBalances()
+  fetchAccountsBalances()
+
+  fetchAccountsTransactions()
 })
 
 chrome.runtime.onStartup.addListener(function () {

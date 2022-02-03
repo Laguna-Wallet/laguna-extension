@@ -62,7 +62,7 @@ const AccountProvider: FunctionComponent = ({ children }: { children?: ReactNode
 
   const getEncryptedPassword = useMemo(() => getFromStorage(StorageKeys.Encoded), []);
 
-  const getActiveAccount = () => {
+  const getActiveAccount = useCallback(() => {
     // if no account in the storage than insert first one from keyring
     if (!activeAccount) {
       const accounts = keyring.getAccounts();
@@ -73,7 +73,7 @@ const AccountProvider: FunctionComponent = ({ children }: { children?: ReactNode
     }
 
     return activeAccount;
-  };
+  }, [activeAccount]);
 
   const saveActiveAccount = (account: any) => {
     saveToStorage({ key: StorageKeys.ActiveAccount, value: JSON.stringify(account) });
