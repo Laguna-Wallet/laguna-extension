@@ -31,9 +31,9 @@ function Snackbar({ children, type, top, bottom, left, right, isOpen, close, mes
   }, [isOpen]);
 
   return (
-    <div>
+    <Container top={top} bottom={bottom} left={left} right={right}>
       <CSSTransition in={isOpen} timeout={200} classNames="my-node" unmountOnExit>
-        <Container type={type} top={top} bottom={bottom} left={left} right={right}>
+        <Content type={type}>
           {children || (
             <>
               <CloseIconContainer>
@@ -42,35 +42,39 @@ function Snackbar({ children, type, top, bottom, left, right, isOpen, close, mes
               <ErrorMessage>{message}</ErrorMessage>
             </>
           )}
-        </Container>
+        </Content>
       </CSSTransition>
-    </div>
+    </Container>
   );
 }
 
 export default memo(Snackbar);
 
-const Container = styled.div<{
-  type: string;
-  top?: string;
-  bottom?: string;
-  left?: string;
-  right?: string;
-  isSnackbarOpen?: boolean;
-}>`
+const Container = styled.div<{ top?: string; bottom?: string; left?: string; right?: string }>`
   width: 100%;
   height: 46px;
-  display: flex;
-  align-items: center;
-  background-color: ${({ type }) => detectColor(type)};
-  border-radius: 5px;
-  padding: 10px;
+  padding: 15px;
   box-sizing: border-box;
   position: absolute;
+  border-radius: 5px;
   top: ${({ top }) => top && top};
   bottom: ${({ bottom }) => bottom && bottom};
   left: ${({ left }) => left && left};
   right: ${({ right }) => right && right};
+`;
+
+const Content = styled.div<{
+  type: string;
+  isSnackbarOpen?: boolean;
+}>`
+  width: 100%;
+  height: 46px;
+  padding: 0 10px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  background-color: ${({ type }) => detectColor(type)};
+  border-radius: 5px;
 `;
 
 const ErrorMessage = styled.div`

@@ -8,8 +8,6 @@ const infos = getFromStorage(StorageKeys.TokenInfos);
 const accountsBalances = getFromStorage(StorageKeys.AccountBalances);
 const transactions = getFromStorage(StorageKeys.Transactions);
 
-console.log('~ transactions', transactions);
-
 const initialState: any = {
   wallet: {
     prices: prices ? JSON.parse(prices) : {},

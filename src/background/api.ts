@@ -87,7 +87,6 @@ export async function fetchAccountsTransactions() {
   let accountTransfers = []
   for (let i = 0; i < addresses.length; i++) {
     for (let j = 0; j < chains.length; j++) {
-      console.log("~ chains", chains[j])
       await timer(500)
 
       const res = await fetchTransactions(addresses[i], chains[j], page)
@@ -125,7 +124,6 @@ export async function fetchAccountsTransactions() {
 }
 
 export async function fetchTransactions(address: string, chain: string, page: number) {
-  console.log("~ page", page)
   const res = await fetch(`https://${chain}.api.subscan.io/api/scan/transfers`, {
     method: "POST",
     mode: "cors",

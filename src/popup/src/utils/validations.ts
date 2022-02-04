@@ -71,3 +71,9 @@ export const validateSeedPhase = (values: any) => {
   }
   return errors;
 };
+
+export function isNumeric(str: string) {
+  if (typeof str != 'string') return false;
+
+  return !isNaN(str as any) && !isNaN(parseFloat(str));
+}

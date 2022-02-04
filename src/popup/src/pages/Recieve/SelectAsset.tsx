@@ -50,14 +50,20 @@ export default function SelectAsset({ assets, selectedAsset, setSelectedAsset }:
           marginTop="20px"
         />
         <List>
-          {assets &&
-            assets.map((asset: Asset) => {
-              return (
-                <ChainItemContainer onClick={() => handleClick(asset)} key={asset.symbol}>
-                  <ChainItem asset={asset} accountAddress={account.getActiveAccount()?.address} />
-                </ChainItemContainer>
-              );
-            })}
+          {assets
+            ? assets.length === 0
+              ? 'no assets'
+              : renderAssets(assets, assetsFilter).map((asset: Asset) => {
+                  return (
+                    <ChainItemContainer onClick={() => handleClick(asset)} key={asset.symbol}>
+                      <ChainItem
+                        asset={asset}
+                        accountAddress={account.getActiveAccount()?.address}
+                      />
+                    </ChainItemContainer>
+                  );
+                })
+            : 'Loading...'}
         </List>
       </Content>
     </Container>

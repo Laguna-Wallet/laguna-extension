@@ -306,7 +306,3 @@ export function isKeyringPairs$Json(
 ): json is KeyringPairs$Json {
   return json.encoding.content.includes('batch-pkcs8');
 }
-
-export function calculateSelectedTokenExchange(amount: string, price: number): number {
-  return Number(amount) * Number(price);
-}
