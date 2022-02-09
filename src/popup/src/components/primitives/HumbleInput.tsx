@@ -26,6 +26,7 @@ type InputProps = {
   input?: any;
   truncate?: boolean;
   copy?: boolean;
+  rightLabel?: string;
 };
 
 export default function HumbleInput({
@@ -49,10 +50,11 @@ export default function HumbleInput({
   color,
   input,
   copy,
-  truncate
+  truncate,
+  rightLabel
 }: InputProps) {
   const handleValue = (value: string) => {
-    if (!value) return;
+    if (!value) return '';
     if (truncate) {
       return truncateString(value, 9);
     }
@@ -100,6 +102,8 @@ export default function HumbleInput({
                 Copy
               </Copy>
             )}
+            {rightLabel && <RightLabel>{rightLabel}</RightLabel>}
+
             {/* </Paste> */}
             {/* <Paste
               onClick={async () => {
@@ -198,6 +202,14 @@ const Copy = styled.div`
   align-items: center;
   justify-content: center;
   cursor: pointer;
+`;
+
+const RightLabel = styled.span`
+  position: absolute;
+  right: 10px;
+  top: 12px;
+  color: #828282;
+  font-size: 16px;
 `;
 
 const ErrorContainer = styled.div`

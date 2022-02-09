@@ -124,6 +124,9 @@ const Container = styled.div`
   flex-direction: column;
   justify-content: space-between;
   position: relative;
+  background-color: #f8f8f8;
+  padding: 30px 16px 38px 16px;
+  box-sizing: border-box;
 `;
 
 const MainContent = styled.div``;

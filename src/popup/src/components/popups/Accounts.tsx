@@ -12,6 +12,7 @@ import { Link } from 'react-chrome-extension-router';
 import styled from 'styled-components';
 import { getAccounts } from 'utils/polkadot';
 import SignUp from 'pages/SignUp/SignUp';
+import AddImportForExistingUsers from 'pages/AddImportForExistingUsers/AddImportForExistingUsers';
 
 type Props = {
   // todo find out proper account typing
@@ -78,14 +79,15 @@ export default function Accounts({ setActiveAccount }: Props) {
             );
           })}
       </AccountsContainer>
-      <StyledLink component={SignUp}>
+      <StyledLink component={AddImportForExistingUsers}>
         <Button
           width="260px"
           type="button"
-          text="Add Account"
+          text="Add / Import Wallet"
           bgColor="#fff"
           color="#111"
           justify={'center'}
+          direction={'row-reverse'}
           fontFamily="Sequel100Wide55Wide"
           fontSize="11px"
           Icon={<PlusIcon width={16} />}

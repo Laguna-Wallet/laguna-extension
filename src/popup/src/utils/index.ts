@@ -79,7 +79,7 @@ export function exportJson(json: any) {
 
 export async function convertUploadedFileToJson(
   acceptedFile: File[]
-): Promise<KeyringPair$Json | KeyringPairs$Json | undefined> {
+): Promise<KeyringPair$Json | KeyringPairs$Json> {
   try {
     return await new Promise((resolve) => {
       const fileReader = new FileReader();
@@ -88,8 +88,8 @@ export async function convertUploadedFileToJson(
         resolve(JSON.parse(e.target.result));
       };
     });
-  } catch (err) {
-    console.log('err', err);
+  } catch (err: any) {
+    throw new Error(err.message);
   }
 }
 
@@ -111,6 +111,6 @@ export function isObjectEmpty(obj: Record<string, string>): boolean {
   return obj && Object.keys(obj).length === 0 && Object.getPrototypeOf(obj) === Object.prototype;
 }
 
-export function objectToArray(obj: Record<string, string>): any[] {
+export function objectToArray(obj: Record<string, unknown>): any[] {
   return Object.keys(obj).map((key) => [obj[key]]);
 }

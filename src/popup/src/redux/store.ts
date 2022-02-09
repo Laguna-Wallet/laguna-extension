@@ -7,13 +7,15 @@ const prices = getFromStorage(StorageKeys.TokenPrices);
 const infos = getFromStorage(StorageKeys.TokenInfos);
 const accountsBalances = getFromStorage(StorageKeys.AccountBalances);
 const transactions = getFromStorage(StorageKeys.Transactions);
+const idleTimeout = getFromStorage(StorageKeys.IdleTimeout);
 
 const initialState: any = {
   wallet: {
     prices: prices ? JSON.parse(prices) : {},
     infos: infos ? JSON.parse(infos) : [],
     accountsBalances: accountsBalances ? JSON.parse(accountsBalances) : [],
-    transactions: transactions ? JSON.parse(transactions) : []
+    transactions: transactions ? JSON.parse(transactions) : [],
+    idleTimeout: idleTimeout || 10
   }
 };
 

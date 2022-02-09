@@ -93,13 +93,6 @@ export default function Send({ initialIsContactsPopupOpen }: Props) {
         .plus(fees.toNumber())
         .plus(api.consts.balances.existentialDeposit.toNumber());
 
-      console.log(
-        '~ api.consts.balances.existentialDeposit.toNumber()',
-        api.consts.balances.existentialDeposit.toNumber()
-      );
-      console.log('~ fees.toNumber()', fees.toNumber());
-      console.log('~ total', total.toNumber(), available);
-
       if (total.gt(available)) {
         console.error(`Cannot transfer ${total} with ${available}`);
         setAbilityToTransfer(false);

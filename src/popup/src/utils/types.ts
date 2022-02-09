@@ -25,7 +25,8 @@ export enum StorageKeys {
   TokenPrices = 'token-prices',
   TokenInfos = 'token-infos',
   AccountBalances = 'account-balances',
-  Transactions = 'transactions'
+  Transactions = 'transactions',
+  IdleTimeout = 'idle-timeout'
 }
 
 //==============================================================================

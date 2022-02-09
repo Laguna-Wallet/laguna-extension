@@ -75,7 +75,7 @@ export function validateSeed(suri: string) {
 }
 
 // todo alter this function to createAccountFromSeed
-export function seedValidate(suri: string, type?: KeypairType) {
+export function importViaSeed(suri: string, password: string) {
   if (!suri) return false;
 
   const { phrase } = keyExtractSuri(suri);
@@ -89,8 +89,7 @@ export function seedValidate(suri: string, type?: KeypairType) {
 
   // todo revise with sam
   // todo move to separate function
-  const password = '123123123';
-  const account = keyring.addUri(suri);
+  const account = keyring.addUri(suri, password);
   return account;
 }
 
@@ -259,7 +258,7 @@ export async function getAssets(
       const price = prices[chain]?.usd;
 
       // todo rename calculatedBalance
-      const calculatedPrice = new BigNumber(balance).multipliedBy(price);
+      const calculatedPrice = new BigNumber(balance).multipliedBy(price || 0);
 
       if (price) {
         overallBalance += calculatedPrice.toNumber();
@@ -305,4 +304,46 @@ export function isKeyringPairs$Json(
   json: KeyringPair$Json | KeyringPairs$Json
 ): json is KeyringPairs$Json {
   return json.encoding.content.includes('batch-pkcs8');
+}
+
+export function isKeyringJson(json: KeyringPair$Json): json is KeyringPair$Json {
+  try {
+    const {
+      address,
+      meta: { genesisHash, name },
+      type
+    } = keyring.createFromJson(json);
+
+    return !!address;
+  } catch (e) {
+    return false;
+  }
+}
+
+export async function isValidKeyringPassword(
+  json: KeyringPair$Json | KeyringPairs$Json,
+  password: string
+): Promise<boolean> {
+  try {
+    // yet this is the only way found
+    // to check if password is valid, for batch json file
+    if (isKeyringPairs$Json(json)) {
+      // if password if wrong function will throw error
+      keyring.restoreAccounts(json, password);
+      // in this function we wan't to check if password is valid
+      // without storing accounts,
+      json.accounts.map(({ address }) => {
+        keyring.forgetAccount(address);
+      });
+      return true;
+    } else {
+      const newPair = keyring.createFromJson(json);
+      newPair.unlock(password);
+      if (!newPair.isLocked) return true;
+    }
+
+    return false;
+  } catch (err) {
+    return false;
+  }
 }

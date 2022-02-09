@@ -31,7 +31,7 @@ function Snackbar({ children, type, top, bottom, left, right, isOpen, close, mes
   }, [isOpen]);
 
   return (
-    <Container top={top} bottom={bottom} left={left} right={right}>
+    <Container top={top} bottom={bottom} left={left} right={right} isOpen={isOpen}>
       <CSSTransition in={isOpen} timeout={200} classNames="my-node" unmountOnExit>
         <Content type={type}>
           {children || (
@@ -50,22 +50,30 @@ function Snackbar({ children, type, top, bottom, left, right, isOpen, close, mes
 
 export default memo(Snackbar);
 
-const Container = styled.div<{ top?: string; bottom?: string; left?: string; right?: string }>`
+const Container = styled.div<{
+  top?: string;
+  bottom?: string;
+  left?: string;
+  right?: string;
+  isOpen?: boolean;
+}>`
   width: 100%;
   height: 46px;
-  padding: 15px;
+  /* padding: 15px; */
   box-sizing: border-box;
   position: absolute;
   border-radius: 5px;
+  padding: 0 16px;
+  box-sizing: border-box;
   top: ${({ top }) => top && top};
   bottom: ${({ bottom }) => bottom && bottom};
   left: ${({ left }) => left && left};
   right: ${({ right }) => right && right};
+  display: ${({ isOpen }) => (isOpen ? 'block' : 'none')};
 `;
 
 const Content = styled.div<{
   type: string;
-  isSnackbarOpen?: boolean;
 }>`
   width: 100%;
   height: 46px;

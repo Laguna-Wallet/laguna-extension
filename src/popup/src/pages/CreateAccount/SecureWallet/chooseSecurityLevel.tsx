@@ -4,28 +4,42 @@ import { ConfirmSecuritySkip } from 'components/popups/ConfirmSecuritySkip';
 import { MnemonicsDescription } from 'components/popups/MnemonicsDescription';
 import Button from 'components/primitives/Button';
 import { PageContainer } from 'components/ui';
+import WizardHeader from 'pages/AddImportForExistingUsers/WizardHeader';
+import Wallet from 'pages/Wallet/Wallet';
 import { useState } from 'react';
+import { goTo } from 'react-chrome-extension-router';
 import { useWizard } from 'react-use-wizard';
 import styled from 'styled-components';
 import { SecurityOptions, SecurityOptionsEnum } from 'utils/types';
 import SecurityInfo from './securityInfo';
 import PopupContainer from './securityInfo';
 
+// todo onBack Prop wizard
+
 export default function ChooseSecurityLevel() {
   const [securityType, setSecurityType] = useState<SecurityOptions>(undefined);
-  const { nextStep } = useWizard();
+  const { nextStep, previousStep } = useWizard();
 
   const [isMnemonicDescriptionOpen, setIsMnemonicDescriptionOpen] = useState<boolean>();
   const [isConfirmSkipOpen, setConfirmSkipOpen] = useState<boolean>();
 
   return (
     <Container>
+      <WizardHeader
+        title={'SECURE YOUR WALLET'}
+        onClose={() => {
+          goTo(Wallet);
+        }}
+        onBack={() => {
+          previousStep();
+        }}
+      />
+
       {isMnemonicDescriptionOpen && (
         <MnemonicsDescription onClose={() => setIsMnemonicDescriptionOpen(false)} />
       )}
       {isConfirmSkipOpen && <ConfirmSecuritySkip />}
 
-      <Title>SECURE YOUR WALLET</Title>
       <IconContainer>
         <Icon></Icon>
       </IconContainer>
@@ -37,6 +51,7 @@ export default function ChooseSecurityLevel() {
       </TextContainer>
       <Buttons>
         <Button
+          type="button"
           onClick={() => setConfirmSkipOpen(true)}
           Icon={<RightArrow width={23} />}
           text={'Remind me Later'}
@@ -45,6 +60,7 @@ export default function ChooseSecurityLevel() {
           color={'#111'}
         />
         <Button
+          type="button"
           onClick={() => nextStep()}
           Icon={<RightArrow width={23} fill="#fff" />}
           text={'Start'}
@@ -61,6 +77,9 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  background-color: #fff;
+  padding: 30px 16px 38px 16px;
+  box-sizing: border-box;
 `;
 
 const Title = styled.span`
@@ -99,5 +118,5 @@ const TextContainer = styled.div`
 `;
 
 const Buttons = styled.div`
-  /* margin-top: auto; */
+  margin-top: auto;
 `;

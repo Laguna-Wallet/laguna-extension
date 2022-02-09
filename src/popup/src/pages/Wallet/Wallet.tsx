@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { ApiPromise, WsProvider, Keyring } from '@polkadot/api';
 import Config from 'config/config.json';
@@ -21,12 +21,14 @@ import Receive from 'pages/Recieve/Receive';
 import BigNumber from 'bignumber.js';
 import keyring from '@polkadot/ui-keyring';
 import { useSelector } from 'react-redux';
+import { mnemonicGenerate } from '@polkadot/util-crypto';
+import { randomAsHex } from '@polkadot/util-crypto';
 
 type Props = {
   isMenuOpen?: boolean;
 };
 
-export default function Wallet({ isMenuOpen }: Props) {
+function Wallet({ isMenuOpen }: Props) {
   const account = useAccount();
   const [assets, setAssets] = useState<any>([]);
   const [networks, setNetworks] = useState<any>([]);
@@ -71,8 +73,6 @@ export default function Wallet({ isMenuOpen }: Props) {
     const networks = getNetworks(prices, infos).filter((network) => network.symbol !== 'wnd');
     setNetworks(networks);
   }, [prices, infos]);
-
-  const state = useSelector((state: any) => state);
 
   return (
     <Container bg={walletBG}>
@@ -140,6 +140,8 @@ export default function Wallet({ isMenuOpen }: Props) {
   );
 }
 
+export default memo(Wallet);
+
 const Container = styled.div<{ bg: string }>`
   width: 100%;
   height: 100%;
@@ -159,6 +161,7 @@ const Content = styled.div`
   width: 100%;
   flex-direction: column;
   padding: 15px;
+  box-sizing: border-box;
 `;
 
 const BalanceContainer = styled.div`

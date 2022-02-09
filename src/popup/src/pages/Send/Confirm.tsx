@@ -88,10 +88,7 @@ function Confirm({ fee, transfer }: Props) {
 
         <Info>
           <InfoItem>
-            Fee ={' '}
-            <span>
-              {selectedAsset?.chain !== 'westend' && new BigNumber(fee).toFormat(4) + `${token}`}
-            </span>
+            Fee = <span>{new BigNumber(fee).toFormat(4) + `${token}`}</span>
           </InfoItem>
           {console.log('~ selectedAsset?.chain', selectedAsset?.chain)}
 

@@ -10,6 +10,7 @@ type Props = {
   bgImage?: string;
   textColor?: string;
   justify?: string;
+  direction?: string;
   type?: 'button' | 'submit' | 'reset' | undefined;
   disabled?: boolean;
   color?: string;
@@ -30,6 +31,7 @@ export default function Button({ Icon, text, bgColor = '#111', ...rest }: Props)
 
 const StyledButton = styled.button<{
   justify?: string;
+  direction?: string;
   bgColor?: string;
   bgImage?: string;
   disabled?: boolean;
@@ -41,6 +43,7 @@ const StyledButton = styled.button<{
 }>`
   width: ${({ width }) => width || '100%'};
   display: flex;
+  flex-direction: ${({ direction }) => direction || 'row'};
   justify-content: ${({ justify }) => justify || 'space-between'};
   align-items: center;
   height: 46px;
@@ -61,5 +64,5 @@ const StyledButton = styled.button<{
 `;
 
 const Text = styled.div`
-  margin-right: 10px;
+  margin: 0 5px;
 `;

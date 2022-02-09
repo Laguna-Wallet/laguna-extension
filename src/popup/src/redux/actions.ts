@@ -64,3 +64,10 @@ export function changeTransactions(transactions: Record<string, number>) {
     payload: { transactions }
   };
 }
+
+export function changeIdleTimeout(idleTimeout: string) {
+  return {
+    type: 'CHANGE_IDLE_TIMEOUT',
+    payload: { idleTimeout }
+  };
+}

@@ -14,29 +14,26 @@ import Activity from './Activity';
 import { truncateString } from 'utils';
 import BigNumber from 'bignumber.js';
 import { useSelector } from 'react-redux';
+import BN from 'bn.js';
 
 type Props = {
   transaction?: any;
 };
 
 export default function AccountInfo({ transaction }: Props) {
-  // amount: "1"
-  // chain: "westend"
-  // fee: "15900001486"
-  // from: "5HpLdCTNBQDjFomqpG2XWadgB4zHTuqQqNHhUyYbett7k1RR"
-  // hash: "0xdbc210c697103c771793c1238f4c948af93a237f5a5dfbc89ce434f5b29afe5b"
-  // nonce: "5GKLCbq6FPC9ZP8z36SHKzTYGVwuvp44h2U5dnLovTFVbJiV"
-  // timestamp: 1643647704
-  // to: "5GKLCbq6FPC9ZP8z36SHKzTYGVwuvp44h2U5dnLovTFVbJiV"
-
   const { from, to, nonce, amount, fee, chain, hash } = transaction;
-  console.log('~ hash', hash);
   const prices = useSelector((state: any) => state.wallet.prices);
   const price = prices[chain];
 
   const onClick = (hash: any) => {
     chrome.windows.create({ url: `https://polkadot.js.org/apps/#/explorer/query/${hash}` });
   };
+
+  const factor = new BigNumber(10).pow(10);
+
+  const calculatedFee = new BigNumber(new BN(fee).muln(110).divn(100).toNumber())
+    .div(factor)
+    .toFixed(4);
 
   return (
     <Container>
@@ -89,16 +86,16 @@ export default function AccountInfo({ transaction }: Props) {
         </Row>
         <Row>
           <RowLeft>Gas Fee</RowLeft>
-          <RowRight>{fee}</RowRight>
+          <RowRight>
+            {new BigNumber(new BN(fee).muln(110).divn(100).toNumber()).div(factor).toFixed(4)}
+          </RowRight>
         </Row>
         <Row>
           <RowLeft> Total</RowLeft>
           <RowRight>
             <TotalValue>
-              <span>{new BigNumber(amount).plus(fee).toNumber()} DOT</span>{' '}
-              <span>
-                {price && price} {new BigNumber(amount).plus(fee).toNumber()}USD
-              </span>
+              <span> {calculatedFee}</span>{' '}
+              {/* <span>{new BigNumber(Number(calculatedFee) + Number(amount)).toFixed(4)} USD</span> */}
             </TotalValue>
           </RowRight>
         </Row>

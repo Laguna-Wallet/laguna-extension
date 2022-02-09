@@ -4,6 +4,10 @@ import * as yup from 'yup';
 import { isHex } from '@polkadot/util';
 import { SEED_LENGTHS } from './types';
 import { mnemonicValidate } from '@polkadot/util-crypto';
+import { isKeyringPairs$Json } from './polkadot';
+import { KeyringPair$Json } from '@polkadot/keyring/types';
+import { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
+import { convertUploadedFileToJson } from 'utils';
 
 export const createPasswordSchema = yup.object({
   password: yup
@@ -72,8 +76,11 @@ export const validateSeedPhase = (values: any) => {
   return errors;
 };
 
-export function isNumeric(str: string) {
+export function isNumeric(str: string | number) {
   if (typeof str != 'string') return false;
-
   return !isNaN(str as any) && !isNaN(parseFloat(str));
+}
+
+export function parseNumeric(str: string) {
+  return str.replace(/[^0-9\.]+/g, '');
 }
