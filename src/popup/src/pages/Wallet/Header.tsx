@@ -9,6 +9,7 @@ import { useAccount } from 'context/AccountContext';
 import Menu from 'components/Menu/Menu';
 import LeftArrowIcon from 'assets/svgComponents/LeftArrowIcon';
 import CloseIcon from 'assets/svgComponents/CloseIcon';
+import { truncateString } from 'utils';
 
 type Props = {
   title?: string;
@@ -24,13 +25,16 @@ export default function Header({ title, backAction, iconStyle, menuInitialOpenSt
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(menuInitialOpenState || false);
   const [isHamburgerOpen, setOpen] = useState<boolean>(false);
 
+  const name = account.getActiveAccount().meta.name;
+  const formattedName = name.length > 15 ? truncateString(name) : name;
+
   return (
     <Container>
       {isMenuOpen && <Menu onClose={() => setIsMenuOpen(false)} />}
       <Content>
         <UserContainer>
           <Avatar />
-          <UserName>{account.getActiveAccount().meta.name}</UserName>
+          <UserName>{formattedName}</UserName>
           <DownIconContainer onClick={() => setIsPopupOpen(true)}>
             <DownArrowIcon />
           </DownIconContainer>

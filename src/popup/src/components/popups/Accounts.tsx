@@ -13,6 +13,7 @@ import styled from 'styled-components';
 import { getAccounts } from 'utils/polkadot';
 import SignUp from 'pages/SignUp/SignUp';
 import AddImportForExistingUsers from 'pages/AddImportForExistingUsers/AddImportForExistingUsers';
+import { truncateString } from 'utils';
 
 type Props = {
   // todo find out proper account typing
@@ -24,6 +25,10 @@ export default function Accounts({ setActiveAccount }: Props) {
   // todo save in storage
   const [accounts, setAccounts] = useState(getAccounts());
   const [activeAccountIndex, setActiveAccountIndex] = useState(0);
+
+  const formatName = (name: string) => {
+    return name.length > 12 ? truncateString(name) : name;
+  };
 
   const handleSetActiveAccount = (
     e: React.MouseEvent<HTMLDivElement>,
@@ -63,7 +68,7 @@ export default function Accounts({ setActiveAccount }: Props) {
                 onClick={(e) => handleSetActiveAccount(e, account, index)}
                 key={account.address}>
                 <AccountIcon />
-                <span>{account.meta.name}</span>
+                <span>{account?.meta?.name && formatName(account?.meta?.name)}</span>
 
                 <Icons>
                   <Link component={ExportAccount} props={{ address: account.address }}>

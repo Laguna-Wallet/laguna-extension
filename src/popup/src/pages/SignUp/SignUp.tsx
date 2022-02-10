@@ -7,7 +7,8 @@ import { PageContainer } from 'components/ui';
 import DonutIcon from 'assets/svgComponents/DonutIcon';
 // import donut from '../../assets/imgs/donut.png';
 import donut from 'assets/imgs/donut.png';
-import { useEffect } from 'react';
+
+import ImportAccount from 'pages/AddImportForExistingUsers/ImportAccount';
 
 export default function SignUp() {
   return (
@@ -18,10 +19,10 @@ export default function SignUp() {
       <MainSection>
         <Title>HYDROX</Title>
         <Description>Polkadot Wallet for Web 3.0</Description>
-        <StyledLink component={CreateAccount}>
+        <StyledLink component={CreateAccount} props={{ redirectedFromSignUp: true }}>
           <Button text="Create New Wallet" margin="40px 0 0 0" justify="center" />
         </StyledLink>
-        <StyledLink component={ImportWallet}>
+        <StyledLink component={ImportAccount} props={{ redirectedFromSignUp: true }}>
           <Button
             text="Import Wallet"
             bgColor="#fff"
@@ -40,7 +41,6 @@ export default function SignUp() {
 const IconSection = styled.div`
   width: 100%;
   height: 330px;
-
   position: relative;
 `;
 

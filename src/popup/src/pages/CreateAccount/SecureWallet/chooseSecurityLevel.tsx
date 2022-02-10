@@ -5,19 +5,30 @@ import { MnemonicsDescription } from 'components/popups/MnemonicsDescription';
 import Button from 'components/primitives/Button';
 import { PageContainer } from 'components/ui';
 import WizardHeader from 'pages/AddImportForExistingUsers/WizardHeader';
+import SignUp from 'pages/SignUp/SignUp';
 import Wallet from 'pages/Wallet/Wallet';
 import { useState } from 'react';
 import { goTo } from 'react-chrome-extension-router';
 import { useWizard } from 'react-use-wizard';
 import styled from 'styled-components';
 import { SecurityOptions, SecurityOptionsEnum } from 'utils/types';
+import { LevelEnum } from './SecureWallet';
 import SecurityInfo from './securityInfo';
 import PopupContainer from './securityInfo';
 
 // todo onBack Prop wizard
 
-export default function ChooseSecurityLevel() {
-  const [securityType, setSecurityType] = useState<SecurityOptions>(undefined);
+type Props = {
+  setLevel: (level: string) => void;
+  nextStepFromParent: () => void;
+  redirectedFromSignUp?: boolean;
+};
+
+export default function ChooseSecurityLevel({
+  setLevel,
+  nextStepFromParent,
+  redirectedFromSignUp
+}: Props) {
   const { nextStep, previousStep } = useWizard();
 
   const [isMnemonicDescriptionOpen, setIsMnemonicDescriptionOpen] = useState<boolean>();
@@ -28,17 +39,31 @@ export default function ChooseSecurityLevel() {
       <WizardHeader
         title={'SECURE YOUR WALLET'}
         onClose={() => {
-          goTo(Wallet);
+          if (redirectedFromSignUp) {
+            goTo(SignUp);
+          } else {
+            goTo(Wallet);
+          }
         }}
         onBack={() => {
-          previousStep();
+          if (redirectedFromSignUp) {
+            goTo(SignUp);
+          } else {
+            previousStep();
+          }
         }}
       />
 
       {isMnemonicDescriptionOpen && (
         <MnemonicsDescription onClose={() => setIsMnemonicDescriptionOpen(false)} />
       )}
-      {isConfirmSkipOpen && <ConfirmSecuritySkip />}
+      {isConfirmSkipOpen && (
+        <ConfirmSecuritySkip
+          setLevel={setLevel}
+          nextStepFromParent={nextStepFromParent}
+          nextStep={nextStep}
+        />
+      )}
 
       <IconContainer>
         <Icon></Icon>
@@ -61,7 +86,10 @@ export default function ChooseSecurityLevel() {
         />
         <Button
           type="button"
-          onClick={() => nextStep()}
+          onClick={() => {
+            setLevel(LevelEnum.Secured);
+            nextStep();
+          }}
           Icon={<RightArrow width={23} fill="#fff" />}
           text={'Start'}
           margin="14px 0px 0px 0px"

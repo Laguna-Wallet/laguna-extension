@@ -1,14 +1,6 @@
-import { Link } from 'react-chrome-extension-router';
-import styled from 'styled-components';
-import { PageContainer } from 'components/ui';
 import { Wizard } from 'react-use-wizard';
 import AddImport from './AddImport';
-import ImportPhase from 'pages/ImportWallet/importPhase';
 import { useState } from 'react';
-import { connect } from 'react-redux';
-import { getFormSyncErrors, reduxForm } from 'redux-form';
-import EncodeAccount from './EncodeAccount';
-import { SEED_LENGTHS } from 'utils/types';
 import CreateAccount from 'pages/CreateAccount/CreateAccount';
 import ImportAccount from './ImportAccount';
 

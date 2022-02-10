@@ -55,6 +55,10 @@ export default function MenuHeader({
     }
   };
 
+  const formatName = (name: string) => {
+    return name.length > 12 ? truncateString(name) : name;
+  };
+
   return (
     <Container>
       <Header>
@@ -78,7 +82,7 @@ export default function MenuHeader({
             <Name>
               <NameInput
                 ref={inputRef}
-                value={name}
+                value={formatName(name)}
                 onChange={(e) => setName(e.target.value)}
                 readOnly={!editMode}
                 onKeyDown={(e) => {

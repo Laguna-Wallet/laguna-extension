@@ -18,7 +18,7 @@ function CreatePassword() {
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
 
   const account = useAccount();
-
+  // todo refactor, change formik to redux-form
   const formik = useFormik({
     initialValues: {
       password: '',
@@ -34,17 +34,18 @@ function CreatePassword() {
   const passwordLength = passwordStrength(formik.values.password).value;
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e?.preventDefault();
-    formik.handleSubmit();
-
     if (!formik.isValid) {
       setIsSnackbarOpen(true);
+      return;
     }
+
+    e?.preventDefault();
+    formik.handleSubmit();
   };
 
   return (
     <Container>
-      <Form onSubmit={handleSubmit}>
+      <Form>
         <MainContent>
           <Title>CREATE PASSWORD</Title>
           <Description>Please create a secure password to unlock your HydroX wallet:</Description>
@@ -83,15 +84,18 @@ function CreatePassword() {
         </MainContent>
         <Snackbar
           isOpen={isSnackbarOpen}
+          message="Please fix the existing errors"
           close={() => setIsSnackbarOpen(false)}
           type="error"
-          bottom="50px">
-          <CloseIconContainer>
-            <CloseIcon stroke="#111" />
-          </CloseIconContainer>
-          <ErrorMessage>Please fix the existing errors</ErrorMessage>
-        </Snackbar>
-        <Button type="submit" Icon={<RightArrow width={23} />} text={'Create Password'} />
+          left="0"
+          bottom="90px"
+        />
+        <Button
+          type="button"
+          onClick={handleSubmit}
+          Icon={<RightArrow width={23} />}
+          text={'Create Password'}
+        />
       </Form>
     </Container>
   );
@@ -103,8 +107,10 @@ const Container = styled.div`
   width: 100%;
   height: 100%;
   box-sizing: border-box;
-  margin-top: 24px;
   position: relative;
+  background-color: #f8f8f8;
+  padding: 30px 16px 38px 16px;
+  box-sizing: border-box;
 `;
 
 const Form = styled.form`

@@ -18,27 +18,6 @@ import { StorageKeys } from 'utils/types';
 export default memo(function CongratsSecuringWallet() {
   const account = useAccount();
 
-  useEffect(() => {
-    const { password, mnemonics, getEncryptedPassword } = account;
-
-    const encoded = getEncryptedPassword();
-    const passwordToSet = encoded ? encoded : encryptPassword({ password });
-
-    const { pair, json } = generateKeyPair(passwordToSet, mnemonics.join(' '));
-
-    pair.unlock(passwordToSet);
-
-    keyring.saveAccount(pair);
-
-    account.setJson(json);
-
-    saveToStorage({ key: StorageKeys.SignedIn, value: 'true' });
-    saveToStorage({
-      key: StorageKeys.Encoded,
-      value: passwordToSet
-    });
-  }, []);
-
   return (
     <Container>
       <MainContent>

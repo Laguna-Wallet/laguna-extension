@@ -4,7 +4,7 @@ import { saveToStorage } from "./utils"
 
 chrome.runtime.onInstalled.addListener(async () => {
   console.log("onInstalled...")
-
+  
   const prices = await Retrieve_Coin_Prices()
   chrome.runtime.sendMessage({ type: Messages.PriceUpdated, payload: JSON.stringify(prices) })
   saveToStorage({ key: StorageKeys.TokenPrices, value: JSON.stringify(prices) })
@@ -18,6 +18,11 @@ chrome.runtime.onInstalled.addListener(async () => {
   chrome.alarms.create("refresh", { periodInMinutes: 1 })
 
   chrome.alarms.create("refetch-account-balances", { periodInMinutes: 3 })
+
+  chrome.idle.setDetectionInterval(15)
+  chrome.idle.onStateChanged.addListener((status: string) => {
+    console.log("status", status)
+  })
 
   fetchAccountsBalances()
 

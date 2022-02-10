@@ -5,7 +5,7 @@ import Button from 'components/primitives/Button';
 import HumbleInput from 'components/primitives/HumbleInput';
 import Snackbar from 'components/Snackbar/Snackbar';
 import Wallet from 'pages/Wallet/Wallet';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { goTo } from 'react-chrome-extension-router';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
@@ -13,45 +13,24 @@ import { importJson, importViaSeed, validatePassword } from 'utils/polkadot';
 import WizardHeader from './WizardHeader';
 
 import { useWizard } from 'react-use-wizard';
+import { saveToStorage } from 'utils/chrome';
+import { StorageKeys } from 'utils/types';
+import DiscordIcon from 'assets/svgComponents/DiscordIcon';
+import TwitterIcon from 'assets/svgComponents/twitterIcon';
 
-type Props = {
-  handleEncode: (password: string) => void;
-  onClose: () => void;
-  onBack: (backAction: () => void) => void;
-};
-
-export default function EncodeAccount({ handleEncode, onClose, onBack }: Props) {
+export default function EncodeAccount() {
   const [password, setPassword] = useState<string>('');
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
   const [snackbarError, setSnackbarError] = useState<string>('');
   const { nextStep, previousStep } = useWizard();
 
-  const onClick = (password: string) => {
-    const isValid = validatePassword(password);
-
-    if (!isValid) {
-      setIsSnackbarOpen(true);
-      setSnackbarError('Invalid Password');
-      return;
-    }
-
-    try {
-      handleEncode(password);
-      nextStep();
-    } catch (err: any) {
-      // todo proper typing
-      setIsSnackbarOpen(true);
-      setSnackbarError(err.message);
-    }
-  };
+  useEffect(() => {
+    saveToStorage({ key: StorageKeys.SignedIn, value: 'true' });
+  }, []);
 
   return (
     <Container>
-      <WizardHeader
-        title={'IMPORT COMPLETE!'}
-        onClose={onClose}
-        onBack={() => onBack(previousStep)}
-      />
+      <WizardHeader title={'SETUP COMPLETE!!'} onClose={() => goTo(Wallet)} onBack={previousStep} />
       <Content>
         <IconContainer>
           <CheckMarkContainer>
@@ -64,25 +43,30 @@ export default function EncodeAccount({ handleEncode, onClose, onBack }: Props) 
             <LockIcon />
           </LockContainer>
         </IconContainer>
-        <Title>To encrypt your new wallet please enter your password:</Title>
+        <Title>
+          Connect with our community to stay up to date with feature updates and opportunities.
+        </Title>
+        <LinksContainer>
+          <LinkContainer>
+            <LinkIconContainer>
+              <DiscordIcon width={22} height={22} />
+            </LinkIconContainer>
+            <span>Join our Discord</span>
+          </LinkContainer>
+          <LinkContainer>
+            <LinkIconContainer>
+              <TwitterIcon width={22} height={22} />
+            </LinkIconContainer>
+            <span>Follow us on Twitter</span>
+          </LinkContainer>
+        </LinksContainer>
         <BottomContainer>
-          {/* todo proper event typing */}
-          <HumbleInput
-            id="password"
-            type="password"
-            placeholder="Your password"
-            value={password}
-            bgColor=" #ececec"
-            color="#434343"
-            height="45px"
-            onChange={(e: any) => setPassword(e.target.value)}
-          />
           <Button
             type="button"
+            justify="center"
             margin="10px 0 0 0"
-            Icon={<RightArrow width={23} />}
-            text={'Import'}
-            onClick={() => onClick(password)}
+            text={'Finish'}
+            onClick={() => goTo(Wallet)}
           />
         </BottomContainer>
         <Snackbar
@@ -124,7 +108,7 @@ const IconContainer = styled.div`
   align-items: center;
   justify-content: center;
   position: relative;
-  margin-top: 40px;
+  margin-top: 25px;
 `;
 
 const Circle = styled.div`
@@ -161,6 +145,40 @@ const Title = styled.div`
   font-size: 17px;
   margin-top: 50px;
   font-family: 'SFCompactDisplayRegular';
+`;
+
+const LinksContainer = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-family: 'SFCompactDisplayRegular';
+  font-size: 14px;
+  font-weight: 600;
+  margin-top: auto;
+`;
+
+const LinkContainer = styled.div`
+  width: 190px;
+  height: 41px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ececec;
+  border-radius: 25px;
+  padding: 10px 16px;
+  box-sizing: border-box;
+  border-radius: 25px;
+  margin-top: 10px;
+  cursor: pointer;
+  span {
+    margin-right: auto;
+  }
+`;
+
+const LinkIconContainer = styled.div`
+  margin-right: auto;
 `;
 
 const BottomContainer = styled.div`

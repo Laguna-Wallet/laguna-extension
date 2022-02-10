@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 type Props = {
-  onClick?: () => void;
+  onClick?: (e?: any) => void;
   //todo proper typing
   width?: string;
   Icon?: any;

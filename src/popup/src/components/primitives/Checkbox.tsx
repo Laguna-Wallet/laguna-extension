@@ -1,9 +1,14 @@
 import styled from 'styled-components';
 
-export default function Checkbox() {
+type Props = {
+  value: any;
+  onChange: (value: any) => void;
+};
+
+export default function Checkbox({ value, onChange }: Props) {
   return (
     <Container>
-      <Input type="checkbox" />
+      <Input value={value} onChange={onChange} type="checkbox" />
     </Container>
   );
 }
