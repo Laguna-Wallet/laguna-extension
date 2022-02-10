@@ -8,9 +8,12 @@ import { ArrowSmRightIcon } from '@heroicons/react/outline';
 import { useWizard } from 'react-use-wizard';
 import { useAccount } from 'context/AccountContext';
 import RightArrow from 'assets/svgComponents/RightArrow';
+import WizardHeader from 'pages/AddImportForExistingUsers/WizardHeader';
+import { goTo } from 'react-chrome-extension-router';
+import Wallet from 'pages/Wallet/Wallet';
 
 export default function MnemonicsSeed() {
-  const { nextStep } = useWizard();
+  const { nextStep, previousStep } = useWizard();
 
   const handleClick = () => {
     nextStep();
@@ -20,8 +23,16 @@ export default function MnemonicsSeed() {
 
   return (
     <Container>
+      <WizardHeader
+        title={'SECURE YOUR WALLET'}
+        onClose={() => {
+          goTo(Wallet);
+        }}
+        onBack={() => {
+          previousStep();
+        }}
+      />
       <MainContent>
-        <Title>SECURE YOUR WALLET</Title>
         <Description>
           Please write this 12 word mnemonic seed phrase down in the exact order that it is shown
           below. Do not reveal this information to anyone.
@@ -57,6 +68,9 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  background-color: #f8f8f8;
+  padding: 30px 16px 38px 16px;
+  box-sizing: border-box;
 `;
 
 const MainContent = styled.div``;
@@ -72,6 +86,8 @@ const Description = styled.div`
   color: #767e93;
   line-height: 1.45;
   font-family: 'SFCompactDisplayRegular';
+  font-size: 16px;
+  text-align: left;
 `;
 
 const MnemonicsContainer = styled.div`

@@ -3,7 +3,7 @@ import Button from 'components/primitives/Button';
 import Checkbox from 'components/primitives/Checkbox';
 import { PageContainer } from 'components/ui';
 import { useWizard } from 'react-use-wizard';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 
 type Props = {
   onClose: () => void;
@@ -55,8 +55,8 @@ const MainContent = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 26px;
-  padding-bottom: 35px;
+  padding: 8px 16px 38px 16px;
+  box-sizing: border-box;
   background-color: #f8f8f9;
   border-top-left-radius: 5px;
   border-top-right-radius: 5px;

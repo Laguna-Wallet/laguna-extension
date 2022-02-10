@@ -67,7 +67,16 @@ export default function ConfirmSeed({ handleNextSection }: Props) {
   return (
     <Container>
       <MainContent>
-        <Title>CONFIRM YOUR SEED</Title>
+        <WizardHeader
+          title={'CONFIRM YOUR SEED'}
+          onClose={() => {
+            goTo(Wallet);
+          }}
+          onBack={() => {
+            previousStep();
+          }}
+        />
+
         <SelectWords>
           <Description>Select each word in the order it was presented to you:</Description>
           <WordsContainer>
@@ -124,6 +133,9 @@ const Container = styled.div`
   flex-direction: column;
   justify-content: space-between;
   position: relative;
+  background-color: #f8f8f8;
+  padding: 30px 16px 38px 16px;
+  box-sizing: border-box;
 `;
 
 const MainContent = styled.div``;

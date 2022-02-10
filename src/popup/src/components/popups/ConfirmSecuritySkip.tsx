@@ -1,26 +1,53 @@
 import ArrowSmRightIcon from '@heroicons/react/outline/ArrowSmRightIcon';
 import Button from 'components/primitives/Button';
 import Checkbox from 'components/primitives/Checkbox';
+import { LevelEnum } from 'pages/CreateAccount/SecureWallet/SecureWallet';
+import { useState } from 'react';
 import styled from 'styled-components';
 
-export function ConfirmSecuritySkip() {
+type Props = {
+  nextStep: () => void;
+  nextStepFromParent: () => void;
+  setLevel: (level: string) => void;
+};
+
+export function ConfirmSecuritySkip({ nextStep, nextStepFromParent, setLevel }: Props) {
+  const [checked, setChecked] = useState(false);
+
+  const handleSkip = () => {
+    if (checked) {
+      setLevel(LevelEnum.Skipped);
+      nextStepFromParent();
+    }
+  };
+
+  const handleSecure = () => {
+    setLevel(LevelEnum.Secured);
+    nextStep();
+  };
+
   return (
     <Container>
       <MainContent>
         <Title>Skip Account Security?</Title>
 
         <Description>
-          <Checkbox />
+          <Checkbox value={checked} onChange={setChecked} />
           <span> I understand that without a seed phrase I cannot restore my wallet</span>
         </Description>
 
         <ButtonContainer>
-          <Button Icon={<ArrowSmRightIcon className="w-5 h-5 text-white" />} text={'Secure Now'} />
+          <Button
+            onClick={handleSecure}
+            Icon={<ArrowSmRightIcon width={23} />}
+            text={'Secure Now'}
+          />
           <Gap />
           <Button
+            onClick={handleSkip}
             bgColor="transparent"
             color="#111"
-            Icon={<ArrowSmRightIcon className="w-5 h-5 text-black" />}
+            Icon={<ArrowSmRightIcon width={23} />}
             text={'Skip'}
           />
         </ButtonContainer>
@@ -47,7 +74,8 @@ const MainContent = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 14px 24px;
+  padding: 30px 16px 38px 16px;
+  box-sizing: border-box;
   background-color: #f8f8f9;
   border-top-left-radius: 5px;
   border-top-right-radius: 5px;
@@ -56,18 +84,19 @@ const MainContent = styled.div`
 const Title = styled.h3`
   width: 100%;
   font-size: 18px;
-  /* font-family: "SFCompactDisplay"; */
   font-weight: 600;
   line-height: 1.35;
   text-align: left;
   color: #090a0b;
+  margin: 0;
 `;
 
 const Description = styled.div`
   display: flex;
-  margin-top: 42px;
   color: #767e93;
   line-height: 1.45;
+  font-size: 16px;
+  margin-top: 20px;
   span {
     margin-left: 11px;
   }
@@ -76,7 +105,7 @@ const Description = styled.div`
 const ButtonContainer = styled.div`
   width: 100%;
   display: flex;
-  margin-top: 30px;
+  margin-top: auto;
 `;
 
 const Gap = styled.div`

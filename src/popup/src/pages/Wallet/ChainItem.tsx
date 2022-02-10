@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { Account_Search, Price_Converter } from 'utils/Api';
 import { getApiInstance } from 'utils/polkadot';
 import { Asset } from 'utils/types';
+import { isNumeric } from 'utils/validations';
 
 type Props = {
   accountAddress: string;
@@ -19,7 +20,7 @@ export default function ChainItem({ asset, accountAddress }: Props) {
         <NetworkIcons chain={asset.chain} />
       </ListItemIcon>
       <ListItemText>
-        <Title>{asset.name}</Title>
+        <Title>{asset.chain}</Title>
         <Tag>{asset.chain}</Tag>
       </ListItemText>
       <ListItemText>

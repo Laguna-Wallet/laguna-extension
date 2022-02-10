@@ -4,7 +4,7 @@ import { Asset } from 'utils/types';
 import { Wizard } from 'react-use-wizard';
 import SelectAsset from './SelectAsset';
 import { useEffect, useState } from 'react';
-import RecieveToken from './RecieveToken';
+import ReceiveToken from './ReceiveToken';
 import { accountsTie, getApiInstance, getAssets, recodeAddress } from 'utils/polkadot';
 import { useSelector } from 'react-redux';
 
@@ -60,7 +60,7 @@ export default function Receive() {
           selectedAsset={selectedAsset}
           setSelectedAsset={setSelectedAsset}
         />
-        <RecieveToken recoded={recoded} selectedAsset={selectedAsset} />
+        <ReceiveToken recoded={recoded} selectedAsset={selectedAsset} />
       </Wizard>
     </Container>
   );

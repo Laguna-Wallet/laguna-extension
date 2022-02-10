@@ -12,12 +12,12 @@ import { mnemonicGenerate } from '@polkadot/util-crypto/mnemonic';
 import { getFromStorage, saveToStorage } from 'utils/chrome';
 import { StorageKeys } from 'utils/types';
 import keyring from '@polkadot/ui-keyring';
+import { encryptPassword } from 'utils';
 
 // todoProperTyping
 interface IAccountCtx {
   mnemonics: string[];
-  password: string;
-  getEncryptedPassword: () => string | null;
+  encryptedPassword: string | null;
   setPassword: (password: string) => void;
   pair?: any;
   json: any;
@@ -29,9 +29,8 @@ interface IAccountCtx {
 // todoProperTyping
 const initialContextValue = {
   mnemonics: [],
-  password: '',
   setPassword: () => undefined,
-  getEncryptedPassword: () => null,
+  encryptedPassword: null,
   pair: {},
   json: {},
   setJson: () => undefined,
@@ -52,7 +51,6 @@ const useAccount = () => {
 };
 
 const AccountProvider: FunctionComponent = ({ children }: { children?: ReactNode }) => {
-  const [password, setPassword] = useState<string>('');
   const [json, setJson] = useState<any>('');
 
   const accountFromStorage = getFromStorage(StorageKeys.ActiveAccount);
@@ -60,7 +58,9 @@ const AccountProvider: FunctionComponent = ({ children }: { children?: ReactNode
     accountFromStorage && JSON.parse(accountFromStorage)
   );
 
-  const getEncryptedPassword = useMemo(() => getFromStorage(StorageKeys.Encoded), []);
+  const [encryptedPassword, setEncryptedPassword] = useState<string | null>(
+    getFromStorage(StorageKeys.Encoded)
+  );
 
   const getActiveAccount = useCallback(() => {
     // if no account in the storage than insert first one from keyring
@@ -77,15 +77,19 @@ const AccountProvider: FunctionComponent = ({ children }: { children?: ReactNode
 
   const saveActiveAccount = (account: any) => {
     saveToStorage({ key: StorageKeys.ActiveAccount, value: JSON.stringify(account) });
-
     setActiveAccount(account);
+  };
+
+  const setPassword = (password: string) => {
+    const encoded = encryptPassword({ password });
+    setEncryptedPassword(encoded);
+    saveToStorage({ key: StorageKeys.Encoded, value: encoded });
   };
 
   const value: IAccountCtx = {
     mnemonics: mnemonicGenerate().split(' '),
-    password,
     setPassword,
-    getEncryptedPassword: useCallback(() => getEncryptedPassword, []),
+    encryptedPassword,
     json,
     setJson,
     getActiveAccount,

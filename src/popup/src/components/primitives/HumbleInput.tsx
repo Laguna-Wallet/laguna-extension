@@ -1,6 +1,7 @@
 import ErrorIcon from 'assets/svgComponents/ErrorIcon';
 import { useRef } from 'react';
 import styled from 'styled-components/macro';
+import { truncateString } from 'utils';
 
 type InputProps = {
   id: string;
@@ -23,6 +24,9 @@ type InputProps = {
   hideErrorMsg?: boolean;
   autoFocus?: boolean;
   input?: any;
+  truncate?: boolean;
+  copy?: boolean;
+  rightLabel?: string;
 };
 
 export default function HumbleInput({
@@ -44,9 +48,18 @@ export default function HumbleInput({
   hideErrorMsg,
   autoFocus,
   color,
-  input
+  input,
+  copy,
+  truncate,
+  rightLabel
 }: InputProps) {
-  const inputRef = useRef<any>(null);
+  const handleValue = (value: string) => {
+    if (!value) return '';
+    if (truncate) {
+      return truncateString(value, 9);
+    }
+    return value;
+  };
 
   return (
     <Container marginBottom={marginBottom}>
@@ -71,9 +84,8 @@ export default function HumbleInput({
         ) : (
           <>
             <StyledInput
-              ref={inputRef}
               id={id}
-              value={value || input?.value}
+              value={handleValue(value || input?.value)}
               onChange={onChange || input?.onChange}
               type={type}
               placeholder={placeholder}
@@ -82,6 +94,17 @@ export default function HumbleInput({
               autoFocus={!!autoFocus}
               color={color}
             />
+            {copy && (
+              <Copy
+                onClick={() => {
+                  navigator.clipboard.writeText(value || input?.value);
+                }}>
+                Copy
+              </Copy>
+            )}
+            {rightLabel && <RightLabel>{rightLabel}</RightLabel>}
+
+            {/* </Paste> */}
             {/* <Paste
               onClick={async () => {
                 try {
@@ -125,6 +148,7 @@ const InputContainer = styled.div<{
   border-radius: 5px;
   background-color: ${({ bgColor }) => bgColor || '#fff'};
   margin-top: ${({ marginTop }) => marginTop || marginTop};
+  position: relative;
 `;
 
 const StyledInput = styled.input<{ fontSize?: string; bgColor?: string; color?: string }>`
@@ -163,6 +187,30 @@ const StyledTextarea = styled.textarea<{
 `;
 
 const Paste = styled.div``;
+
+const Copy = styled.div`
+  width: 95px;
+  height: 30px;
+  background-image: linear-gradient(to right, #1cc3ce, #b9e260);
+  position: absolute;
+  right: 10px;
+  border-radius: 5px;
+  color: #fff;
+  font-size: 16px;
+  font-family: 'SFCompactDisplayRegular';
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+`;
+
+const RightLabel = styled.span`
+  position: absolute;
+  right: 10px;
+  top: 12px;
+  color: #828282;
+  font-size: 16px;
+`;
 
 const ErrorContainer = styled.div`
   display: flex;

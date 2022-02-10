@@ -1,4 +1,6 @@
+import { PlusIcon } from '@heroicons/react/outline';
 import { KeyringPair$Json } from '@polkadot/keyring/types';
+import keyring from '@polkadot/ui-keyring';
 import { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
 import ActiveImportIcon from 'assets/svgComponents/ActiveImportIcon';
 import CloseIcon from 'assets/svgComponents/CloseIcon';
@@ -7,88 +9,121 @@ import RightArrow from 'assets/svgComponents/RightArrow';
 import UploadFinishedIcon from 'assets/svgComponents/UploadFinishedIcon';
 import Dnd from 'components/Dnd/Dnd';
 import Button from 'components/primitives/Button';
+import HumbleInput from 'components/primitives/HumbleInput';
 import Input from 'components/primitives/Input';
 import Snackbar from 'components/Snackbar/Snackbar';
-import { useFormik } from 'formik';
+import WizardHeader from 'pages/AddImportForExistingUsers/WizardHeader';
+import Wallet from 'pages/Wallet/Wallet';
 import { ReactNode, useCallback, useEffect, useState } from 'react';
+import { goTo } from 'react-chrome-extension-router';
 import { useDropzone } from 'react-dropzone';
+import { connect, useDispatch, useSelector } from 'react-redux';
 import { useWizard } from 'react-use-wizard';
+import { change, reset, Field, FormErrors, getFormSyncErrors } from 'redux-form';
 import styled from 'styled-components';
-import { convertUploadedFileToJson } from 'utils';
+import { convertUploadedFileToJson, objectToArray } from 'utils';
 import { saveToStorage } from 'utils/chrome';
-import { importJson, seedValidate, validateSeed } from 'utils/polkadot';
-import { StorageKeys } from 'utils/types';
-import { validateSeedPhase } from 'utils/validations';
+import {
+  importJson,
+  isKeyringJson,
+  isKeyringPairs$Json,
+  isValidKeyringPassword,
+  validateSeed
+} from 'utils/polkadot';
+// import { StorageKeys } from 'utils/types';
+// import { validateSeedPhase } from 'utils/validations';
 
-export default function ImportPhase() {
-  const { nextStep } = useWizard();
+type Props = {
+  errors: FormErrors<Record<string, unknown>, string>;
+};
+
+function ImportPhase({ errors }: Props) {
+  const { nextStep, previousStep } = useWizard();
+
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
   const [snackbarError, setSnackbarError] = useState<string>('');
+  const [uploaded, setUploaded] = useState<boolean>(false);
+
+  const formValues = useSelector((state: any) => state?.form?.AddImportAccount?.values);
+  const { seedPhase, file, password }: any = { ...formValues };
+  const dispatch = useDispatch();
 
   const onDrop = useCallback(async (acceptedFile) => {
+    if (!acceptedFile.length) return;
+
     const json = await convertUploadedFileToJson(acceptedFile);
-    formik.setFieldValue('file', json);
-    // setFile(json as KeyringPair$Json | KeyringPairs$Json);
+
+    if (isKeyringPairs$Json(json) || isKeyringJson(json)) {
+      setUploaded(true);
+      dispatch(change('AddImportAccount', 'file', json));
+    } else {
+      setIsSnackbarOpen(true);
+      setSnackbarError('Invalid json file');
+    }
   }, []);
 
   const { getRootProps, getInputProps, isDragActive, isDragAccept, acceptedFiles, open } =
     useDropzone({
       onDrop,
-      noClick: true
+      noClick: true,
+      accept: '.json'
     });
 
-  const formik = useFormik({
-    initialValues: {
-      seedPhase: '',
-      password: '',
-      file: undefined
-    },
-    validate: validateSeedPhase,
-    // validationSchema: welcomeBackSchema,
-    onSubmit: async ({ seedPhase, file, password }) => {
-      try {
-        if (file) {
-          const res = await importJson(
-            file as KeyringPair$Json | KeyringPairs$Json | undefined,
-            password
-          );
-        } else {
-          seedValidate(seedPhase);
-        }
-
-        saveToStorage({ key: StorageKeys.SignedIn, value: 'true' });
-        nextStep();
-      } catch (err: any) {
-        // todo proper typing
-        setIsSnackbarOpen(true);
-        setSnackbarError(err.message);
-      }
-    }
-  });
-
-  // todo refactor this function
   const isDisabled = () => {
-    if (!validateSeed(formik.values.seedPhase) || !(acceptedFiles.length > 0)) return false;
+    if (validateSeed(seedPhase) || uploaded) return false;
     return true;
   };
 
-  const fileUploaded = !!(acceptedFiles.length > 0);
+  // todo proper typing
+  const handleClick = async ({ seedPhase, file, password }: any) => {
+    try {
+      if (file) {
+        const isValid = await isValidKeyringPassword(file, password);
+        if (isValid) {
+          nextStep();
+        } else {
+          setIsSnackbarOpen(true);
+          setSnackbarError('Invalid password');
+        }
+      } else {
+        nextStep();
+      }
+
+      // saveToStorage({ key: StorageKeys.SignedIn, value: 'true' });
+    } catch (err: any) {
+      // todo proper error typing
+      setIsSnackbarOpen(true);
+      setSnackbarError(err.message);
+    }
+  };
 
   useEffect(() => {
-    if (formik.errors.seedPhase && !isSnackbarOpen) {
+    if (errors?.seedPhase && !isSnackbarOpen) {
+      const errorsArr = objectToArray(errors);
       setIsSnackbarOpen(true);
-      setSnackbarError(formik.errors.seedPhase);
+      setSnackbarError(errorsArr[0]);
     }
-  }, [formik.errors.seedPhase]);
+  }, [errors]);
 
   return (
     <Container>
-      <Form onSubmit={formik.handleSubmit}>
+      <WizardHeader
+        title={'IMPORT WALLET'}
+        onClose={() => {
+          goTo(Wallet);
+          dispatch(reset('AddImportAccount'));
+        }}
+        onBack={() => {
+          dispatch(reset('AddImportAccount'));
+          previousStep();
+        }}
+      />
+      <Content>
         <DndContainer {...getRootProps()} role={'Box'}>
-          {!formik.values.seedPhase && (
+          {!seedPhase && (
             <FileUploadContainer>
               <input {...getInputProps()} />
-              {fileUploaded ? (
+              {uploaded ? (
                 <IconContainerBorder>
                   <UploadedIconContainer>
                     <UploadFinishedIcon />
@@ -99,77 +134,91 @@ export default function ImportPhase() {
                   {isDragActive ? <ActiveImportIcon /> : <FileUploadIcon />}
                 </IconContainer>
               )}
-              {fileUploaded ? <Text>Upload Complete</Text> : ''}
+              {uploaded ? <Text>Upload Complete</Text> : ''}
             </FileUploadContainer>
           )}
 
-          {!fileUploaded && (
+          {!uploaded && (
             <InputContainer>
-              <Input
-                type="textarea"
+              <Field
                 id="seedPhase"
+                name="seedPhase"
+                type="textarea"
+                label="seedPhase"
                 placeholder="Enter your seed phrase, private key, Polkadot address or drag and drop a JSON backup file."
-                onChange={formik.handleChange}
-                value={formik.values.seedPhase}
-                height={'120px'}
-                fontSize="20px"
-                marginTop="20px"
-                textAlign="center"
-                bgColor="#f8f8f8"
-                hideErrorMsg={false}
-                autoFocus={true}
+                component={HumbleInput}
+                props={{
+                  type: 'textarea',
+                  height: '120px',
+                  fontSize: '20px',
+                  marginTop: '20px',
+                  textAlign: 'center',
+                  bgColor: '#fff',
+                  borderColor: '#fff',
+                  hideErrorMsg: false,
+                  autoFocus: true
+                }}
               />
             </InputContainer>
           )}
         </DndContainer>
-
-        {fileUploaded && (
-          <Input
+        {uploaded && (
+          <Field
             id="password"
-            value={formik.values.password}
-            onChange={formik.handleChange}
+            name="password"
             type="password"
-            placeholder="password"
-            label="Password"
-            error={formik.errors.password}
-            touched={formik.touched.password}
-            height="50px"
-            autoFocus={true}
+            label="password"
+            placeholder="Enter Password for this file"
+            component={HumbleInput}
+            props={{
+              type: 'password',
+              height: '45px',
+              marginTop: '20px',
+              textAlign: 'center',
+              bgColor: '#ececec',
+              color: '#434343',
+              hideErrorMsg: false,
+              autoFocus: true
+            }}
           />
         )}
 
         <Button
+          onClick={() => handleClick({ seedPhase, file, password })}
+          type="button"
           disabled={isDisabled()}
-          type="submit"
           text="import"
+          margin="10px 0 0 0"
           Icon={<RightArrow width={23} fill="#fff" />}
         />
+
         <Snackbar
           isOpen={isSnackbarOpen}
+          message={snackbarError}
           close={() => setIsSnackbarOpen(false)}
           type="error"
           left="0px"
-          bottom={formik.values.seedPhase ? '50px' : formik.values.file ? '120px' : '50px'}>
-          <CloseIconContainer>
-            <CloseIcon stroke="#111" />
-          </CloseIconContainer>
-          <ErrorMessage>{snackbarError}</ErrorMessage>
-        </Snackbar>
-
-        {/* <Input /> */}
-      </Form>
+          bottom={seedPhase ? '100px' : file ? '150px' : '100px'}
+        />
+      </Content>
     </Container>
   );
 }
 
+export default connect((state: any) => ({
+  errors: getFormSyncErrors('AddImportAccount')(state)
+}))(ImportPhase);
+
 const Container = styled.div`
   width: 100%;
   height: 100%;
-  margin-top: 24px;
   position: relative;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
+  background-color: #fff;
+  padding: 30px 16px 38px 16px;
+  box-sizing: border-box;
 `;
 
 const IconContainerBorder = styled.div`
@@ -184,7 +233,7 @@ const IconContainerBorder = styled.div`
   border-radius: 100%;
 `;
 
-const Form = styled.form`
+const Content = styled.div`
   width: 100%;
   height: 100%;
   display: flex;

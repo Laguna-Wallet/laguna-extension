@@ -4,28 +4,67 @@ import { ConfirmSecuritySkip } from 'components/popups/ConfirmSecuritySkip';
 import { MnemonicsDescription } from 'components/popups/MnemonicsDescription';
 import Button from 'components/primitives/Button';
 import { PageContainer } from 'components/ui';
+import WizardHeader from 'pages/AddImportForExistingUsers/WizardHeader';
+import SignUp from 'pages/SignUp/SignUp';
+import Wallet from 'pages/Wallet/Wallet';
 import { useState } from 'react';
+import { goTo } from 'react-chrome-extension-router';
 import { useWizard } from 'react-use-wizard';
 import styled from 'styled-components';
 import { SecurityOptions, SecurityOptionsEnum } from 'utils/types';
+import { LevelEnum } from './SecureWallet';
 import SecurityInfo from './securityInfo';
 import PopupContainer from './securityInfo';
 
-export default function ChooseSecurityLevel() {
-  const [securityType, setSecurityType] = useState<SecurityOptions>(undefined);
-  const { nextStep } = useWizard();
+// todo onBack Prop wizard
+
+type Props = {
+  setLevel: (level: string) => void;
+  nextStepFromParent: () => void;
+  redirectedFromSignUp?: boolean;
+};
+
+export default function ChooseSecurityLevel({
+  setLevel,
+  nextStepFromParent,
+  redirectedFromSignUp
+}: Props) {
+  const { nextStep, previousStep } = useWizard();
 
   const [isMnemonicDescriptionOpen, setIsMnemonicDescriptionOpen] = useState<boolean>();
   const [isConfirmSkipOpen, setConfirmSkipOpen] = useState<boolean>();
 
   return (
     <Container>
+      <WizardHeader
+        title={'SECURE YOUR WALLET'}
+        onClose={() => {
+          if (redirectedFromSignUp) {
+            goTo(SignUp);
+          } else {
+            goTo(Wallet);
+          }
+        }}
+        onBack={() => {
+          if (redirectedFromSignUp) {
+            goTo(SignUp);
+          } else {
+            previousStep();
+          }
+        }}
+      />
+
       {isMnemonicDescriptionOpen && (
         <MnemonicsDescription onClose={() => setIsMnemonicDescriptionOpen(false)} />
       )}
-      {isConfirmSkipOpen && <ConfirmSecuritySkip />}
+      {isConfirmSkipOpen && (
+        <ConfirmSecuritySkip
+          setLevel={setLevel}
+          nextStepFromParent={nextStepFromParent}
+          nextStep={nextStep}
+        />
+      )}
 
-      <Title>SECURE YOUR WALLET</Title>
       <IconContainer>
         <Icon></Icon>
       </IconContainer>
@@ -37,6 +76,7 @@ export default function ChooseSecurityLevel() {
       </TextContainer>
       <Buttons>
         <Button
+          type="button"
           onClick={() => setConfirmSkipOpen(true)}
           Icon={<RightArrow width={23} />}
           text={'Remind me Later'}
@@ -45,7 +85,11 @@ export default function ChooseSecurityLevel() {
           color={'#111'}
         />
         <Button
-          onClick={() => nextStep()}
+          type="button"
+          onClick={() => {
+            setLevel(LevelEnum.Secured);
+            nextStep();
+          }}
           Icon={<RightArrow width={23} fill="#fff" />}
           text={'Start'}
           margin="14px 0px 0px 0px"
@@ -61,6 +105,9 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  background-color: #fff;
+  padding: 30px 16px 38px 16px;
+  box-sizing: border-box;
 `;
 
 const Title = styled.span`
@@ -99,5 +146,5 @@ const TextContainer = styled.div`
 `;
 
 const Buttons = styled.div`
-  /* margin-top: auto; */
+  margin-top: auto;
 `;

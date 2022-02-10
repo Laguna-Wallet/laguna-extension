@@ -10,6 +10,8 @@ import { useEffect, useState } from 'react';
 import { getAssets, recodeAddress } from 'utils/polkadot';
 import { Asset } from 'utils/types';
 import { addMetadata, knownMetadata } from '@polkadot/extension-chains';
+import SelectAsset from './SelectAsset';
+import { useWizard } from 'react-use-wizard';
 
 type Props = {
   selectedAsset: Asset | undefined;
@@ -17,6 +19,8 @@ type Props = {
 };
 
 export default function ReceiveToken({ selectedAsset, recoded }: Props) {
+  const { previousStep } = useWizard();
+
   const account = useAccount();
   const activeAccount = account.getActiveAccount();
 
@@ -29,7 +33,10 @@ export default function ReceiveToken({ selectedAsset, recoded }: Props) {
 
   return (
     <Container>
-      <Header title={`Receive Polkadot`} backAction={() => goTo(Wallet)} />
+      <Header
+        title={`Receive ${selectedAsset?.chain.toLocaleUpperCase()}`}
+        backAction={() => previousStep()}
+      />
       <Content>
         {recoded && <QRCode value={recoded} size={180} />}
 
@@ -44,6 +51,8 @@ export default function ReceiveToken({ selectedAsset, recoded }: Props) {
             marginTop="10px"
             bgColor="#F2F2F2"
             borderColor="#F2F2F2"
+            truncate={true}
+            copy={true}
           />
         </ContentItem>
 
@@ -58,7 +67,8 @@ export default function ReceiveToken({ selectedAsset, recoded }: Props) {
         </ContentItem>
 
         <BottomText>
-          This address can only be used toreceive assets on the Polkadot chain.
+          This address can only be used toreceive assets on the <span>{selectedAsset?.chain}</span>{' '}
+          chain.
         </BottomText>
       </Content>
     </Container>
@@ -112,4 +122,7 @@ const BottomText = styled.div`
   color: #000000;
   margin-top: auto;
   text-align: center;
+  span {
+    text-transform: capitalize;
+  }
 `;

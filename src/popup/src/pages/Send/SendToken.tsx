@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { goTo, Link } from 'react-chrome-extension-router';
-import { calculateSelectedTokenExchange, getAccounts, getApiInstance } from 'utils/polkadot';
+import { getAccounts, getApiInstance, isValidAddressPolkadotAddress } from 'utils/polkadot';
 import { Dispatch, useEffect, useState } from 'react';
 import TokenAndAmountSelect from 'pages/Send/TokenAndAmountSelect';
 import ContactsIcon from 'assets/svgComponents/ContactsIcon';
@@ -21,12 +21,22 @@ import QRPopup from './QRPopup';
 import Header from 'pages/Wallet/Header';
 import BigNumber from 'bignumber.js';
 import ContactsPopup from './ContactsPopup';
-import { sendTokenSchema } from 'utils/validations';
+import { isNumeric, sendTokenSchema } from 'utils/validations';
 import { validator } from 'utils/validator';
 import { changeAddress, changeAmount, selectAssetToken } from 'redux/actions';
 import { useDispatch, useSelector, connect } from 'react-redux';
-import { Field, getFormError, getFormValues, reduxForm } from 'redux-form';
-import { change, reset } from 'redux-form';
+import {
+  Field,
+  change,
+  reset,
+  getFormError,
+  getFormValues,
+  reduxForm,
+  getFormSyncErrors,
+  formValueSelector
+} from 'redux-form';
+import Snackbar from 'components/Snackbar/Snackbar';
+import { isObjectEmpty, objectToArray } from 'utils';
 
 // const renderInputElement = ({ input, label, type, meta: { touched, error, warning } }: any) => (
 //   <SelectContainer>
@@ -44,6 +54,16 @@ import { change, reset } from 'redux-form';
 
 const validate = (values: any) => {
   const errors: any = {};
+  if (!values.address) {
+    errors.address = 'Please enter address';
+  }
+  if (values.address && !isValidAddressPolkadotAddress(values.address)) {
+    errors.address = 'Please enter valid address';
+  } else if (!values.amount) {
+    errors.amount = 'Please enter amount';
+  } else if (values.amount && !isNumeric(values.amount)) {
+    errors.amount = 'Amount value must be integer value';
+  }
 
   return errors;
 };
@@ -62,6 +82,9 @@ type Props = {
   fee: string;
   loading: boolean;
   handleSubmit?: any;
+  errors?: any;
+  abilityToTransfer: boolean;
+  amount: string;
 };
 
 const handleShowAccountInput = (flow: string | undefined, address: string | undefined): boolean => {
@@ -75,7 +98,16 @@ const handleShowAccountInput = (flow: string | undefined, address: string | unde
   return false;
 };
 
-function SendToken({ flow, setFlow, fee, loading, handleSubmit }: Props) {
+function SendToken({
+  flow,
+  setFlow,
+  fee,
+  loading,
+  handleSubmit,
+  errors,
+  abilityToTransfer,
+  amount
+}: Props) {
   const dispatch = useDispatch();
   const account = useAccount();
   const { nextStep, previousStep } = useWizard();
@@ -83,8 +115,14 @@ function SendToken({ flow, setFlow, fee, loading, handleSubmit }: Props) {
   const [isQRPopupOpen, setIsQRPopupOpen] = useState<boolean>(false);
   const [isContactsPopupOpen, setIsContactsPopupOpen] = useState<boolean>(false);
 
+  const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
+  const [snackbarError, setSnackbarError] = useState<string>('');
+
   // todo proper typing
   const { selectedAsset } = useSelector((state: any) => state.sendToken);
+  const { prices } = useSelector((state: any) => state.wallet);
+
+  const price = selectedAsset?.chain && prices[selectedAsset.chain]?.usd;
 
   const handleClick = (isValid: boolean) => {
     if (!isValid) return;
@@ -132,15 +170,42 @@ function SendToken({ flow, setFlow, fee, loading, handleSubmit }: Props) {
   };
 
   const submit = (values: any) => {
+    const errors = validate(values);
+    if (!isObjectEmpty(errors)) {
+      if (isSnackbarOpen) return;
+      const errArray = objectToArray(errors);
+      setSnackbarError(errArray[0]);
+      setIsSnackbarOpen(true);
+      return;
+    }
+
     nextStep();
   };
 
   const handleBack = () => {
     previousStep();
     dispatch(reset('sendToken'));
-    console.log('~ reset', reset);
     setFlow(undefined);
   };
+
+  useEffect(() => {
+    if (!abilityToTransfer) {
+      setSnackbarError('No enough founds to make transfer');
+      setIsSnackbarOpen(true);
+    }
+  }, [abilityToTransfer]);
+
+  const isDisabled = (
+    errors: Record<string, string>,
+    loading: boolean,
+    abilityToTransfer: boolean
+  ) => {
+    if (!isObjectEmpty(errors)) return true;
+    if (loading) return true;
+    if (!abilityToTransfer) return true;
+    return false;
+  };
+
   return (
     <Container>
       <Header title={`SEND ${selectedAsset?.chain}`} backAction={handleBack} />
@@ -152,15 +217,7 @@ function SendToken({ flow, setFlow, fee, loading, handleSubmit }: Props) {
             <TokenAndAmountSelect tokens={[selectedAsset.symbol]} />
 
             <Price>
-              <span>
-                $
-                {/* {new BigNumber(
-                  calculateSelectedTokenExchange(
-                    // formik.values.amount,
-                    // formik.values?.selectedAsset?.price as number
-                  )
-                ).toFixed(2)} */}
-              </span>
+              <span>{amount && price && '$' + new BigNumber(amount).times(price).toFormat(2)}</span>
               <ExchangeIconContainer>
                 <ExchangeIcon />
               </ExchangeIconContainer>
@@ -235,24 +292,31 @@ function SendToken({ flow, setFlow, fee, loading, handleSubmit }: Props) {
               marginTop="5px"
             />
           </ContentItem>
+
+          <Snackbar
+            isOpen={isSnackbarOpen}
+            close={() => setIsSnackbarOpen(false)}
+            message={snackbarError}
+            type="error"
+            left="0px"
+            bottom="138px"
+          />
         </Content>
 
         <BottomSection>
           <Info>
             <span>
-              Balance: {new BigNumber(selectedAsset.balance).toFixed(2)}{' '}
+              Balance: {new BigNumber(selectedAsset.balance).toFormat(2)}{' '}
               {selectedAsset?.symbol.toUpperCase()}
             </span>
-            <span>Estimated Fee: {loading ? '...' : new BigNumber(fee).toFixed(3)}</span>
+            <span>Estimated Fee: {loading ? '...' : new BigNumber(fee).toFormat(4)}</span>
           </Info>
-
           <Button
             type="submit"
-            text="Preview"
+            text={loading ? 'Calculating ability to transfer...' : 'Preview'}
             justify="center"
             Icon={<RightArrow width={23} fill="#fff" />}
-            // disabled={!address || !selectedAsset || !amount}
-            // onClick={() => handleClick(address && selectedAsset && amount)}
+            disabled={isDisabled(errors, loading, abilityToTransfer)}
           />
         </BottomSection>
       </Form>
@@ -284,6 +348,8 @@ function SendToken({ flow, setFlow, fee, loading, handleSubmit }: Props) {
 }
 
 export default connect((state: any) => ({
+  errors: getFormSyncErrors('sendToken')(state),
+  amount: formValueSelector('sendToken')(state, 'amount'),
   initialValues: {
     token: state.sendToken.selectedAsset.symbol
   }
@@ -306,7 +372,6 @@ const Container = styled.div<{ bg?: string }>`
   justify-content: space-between;
   background-color: #fff;
   box-sizing: border-box;
-  position: relative;
   position: relative;
   background-image: ${({ bg }) => `url(${bg})`};
   background-size: cover;

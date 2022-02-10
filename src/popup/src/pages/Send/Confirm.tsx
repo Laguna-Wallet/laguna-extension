@@ -15,7 +15,7 @@ import SwipeAndConfirm from 'components/primitives/SwipeAndConfirm';
 import TransactionSent from './TransactionSent';
 import { goTo, Link } from 'react-chrome-extension-router';
 import { useAccount } from 'context/AccountContext';
-import { calculateSelectedTokenExchange, getApiInstance, recodeAddress } from 'utils/polkadot';
+import { getApiInstance, recodeAddress } from 'utils/polkadot';
 import { useWizard } from 'react-use-wizard';
 import { memo, useEffect, useState } from 'react';
 import keyring from '@polkadot/ui-keyring';
@@ -31,19 +31,18 @@ type Props = {
   transfer: any;
 };
 function Confirm({ fee, transfer }: Props) {
+  const { nextStep, previousStep } = useWizard();
   const account = useAccount();
   const dispatch = useDispatch();
+
   const { address, amount, token } = useSelector((state: any) => state.form.sendToken.values);
   const selectedAsset = useSelector((state: any) => state.sendToken.selectedAsset);
-  console.log('~ selectedToken', selectedAsset);
 
   const { prices } = useSelector((state: any) => state.wallet);
 
   const price = prices[selectedAsset.name.toLowerCase()].usd;
 
-  const { nextStep, previousStep } = useWizard();
-
-  const total = calculateSelectedTokenExchange(amount, price);
+  const total = new BigNumber(amount).plus(price).toFormat(4);
 
   const handleClick = async () => {
     const pair = keyring.getPair(account.getActiveAccount().address);
@@ -67,6 +66,12 @@ function Confirm({ fee, transfer }: Props) {
       });
   };
 
+  const renderTotal = (total: string) => {
+    if (!total) return '...';
+    if (Number(total) === 0) return 0;
+    return total;
+  };
+
   return (
     <Container>
       <Header title="CONFIRM" backAction={() => previousStep()} />
@@ -83,23 +88,12 @@ function Confirm({ fee, transfer }: Props) {
 
         <Info>
           <InfoItem>
-            Fee ={' '}
-            <span>
-              {/* {new BigNumber(fee).div(new BigNumber(10).pow(10))}{' '} */}
-              {new BigNumber(fee).toFixed(3) || '...'} {token}
-              ($
-              {new BigNumber(
-                calculateSelectedTokenExchange(
-                  new BigNumber(fee).div(new BigNumber(10).pow(10)).toString(),
-                  price as number
-                )
-              ).toFixed(2)}
-              )
-            </span>
+            Fee = <span>{new BigNumber(fee).toFormat(4) + `${token}`}</span>
           </InfoItem>
+          {console.log('~ selectedAsset?.chain', selectedAsset?.chain)}
 
           <InfoItem>
-            Total = <span> ${total || total === 0 ? total : '...'}</span>
+            Total = <span> ${renderTotal(total)}</span>
           </InfoItem>
         </Info>
       </Content>

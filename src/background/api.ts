@@ -20,6 +20,12 @@ export async function networkConnectors() {
     const Promises = chains.map(async (chain) => {
       const wsProvider = new WsProvider(`wss://${chain}.api.onfinality.io/ws?apikey=0dcf3660-e510-4df3-b9d2-bba6b16e3ae9`)
       const api = new ApiPromise({ provider: wsProvider })
+
+      api.once("error", (error) => {
+        console.log("error", error)
+        api.disconnect()
+      })
+
       await api.isReady
       return api
     })
@@ -47,8 +53,8 @@ export async function fetchAccountsData(apis: any[]) {
 
     saveToStorage({ key: StorageKeys.AccountBalances, value: JSON.stringify(resolvedData) })
 
-    console.log("ballances updated")
     chrome.runtime.sendMessage({ type: Messages.AccountsBalanceUpdated, payload: JSON.stringify(resolvedData) })
+    console.log("ballances updated")
   } catch (err) {
     console.log("err", err)
   }
@@ -87,7 +93,6 @@ export async function fetchAccountsTransactions() {
   let accountTransfers = []
   for (let i = 0; i < addresses.length; i++) {
     for (let j = 0; j < chains.length; j++) {
-      console.log("~ chains", chains[j])
       await timer(500)
 
       const res = await fetchTransactions(addresses[i], chains[j], page)
@@ -125,7 +130,6 @@ export async function fetchAccountsTransactions() {
 }
 
 export async function fetchTransactions(address: string, chain: string, page: number) {
-  console.log("~ page", page)
   const res = await fetch(`https://${chain}.api.subscan.io/api/scan/transfers`, {
     method: "POST",
     mode: "cors",

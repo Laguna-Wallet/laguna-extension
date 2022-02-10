@@ -27,7 +27,6 @@ cryptoWaitReady().then(() => {
           </AccountProvider>
         </Provider>
       </React.StrictMode>
-      ,
     </React.StrictMode>,
     document.getElementById('root')
   );

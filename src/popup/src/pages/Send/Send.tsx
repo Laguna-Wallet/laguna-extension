@@ -11,7 +11,12 @@ import Button from 'components/primitives/Button';
 import RightArrow from 'assets/svgComponents/RightArrow';
 import Confirm from './Confirm';
 import { goTo, Link } from 'react-chrome-extension-router';
-import { getApiInstance, getAssets, getNetworks } from 'utils/polkadot';
+import {
+  getApiInstance,
+  getAssets,
+  getNetworks,
+  isValidAddressPolkadotAddress
+} from 'utils/polkadot';
 import { useEffect, useReducer, useState } from 'react';
 import { Asset, Network, SelectType } from 'utils/types';
 import { useWizard, Wizard } from 'react-use-wizard';
@@ -19,7 +24,7 @@ import TransactionSent from './TransactionSent';
 import SendToken from './SendToken';
 import { useAccount } from 'context/AccountContext';
 import { useFormik } from 'formik';
-import { sendTokenSchema } from 'utils/validations';
+import { isNumeric, sendTokenSchema } from 'utils/validations';
 import BigNumber from 'bignumber.js';
 import { useSelector } from 'react-redux';
 
@@ -55,20 +60,25 @@ export default function Send({ initialIsContactsPopupOpen }: Props) {
   const [transfer, setTransfer] = useState<any>();
   const [fee, setFee] = useState<any>();
   const [loading, setLoading] = useState<any>();
+  const [abilityToTransfer, setAbilityToTransfer] = useState<boolean>(true);
 
   const reduxSendTokenState = useSelector((state: any) => state.sendToken);
-
   const form = useSelector((state: any) => state?.form?.sendToken?.values);
 
   useEffect(() => {
     async function go() {
-      if (!reduxSendTokenState.selectedAsset || !form?.address) return;
+      if (
+        !reduxSendTokenState.selectedAsset ||
+        !isValidAddressPolkadotAddress(form?.address) ||
+        !form.amount
+      )
+        return;
 
       setLoading(true);
       const api = await getApiInstance(reduxSendTokenState.selectedAsset.chain);
 
       const factor = new BigNumber(10).pow(new BigNumber(api.registry.chainDecimals[0]));
-      const amount = new BigNumber(form.formAmount).multipliedBy(factor);
+      const amount = new BigNumber(form.amount).multipliedBy(factor);
 
       const balance = await api.derive.balances.all(account.getActiveAccount().address);
       const available = balance.availableBalance.toNumber();
@@ -85,6 +95,9 @@ export default function Send({ initialIsContactsPopupOpen }: Props) {
 
       if (total.gt(available)) {
         console.error(`Cannot transfer ${total} with ${available}`);
+        setAbilityToTransfer(false);
+      } else {
+        setAbilityToTransfer(true);
       }
 
       setFee(`${new BigNumber(partialFee.toNumber()).div(factor)}`);
@@ -93,13 +106,19 @@ export default function Send({ initialIsContactsPopupOpen }: Props) {
     }
 
     go();
-  }, [reduxSendTokenState.selectedAsset, form?.address, form?.formAmount]);
+  }, [reduxSendTokenState.selectedAsset, form?.address, form?.amount]);
 
   return (
     <Container>
       <Wizard>
         <SelectAsset assets={assets} />
-        <SendToken flow={flow} setFlow={setFlow} fee={fee} loading={loading} />
+        <SendToken
+          flow={flow}
+          setFlow={setFlow}
+          fee={fee}
+          loading={loading}
+          abilityToTransfer={abilityToTransfer}
+        />
         <Confirm fee={fee} transfer={transfer} />
         <TransactionSent />
       </Wizard>

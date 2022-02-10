@@ -79,7 +79,7 @@ export function exportJson(json: any) {
 
 export async function convertUploadedFileToJson(
   acceptedFile: File[]
-): Promise<KeyringPair$Json | KeyringPairs$Json | undefined> {
+): Promise<KeyringPair$Json | KeyringPairs$Json> {
   try {
     return await new Promise((resolve) => {
       const fileReader = new FileReader();
@@ -88,8 +88,8 @@ export async function convertUploadedFileToJson(
         resolve(JSON.parse(e.target.result));
       };
     });
-  } catch (err) {
-    console.log('err', err);
+  } catch (err: any) {
+    throw new Error(err.message);
   }
 }
 
@@ -97,12 +97,20 @@ export function encryptPassword({ password }: { password: string }) {
   return bcrypt.hashSync(password, bcrypt.genSaltSync());
 }
 
-export function truncateString(string: string) {
-  const part1 = string.slice(0, 4).concat('...');
-  const part2 = string.substring(string.length - 4, string.length);
+export function truncateString(string: string, length?: number) {
+  const part1 = string.slice(0, length || 4).concat('...');
+  const part2 = string.substring(string.length - (length || 4), string.length);
   return `${part1}${part2}`;
 }
 
 export function objectValuesToArray(obj: Record<string, string>): string[] {
   return Object.values(obj).map((item) => item);
+}
+
+export function isObjectEmpty(obj: Record<string, string>): boolean {
+  return obj && Object.keys(obj).length === 0 && Object.getPrototypeOf(obj) === Object.prototype;
+}
+
+export function objectToArray(obj: Record<string, unknown>): any[] {
+  return Object.keys(obj).map((key) => [obj[key]]);
 }
