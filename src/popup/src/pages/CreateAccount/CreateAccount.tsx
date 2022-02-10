@@ -44,9 +44,9 @@ export default function CreateAccount({ redirectedFromSignUp, encodePhase }: Pro
   const onClose = () => {
     if (redirectedFromSignUp) {
       goTo(SignUp);
+    } else {
+      goTo(Wallet);
     }
-
-    goTo(Wallet);
   };
 
   return (

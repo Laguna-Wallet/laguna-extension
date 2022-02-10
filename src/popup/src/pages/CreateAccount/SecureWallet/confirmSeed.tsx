@@ -15,6 +15,11 @@ import RightArrow from 'assets/svgComponents/RightArrow';
 import arrayShuffle from 'array-shuffle';
 import Snackbar from 'components/Snackbar/Snackbar';
 import CloseIcon from 'assets/svgComponents/CloseIcon';
+import WizardHeader from 'pages/AddImportForExistingUsers/WizardHeader';
+import { goTo } from 'react-chrome-extension-router';
+import Wallet from 'pages/Wallet/Wallet';
+import SignUp from 'pages/SignUp/SignUp';
+import { useWizard } from 'react-use-wizard';
 
 const calculateWordColor = (index: number, mnemonicIndexToChoose: number) => {
   if (index === mnemonicIndexToChoose) return '#F9F7CD';
@@ -24,10 +29,12 @@ const calculateWordColor = (index: number, mnemonicIndexToChoose: number) => {
 
 type Props = {
   handleNextSection: () => void;
+  redirectedFromSignUp?: boolean;
 };
 
-export default function ConfirmSeed({ handleNextSection }: Props) {
+export default function ConfirmSeed({ handleNextSection, redirectedFromSignUp }: Props) {
   const { mnemonics } = useAccount();
+  const { previousStep } = useWizard();
   const [mnemonicIndexes, setMnemonicIndexes] = useState<MnemonicsTriple>();
   const [chosenMnemonics, setChosenMnemonics] = useState<string[] | []>([]);
   const [mnemonicIndexToChoose, setMnemonicIndexToChoose] = useState<number>(0);
@@ -70,7 +77,11 @@ export default function ConfirmSeed({ handleNextSection }: Props) {
         <WizardHeader
           title={'CONFIRM YOUR SEED'}
           onClose={() => {
-            goTo(Wallet);
+            if (redirectedFromSignUp) {
+              goTo(SignUp);
+            } else {
+              goTo(Wallet);
+            }
           }}
           onBack={() => {
             previousStep();

@@ -21,6 +21,10 @@ export default function SecureWallet({ redirectedFromSignUp }: Props) {
   const { nextStep } = useWizard();
   const [level, setLevel] = useState('');
 
+  // todo refactor
+  // pass onClose function instead of redirectedFromSignUp prop
+  // const onClose = () => redirectedFromSignUp ? goTo(Signup) : goTo(Wallet)
+
   return (
     <Wizard>
       <ChooseSecurityLevel
@@ -28,8 +32,10 @@ export default function SecureWallet({ redirectedFromSignUp }: Props) {
         nextStepFromParent={nextStep}
         setLevel={setLevel}
       />
-      {level === LevelEnum.Secured && <MnemonicsSeed />}
-      {level === LevelEnum.Secured && <ConfirmSeed handleNextSection={nextStep} />}
+      {level === LevelEnum.Secured && <MnemonicsSeed redirectedFromSignUp={redirectedFromSignUp} />}
+      {level === LevelEnum.Secured && (
+        <ConfirmSeed redirectedFromSignUp={redirectedFromSignUp} handleNextSection={nextStep} />
+      )}
     </Wizard>
   );
 }

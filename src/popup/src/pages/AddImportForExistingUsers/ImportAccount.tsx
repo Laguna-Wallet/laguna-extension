@@ -14,6 +14,7 @@ import { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
 import { useAccount } from 'context/AccountContext';
 import CreatePassword from '../CreateAccount/CreatePassword/CreatePassword';
 import SetupComplete from './SetupComplete';
+import SignUp from 'pages/SignUp/SignUp';
 
 const validate = (values: any) => {
   const errors: any = {};
@@ -35,9 +36,13 @@ const validate = (values: any) => {
   return errors;
 };
 
-function ImportAccount() {
+type Props = {
+  redirectedFromSignUp?: boolean;
+};
+
+function ImportAccount({ redirectedFromSignUp }: Props) {
   const account = useAccount();
-  const encoded = account.getEncryptedPassword();
+  const encoded = account.encryptedPassword;
 
   const dispatch = useDispatch();
 
@@ -54,7 +59,11 @@ function ImportAccount() {
 
   const onClose = () => {
     dispatch(reset('AddImportAccount'));
-    goTo(Wallet);
+    if (redirectedFromSignUp) {
+      goTo(SignUp);
+    } else {
+      goTo(Wallet);
+    }
   };
 
   const onBack = (backAction: () => void) => {
@@ -66,7 +75,7 @@ function ImportAccount() {
     <Form>
       <Wizard>
         {!encoded && <CreatePassword />}
-        <ImportPhase />
+        <ImportPhase redirectedFromSignUp={redirectedFromSignUp} onClose={onClose} />
         <EncodeAccount handleEncode={handleEncode} onBack={onBack} onClose={onClose} />
         <SetupComplete />
       </Wizard>
@@ -77,7 +86,7 @@ function ImportAccount() {
 export default connect((state: any) => ({
   errors: getFormSyncErrors('sendToken')(state)
 }))(
-  reduxForm<Record<string, unknown>, Record<string, unknown>>({
+  reduxForm<Record<string, unknown>, Props>({
     form: 'AddImportAccount',
     validate,
     destroyOnUnmount: false,

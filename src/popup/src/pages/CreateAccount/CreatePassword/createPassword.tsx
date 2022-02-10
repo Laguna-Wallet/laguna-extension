@@ -26,20 +26,24 @@ function CreatePassword() {
     },
     validationSchema: createPasswordSchema,
     onSubmit: (values) => {
+      // after password is set and wizard component is rerendered
+      // it removes CreatePassword from dom and sets next element
+      // so no need calling nextStep()
+      // {!encoded && <CreatePassword />}
       account.setPassword(values.password);
-      nextStep();
     }
   });
 
   const passwordLength = passwordStrength(formik.values.password).value;
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e?.preventDefault();
+
     if (!formik.isValid) {
       setIsSnackbarOpen(true);
       return;
     }
 
-    e?.preventDefault();
     formik.handleSubmit();
   };
 

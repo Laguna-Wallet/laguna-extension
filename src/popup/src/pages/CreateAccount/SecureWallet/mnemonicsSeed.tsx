@@ -11,8 +11,13 @@ import RightArrow from 'assets/svgComponents/RightArrow';
 import WizardHeader from 'pages/AddImportForExistingUsers/WizardHeader';
 import { goTo } from 'react-chrome-extension-router';
 import Wallet from 'pages/Wallet/Wallet';
+import SignUp from 'pages/SignUp/SignUp';
 
-export default function MnemonicsSeed() {
+type Props = {
+  redirectedFromSignUp?: boolean;
+};
+
+export default function MnemonicsSeed({ redirectedFromSignUp }: Props) {
   const { nextStep, previousStep } = useWizard();
 
   const handleClick = () => {
@@ -26,7 +31,11 @@ export default function MnemonicsSeed() {
       <WizardHeader
         title={'SECURE YOUR WALLET'}
         onClose={() => {
-          goTo(Wallet);
+          if (redirectedFromSignUp) {
+            goTo(SignUp);
+          } else {
+            goTo(Wallet);
+          }
         }}
         onBack={() => {
           previousStep();

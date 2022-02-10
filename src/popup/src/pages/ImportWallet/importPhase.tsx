@@ -13,6 +13,7 @@ import HumbleInput from 'components/primitives/HumbleInput';
 import Input from 'components/primitives/Input';
 import Snackbar from 'components/Snackbar/Snackbar';
 import WizardHeader from 'pages/AddImportForExistingUsers/WizardHeader';
+import SignUp from 'pages/SignUp/SignUp';
 import Wallet from 'pages/Wallet/Wallet';
 import { ReactNode, useCallback, useEffect, useState } from 'react';
 import { goTo } from 'react-chrome-extension-router';
@@ -35,9 +36,11 @@ import {
 
 type Props = {
   errors: FormErrors<Record<string, unknown>, string>;
+  onClose: () => void;
+  redirectedFromSignUp?: boolean;
 };
 
-function ImportPhase({ errors }: Props) {
+function ImportPhase({ errors, onClose, redirectedFromSignUp }: Props) {
   const { nextStep, previousStep } = useWizard();
 
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
@@ -109,13 +112,15 @@ function ImportPhase({ errors }: Props) {
     <Container>
       <WizardHeader
         title={'IMPORT WALLET'}
-        onClose={() => {
-          goTo(Wallet);
-          dispatch(reset('AddImportAccount'));
-        }}
+        onClose={onClose}
         onBack={() => {
           dispatch(reset('AddImportAccount'));
-          previousStep();
+          if (redirectedFromSignUp) {
+            goTo(SignUp);
+          } else {
+            goTo(Wallet);
+          }
+          // previousStep();
         }}
       />
       <Content>
