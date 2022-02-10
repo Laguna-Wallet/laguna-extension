@@ -30,7 +30,8 @@ export default function EncodeAccount() {
 
   return (
     <Container>
-      <WizardHeader title={'SETUP COMPLETE!!'} onClose={() => goTo(Wallet)} onBack={previousStep} />
+      {/* <WizardHeader title={'SETUP COMPLETE!!'} onClose={() => goTo(Wallet)} onBack={previousStep} /> */}
+      <Heading>SETUP COMPLETE!!</Heading>
       <Content>
         <IconContainer>
           <CheckMarkContainer>
@@ -101,6 +102,17 @@ const Content = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
+`;
+
+const Heading = styled.div`
+  width: 100%;
+  line-height: 1.45;
+  letter-spacing: 0.85px;
+  text-align: center;
+  color: #000;
+  font-size: 17px;
+  font-family: 'Sequel100Wide55Wide';
+  margin-right: auto;
 `;
 
 const IconContainer = styled.div`

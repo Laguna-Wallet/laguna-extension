@@ -33,9 +33,7 @@ export default function WizardHeader({ title, onClose, onBack }: Props) {
   };
 
   return (
-    <Container
-    // ${activeStep === 2 && 'hidden'
-    >
+    <Container>
       <TopSection>
         <IconContainer onClick={onClose}>
           <CloseIcon stroke="#111" />
@@ -54,8 +52,6 @@ export default function WizardHeader({ title, onClose, onBack }: Props) {
     </Container>
   );
 }
-
-// title, onClose
 
 const Container = styled.div`
   width: 100%;
