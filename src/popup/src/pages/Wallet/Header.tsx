@@ -25,8 +25,8 @@ export default function Header({ title, backAction, iconStyle, menuInitialOpenSt
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(menuInitialOpenState || false);
   const [isHamburgerOpen, setOpen] = useState<boolean>(false);
 
-  const name = account.getActiveAccount().meta.name;
-  const formattedName = name.length > 15 ? truncateString(name) : name;
+  const name = account?.getActiveAccount()?.meta?.name;
+  const formattedName = name?.length > 15 ? truncateString(name) : name;
 
   return (
     <Container>

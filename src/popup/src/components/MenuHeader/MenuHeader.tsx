@@ -31,10 +31,10 @@ export default function MenuHeader({
   backAction
 }: Props) {
   const account = useAccount();
-  const [name, setName] = useState(account.getActiveAccount()?.meta?.name);
+  const [name, setName] = useState(account?.getActiveAccount()?.meta?.name);
   const [editMode, setEditMode] = useState<boolean>(false);
 
-  const address = account.getActiveAccount().address;
+  const address = account?.getActiveAccount()?.address;
 
   const editAccount = () => {
     setEditMode(false);
@@ -56,7 +56,7 @@ export default function MenuHeader({
   };
 
   const formatName = (name: string) => {
-    return name.length > 12 ? truncateString(name) : name;
+    return name && name?.length > 12 ? truncateString(name) : name;
   };
 
   return (
@@ -82,7 +82,7 @@ export default function MenuHeader({
             <Name>
               <NameInput
                 ref={inputRef}
-                value={formatName(name)}
+                value={formatName(name) || ''}
                 onChange={(e) => setName(e.target.value)}
                 readOnly={!editMode}
                 onKeyDown={(e) => {
@@ -97,7 +97,7 @@ export default function MenuHeader({
                 <PencilIcon width={15} />
               </PencilIconContainer>
             </Name>
-            <Address>{truncateString(address)}</Address>
+            <Address>{address && truncateString(address)}</Address>
           </Text>
         </User>
       )}

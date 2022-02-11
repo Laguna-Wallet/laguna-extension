@@ -14,7 +14,7 @@ export default function ImportWallet() {
     <PageContainer>
       <Wizard header={<WizardStepHeader />} footer={<></>}>
         {/* <ChooseImportType setImportType={setImportType} /> */}
-        <ImportPhase />
+        {/* <ImportPhase /> */}
         <CongratsImportWallet />
       </Wizard>
     </PageContainer>

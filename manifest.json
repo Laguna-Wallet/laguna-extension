@@ -13,12 +13,6 @@
     "scripts": ["background.js"],
     "persistent": false
   },
-  "content_scripts": [
-    {
-      "matches": ["http://*/*", "https://*/*"],
-      "js": ["content.js"],
-      "run_at": "document_end"
-    }
-  ],
+
   "content_security_policy": "script-src 'self' 'unsafe-eval' 'sha256-...='; object-src 'self'"
 }
