@@ -47,11 +47,11 @@ export default function Accounts({ setActiveAccount }: Props) {
       </TriangleContainer>
 
       <Header>
-        <HeaderItem>Accounts</HeaderItem>
+        <HeaderItem>ACCOUNTS</HeaderItem>
         <HeaderItem>
           <Connected>
             <ConnectedRibbon />
-            <span>Connected</span>
+            <span>CONNECTED</span>
           </Connected>
         </HeaderItem>
         {/* <Tab active={false}>
@@ -71,9 +71,9 @@ export default function Accounts({ setActiveAccount }: Props) {
                 <span>{account?.meta?.name && formatName(account?.meta?.name)}</span>
 
                 <Icons>
-                  <Link component={ExportAccount} props={{ address: account.address }}>
+                  {/* <Link component={ExportAccount} props={{ address: account.address }}>
                     <ExportIcon width={13} />
-                  </Link>
+                  </Link> */}
                   <CheckedIconContainer>
                     {account.address === accountCtx.getActiveAccount().address && (
                       <CheckedIcon width={18} />
@@ -111,7 +111,7 @@ const Container = styled.div`
   border-radius: 5px;
   position: relative;
   margin: auto;
-  margin-top: 45px;
+  margin-top: 60px;
 `;
 
 const TriangleContainer = styled.div`
