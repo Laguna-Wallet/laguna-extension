@@ -178,15 +178,23 @@ export function getNetworks(prices: Prices, tokenInfos: Network[]): Network[] {
     {
       name: 'Moonbeam',
       symbol: 'glmr',
-      chain: ' moonbeam-alpha',
+      chain: 'moonbeam',
+      // chain: ' moonbeam-alpha',
       node: 'wss://moonbeam-rpc.polkadot.io'
     },
     {
       name: 'Shiden',
       symbol: 'sdn',
-      chain: ' shiden',
+      chain: 'shiden',
       node: 'wss://shiden-rpc.polkadot.io'
+    },
+    {
+      name: 'Astar',
+      symbol: 'astr',
+      chain: 'astar',
+      node: 'wss://astar-rpc.polkadot.io'
     }
+
     // {
     //   name: 'Acala',
     //   symbol: 'ACA',
@@ -234,7 +242,6 @@ export function getNetworks(prices: Prices, tokenInfos: Network[]): Network[] {
     };
   });
 
-  console.log('~ enhancedNetworks', enhancedNetworks);
   return enhancedNetworks;
 }
 
@@ -258,13 +265,16 @@ export async function getAssets(
   let overallBalance = 0;
   const assets: Asset[] = [];
 
+  console.log('~ balances', balances);
   for (let i = 0; i < networks.length; i++) {
     try {
       const { name, symbol, chain, node } = networks[i];
 
-      console.log('~ chain', chain);
-      console.log('~ balances', balances);
       const balance = balances?.balances[chain];
+
+      console.log(balances?.balances);
+      console.log('~ balance', balance);
+      console.log('~ chain', chain);
 
       if (!balance) continue;
 

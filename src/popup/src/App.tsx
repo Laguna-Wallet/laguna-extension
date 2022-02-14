@@ -18,7 +18,7 @@ function App() {
 
   useEffect(() => {
     chrome.runtime.onMessage.addListener((msg) => {
-      MessageListener(msg, dispatch);
+      // MessageListener(msg, dispatch);
     });
   }, []);
 
