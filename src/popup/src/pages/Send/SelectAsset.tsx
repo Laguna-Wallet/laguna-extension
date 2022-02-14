@@ -92,11 +92,14 @@ const Content = styled.div`
 
 const List = styled.div`
   margin-top: 24px;
+  height: 400px;
+  overflow: scroll;
+  padding-bottom: 20px;
+  box-sizing: border-box;
 `;
 
 const ChainItemContainer = styled.div`
   width: 100%;
-  height: 100%;
   cursor: pointer;
   text-decoration: none;
   color: #111;

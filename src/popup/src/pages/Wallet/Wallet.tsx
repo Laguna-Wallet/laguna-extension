@@ -249,6 +249,7 @@ const ListContentChild = styled.div`
   bottom: -20px;
   right: -20px;
   overflow: scroll;
+  padding-bottom: 20px;
 `;
 
 const StyledLink = styled(Link)`
