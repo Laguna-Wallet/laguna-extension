@@ -16,4 +16,4 @@ export enum Messages {
   TransactionsUpdated = "TRANSACTIONS_UPDATED",
 }
 
-export const chains = ["westend", "polkadot", "kusama"]
+export const chains = ["westend", "polkadot", "kusama", "moonriver", "moonbeam", "shiden", "astar"]

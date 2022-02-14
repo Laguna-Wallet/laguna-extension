@@ -12,6 +12,7 @@ import AddressBook from 'pages/AddressBook/AddressBook';
 import MenuHeader from 'components/MenuHeader/MenuHeader';
 import AutoLockTimer from 'pages/AutoLockTimer/AutoLockTimer';
 import RemoveAccount from 'pages/RemoveAccount/RemoveAccount';
+import ChangePassword from 'pages/ChangePassword/ChangePassword';
 
 type Props = {
   onClose: () => void;
@@ -49,7 +50,7 @@ export default function Menu({ onClose }: Props) {
           </StyledLink>
         </ListItem>
         <ListItem>
-          <StyledLink color={'#c1c1c154'} component={ExportAllAccounts}>
+          <StyledLink component={ChangePassword}>
             <span>Change Password</span>
             <RightArrow width={25} />
           </StyledLink>
@@ -119,6 +120,9 @@ const ListItem = styled.div`
     pointer-events: inherit;
   }
   :nth-child(2) {
+    pointer-events: inherit;
+  }
+  :nth-child(4) {
     pointer-events: inherit;
   }
   :nth-child(5) {
