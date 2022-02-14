@@ -168,6 +168,24 @@ export function getNetworks(prices: Prices, tokenInfos: Network[]): Network[] {
       symbol: 'ksm',
       chain: 'kusama',
       node: 'wss://kusama-rpc.polkadot.io'
+    },
+    {
+      name: 'Moonriver',
+      symbol: 'movr',
+      chain: 'moonriver',
+      node: 'wss://moonriver-rpc.polkadot.io'
+    },
+    {
+      name: 'Moonbeam',
+      symbol: 'glmr',
+      chain: ' moonbeam-alpha',
+      node: 'wss://moonbeam-rpc.polkadot.io'
+    },
+    {
+      name: 'Shiden',
+      symbol: 'sdn',
+      chain: ' shiden',
+      node: 'wss://shiden-rpc.polkadot.io'
     }
     // {
     //   name: 'Acala',
@@ -184,16 +202,7 @@ export function getNetworks(prices: Prices, tokenInfos: Network[]): Network[] {
     //   symbol: 'AIR',
     //   chain: 'altair'
     // },
-    // {
-    //   name: 'Moonbeam',
-    //   symbol: 'GLMR',
-    //   chain: ' moonbeam-alpha'
-    // },
-    // {
-    //   name: 'Moonriver',
-    //   symbol: 'MOVR',
-    //   chain: 'moonriver'
-    // },
+
     // {
     //   name: 'Bifrost',
     //   symbol: 'BNC',
@@ -213,6 +222,7 @@ export function getNetworks(prices: Prices, tokenInfos: Network[]): Network[] {
 
   // todo typing
   const enhancedNetworks: Network[] = networks.map((network) => {
+    console.log('~ network.symbol', network.symbol);
     if (!ht[network.symbol]) {
       return network;
     }
@@ -224,6 +234,7 @@ export function getNetworks(prices: Prices, tokenInfos: Network[]): Network[] {
     };
   });
 
+  console.log('~ enhancedNetworks', enhancedNetworks);
   return enhancedNetworks;
 }
 
@@ -251,6 +262,8 @@ export async function getAssets(
     try {
       const { name, symbol, chain, node } = networks[i];
 
+      console.log('~ chain', chain);
+      console.log('~ balances', balances);
       const balance = balances?.balances[chain];
 
       if (!balance) continue;

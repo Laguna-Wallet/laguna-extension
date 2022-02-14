@@ -164,7 +164,6 @@ function SendToken({
   };
 
   const handleCloseContacts = (address: string) => {
-    console.log('~ address', address);
     dispatch(changeAddress(address));
     // setIsContactsPopupOpen(false);
   };

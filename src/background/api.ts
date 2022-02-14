@@ -3,14 +3,18 @@ import { ApiPromise, WsProvider } from "@polkadot/api"
 import { executeTemporarily, getAccountAddresses, saveToStorage, transformTransfers } from "./utils"
 import { formatBalance } from "@polkadot/util/format"
 
+// todo make chains dynamic
 export async function Retrieve_Coin_Prices() {
-  const data = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=polkadot,kusama&vs_currencies=usd")
+  const data = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=polkadot,kusama,moonriver,moonbeam,shiden,astar&vs_currencies=usd")
   const json = await data.json()
   return json
 }
 
+// todo make chains dynamic
 export async function Retrieve_Coin_Infos() {
-  const data = await fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=polkadot,kusama&order=market_cap_desc&per_page=100&page=1&sparkline=false`)
+  const data = await fetch(
+    `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=polkadot,kusama,moonriver,moonbeam,shiden,astar&order=market_cap_desc&per_page=100&page=1&sparkline=false`
+  )
   const json = await data.json()
   return json
 }
