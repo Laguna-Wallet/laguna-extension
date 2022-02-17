@@ -87,7 +87,8 @@ export async function convertUploadedFileToJson(
       fileReader.onload = (e: any) => {
         resolve(JSON.parse(e.target.result));
       };
-    });12
+    });
+    12;
   } catch (err: any) {
     throw new Error(err.message);
   }

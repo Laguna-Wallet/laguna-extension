@@ -37,8 +37,10 @@ export default function MenuHeader({
   const address = account?.getActiveAccount()?.address;
 
   const editAccount = () => {
+    const val = name ? name : address;
+    setName(val);
     setEditMode(false);
-    const newAccount = addAccountMeta(address, { name });
+    const newAccount = addAccountMeta(address, { name: val });
     account.saveActiveAccount(newAccount);
   };
 
@@ -49,8 +51,7 @@ export default function MenuHeader({
   });
 
   const handleKeyPress = (e: any) => {
-    console.log(e);
-    if (e.key === 'Enter' || e.keyCode === 13) {
+    if (e.key === 'Enter' || e.keyCode === 14) {
       editAccount();
     }
   };
