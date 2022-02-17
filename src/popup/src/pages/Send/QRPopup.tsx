@@ -2,6 +2,8 @@ import Button from 'components/primitives/Button';
 import Header from 'pages/Wallet/Header';
 import styled from 'styled-components';
 import QrReader from 'react-qr-reader';
+import { BrowserQRCodeReader } from '@zxing/browser';
+import { useEffect } from 'react';
 
 type Props = {
   handleCloseQR: () => void;
@@ -15,6 +17,17 @@ export default function QRPopup({ handleCloseQR }: Props) {
   const handleError = (error: any) => {
     console.log('error', error);
   };
+
+  useEffect(() => {
+    const codeReader = new BrowserQRCodeReader();
+
+    // const videoInputDevices = await ZXingBrowser.BrowserCodeReader.listVideoInputDevices();
+
+    codeReader.decodeFromVideoDevice(undefined, 'webcam-preview', (result, err) => {
+      result;
+      console.log('~ result', result);
+    });
+  });
 
   return (
     <Container>

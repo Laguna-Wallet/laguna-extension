@@ -164,8 +164,8 @@ function SendToken({
   };
 
   const handleCloseContacts = (address: string) => {
-    dispatch(changeAddress(address));
-    // setIsContactsPopupOpen(false);
+    dispatch(change('sendToken', 'address', address));
+    setIsContactsPopupOpen(false);
   };
 
   const submit = (values: any) => {
@@ -341,7 +341,15 @@ function SendToken({
       )}
 
       {isQRPopupOpen && <QRPopup handleCloseQR={handleCloseQR} />}
-      {isContactsPopupOpen && <ContactsPopup handleCloseContacts={handleCloseContacts} />}
+      {isContactsPopupOpen && (
+        <ContactsPopup
+          onBack={() => {
+            setIsContactsPopupOpen(false);
+            setFlow(undefined);
+          }}
+          handleCloseContacts={handleCloseContacts}
+        />
+      )}
     </Container>
   );
 }

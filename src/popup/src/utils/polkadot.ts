@@ -17,6 +17,7 @@ import { decodeAddress, encodeAddress } from '@polkadot/keyring';
 import { MetadataDef } from '@polkadot/extension-inject/types';
 import settings from '@polkadot/ui-settings';
 import BigNumber from 'bignumber.js';
+import { Json } from '@polkadot/types';
 
 // TODO appropriate typing
 
@@ -59,10 +60,7 @@ export function validateSeed(suri: string) {
     if (isHex(phrase)) {
       assert(isHex(phrase, 256), 'Hex seed needs to be 256-bits');
     } else {
-      assert(
-        SEED_LENGTHS.includes(phrase.split(' ').length),
-        `Mnemonic needs to contain ${SEED_LENGTHS.join(', ')} words`
-      );
+      assert(SEED_LENGTHS.includes(phrase.split(' ').length), `Please enter 12 or 14 words`);
 
       assert(mnemonicValidate(phrase), 'Not a valid mnemonic seed');
     }
@@ -76,7 +74,7 @@ export function validateSeed(suri: string) {
 
 // todo alter this function to createAccountFromSeed
 export function importViaSeed(suri: string, password: string) {
-  if (!suri) return false;
+  if (!suri) return;
 
   const { phrase } = keyExtractSuri(suri);
 
@@ -89,8 +87,7 @@ export function importViaSeed(suri: string, password: string) {
 
   // todo revise with sam
   // todo move to separate function
-  const account = keyring.addUri(suri, password);
-  return account;
+  return keyring.addUri(suri, password);
 }
 
 // todo proper typing for string
@@ -126,9 +123,11 @@ export async function importJson(
 ) {
   if (!json) return;
   if (isKeyringPairs$Json(json)) {
-    return keyring.restoreAccounts(json, password);
+    keyring.restoreAccounts(json, password);
+    return json;
   } else {
-    return keyring.restoreAccount(json, password);
+    const pair = keyring.restoreAccount(json, password);
+    return pair.toJson(password);
   }
 }
 
@@ -230,7 +229,6 @@ export function getNetworks(prices: Prices, tokenInfos: Network[]): Network[] {
 
   // todo typing
   const enhancedNetworks: Network[] = networks.map((network) => {
-    console.log('~ network.symbol', network.symbol);
     if (!ht[network.symbol]) {
       return network;
     }
@@ -265,16 +263,11 @@ export async function getAssets(
   let overallBalance = 0;
   const assets: Asset[] = [];
 
-  console.log('~ balances', balances);
   for (let i = 0; i < networks.length; i++) {
     try {
       const { name, symbol, chain, node } = networks[i];
 
       const balance = balances?.balances[chain];
-
-      console.log(balances?.balances);
-      console.log('~ balance', balance);
-      console.log('~ chain', chain);
 
       if (!balance) continue;
 
@@ -368,5 +361,41 @@ export async function isValidKeyringPassword(
     return false;
   } catch (err) {
     return false;
+  }
+}
+
+export function encryptKeyringPairs(oldPassword: string, newPassword: string) {
+  const pairs = keyring.getPairs();
+}
+
+export function accountsChangePassword(address: string, oldPass: string, newPass: string) {
+  const pair = keyring.getPair(address);
+
+  pair.decodePkcs8(oldPass);
+
+  keyring.encryptAccount(pair, newPass);
+  return pair;
+}
+
+// todo pair proper typing
+export function unlockAndSavePair(pair: any, password: string) {
+  try {
+    const json = pair.toJson(password);
+
+    let newPairs = [];
+
+    const unlockedPairs = getFromStorage(StorageKeys.UnlockedPairs);
+    console.log('~ unlockedPairs', unlockedPairs);
+
+    if (unlockedPairs) {
+      const parsed = JSON.parse(unlockedPairs);
+      newPairs = [...parsed, json];
+    } else {
+      newPairs = [json];
+    }
+
+    saveToStorage({ key: StorageKeys.UnlockedPairs, value: JSON.stringify(newPairs) });
+  } catch (error) {
+    throw new Error(error as string);
   }
 }

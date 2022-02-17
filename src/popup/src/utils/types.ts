@@ -1,4 +1,7 @@
 import { KeypairType } from '@polkadot/util-crypto/types';
+import type { Signer as InjectedSigner } from '@polkadot/api/types';
+import type { ExtDef } from '@polkadot/types/extrinsic/signedExtensions/types';
+import type { ProviderInterface } from '@polkadot/rpc-provider/types';
 
 export enum SecurityOptionsEnum {
   Secured = 'Secured',
@@ -26,7 +29,8 @@ export enum StorageKeys {
   TokenInfos = 'token-infos',
   AccountBalances = 'account-balances',
   Transactions = 'transactions',
-  IdleTimeout = 'idle-timeout'
+  IdleTimeout = 'idle-timeout',
+  UnlockedPairs = 'unlocked-pairs'
 }
 
 //==============================================================================
@@ -69,4 +73,75 @@ export enum Messages {
 export interface SelectType {
   value: string;
   name: string;
+}
+
+//==============================================================================
+// Inject
+//==============================================================================
+
+export interface InjectedAccount {
+  address: string;
+  genesisHash?: string | null;
+  name?: string;
+  type?: KeypairType;
+}
+
+export type Unsubcall = () => void;
+
+export interface InjectedAccounts {
+  get: (anyType?: boolean) => Promise<InjectedAccount[]>;
+  subscribe: (cb: (accounts: InjectedAccount[]) => void | Promise<void>) => Unsubcall;
+}
+
+export interface InjectedMetadataKnown {
+  genesisHash: string;
+  specVersion: number;
+}
+
+export interface MetadataDefBase {
+  chain: string;
+  genesisHash: string;
+  icon: string;
+  ss58Format: number;
+  chainType?: 'substrate' | 'ethereum';
+}
+
+export interface MetadataDef extends MetadataDefBase {
+  color?: string;
+  specVersion: number;
+  tokenDecimals: number;
+  tokenSymbol: string;
+  types: Record<string, Record<string, string> | string>;
+  metaCalls?: string;
+  userExtensions?: ExtDef;
+}
+
+export interface InjectedMetadata {
+  get: () => Promise<InjectedMetadataKnown[]>;
+  provide: (definition: MetadataDef) => Promise<boolean>;
+}
+
+export interface ProviderMeta {
+  // Network of the provider
+  network: string;
+  // Light or full node
+  node: 'full' | 'light';
+  // The extension source
+  source: string;
+  // Provider transport: 'WsProvider' etc.
+  transport: string;
+}
+
+export type ProviderList = Record<string, ProviderMeta>;
+
+export interface InjectedProvider extends ProviderInterface {
+  listProviders: () => Promise<ProviderList>;
+  startProvider: (key: string) => Promise<ProviderMeta>;
+}
+
+export interface Injected {
+  accounts: InjectedAccounts;
+  metadata?: InjectedMetadata;
+  provider?: InjectedProvider;
+  signer: InjectedSigner;
 }
