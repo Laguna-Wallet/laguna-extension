@@ -16,9 +16,10 @@ import SendToken from './SendToken';
 
 type Props = {
   handleCloseContacts: (address: string) => void;
+  onBack: () => void;
 };
 
-export default function ContactsPopup({ handleCloseContacts }: Props) {
+export default function ContactsPopup({ handleCloseContacts, onBack }: Props) {
   const [addresses, setAddresses] = useState<any[] | undefined>(undefined);
   const [filter, setFilter] = useState<string>('');
   const [isAddAddressOpen, setIsAddAddressOpen] = useState<boolean>(false);
@@ -43,7 +44,7 @@ export default function ContactsPopup({ handleCloseContacts }: Props) {
 
   return (
     <Container>
-      <Header title="Choose Contact" iconStyle="Close" />
+      <Header title="Choose Contact" iconStyle="LeftArrow" backAction={onBack} />
       <InnerContainer>
         <Content>
           <HumbleInput

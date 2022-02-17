@@ -55,7 +55,7 @@ function ImportPhase({ errors, onClose, redirectedFromSignUp }: Props) {
     if (!acceptedFile.length) return;
 
     const json = await convertUploadedFileToJson(acceptedFile);
-
+    
     if (isKeyringPairs$Json(json) || isKeyringJson(json)) {
       setUploaded(true);
       dispatch(change('AddImportAccount', 'file', json));

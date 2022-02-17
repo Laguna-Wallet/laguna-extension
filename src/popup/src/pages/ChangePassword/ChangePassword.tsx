@@ -36,7 +36,7 @@ const validate = (values: any) => {
     errors.newPassword = 'Please enter new password';
   }
 
-  if (!values.newPassword) {
+  if (!values.confirmNewPassword) {
     errors.confirmNewPassword = 'Please confirm new password';
   }
 
@@ -45,7 +45,7 @@ const validate = (values: any) => {
     values.confirmNewPassword &&
     values.newPassword !== values.confirmNewPassword
   ) {
-    errors.newPassword = 'Please confirm new password';
+    errors.newPassword = 'Passwords should match';
   }
 
   return errors;
@@ -60,10 +60,7 @@ function ChangePassword({ handleSubmit }: Props) {
 
   // todo proper typing
   const submit = (values: any) => {
-    console.log('aqa');
     const errors = validate(values);
-
-    console.log('~errors', errors);
 
     if (!isObjectEmpty(errors)) {
       if (isSnackbarOpen) return;
@@ -91,79 +88,79 @@ function ChangePassword({ handleSubmit }: Props) {
           <LockLogoIcon />
         </IconContainer>
         <Form onSubmit={handleSubmit(submit)}>
-          <Field
-            id="currentPassword"
-            name="currentPassword"
-            type="text"
-            label="Current password"
-            placeholder="Current password"
-            component={HumbleInput}
-            props={{
-              type: 'text',
-              bgColor: '#303030',
-              color: '#9c9c9c',
-              height: '48px',
-              marginTop: '12px',
-              borderColor: '#303030'
-            }}
-          />
+          <FieldsContainer>
+            <Field
+              id="currentPassword"
+              name="currentPassword"
+              type="password"
+              label="Current password"
+              placeholder="Current password"
+              component={HumbleInput}
+              props={{
+                type: 'password',
+                bgColor: '#303030',
+                color: '#9c9c9c',
+                height: '48px',
+                marginTop: '12px',
+                borderColor: '#303030'
+              }}
+            />
+            <Field
+              id="newPassword"
+              name="newPassword"
+              type="password"
+              label="New password"
+              placeholder="New password"
+              component={HumbleInput}
+              props={{
+                type: 'password',
+                bgColor: '#303030',
+                color: '#9c9c9c',
+                height: '48px',
+                marginTop: '12px',
+                borderColor: '#303030'
+              }}
+            />
+            <Field
+              id="confirmNewPassword"
+              name="confirmNewPassword"
+              type="password"
+              label="Confirm new password"
+              placeholder="Confirm new password"
+              component={HumbleInput}
+              props={{
+                type: 'password',
+                bgColor: '#303030',
+                color: '#9c9c9c',
+                height: '48px',
+                marginTop: '12px',
+                borderColor: '#303030'
+              }}
+            />
+          </FieldsContainer>
 
-          <Field
-            id="newPassword"
-            name="newPassword"
-            type="text"
-            label="New password"
-            placeholder="New password"
-            component={HumbleInput}
-            props={{
-              type: 'text',
-              bgColor: '#303030',
-              color: '#9c9c9c',
-              height: '48px',
-              marginTop: '12px',
-              borderColor: '#303030'
-            }}
-          />
+          <ButtonsContainer>
+            <Button
+              onClick={() => goTo(Wallet, { isMenuOpen: true })}
+              text="Cancel"
+              color="#111"
+              bgColor="#fb5a5a"
+              borderColor="#fb5a5a"
+              justify="center"
+              margin="auto 10px 0 0"
+            />
 
-          <Field
-            id="confirmNewPassword"
-            name="confirmNewPassword"
-            type="text"
-            label="Confirm new password"
-            placeholder="Confirm new password"
-            component={HumbleInput}
-            props={{
-              type: 'text',
-              bgColor: '#303030',
-              color: '#9c9c9c',
-              height: '48px',
-              marginTop: '12px',
-              borderColor: '#303030'
-            }}
-          />
+            <Button
+              type="submit"
+              text="Save"
+              color="#111"
+              justify="center"
+              margin="auto 0 0 0"
+              bgColor="#1a1a1a"
+              bgImage="linear-gradient(to right, #1cc3ce, #b9e260)"
+            />
+          </ButtonsContainer>
         </Form>
-
-        <ButtonsContainer>
-          <Button
-            onClick={() => goTo(Wallet, { isMenuOpen: true })}
-            text="Cancel"
-            color="#111"
-            bgColor="#fb5a5a"
-            borderColor="#fb5a5a"
-            justify="center"
-            margin="auto 10px 0 0"
-          />
-
-          <Button
-            type="submit"
-            text="Save"
-            color="#111"
-            justify="center"
-            margin="auto 0 0 0"
-            bgColor="#1a1a1a"
-            bgImage="linear-gradient(to right, #1cc3ce, #b9e260)"
-          />
-        </ButtonsContainer>
       </Content>
       <Snackbar
         isOpen={isSnackbarOpen}
@@ -171,7 +168,7 @@ function ChangePassword({ handleSubmit }: Props) {
         message={snackbarError}
         type="error"
         left="0px"
-        bottom="110px"
+        bottom="94px"
       />
     </Container>
   );
@@ -185,8 +182,8 @@ export default connect((state: any) => ({
   //   }
 }))(
   reduxForm<Record<string, unknown>, any>({
-    form: 'changePassword',
-    validate
+    form: 'changePassword'
+    // validate
     // destroyOnUnmount: false,
     // enableReinitialize: true,
     // keepDirtyOnReinitialize: true,
@@ -226,12 +223,22 @@ const IconContainer = styled.div`
   align-items: center;
   border-radius: 100%;
   background-color: #000;
-  margin-top: auto;
+  margin-top: 30px;
 `;
 
 const Form = styled.form`
   width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   margin-top: 30px;
+`;
+
+const FieldsContainer = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
 `;
 
 const ButtonsContainer = styled.div`

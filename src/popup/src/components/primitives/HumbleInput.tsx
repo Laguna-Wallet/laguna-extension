@@ -1,5 +1,5 @@
 import ErrorIcon from 'assets/svgComponents/ErrorIcon';
-import { useRef } from 'react';
+import { memo, useRef } from 'react';
 import styled from 'styled-components/macro';
 import { truncateString } from 'utils';
 
@@ -29,7 +29,7 @@ type InputProps = {
   rightLabel?: string;
 };
 
-export default function HumbleInput({
+function HumbleInput({
   id,
   type,
   placeholder,
@@ -122,6 +122,8 @@ export default function HumbleInput({
     </Container>
   );
 }
+
+export default memo(HumbleInput);
 
 const Container = styled.div<{ marginBottom?: string }>`
   width: 100%;

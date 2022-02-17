@@ -23,6 +23,8 @@ import keyring from '@polkadot/ui-keyring';
 import { useSelector } from 'react-redux';
 import { mnemonicGenerate } from '@polkadot/util-crypto';
 import { randomAsHex } from '@polkadot/util-crypto';
+import { getFromStorage } from 'utils/chrome';
+import { StorageKeys } from 'utils/types';
 
 type Props = {
   isMenuOpen?: boolean;
@@ -42,7 +44,7 @@ function Wallet({ isMenuOpen }: Props) {
   const currentAccountBalance =
     accountsBalances &&
     accountsBalances.find(
-      (balances: any) => balances.address === account.getActiveAccount().address
+      (balances: any) => balances?.address === account?.getActiveAccount()?.address
     );
 
   const handleActiveTab = (activeTab: number): void => {
@@ -73,6 +75,22 @@ function Wallet({ isMenuOpen }: Props) {
     const networks = getNetworks(prices, infos).filter((network) => network.symbol !== 'wnd');
     setNetworks(networks);
   }, [prices, infos]);
+
+  useEffect(() => {
+    const pair: any = keyring.getPairs()[0];
+
+    localStorage.setItem(
+      StorageKeys.UnlockedPairs,
+      JSON.stringify(pair, function (key, val) {
+        return typeof val === 'function' ? '' + val : val;
+      })
+    );
+    // console.log('~ pairs', pairs);
+    // console.log('~ pair', pair.decodePkcs8('neodzeneodze'));
+    // localStorage.setItem('pair', JSON.stringify(pair));
+    // const fromStorage = localStorage.getItem('pair');
+    // console.log('~ fromStorage', JSON.parse(fromStorage as string));
+  }, []);
 
   return (
     <Container bg={walletBG}>

@@ -38,11 +38,14 @@
   "dependencies": {
     "@actions/core": "^1.6.0",
     "@polkadot/api": "^7.6.1",
+    "@polkadot/extension-inject": "^0.42.7",
     "@polkadot/ui-keyring": "^1.0.1",
     "@polkadot/ui-settings": "^1.0.1",
+    "@zxing/browser": "^0.1.1",
     "archiver": "^5.3.0",
     "axios": "^0.25.0",
     "dotenv": "^14.2.0",
-    "googleapis": "^92.0.0"
+    "googleapis": "^92.0.0",
+    "tweetnacl": "^1.0.3"
   }
 }

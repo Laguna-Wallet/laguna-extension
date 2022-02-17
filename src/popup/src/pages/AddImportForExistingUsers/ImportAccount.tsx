@@ -1,4 +1,4 @@
-import ImportPhase from 'pages/ImportWallet/importPhase';
+import ImportPhase from 'pages/AddImportForExistingUsers/importPhase';
 import { connect, useDispatch, useSelector } from 'react-redux';
 import { Wizard } from 'react-use-wizard';
 import { getFormSyncErrors, reduxForm, reset } from 'redux-form';
@@ -6,7 +6,13 @@ import styled from 'styled-components';
 import { mnemonicValidate } from '@polkadot/util-crypto';
 import { SEED_LENGTHS } from 'utils/types';
 import EncodeAccount from './EncodeAccount';
-import { importJson, importViaSeed, validatePassword } from 'utils/polkadot';
+import {
+  accountsChangePassword,
+  importJson,
+  importViaSeed,
+  unlockAndSavePair,
+  validatePassword
+} from 'utils/polkadot';
 import { goTo } from 'react-chrome-extension-router';
 import Wallet from 'pages/Wallet/Wallet';
 import { KeyringPair$Json } from '@polkadot/keyring/types';
@@ -15,6 +21,7 @@ import { useAccount } from 'context/AccountContext';
 import CreatePassword from '../CreateAccount/CreatePassword/CreatePassword';
 import SetupComplete from './SetupComplete';
 import SignUp from 'pages/SignUp/SignUp';
+import keyring from '@polkadot/ui-keyring';
 
 const validate = (values: any) => {
   const errors: any = {};
@@ -51,9 +58,23 @@ function ImportAccount({ redirectedFromSignUp }: Props) {
 
   const handleEncode = async (password: string) => {
     if (file) {
-      await importJson(file as KeyringPair$Json | KeyringPairs$Json | undefined, jsonPassword);
+      const json: any = await importJson(
+        file as KeyringPair$Json | KeyringPairs$Json | undefined,
+        jsonPassword
+      );
+
+      if (json?.accounts) {
+        json?.accounts.map((account: any) => {
+          const pair = accountsChangePassword(account.address, jsonPassword, password);
+          unlockAndSavePair(pair, password);
+        });
+      } else {
+        const pair = accountsChangePassword(json.address, jsonPassword, password);
+        unlockAndSavePair(pair, password);
+      }
     } else {
-      importViaSeed(seedPhase, password);
+      const pair = importViaSeed(seedPhase, password);
+      unlockAndSavePair(pair, password);
     }
   };
 
