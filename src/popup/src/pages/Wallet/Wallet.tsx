@@ -21,11 +21,16 @@ import Receive from 'pages/Recieve/Receive';
 import BigNumber from 'bignumber.js';
 import keyring from '@polkadot/ui-keyring';
 import { useSelector } from 'react-redux';
-import { mnemonicGenerate } from '@polkadot/util-crypto';
+import { base64Decode, mnemonicGenerate } from '@polkadot/util-crypto';
 import { randomAsHex } from '@polkadot/util-crypto';
 import { getFromStorage } from 'utils/chrome';
 import { StorageKeys } from 'utils/types';
 // const { naclDecrypt, naclEncrypt, randomAsU8a } = require('@polkadot/util-crypto');
+import { stringToU8a, u8aToHex, hexToU8a } from '@polkadot/util';
+import { decodePair } from '@polkadot/keyring/pair/decode';
+import { createPair } from '@polkadot/keyring/pair';
+
+import { ed25519PairFromSeed } from '@polkadot/util-crypto';
 
 type Props = {
   isMenuOpen?: boolean;
@@ -78,17 +83,30 @@ function Wallet({ isMenuOpen }: Props) {
   }, [prices, infos]);
 
   useEffect(() => {
-    // 0xae90b998a9a683b522247219f9da05fa2ae49db5770e99900e8138fabdc2cf34
-    // const randomMini = randomAsHex(32);
-    // console.log('~ randomMini', randomMini);
-    // keyring.addUri(randomMini, 'password', { name: 'test this one' });
-    // const pair = keyring.getPair('5EpYfYwTU3tP6MZupw9QN7VV83PEN2zTyAQ5fjNGYs6hJHjL');
-    // console.log('~ pair', pair);
-    // pair.decodePkcs8('password');
-    // console.log(pair);
-    // const json = pair.toJson('password');
-    // console.log('json', json);
-    // const decoded = keyring.decodeAddress(json.encoded, true);
+    // const newPair = keyring.addUri(
+    //   ' 0x38e3fdfd1ea08fcfa451ca2dc9512e0186983afad6f01e43dbd458c612340145235f5d6c703736e60a3bec6f3f25b73765d82869a26f143681b79f10ffa5c57c',
+    //   '123123123',
+    //   { name: 'reziko2' }
+    // );
+    // console.log('~ newPair', newPair);
+    // console.log('~ newPair', newPair);
+    // 0x38e3fdfd1ea08fcfa451ca2dc9512e0186983afad6f01e43dbd458c612340145235f5d6c703736e60a3bec6f3f25b73765d82869a26f143681b79f10ffa5c57c;
+    const pair = keyring.getPair(account.getActiveAccount().address);
+    pair.unlock('123123123');
+    const json = pair.toJson('123123123');
+    const u8aEncoded = stringToU8a(json.encoded);
+    console.log('what is dis', base64Decode(json.encoded));
+    const decoded = decodePair('123123123', base64Decode(json.encoded), json.encoding.type);
+    console.log('~ decoded', decoded);
+    console.log('public - 1: ', keyring.encodeAddress(u8aToHex(decoded.publicKey), 0));
+    console.log('public - 2: ', keyring.encodeAddress(account.getActiveAccount().address, 0));
+    console.log('secret - 1:', u8aToHex(decoded.secretKey.subarray(0, 32)));
+    console.log('secret - 2:', u8aToHex(decoded.secretKey.subarray(32)));
+    console.log('secret - 64:', u8aToHex(decoded.secretKey));
+    console.log('seed: ', decoded.seed);
+
+    // const newpair = createPair();
+    // keyring.addPair();
   }, []);
 
   return (

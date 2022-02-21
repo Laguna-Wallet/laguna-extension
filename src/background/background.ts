@@ -71,8 +71,13 @@ chrome.runtime.onStartup.addListener(async () => {
     console.log("status", status)
   })
 
-  fetchAccountsBalances()
 
+
+  window.addEventListener('message', () => {
+    givme account data id 
+  })
+
+  fetchAccountsBalances()
   fetchAccountsTransactions()
 })
 

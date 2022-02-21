@@ -87,7 +87,7 @@ export function importViaSeed(suri: string, password: string) {
 
   // todo revise with sam
   // todo move to separate function
-  return keyring.addUri(suri, password);
+  return keyring.addUri(suri, password, {}, 'ed25519');
 }
 
 // todo proper typing for string

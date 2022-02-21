@@ -1,23 +1,13 @@
-import { ArrowSmRightIcon } from '@heroicons/react/outline';
-import keyring from '@polkadot/ui-keyring';
 import CheckMarkIcon from 'assets/svgComponents/CheckMarkIcon';
 import LockIcon from 'assets/svgComponents/LockIcon';
 import Button from 'components/primitives/Button';
-import { useAccount } from 'context/AccountContext';
 import Wallet from 'pages/Wallet/Wallet';
-import { memo, useEffect } from 'react';
+import { memo } from 'react';
 import { Link } from 'react-chrome-extension-router';
 import styled from 'styled-components';
-import { saveToStorage } from 'utils/chrome';
-import { generateKeyPair } from 'utils/polkadot';
-import { decodeAddress, encodeAddress } from '@polkadot/keyring';
 import RightArrow from 'assets/svgComponents/RightArrow';
-import { encryptPassword } from 'utils';
-import { StorageKeys } from 'utils/types';
 
 export default memo(function CongratsSecuringWallet() {
-  const account = useAccount();
-
   return (
     <Container>
       <MainContent>

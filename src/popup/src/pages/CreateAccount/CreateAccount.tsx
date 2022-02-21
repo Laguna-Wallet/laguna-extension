@@ -28,11 +28,11 @@ export default function CreateAccount({ redirectedFromSignUp, encodePhase }: Pro
     // would be better to refactor and save data in redux, (just for flow)
     if (account.mnemonics) {
       const mnemonicsStr = account?.mnemonics.join(' ');
-      const { pair } = keyring.addUri(mnemonicsStr, password);
+      const { pair } = keyring.addUri(mnemonicsStr, password, {}, 'ed25519');
       keyring.saveAccountMeta(pair, { name: pair.address });
     } else {
       const hex = randomAsHex(32);
-      const { pair } = keyring.addUri(hex, password);
+      const { pair } = keyring.addUri(hex, password, {}, 'ed25519');
       keyring.saveAccountMeta(pair, { name: pair.address });
     }
   };

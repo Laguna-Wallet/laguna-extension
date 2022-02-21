@@ -46,8 +46,10 @@ function Confirm({ fee, transfer }: Props) {
 
   const total = new BigNumber(amount).plus(price).toFormat(4);
 
+  const activeAccountAddress = account?.getActiveAccount()?.address;
+
   const handleClick = async () => {
-    const pair = keyring.getPairs()[0];
+    const pair = keyring.getPair(activeAccountAddress);
 
     pair.unlock('123123123');
 
