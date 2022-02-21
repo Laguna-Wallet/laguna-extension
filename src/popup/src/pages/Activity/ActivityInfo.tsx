@@ -15,25 +15,51 @@ import { truncateString } from 'utils';
 import BigNumber from 'bignumber.js';
 import { useSelector } from 'react-redux';
 import BN from 'bn.js';
+import RightArrow from 'assets/svgComponents/RightArrow';
+import ExportTransactionIcon from 'assets/svgComponents/ExportTransactionIcon';
+import { TokenSymbols, Transaction } from 'utils/types';
+import { CSVLink, CSVDownload } from 'react-csv';
 
 type Props = {
-  transaction?: any;
+  transaction: Transaction;
 };
 
 export default function AccountInfo({ transaction }: Props) {
+  const account = useAccount();
   const { from, to, nonce, amount, fee, chain, hash } = transaction;
   const prices = useSelector((state: any) => state.wallet.prices);
   const price = prices[chain];
 
-  const onClick = (hash: any) => {
-    chrome.windows.create({ url: `https://polkadot.js.org/apps/#/explorer/query/${hash}` });
+  const symbol = TokenSymbols[chain];
+
+  const accountsBalances = useSelector((state: any) => state?.wallet?.accountsBalances);
+  const currentAccountBalance =
+    accountsBalances &&
+    accountsBalances.find(
+      (balances: any) => balances.address === account.getActiveAccount().address
+    );
+
+  const decimal = currentAccountBalance?.decimals[chain];
+
+  const onClick = (hash: string, chain: string) => {
+    chrome.windows.create({ url: `https://${chain}.subscan.io/extrinsic/${hash}` });
   };
 
-  const factor = new BigNumber(10).pow(10);
+  const factor = new BigNumber(10).pow(decimal);
+  const gasFee = new BigNumber(fee).dividedBy(factor);
+  const total = new BigNumber(amount).plus(gasFee);
+  const totalInUsd = price?.usd ? new BigNumber(total).multipliedBy(price?.usd) : new BigNumber(0);
 
-  const calculatedFee = new BigNumber(new BN(fee).muln(110).divn(100).toNumber())
-    .div(factor)
-    .toFixed(4);
+  const csvData = [
+    ['Confirmed', hash],
+    ['From', from],
+    ['To', to],
+    ['Nonce', nonce],
+    ['Amount', `${amount} ${symbol}`],
+    ['Gas Fee', `${gasFee} ${symbol}`],
+    ['Total', `${total} ${symbol}`],
+    ['Total in currency', `${totalInUsd} usd`]
+  ];
 
   return (
     <Container>
@@ -46,7 +72,7 @@ export default function AccountInfo({ transaction }: Props) {
         </Title>
         <Row>
           <RowLeft>Status</RowLeft>
-          <RowRight style={{ cursor: 'pointer' }} onClick={() => onClick(hash)}>
+          <RowRight style={{ cursor: 'pointer' }} onClick={() => onClick(hash, chain)}>
             View on Polkadot explorer
           </RowRight>
         </Row>
@@ -65,6 +91,9 @@ export default function AccountInfo({ transaction }: Props) {
             <span>From</span>
             <Address>{truncateString(from)}</Address>
           </Direction>
+          <ArrowContainer>
+            <RightArrow width={20} height={20} />
+          </ArrowContainer>
           <Direction>
             <span>To</span>
             <Address>{truncateString(to)}</Address>
@@ -86,20 +115,24 @@ export default function AccountInfo({ transaction }: Props) {
         </Row>
         <Row>
           <RowLeft>Gas Fee</RowLeft>
-          <RowRight>
-            {new BigNumber(new BN(fee).muln(110).divn(100).toNumber()).div(factor).toFixed(4)}
-          </RowRight>
+          <RowRight>{gasFee.toFormat(4, 1)}</RowRight>
         </Row>
         <Row>
           <RowLeft> Total</RowLeft>
           <RowRight>
             <TotalValue>
-              <span> {calculatedFee}</span>{' '}
-              {/* <span>{new BigNumber(Number(calculatedFee) + Number(amount)).toFixed(4)} USD</span> */}
+              <span> {total.toFormat(4, 1)}</span> <span>${totalInUsd.toFormat(4, 1)} USD</span>
             </TotalValue>
           </RowRight>
         </Row>
       </ContentItem>
+
+      <ExportButton>
+        <ExportTransactionIcon />
+        <StyledCSVLink filename={'transaction.csv'} data={csvData}>
+          <span>Export Transaction</span>
+        </StyledCSVLink>
+      </ExportButton>
     </Container>
   );
 }
@@ -185,9 +218,38 @@ const Direction = styled.div`
   }
 `;
 
+const ArrowContainer = styled.div`
+  display: flex;
+  align-items: flex-end;
+  svg {
+    margin-top: 29px;
+  }
+`;
+
 const Address = styled.div`
   font-size: 14px;
   color: #000000;
   font-family: SFCompactDisplayRegular;
   margin-top: 10px;
+`;
+
+const ExportButton = styled.div`
+  width: 145px;
+  height: 26px;
+  background-color: #000000;
+  border-radius: 20px;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  text-decoration: none;
+  span {
+    margin-left: 5px;
+  }
+`;
+
+const StyledCSVLink = styled(CSVLink)`
+  color: #fff;
+  text-decoration: none;
 `;

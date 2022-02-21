@@ -121,7 +121,11 @@ const Header = styled.div`
   font-family: 'Sequel100Wide55Wide';
 `;
 
-const BurgerMenu = styled.div``;
+const BurgerMenu = styled.div`
+  .hamburger-react {
+    width: 33px !important;
+  }
+`;
 
 const User = styled.div`
   display: flex;

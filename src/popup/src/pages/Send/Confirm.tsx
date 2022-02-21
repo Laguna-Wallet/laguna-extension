@@ -47,32 +47,13 @@ function Confirm({ fee, transfer }: Props) {
   const total = new BigNumber(amount).plus(price).toFormat(4);
 
   const handleClick = async () => {
-    const pairs = getFromStorage(StorageKeys.UnlockedPairs);
-
-    if (!pairs) return;
-
     const pair = keyring.getPairs()[0];
 
-    const json = getFromStorage(StorageKeys.UnlockedPairs);
-    // console.log('~ keypair', keypair);
-    // console.log('~ pair', pair);
-    const parsed = JSON.parse(json as string);
-
-    console.log('~ parsed', parsed);
-
-    // const keypair = keyring.keyring.
-    // //  createFromPair(pair, '', 'ed25519');
-
-    // console.log('~ keypair', keypair);
-
-    // console.log('~ parsed', parsed);
-    // const newpair = parsed[0];
-    // console.log('~ newpair', newpair);
-    // todo dynamic password
+    pair.unlock('123123123');
 
     // Todo Proper handling
     const unsub = await transfer
-      .signAndSend(parsed, ({ status }: any) => {
+      .signAndSend(pair, ({ status }: any) => {
         if (status.isInBlock) {
           console.log(`Completed at block hash #${status.asInBlock.toString()}`);
           dispatch(setBlockHash(status.asInBlock.toString()));

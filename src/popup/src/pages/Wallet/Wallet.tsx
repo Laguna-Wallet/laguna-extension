@@ -25,6 +25,7 @@ import { mnemonicGenerate } from '@polkadot/util-crypto';
 import { randomAsHex } from '@polkadot/util-crypto';
 import { getFromStorage } from 'utils/chrome';
 import { StorageKeys } from 'utils/types';
+// const { naclDecrypt, naclEncrypt, randomAsU8a } = require('@polkadot/util-crypto');
 
 type Props = {
   isMenuOpen?: boolean;
@@ -77,19 +78,17 @@ function Wallet({ isMenuOpen }: Props) {
   }, [prices, infos]);
 
   useEffect(() => {
-    const pair: any = keyring.getPairs()[0];
-
-    localStorage.setItem(
-      StorageKeys.UnlockedPairs,
-      JSON.stringify(pair, function (key, val) {
-        return typeof val === 'function' ? '' + val : val;
-      })
-    );
-    // console.log('~ pairs', pairs);
-    // console.log('~ pair', pair.decodePkcs8('neodzeneodze'));
-    // localStorage.setItem('pair', JSON.stringify(pair));
-    // const fromStorage = localStorage.getItem('pair');
-    // console.log('~ fromStorage', JSON.parse(fromStorage as string));
+    // 0xae90b998a9a683b522247219f9da05fa2ae49db5770e99900e8138fabdc2cf34
+    // const randomMini = randomAsHex(32);
+    // console.log('~ randomMini', randomMini);
+    // keyring.addUri(randomMini, 'password', { name: 'test this one' });
+    // const pair = keyring.getPair('5EpYfYwTU3tP6MZupw9QN7VV83PEN2zTyAQ5fjNGYs6hJHjL');
+    // console.log('~ pair', pair);
+    // pair.decodePkcs8('password');
+    // console.log(pair);
+    // const json = pair.toJson('password');
+    // console.log('json', json);
+    // const decoded = keyring.decodeAddress(json.encoded, true);
   }, []);
 
   return (
@@ -153,7 +152,7 @@ function Wallet({ isMenuOpen }: Props) {
           </ListContentParent>
         </List>
       </Content>
-      <Footer />
+      <Footer activeItem="wallet" />
     </Container>
   );
 }

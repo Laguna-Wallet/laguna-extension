@@ -15,7 +15,8 @@ import {
   getApiInstance,
   getAssets,
   getNetworks,
-  isValidAddressPolkadotAddress
+  isValidAddressPolkadotAddress,
+  recodeAddress
 } from 'utils/polkadot';
 import { useEffect, useReducer, useState } from 'react';
 import { Asset, Network, SelectType } from 'utils/types';
@@ -50,7 +51,6 @@ export default function Send({ initialIsContactsPopupOpen }: Props) {
   useEffect(() => {
     async function go() {
       const { assets }: any = await getAssets(prices, infos, currentAccountBalance);
-      console.log('~ assets', assets);
       setAssets(assets);
     }
 
@@ -79,21 +79,24 @@ export default function Send({ initialIsContactsPopupOpen }: Props) {
 
       const factor = new BigNumber(10).pow(new BigNumber(api.registry.chainDecimals[0]));
       const amount = new BigNumber(form.amount).multipliedBy(factor);
-
       const balance = await api.derive.balances.all(account.getActiveAccount().address);
-      const available = balance.availableBalance.toNumber();
 
-      const transfer = await api.tx.balances.transfer(form.address, amount.toNumber());
+      const available = `${balance.availableBalance}`;
+      const prefix = api.consts.system.ss58Prefix;
+      const recoded = recodeAddress(form.address, prefix);
 
-      const { partialFee, weight } = await transfer.paymentInfo(form.address);
+      const transfer = await api.tx.balances.transfer(form.address, amount.toString());
+
+      const { partialFee, weight } = await transfer.paymentInfo(recoded);
 
       const fees = partialFee.muln(110).divn(100);
+      console.log('~ fee, partialFee', partialFee.toNumber(), fees.toNumber());
 
       const total = amount
         .plus(fees.toNumber())
         .plus(api.consts.balances.existentialDeposit.toNumber());
 
-      if (total.gt(available)) {
+      if (total.gt(new BigNumber(available))) {
         console.error(`Cannot transfer ${total} with ${available}`);
         setAbilityToTransfer(false);
       } else {

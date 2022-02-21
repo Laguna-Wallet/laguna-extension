@@ -1,6 +1,5 @@
 import Button from 'components/primitives/Button';
 import CreateAccount from 'pages/CreateAccount/CreateAccount';
-import ImportWallet from 'pages/ImportWallet/ImportWallet';
 import { Link } from 'react-chrome-extension-router';
 import styled from 'styled-components';
 import { PageContainer } from 'components/ui';

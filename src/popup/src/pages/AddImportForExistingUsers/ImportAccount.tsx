@@ -10,7 +10,7 @@ import {
   accountsChangePassword,
   importJson,
   importViaSeed,
-  unlockAndSavePair,
+  // unlockAndSavePair,
   validatePassword
 } from 'utils/polkadot';
 import { goTo } from 'react-chrome-extension-router';
@@ -21,7 +21,6 @@ import { useAccount } from 'context/AccountContext';
 import CreatePassword from '../CreateAccount/CreatePassword/CreatePassword';
 import SetupComplete from './SetupComplete';
 import SignUp from 'pages/SignUp/SignUp';
-import keyring from '@polkadot/ui-keyring';
 
 const validate = (values: any) => {
   const errors: any = {};
@@ -66,15 +65,15 @@ function ImportAccount({ redirectedFromSignUp }: Props) {
       if (json?.accounts) {
         json?.accounts.map((account: any) => {
           const pair = accountsChangePassword(account.address, jsonPassword, password);
-          unlockAndSavePair(pair, password);
+          // unlockAndSavePair(pair, password);
         });
       } else {
         const pair = accountsChangePassword(json.address, jsonPassword, password);
-        unlockAndSavePair(pair, password);
+        // unlockAndSavePair(pair, password);
       }
     } else {
       const pair = importViaSeed(seedPhase, password);
-      unlockAndSavePair(pair, password);
+      // unlockAndSavePair(pair, password);
     }
   };
 

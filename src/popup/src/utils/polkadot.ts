@@ -366,6 +366,17 @@ export async function isValidKeyringPassword(
 
 export function encryptKeyringPairs(oldPassword: string, newPassword: string) {
   const pairs = keyring.getPairs();
+
+  for (let i = 0; i < pairs.length; i++) {
+    const pair = pairs[i];
+    pair.decodePkcs8(oldPassword);
+    pair.encodePkcs8(newPassword);
+  }
+
+  const pair = keyring.getPairs()[0];
+  console.log('~ before', pair);
+  console.log('~ unlock', pair.unlock(newPassword));
+  console.log('~ after', pair);
 }
 
 export function accountsChangePassword(address: string, oldPass: string, newPass: string) {
@@ -378,24 +389,24 @@ export function accountsChangePassword(address: string, oldPass: string, newPass
 }
 
 // todo pair proper typing
-export function unlockAndSavePair(pair: any, password: string) {
-  try {
-    const json = pair.toJson(password);
+// export function unlockAndSavePair(pair: any, password: string) {
+//   try {
+//     const json = pair.toJson(password);
 
-    let newPairs = [];
+//     let newPairs = [];
 
-    const unlockedPairs = getFromStorage(StorageKeys.UnlockedPairs);
-    console.log('~ unlockedPairs', unlockedPairs);
+//     const unlockedPairs = getFromStorage(StorageKeys.UnlockedPairs);
+//     console.log('~ unlockedPairs', unlockedPairs);
 
-    if (unlockedPairs) {
-      const parsed = JSON.parse(unlockedPairs);
-      newPairs = [...parsed, json];
-    } else {
-      newPairs = [json];
-    }
+//     if (unlockedPairs) {
+//       const parsed = JSON.parse(unlockedPairs);
+//       newPairs = [...parsed, json];
+//     } else {
+//       newPairs = [json];
+//     }
 
-    saveToStorage({ key: StorageKeys.UnlockedPairs, value: JSON.stringify(newPairs) });
-  } catch (error) {
-    throw new Error(error as string);
-  }
-}
+//     saveToStorage({ key: StorageKeys.UnlockedPairs, value: JSON.stringify(newPairs) });
+//   } catch (error) {
+//     throw new Error(error as string);
+//   }
+// }

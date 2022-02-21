@@ -75,6 +75,28 @@ export interface SelectType {
   name: string;
 }
 
+export enum TokenSymbols {
+  westend = 'wnd',
+  polkadot = 'dot',
+  kusama = 'ksm',
+  moonriver = 'movr',
+  moonbeam = 'glmr',
+  shiden = 'sdn',
+  astar = 'astr'
+}
+
+// todo move chain names to enum
+export interface Transaction {
+  chain: 'westend' | 'polkadot' | 'kusama' | 'moonriver' | 'moonbeam' | 'shiden' | 'astar';
+  amount: string;
+  fee: string;
+  from: string;
+  to: string;
+  nonce: string;
+  hash: string;
+  timestamp: string;
+}
+
 //==============================================================================
 // Inject
 //==============================================================================

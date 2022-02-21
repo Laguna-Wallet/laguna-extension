@@ -62,10 +62,9 @@ function HumbleInput({
   };
 
   return (
-    <Container marginBottom={marginBottom}>
+    <Container marginBottom={marginBottom} marginTop={marginTop}>
       <InputContainer
         borderColor={borderColor}
-        marginTop={marginTop}
         error={!!touched && !!error}
         bgColor={bgColor}
         color={color}
@@ -125,16 +124,16 @@ function HumbleInput({
 
 export default memo(HumbleInput);
 
-const Container = styled.div<{ marginBottom?: string }>`
+const Container = styled.div<{ marginBottom?: string; marginTop?: string }>`
   width: 100%;
   display: flex;
   flex-direction: column;
   margin-bottom: ${({ marginBottom }) => marginBottom || '0px'};
+  margin-top: ${({ marginTop }) => marginTop};
 `;
 
 const InputContainer = styled.div<{
   borderColor?: string;
-  marginTop?: string;
   error: boolean;
   height?: string;
   bgColor?: string;
@@ -149,7 +148,6 @@ const InputContainer = styled.div<{
   border-color: ${({ error, borderColor }) => (error ? '#F05353' : borderColor)};
   border-radius: 5px;
   background-color: ${({ bgColor }) => bgColor || '#fff'};
-  margin-top: ${({ marginTop }) => marginTop || marginTop};
   position: relative;
 `;
 
