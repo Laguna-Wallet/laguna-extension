@@ -13,8 +13,10 @@ import { goTo, Link } from 'react-chrome-extension-router';
 import { connect } from 'react-redux';
 import { Field, reduxForm } from 'redux-form';
 import styled from 'styled-components';
-import { isObjectEmpty, objectToArray, truncateString } from 'utils';
-import { validatePassword } from 'utils/polkadot';
+import { encryptPassword, isObjectEmpty, objectToArray, truncateString } from 'utils';
+import { saveToStorage } from 'utils/chrome';
+import { encryptKeyringPairs, validatePassword } from 'utils/polkadot';
+import { StorageKeys } from 'utils/types';
 
 // todo proper typing
 type Props = {
@@ -70,7 +72,10 @@ function ChangePassword({ handleSubmit }: Props) {
       return;
     }
 
-    console.log('encrypt keyring pairs');
+    encryptKeyringPairs(values?.currentPassword, values?.newPassword);
+
+    const newEncryptedPassword = encryptPassword({ password: values?.newPassword });
+    saveToStorage({ key: StorageKeys.Encoded, value: newEncryptedPassword });
   };
 
   return (

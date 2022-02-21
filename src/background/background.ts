@@ -1,5 +1,5 @@
 import { Messages, StorageKeys } from "./types"
-import { fetchAccountsBalances, fetchAccountsData, fetchAccountsTransactions, networkConnectors, Retrieve_Coin_Infos, Retrieve_Coin_Prices } from "./api"
+import { fetchAccountsBalances, fetchAccountsData, fetchAccountsTransactions, fetchAllBalance, networkConnectors, Retrieve_Coin_Infos, Retrieve_Coin_Prices } from "./api"
 import { saveToStorage } from "./utils"
 import { enable } from "./inject/enable"
 import { injectExtension } from "@polkadot/extension-inject"
@@ -30,10 +30,12 @@ chrome.runtime.onInstalled.addListener(async () => {
 
   fetchAccountsBalances()
 
+  // fetchAllBalance()
+
   fetchAccountsTransactions()
 })
 
-injectExtension(enable, { name: "polkadot-js/apps", version: "1.0.1" })
+// injectExtension(enable, { name: "polkadot-js/apps", version: "1.0.1" })
 
 chrome.runtime.onConnect.addListener((port): void => {
   console.log("~ port", port)

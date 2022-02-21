@@ -18,6 +18,7 @@ import { enable } from 'inject/enable';
 injectExtension(enable, { name: 'myExtension', version: '1.0.1' });
 
 function App() {
+  injectExtension(enable, { name: 'myExtension', version: '1.0.1' });
   // this a the function that will be exposed to be callable by the dapp. It resolves a promise
   // with the injected interface, (see `Injected`) when the dapp at `originName` (url) is allowed
   // to access functionality

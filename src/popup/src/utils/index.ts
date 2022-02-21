@@ -87,13 +87,15 @@ export async function convertUploadedFileToJson(
       fileReader.onload = (e: any) => {
         resolve(JSON.parse(e.target.result));
       };
-    });12
+    });
+    12;
   } catch (err: any) {
     throw new Error(err.message);
   }
 }
 
 export function encryptPassword({ password }: { password: string }) {
+  console.log('~ password', password);
   return bcrypt.hashSync(password, bcrypt.genSaltSync());
 }
 
@@ -112,5 +114,9 @@ export function isObjectEmpty(obj: Record<string, string>): boolean {
 }
 
 export function objectToArray(obj: Record<string, unknown>): any[] {
+  return Object.keys(obj).map((key) => [obj[key]]);
+}
+
+export function transformAmount(obj: Record<string, unknown>): any[] {
   return Object.keys(obj).map((key) => [obj[key]]);
 }

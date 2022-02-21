@@ -11,6 +11,10 @@ export function saveToStorage({ key, value }: { key: string; value: string }) {
   localStorage.setItem(key, value)
 }
 
+export function getFromStorage(key: string) {
+  return localStorage.getItem(key)
+}
+
 export function getAccountAddresses() {
   try {
     const local = localStorage
