@@ -14,6 +14,8 @@ import { getAccounts } from 'utils/polkadot';
 import SignUp from 'pages/SignUp/SignUp';
 import AddImportForExistingUsers from 'pages/AddImportForExistingUsers/AddImportForExistingUsers';
 import { truncateString } from 'utils';
+import { useDispatch } from 'react-redux';
+import { changeAccountsBalances, toggleLoading } from 'redux/actions';
 
 type Props = {
   // todo find out proper account typing
@@ -25,6 +27,7 @@ export default function Accounts({ setActiveAccount }: Props) {
   // todo save in storage
   const [accounts, setAccounts] = useState(getAccounts());
   const [activeAccountIndex, setActiveAccountIndex] = useState(0);
+  const dispatch = useDispatch();
 
   const formatName = (name: string) => {
     return name.length > 12 ? truncateString(name) : name;
@@ -38,6 +41,7 @@ export default function Accounts({ setActiveAccount }: Props) {
     e.stopPropagation();
     setActiveAccountIndex(index);
     setActiveAccount(account);
+    dispatch(toggleLoading(true));
   };
 
   return (
@@ -65,7 +69,9 @@ export default function Accounts({ setActiveAccount }: Props) {
           accounts.map((account, index) => {
             return (
               <Account
-                onClick={(e) => handleSetActiveAccount(e, account, index)}
+                onClick={(e) => {
+                  handleSetActiveAccount(e, account, index);
+                }}
                 key={account.address}>
                 <AccountIcon />
                 <span>{account?.meta?.name && formatName(account?.meta?.name)}</span>

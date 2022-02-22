@@ -25,7 +25,7 @@ export default function ChainItem({ asset, accountAddress }: Props) {
       </ListItemText>
       <ListItemText>
         <Title>
-          {Number(asset?.balance) || 0} {asset.symbol}
+          {new BigNumber(asset?.balance).toFormat(4, 1) || 0} {asset.symbol}
         </Title>
         <Value>${new BigNumber(asset.calculatedPrice).toFixed(2)}</Value>
       </ListItemText>

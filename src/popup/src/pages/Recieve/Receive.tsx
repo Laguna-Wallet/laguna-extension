@@ -16,17 +16,13 @@ export default function Receive() {
   const { prices, infos } = useSelector((state: any) => state.wallet);
 
   const { accountsBalances } = useSelector((state: any) => state.wallet);
-  // todo proper typing
-  const currentAccountBalance =
-    accountsBalances &&
-    accountsBalances.find(
-      (balances: any) => balances.address === account.getActiveAccount().address
-    );
+
+  const balances = accountsBalances?.balances;
 
   // TODO REFETCH NETWORKS FROM STORAGE
   useEffect(() => {
     async function go() {
-      const { assets }: any = await getAssets(prices, infos, currentAccountBalance);
+      const { assets }: any = await getAssets(prices, infos, balances);
       console.log('~ assets', assets);
       setAssets(assets);
     }

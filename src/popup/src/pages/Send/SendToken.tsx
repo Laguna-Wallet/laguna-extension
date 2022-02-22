@@ -109,7 +109,6 @@ function SendToken({
   amount
 }: Props) {
   const dispatch = useDispatch();
-  const account = useAccount();
   const { nextStep, previousStep } = useWizard();
   const [isAccountsPopupOpen, setIsAccountsPopupOpen] = useState<boolean>(false);
   const [isQRPopupOpen, setIsQRPopupOpen] = useState<boolean>(false);
@@ -308,7 +307,10 @@ function SendToken({
               Balance: {new BigNumber(selectedAsset.balance).toFormat(2)}{' '}
               {selectedAsset?.symbol.toUpperCase()}
             </span>
-            <span>Estimated Fee: {loading ? '...' : new BigNumber(fee).toFormat(4)}</span>
+            <span>
+              Estimated Fee: {loading ? '...' : new BigNumber(fee).toFormat(4)}{' '}
+              {selectedAsset?.symbol.toUpperCase()}
+            </span>
           </Info>
           <Button
             type="submit"

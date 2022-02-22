@@ -37,6 +37,13 @@ export function selectAssetToken(selectedAssetToken: string) {
 }
 
 // wallet
+export function toggleLoading(loading: boolean) {
+  return {
+    type: 'TOGGLE_LOADING',
+    payload: { loading }
+  };
+}
+
 export function changePrices(prices: Record<string, number>) {
   return {
     type: 'CHANGE_PRICES',

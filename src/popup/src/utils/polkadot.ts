@@ -267,7 +267,7 @@ export async function getAssets(
     try {
       const { name, symbol, chain, node } = networks[i];
 
-      const balance = balances?.balances[chain];
+      const balance = balances[chain];
 
       if (!balance) continue;
 

@@ -44,7 +44,7 @@ function Confirm({ fee, transfer }: Props) {
 
   const price = prices[selectedAsset.name.toLowerCase()].usd;
 
-  const total = new BigNumber(amount).plus(price).toFormat(4);
+  const total = new BigNumber(amount).plus(fee).times(price).toFormat(4);
 
   const activeAccountAddress = account?.getActiveAccount()?.address;
 
@@ -91,7 +91,11 @@ function Confirm({ fee, transfer }: Props) {
 
         <Info>
           <InfoItem>
-            Fee = <span>{new BigNumber(fee).toFormat(4) + `${token}`}</span>
+            Fee ={' '}
+            <span>
+              {new BigNumber(fee).toFormat(4) + ` ${token.toUpperCase()}`} ( $
+              {new BigNumber(fee).times(price).toFormat(4)} )
+            </span>
           </InfoItem>
 
           <InfoItem>
