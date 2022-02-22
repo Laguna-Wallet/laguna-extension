@@ -87,7 +87,7 @@ export function importViaSeed(suri: string, password: string) {
 
   // todo revise with sam
   // todo move to separate function
-  return keyring.addUri(suri, password);
+  return keyring.addUri(suri, password, {}, 'ed25519');
 }
 
 // todo proper typing for string
@@ -267,7 +267,7 @@ export async function getAssets(
     try {
       const { name, symbol, chain, node } = networks[i];
 
-      const balance = balances?.balances[chain];
+      const balance = balances[chain];
 
       if (!balance) continue;
 

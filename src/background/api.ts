@@ -24,7 +24,8 @@ export async function fetchAllBalance() {
 
 export async function NEWnetworkConnectors(chain: string) {
   try {
-    const wsProvider = new WsProvider(`wss://${chain}.api.onfinality.io/ws?apikey=0dcf3660-e510-4df3-b9d2-bba6b16e3ae9`)
+    // todo move to environment
+    const wsProvider = new WsProvider(`wss://${chain}.api.onfinality.io/ws?apikey=${process.env.REACT_ONFINALITY_KEY}`)
     const api = new ApiPromise({ provider: wsProvider })
 
     api.on("error", (error) => {
@@ -98,19 +99,19 @@ export async function Retrieve_Coin_Infos() {
 
 export async function networkConnectors() {
   const Promises = chains.map(async (chain) => {
+    // console.log("~  process.env.REACT_ONFINALITY_KEY", process.env.REACT_ONFINALITY_KEY)
     const wsProvider = new WsProvider(`wss://${chain}.api.onfinality.io/ws?apikey=0dcf3660-e510-4df3-b9d2-bba6b16e3ae9`)
     const api = new ApiPromise({ provider: wsProvider })
 
-    // setTimeout(() => {
-    //   api.disconnect()
-    // }, 27000)
+    // api.disconnect()
 
-    api.once("error", (error) => {
-      console.log("error", error)
-      // api.connect()
-    })
+    // api.once("error", (error) => {
+    //   console.log("error", error)
+    //   // api.connect()
+    // })
 
     await api.isReady
+
     return api
   })
 
@@ -123,7 +124,9 @@ export async function fetchAccountsBalances() {
 }
 
 export async function fetchAccountsData(apis: any[]) {
-  const addresses = getAccountAddresses()
+  // const addresses = getAccountAddresses()
+  const aa = getFromStorage(StorageKeys.ActiveAccount)
+  const addresses = [JSON.parse(aa).address]
   const userData = addresses.map((address) => fetchAccountData(address, apis))
   const resolvedData = await Promise.all(userData)
 

@@ -40,17 +40,13 @@ export default function Send({ initialIsContactsPopupOpen }: Props) {
   const { prices, infos } = useSelector((state: any) => state.wallet);
 
   const { accountsBalances } = useSelector((state: any) => state.wallet);
-  // todo proper typing
-  const currentAccountBalance =
-    accountsBalances &&
-    accountsBalances.find(
-      (balances: any) => balances.address === account.getActiveAccount().address
-    );
+
+  const balances = accountsBalances?.balances;
 
   // TODO REFETCH NETWORKS FROM STORAGE
   useEffect(() => {
     async function go() {
-      const { assets }: any = await getAssets(prices, infos, currentAccountBalance);
+      const { assets }: any = await getAssets(prices, infos, balances);
       setAssets(assets);
     }
 
@@ -80,21 +76,18 @@ export default function Send({ initialIsContactsPopupOpen }: Props) {
       const factor = new BigNumber(10).pow(new BigNumber(api.registry.chainDecimals[0]));
       const amount = new BigNumber(form.amount).multipliedBy(factor);
       const balance = await api.derive.balances.all(account.getActiveAccount().address);
-
       const available = `${balance.availableBalance}`;
       const prefix = api.consts.system.ss58Prefix;
+
       const recoded = recodeAddress(form.address, prefix);
 
       const transfer = await api.tx.balances.transfer(form.address, amount.toString());
 
       const { partialFee, weight } = await transfer.paymentInfo(recoded);
 
-      const fees = partialFee.muln(110).divn(100);
-      console.log('~ fee, partialFee', partialFee.toNumber(), fees.toNumber());
+      const fees = new BigNumber(`{partialFee}`).multipliedBy(110).dividedBy(100);
 
-      const total = amount
-        .plus(fees.toNumber())
-        .plus(api.consts.balances.existentialDeposit.toNumber());
+      const total = amount.plus(fees).plus(api.consts.balances.existentialDeposit.toNumber());
 
       if (total.gt(new BigNumber(available))) {
         console.error(`Cannot transfer ${total} with ${available}`);

@@ -1,31 +1,18 @@
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { ApiPromise, WsProvider, Keyring } from '@polkadot/api';
-import Config from 'config/config.json';
 import Header from './Header';
 import Footer from './Footer';
 import { useAccount } from 'context/AccountContext';
-import Accounts from 'components/popups/Accounts';
-import Popup from 'components/Popup/Popup';
-import Menu from 'components/Menu/Menu';
 import ChainItem from './ChainItem';
-import config from 'config/config.json';
-import { Account_Search } from 'utils/Api';
-import { getApiInstance, getAssets, getNetworks } from 'utils/polkadot';
+import { getAssets, getNetworks } from 'utils/polkadot';
 import NetworkItem from './NetworkItem';
 import walletBG from 'assets/imgs/walletBG.jpg';
-import { goTo, Link } from 'react-chrome-extension-router';
-import SelectAsset from 'pages/Send/SelectAsset';
+import { Link } from 'react-chrome-extension-router';
 import Send from 'pages/Send/Send';
 import Receive from 'pages/Recieve/Receive';
 import BigNumber from 'bignumber.js';
-import keyring from '@polkadot/ui-keyring';
-import { useSelector } from 'react-redux';
-import { mnemonicGenerate } from '@polkadot/util-crypto';
-import { randomAsHex } from '@polkadot/util-crypto';
-import { getFromStorage } from 'utils/chrome';
-import { StorageKeys } from 'utils/types';
-// const { naclDecrypt, naclEncrypt, randomAsU8a } = require('@polkadot/util-crypto');
+import { useDispatch, useSelector } from 'react-redux';
+import { toggleLoading } from 'redux/actions';
 
 type Props = {
   isMenuOpen?: boolean;
@@ -33,25 +20,23 @@ type Props = {
 
 function Wallet({ isMenuOpen }: Props) {
   const account = useAccount();
+  const dispatch = useDispatch();
   const [assets, setAssets] = useState<any>([]);
   const [networks, setNetworks] = useState<any>([]);
   const [activeTab, setActiveTab] = useState<number>(1);
-  const [loading, setLoading] = useState<boolean>(false);
   const [overallBalance, setOverallBalance] = useState<number | undefined>(undefined);
 
-  const { prices, infos, accountsBalances } = useSelector((state: any) => state.wallet);
+  const {
+    prices,
+    infos,
+    accountsBalances,
+    loading: accountsChanging
+  } = useSelector((state: any) => state.wallet);
 
-  // todo proper typing
-  const currentAccountBalance =
-    accountsBalances &&
-    accountsBalances.find(
-      (balances: any) => balances?.address === account?.getActiveAccount()?.address
-    );
+  const balances = accountsBalances?.balances;
+  console.log('~ balances', balances);
 
   const handleActiveTab = (activeTab: number): void => {
-    if (loading) {
-      setLoading(false);
-    }
     setActiveTab(activeTab);
   };
 
@@ -59,42 +44,26 @@ function Wallet({ isMenuOpen }: Props) {
 
   useEffect(() => {
     async function go() {
-      setLoading(true);
-      const { overallBalance, assets }: any = await getAssets(prices, infos, currentAccountBalance);
-
+      const { overallBalance, assets }: any = await getAssets(prices, infos, balances);
       setAssets(assets);
       setOverallBalance(overallBalance);
-      setLoading(false);
     }
 
-    if (activeAccount && currentAccountBalance) {
+    if (activeAccount && balances) {
       go();
     }
-  }, [activeAccount, currentAccountBalance]);
+  }, [activeAccount, balances]);
 
   useEffect(() => {
     const networks = getNetworks(prices, infos).filter((network) => network.symbol !== 'wnd');
     setNetworks(networks);
   }, [prices, infos]);
 
-  useEffect(() => {
-    // 0xae90b998a9a683b522247219f9da05fa2ae49db5770e99900e8138fabdc2cf34
-    // const randomMini = randomAsHex(32);
-    // console.log('~ randomMini', randomMini);
-    // keyring.addUri(randomMini, 'password', { name: 'test this one' });
-    // const pair = keyring.getPair('5EpYfYwTU3tP6MZupw9QN7VV83PEN2zTyAQ5fjNGYs6hJHjL');
-    // console.log('~ pair', pair);
-    // pair.decodePkcs8('password');
-    // console.log(pair);
-    // const json = pair.toJson('password');
-    // console.log('json', json);
-    // const decoded = keyring.decodeAddress(json.encoded, true);
-  }, []);
-
   return (
     <Container bg={walletBG}>
       <Header menuInitialOpenState={isMenuOpen} />
 
+      {console.log('~ overallBalance', overallBalance)}
       <Content>
         <BalanceContainer>
           <span>Balance</span>
@@ -102,7 +71,7 @@ function Wallet({ isMenuOpen }: Props) {
             <span>
               {' '}
               $
-              {(overallBalance || overallBalance === 0) && !loading
+              {(overallBalance || overallBalance === 0) && !accountsChanging
                 ? new BigNumber(overallBalance).toFixed(2)
                 : '...'}{' '}
             </span>
@@ -128,7 +97,7 @@ function Wallet({ isMenuOpen }: Props) {
             </ListHeaderItem>
           </ListHeader>
           <ListContentParent>
-            {loading ? (
+            {accountsChanging ? (
               'Loading...'
             ) : (
               <ListContentChild>

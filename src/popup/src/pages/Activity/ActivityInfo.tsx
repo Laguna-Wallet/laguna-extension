@@ -33,6 +33,7 @@ export default function AccountInfo({ transaction }: Props) {
   const symbol = TokenSymbols[chain];
 
   const accountsBalances = useSelector((state: any) => state?.wallet?.accountsBalances);
+
   const currentAccountBalance =
     accountsBalances &&
     accountsBalances.find(

@@ -33,7 +33,7 @@ const Row = ({ transaction }: Props) => {
     return false;
   };
 
-  const currAccountAddress = account.getActiveAccount().address;
+  const currAccountAddress = account?.getActiveAccount()?.address;
 
   const isSent = handleIsSent(currAccountAddress, transaction.from);
   return (
@@ -88,9 +88,10 @@ export default function Activity() {
 
       <Content>
         <ActivityItemsContainer>
-          {sortedTransactions.map((transaction: any) => {
-            return <Row key={transaction.hex} transaction={transaction} />;
-          })}
+          {sortedTransactions &&
+            sortedTransactions.map((transaction: any) => {
+              return <Row key={transaction.hex} transaction={transaction} />;
+            })}
         </ActivityItemsContainer>
       </Content>
 

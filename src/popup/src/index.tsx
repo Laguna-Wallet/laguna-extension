@@ -13,7 +13,7 @@ import store from 'redux/store';
 
 cryptoWaitReady().then(() => {
   // load all available addresses and accounts
-  keyring.loadAll({ ss58Format: 42, type: 'ed25519' });
+  keyring.loadAll({ ss58Format: 0, type: 'ed25519' });
 
   ReactDOM.render(
     <React.StrictMode>

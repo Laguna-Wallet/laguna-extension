@@ -38,20 +38,6 @@ function App() {
     });
   }, []);
 
-  const listener = ({ data, source }: any): void => {
-    console.log('~ data, source', data, source);
-  };
-
-  useEffect(() => {
-    const pairs = keyring.getPairs();
-
-    // console.log('~ pairs', pairs);
-    // window.addEventListener('message', () => {
-    //   console.log('on message');
-    // });
-    // return () => window.removeEventListener('message', listener);
-  }, []);
-
   return <div className="App">{handlePage()}</div>;
 }
 

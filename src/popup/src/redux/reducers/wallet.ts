@@ -1,5 +1,7 @@
 export const walletReducer = (state: any = {}, action: any) => {
   switch (action.type) {
+    case 'TOGGLE_LOADING':
+      return { ...state, loading: action.payload.loading };
     case 'CHANGE_PRICES':
       return { ...state, prices: action.payload.prices };
     case 'CHANGE_INFOS':

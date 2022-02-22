@@ -11,6 +11,7 @@ const idleTimeout = getFromStorage(StorageKeys.IdleTimeout);
 
 const initialState: any = {
   wallet: {
+    loading: false,
     prices: prices ? JSON.parse(prices) : {},
     infos: infos ? JSON.parse(infos) : [],
     accountsBalances: accountsBalances ? JSON.parse(accountsBalances) : [],

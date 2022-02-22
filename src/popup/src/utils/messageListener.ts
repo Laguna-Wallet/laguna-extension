@@ -2,8 +2,10 @@ import {
   changeAccountsBalances,
   changeInfo,
   changePrices,
-  changeTransactions
+  changeTransactions,
+  toggleLoading
 } from 'redux/actions';
+import { accountHasChanged } from 'utils';
 import { saveToStorage } from './chrome';
 import { Messages, StorageKeys } from './types';
 
@@ -47,6 +49,12 @@ function updateCoinInfo(message: PriceUpdateMessage, dispatch: any) {
 function updateAccountsBalances(message: PriceUpdateMessage, dispatch: any) {
   dispatch(changeAccountsBalances(JSON.parse(message.payload)));
   saveToStorage({ key: StorageKeys.AccountBalances, value: message.payload });
+
+  // if account address has changed, background has fetched
+  // new balances and loading is finished
+  if (accountHasChanged(JSON.parse(message.payload))) {
+    dispatch(toggleLoading(false));
+  }
 }
 
 function updateTransactions(message: PriceUpdateMessage, dispatch: any) {

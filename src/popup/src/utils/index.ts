@@ -1,8 +1,9 @@
-import { MnemonicsTriple } from './types';
+import { MnemonicsTriple, StorageKeys } from './types';
 import { saveAs } from 'file-saver';
 import { KeyringPair$Json } from '@polkadot/keyring/types';
 import { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
 import bcrypt from 'bcryptjs';
+import { getFromStorage } from './chrome';
 
 //==============================================================================
 // Mnemonics
@@ -119,4 +120,12 @@ export function objectToArray(obj: Record<string, unknown>): any[] {
 
 export function transformAmount(obj: Record<string, unknown>): any[] {
   return Object.keys(obj).map((key) => [obj[key]]);
+}
+
+export function accountHasChanged(balances: Record<string, string>) {
+  console.log('~ balances', balances);
+  const account = getFromStorage(StorageKeys.ActiveAccount);
+  const address = JSON.parse(account as string).address;
+  if (balances.address === address) return true;
+  return false;
 }
