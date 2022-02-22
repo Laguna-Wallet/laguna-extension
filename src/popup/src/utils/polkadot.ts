@@ -374,9 +374,6 @@ export function encryptKeyringPairs(oldPassword: string, newPassword: string) {
   }
 
   const pair = keyring.getPairs()[0];
-  console.log('~ before', pair);
-  console.log('~ unlock', pair.unlock(newPassword));
-  console.log('~ after', pair);
 }
 
 export function accountsChangePassword(address: string, oldPass: string, newPass: string) {

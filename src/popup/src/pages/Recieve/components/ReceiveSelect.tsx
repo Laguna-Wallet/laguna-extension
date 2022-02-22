@@ -1,16 +1,21 @@
 import { FormikProps } from 'formik/dist/types';
 import styled from 'styled-components';
 import { getApiInstance } from 'utils/polkadot';
-import { Asset } from 'utils/types';
+import { Asset, Network } from 'utils/types';
 
 type Props = {
   options: string[] | undefined;
   selectedToken: string | undefined;
   setSelectedToken: (token: string) => void;
-  selectedAsset: Asset | undefined;
+  selectedNetwork: Network | undefined;
 };
 
-export default function Select({ options, selectedToken, setSelectedToken, selectedAsset }: Props) {
+export default function Select({
+  options,
+  selectedToken,
+  setSelectedToken,
+  selectedNetwork
+}: Props) {
   const handleChange = async (e: any) => {
     // todo implement
   };
@@ -26,7 +31,7 @@ export default function Select({ options, selectedToken, setSelectedToken, selec
         {options &&
           options.map((token) => (
             <StyledOption key={token} value={selectedToken}>
-              {token.toUpperCase()} ({selectedAsset?.chain} Chain)
+              {token.toUpperCase()} ({selectedNetwork?.chain} Chain)
             </StyledOption>
           ))}
       </StyledSelect>

@@ -1,41 +1,36 @@
 import styled from 'styled-components';
 import { useAccount } from 'context/AccountContext';
-import { Asset } from 'utils/types';
+import { Network } from 'utils/types';
 import { Wizard } from 'react-use-wizard';
-import SelectAsset from './SelectAsset';
 import { useEffect, useState } from 'react';
 import ReceiveToken from './ReceiveToken';
-import { accountsTie, getApiInstance, getAssets, recodeAddress } from 'utils/polkadot';
+import { accountsTie, getApiInstance, getAssets, getNetworks, recodeAddress } from 'utils/polkadot';
 import { useSelector } from 'react-redux';
+import SelectNetwork from './SelectNetwork';
 
 export default function Receive() {
   const account = useAccount();
   const activeAccount = account.getActiveAccount();
-  const [assets, setAssets] = useState<Asset[]>([]);
+  const [networks, setNetworks] = useState<Network[]>([]);
 
   const { prices, infos } = useSelector((state: any) => state.wallet);
 
-  const { accountsBalances } = useSelector((state: any) => state.wallet);
-
-  const balances = accountsBalances?.balances;
-
-  // TODO REFETCH NETWORKS FROM STORAGE
   useEffect(() => {
     async function go() {
-      const { assets }: any = await getAssets(prices, infos, balances);
-      console.log('~ assets', assets);
-      setAssets(assets);
+      const networks: Network[] = await getNetworks(prices, infos);
+
+      setNetworks(networks);
     }
 
     go();
   }, []);
 
-  const [selectedAsset, setSelectedAsset] = useState<Asset>();
+  const [selectedNetwork, setSelectedNetwork] = useState<Network>();
   const [recoded, setRecoded] = useState<string>('');
   useEffect(() => {
     async function go() {
-      if (!selectedAsset) return;
-      const api = await getApiInstance(selectedAsset.chain);
+      if (!selectedNetwork) return;
+      const api = await getApiInstance(selectedNetwork.chain);
       const genesisHash = api.genesisHash;
 
       // maybe not needed.
@@ -46,17 +41,13 @@ export default function Receive() {
       setRecoded(recoded);
     }
     go();
-  }, [selectedAsset]);
+  }, [selectedNetwork]);
 
   return (
     <Container>
       <Wizard>
-        <SelectAsset
-          assets={assets}
-          selectedAsset={selectedAsset}
-          setSelectedAsset={setSelectedAsset}
-        />
-        <ReceiveToken recoded={recoded} selectedAsset={selectedAsset} />
+        <SelectNetwork setSelectedNetwork={setSelectedNetwork} networks={networks} />
+        <ReceiveToken recoded={recoded} selectedNetwork={selectedNetwork} />
       </Wizard>
     </Container>
   );

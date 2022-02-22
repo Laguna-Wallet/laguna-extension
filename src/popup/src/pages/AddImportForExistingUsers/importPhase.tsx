@@ -41,7 +41,7 @@ type Props = {
 };
 
 function ImportPhase({ errors, onClose, redirectedFromSignUp }: Props) {
-  const { nextStep, previousStep } = useWizard();
+  const { nextStep } = useWizard();
 
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
   const [snackbarError, setSnackbarError] = useState<string>('');
@@ -55,7 +55,7 @@ function ImportPhase({ errors, onClose, redirectedFromSignUp }: Props) {
     if (!acceptedFile.length) return;
 
     const json = await convertUploadedFileToJson(acceptedFile);
-    
+
     if (isKeyringPairs$Json(json) || isKeyringJson(json)) {
       setUploaded(true);
       dispatch(change('AddImportAccount', 'file', json));
@@ -124,7 +124,29 @@ function ImportPhase({ errors, onClose, redirectedFromSignUp }: Props) {
         }}
       />
       <Content>
-        <DndContainer {...getRootProps()} role={'Box'}>
+        <InputContainer>
+          <Field
+            id="seedPhase"
+            name="seedPhase"
+            type="textarea"
+            label="seedPhase"
+            placeholder="Enter your seed phrase, private key, Polkadot address or drag and drop a JSON backup file."
+            component={HumbleInput}
+            props={{
+              type: 'textarea',
+              height: '120px',
+              fontSize: '20px',
+              marginTop: '20px',
+              textAlign: 'center',
+              bgColor: '#fff',
+              borderColor: '#fff',
+              hideErrorMsg: false,
+              autoFocus: true
+            }}
+          />
+        </InputContainer>
+
+        {/* <DndContainer {...getRootProps()} role={'Box'}>
           {!seedPhase && (
             <FileUploadContainer>
               <input {...getInputProps()} />
@@ -142,7 +164,6 @@ function ImportPhase({ errors, onClose, redirectedFromSignUp }: Props) {
               {uploaded ? <Text>Upload Complete</Text> : ''}
             </FileUploadContainer>
           )}
-
           {!uploaded && (
             <InputContainer>
               <Field
@@ -166,8 +187,9 @@ function ImportPhase({ errors, onClose, redirectedFromSignUp }: Props) {
               />
             </InputContainer>
           )}
-        </DndContainer>
-        {uploaded && (
+        </DndContainer> */}
+
+        {/* {uploaded && (
           <Field
             id="password"
             name="password"
@@ -186,7 +208,7 @@ function ImportPhase({ errors, onClose, redirectedFromSignUp }: Props) {
               autoFocus: true
             }}
           />
-        )}
+        )} */}
 
         <Button
           onClick={() => handleClick({ seedPhase, file, password })}

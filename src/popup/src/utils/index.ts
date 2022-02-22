@@ -96,7 +96,6 @@ export async function convertUploadedFileToJson(
 }
 
 export function encryptPassword({ password }: { password: string }) {
-  console.log('~ password', password);
   return bcrypt.hashSync(password, bcrypt.genSaltSync());
 }
 
@@ -123,7 +122,6 @@ export function transformAmount(obj: Record<string, unknown>): any[] {
 }
 
 export function accountHasChanged(balances: Record<string, string>) {
-  console.log('~ balances', balances);
   const account = getFromStorage(StorageKeys.ActiveAccount);
   const address = JSON.parse(account as string).address;
   if (balances.address === address) return true;

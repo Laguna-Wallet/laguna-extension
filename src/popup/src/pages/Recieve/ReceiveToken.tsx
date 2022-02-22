@@ -1,24 +1,20 @@
 import styled from 'styled-components';
 import Header from 'pages/Wallet/Header';
 import QRCode from 'react-qr-code';
-import { goTo } from 'react-chrome-extension-router';
-import Wallet from 'pages/Wallet/Wallet';
 import { useAccount } from 'context/AccountContext';
 import HumbleInput from 'components/primitives/HumbleInput';
 import ReceiveSelect from './components/ReceiveSelect';
-import { useEffect, useState } from 'react';
-import { getAssets, recodeAddress } from 'utils/polkadot';
-import { Asset } from 'utils/types';
-import { addMetadata, knownMetadata } from '@polkadot/extension-chains';
-import SelectAsset from './SelectAsset';
+import { useState } from 'react';
+
+import { Network } from 'utils/types';
 import { useWizard } from 'react-use-wizard';
 
 type Props = {
-  selectedAsset: Asset | undefined;
+  selectedNetwork: Network | undefined;
   recoded: string;
 };
 
-export default function ReceiveToken({ selectedAsset, recoded }: Props) {
+export default function ReceiveToken({ selectedNetwork, recoded }: Props) {
   const { previousStep } = useWizard();
 
   const account = useAccount();
@@ -26,7 +22,7 @@ export default function ReceiveToken({ selectedAsset, recoded }: Props) {
 
   // todo case when there are multiple symbols
   const [selectedToken, setSelectedToken] = useState<string>();
-  const tokens = selectedAsset && [selectedAsset.symbol];
+  const tokens = selectedNetwork && [selectedNetwork.symbol];
   const handleChange = () => {
     console.log('change');
   };
@@ -34,7 +30,7 @@ export default function ReceiveToken({ selectedAsset, recoded }: Props) {
   return (
     <Container>
       <Header
-        title={`Receive ${selectedAsset?.chain.toLocaleUpperCase()}`}
+        title={`Receive ${selectedNetwork?.chain.toLocaleUpperCase()}`}
         backAction={() => previousStep()}
       />
       <Content>
@@ -59,7 +55,7 @@ export default function ReceiveToken({ selectedAsset, recoded }: Props) {
         <ContentItem>
           <Text>ASSET:</Text>
           <ReceiveSelect
-            selectedAsset={selectedAsset}
+            selectedNetwork={selectedNetwork}
             setSelectedToken={setSelectedToken}
             selectedToken={selectedToken}
             options={tokens}
@@ -67,8 +63,8 @@ export default function ReceiveToken({ selectedAsset, recoded }: Props) {
         </ContentItem>
 
         <BottomText>
-          This address can only be used toreceive assets on the <span>{selectedAsset?.chain}</span>{' '}
-          chain.
+          This address can only be used to receive assets on the{' '}
+          <span>{selectedNetwork?.chain}</span> chain.
         </BottomText>
       </Content>
     </Container>
