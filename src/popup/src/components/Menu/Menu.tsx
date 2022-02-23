@@ -13,6 +13,7 @@ import MenuHeader from 'components/MenuHeader/MenuHeader';
 import AutoLockTimer from 'pages/AutoLockTimer/AutoLockTimer';
 import RemoveAccount from 'pages/RemoveAccount/RemoveAccount';
 import ChangePassword from 'pages/ChangePassword/ChangePassword';
+import BackupAccount from 'pages/BackupAccount/BackupAccount';
 
 type Props = {
   onClose: () => void;
@@ -31,12 +32,12 @@ export default function Menu({ onClose }: Props) {
       <MenuHeader isOpen={isOpen} setOpen={setOpen} onClose={() => onClose()} showUser={true} />
 
       <List>
-        <ListItem>
+        {/* <ListItem>
           <StyledLink component={ExportAllAccounts}>
             <span>Export All Accounts</span>
             <RightArrow width={25} />
           </StyledLink>
-        </ListItem>
+        </ListItem> */}
         <ListItem>
           <StyledLink component={AddressBook}>
             <span>Address Book</span>
@@ -45,13 +46,7 @@ export default function Menu({ onClose }: Props) {
         </ListItem>
         <ListItem>
           <StyledLink color={'#c1c1c154'} component={ExportAllAccounts}>
-            <span>Trusted Apps</span>
-            <RightArrow width={25} />
-          </StyledLink>
-        </ListItem>
-        <ListItem>
-          <StyledLink component={ChangePassword}>
-            <span>Change Password</span>
+            <span>Connected Sites</span>
             <RightArrow width={25} />
           </StyledLink>
         </ListItem>
@@ -62,11 +57,24 @@ export default function Menu({ onClose }: Props) {
           </StyledLink>
         </ListItem>
         <ListItem>
-          <StyledLink color={'#c1c1c154'} component={ExportAllAccounts}>
-            <span> Change Network</span>
+          <StyledLink component={ChangePassword}>
+            <span>Change Password</span>
             <RightArrow width={25} />
           </StyledLink>
         </ListItem>
+        <ListItem>
+          <StyledLink color={'#c1c1c154'} component={ExportAllAccounts}>
+            <span>Change Language</span>
+            <RightArrow width={25} />
+          </StyledLink>
+        </ListItem>
+        <ListItem>
+          <StyledLink component={BackupAccount}>
+            <span>Backup Account</span>
+            <RightArrow width={25} />
+          </StyledLink>
+        </ListItem>
+
         <ListItem>
           <StyledLink component={RemoveAccount}>
             <span>Remove Wallet</span>
@@ -119,13 +127,19 @@ const ListItem = styled.div`
     margin-top: 0;
     pointer-events: inherit;
   }
-  :nth-child(2) {
+  /* :nth-child(2) {
+    pointer-events: inherit;
+  } */
+  :nth-child(3) {
     pointer-events: inherit;
   }
   :nth-child(4) {
     pointer-events: inherit;
   }
   :nth-child(5) {
+    pointer-events: inherit;
+  }
+  :nth-child(6) {
     pointer-events: inherit;
   }
   :nth-child(7) {

@@ -18,6 +18,11 @@ import { MetadataDef } from '@polkadot/extension-inject/types';
 import settings from '@polkadot/ui-settings';
 import BigNumber from 'bignumber.js';
 import { Json } from '@polkadot/types';
+import { mnemonicToMiniSecret } from '@polkadot/util-crypto';
+import AES from 'crypto-js/aes';
+import Utf8 from 'crypto-js/enc-utf8';
+import { u8aToHex } from '@polkadot/util';
+import { StringMappingType } from 'typescript';
 
 // TODO appropriate typing
 
@@ -73,6 +78,7 @@ export function validateSeed(suri: string) {
 }
 
 // todo alter this function to createAccountFromSeed
+// todo maybe not needed
 export function importViaSeed(suri: string, password: string) {
   if (!suri) return;
 
@@ -90,8 +96,27 @@ export function importViaSeed(suri: string, password: string) {
   return keyring.addUri(suri, password, {}, 'ed25519');
 }
 
+// Imports
+export function importFromMnemonic(seed: string, password: string) {
+  const key = mnemonicToMiniSecret(seed);
+  const encodedKey = AES.encrypt(u8aToHex(key), password).toString();
+  const encodedSeed = AES.encrypt(seed, password).toString();
+  const { pair } = keyring.addUri(seed, password);
+  keyring.saveAccountMeta(pair, { encodedKey, encodedSeed, name: pair.address });
+}
+
+export function importFromPrivateKey(secretKey: string, password: string) {
+  const encodedKey = AES.encrypt(secretKey, password).toString();
+  const { pair } = keyring.addUri(secretKey, password);
+  keyring.saveAccountMeta(pair, { encodedKey, name: pair.address });
+}
+
+export function importFromPublicKey(publicAddress: string) {
+  keyring.saveAddress(publicAddress, { name: publicAddress, viewOnly: true });
+}
+
 // todo proper typing for string
-export function isValidAddressPolkadotAddress(address: string): boolean {
+export function isValidPolkadotAddress(address: string): boolean {
   try {
     encodeAddress(isHex(address) ? hexToU8a(address) : decodeAddress(address));
     return true;
@@ -374,9 +399,6 @@ export function encryptKeyringPairs(oldPassword: string, newPassword: string) {
   }
 
   const pair = keyring.getPairs()[0];
-  console.log('~ before', pair);
-  console.log('~ unlock', pair.unlock(newPassword));
-  console.log('~ after', pair);
 }
 
 export function accountsChangePassword(address: string, oldPass: string, newPass: string) {

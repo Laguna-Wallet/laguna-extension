@@ -29,8 +29,12 @@ import {
   isKeyringJson,
   isKeyringPairs$Json,
   isValidKeyringPassword,
+  isValidPolkadotAddress,
   validateSeed
 } from 'utils/polkadot';
+import { isHex } from '@polkadot/util';
+import { mnemonicValidate } from '@polkadot/util-crypto';
+
 // import { StorageKeys } from 'utils/types';
 // import { validateSeedPhase } from 'utils/validations';
 
@@ -41,7 +45,7 @@ type Props = {
 };
 
 function ImportPhase({ errors, onClose, redirectedFromSignUp }: Props) {
-  const { nextStep, previousStep } = useWizard();
+  const { nextStep } = useWizard();
 
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
   const [snackbarError, setSnackbarError] = useState<string>('');
@@ -51,47 +55,48 @@ function ImportPhase({ errors, onClose, redirectedFromSignUp }: Props) {
   const { seedPhase, file, password }: any = { ...formValues };
   const dispatch = useDispatch();
 
-  const onDrop = useCallback(async (acceptedFile) => {
-    if (!acceptedFile.length) return;
+  // const onDrop = useCallback(async (acceptedFile) => {
+  //   if (!acceptedFile.length) return;
 
-    const json = await convertUploadedFileToJson(acceptedFile);
-    
-    if (isKeyringPairs$Json(json) || isKeyringJson(json)) {
-      setUploaded(true);
-      dispatch(change('AddImportAccount', 'file', json));
-    } else {
-      setIsSnackbarOpen(true);
-      setSnackbarError('Invalid json file');
-    }
-  }, []);
+  //   const json = await convertUploadedFileToJson(acceptedFile);
 
-  const { getRootProps, getInputProps, isDragActive, isDragAccept, acceptedFiles, open } =
-    useDropzone({
-      onDrop,
-      noClick: true,
-      accept: '.json'
-    });
+  //   if (isKeyringPairs$Json(json) || isKeyringJson(json)) {
+  //     setUploaded(true);
+  //     dispatch(change('AddImportAccount', 'file', json));
+  //   } else {
+  //     setIsSnackbarOpen(true);
+  //     setSnackbarError('Invalid json file');
+  //   }
+  // }, []);
+
+  // const { getRootProps, getInputProps, isDragActive, isDragAccept, acceptedFiles, open } =
+  //   useDropzone({
+  //     onDrop,
+  //     noClick: true,
+  //     accept: '.json'
+  //   });
 
   const isDisabled = () => {
-    if (validateSeed(seedPhase) || uploaded) return false;
-    return true;
+    if (!isHex(seedPhase) && !isValidPolkadotAddress(seedPhase) && !mnemonicValidate(seedPhase))
+      return true;
+    return false;
   };
 
   // todo proper typing
   const handleClick = async ({ seedPhase, file, password }: any) => {
     try {
-      if (file) {
-        const isValid = await isValidKeyringPassword(file, password);
-        if (isValid) {
-          nextStep();
-        } else {
-          setIsSnackbarOpen(true);
-          setSnackbarError('Invalid password');
-        }
-      } else {
-        nextStep();
-      }
-
+      nextStep();
+      // if (file) {
+      //   const isValid = await isValidKeyringPassword(file, password);
+      //   if (isValid) {
+      //     nextStep();
+      //   } else {
+      //     setIsSnackbarOpen(true);
+      //     setSnackbarError('Invalid password');
+      //   }
+      // } else {
+      // nextStep();
+      // }
       // saveToStorage({ key: StorageKeys.SignedIn, value: 'true' });
     } catch (err: any) {
       // todo proper error typing
@@ -124,7 +129,29 @@ function ImportPhase({ errors, onClose, redirectedFromSignUp }: Props) {
         }}
       />
       <Content>
-        <DndContainer {...getRootProps()} role={'Box'}>
+        <InputContainer>
+          <Field
+            id="seedPhase"
+            name="seedPhase"
+            type="textarea"
+            label="seedPhase"
+            placeholder="Enter your seed phrase, private key, Polkadot address or drag and drop a JSON backup file."
+            component={HumbleInput}
+            props={{
+              type: 'textarea',
+              height: '120px',
+              fontSize: '20px',
+              marginTop: '20px',
+              textAlign: 'center',
+              bgColor: '#fff',
+              borderColor: '#fff',
+              hideErrorMsg: false,
+              autoFocus: true
+            }}
+          />
+        </InputContainer>
+
+        {/* <DndContainer {...getRootProps()} role={'Box'}>
           {!seedPhase && (
             <FileUploadContainer>
               <input {...getInputProps()} />
@@ -142,7 +169,6 @@ function ImportPhase({ errors, onClose, redirectedFromSignUp }: Props) {
               {uploaded ? <Text>Upload Complete</Text> : ''}
             </FileUploadContainer>
           )}
-
           {!uploaded && (
             <InputContainer>
               <Field
@@ -166,8 +192,9 @@ function ImportPhase({ errors, onClose, redirectedFromSignUp }: Props) {
               />
             </InputContainer>
           )}
-        </DndContainer>
-        {uploaded && (
+        </DndContainer> */}
+
+        {/* {uploaded && (
           <Field
             id="password"
             name="password"
@@ -186,7 +213,7 @@ function ImportPhase({ errors, onClose, redirectedFromSignUp }: Props) {
               autoFocus: true
             }}
           />
-        )}
+        )} */}
 
         <Button
           onClick={() => handleClick({ seedPhase, file, password })}

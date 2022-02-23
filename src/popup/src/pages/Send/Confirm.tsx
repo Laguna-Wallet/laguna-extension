@@ -51,7 +51,7 @@ function Confirm({ fee, transfer }: Props) {
   const handleClick = async () => {
     const pair = keyring.getPair(activeAccountAddress);
 
-    pair.unlock('123123123');
+    pair.unlock('neodzeneodze');
 
     // Todo Proper handling
     const unsub = await transfer

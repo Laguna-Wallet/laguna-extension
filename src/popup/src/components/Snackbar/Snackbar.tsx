@@ -90,6 +90,7 @@ const ErrorMessage = styled.div`
   font-size: 13px;
   font-weight: 600;
   margin-left: 5px;
+  flex: 1;
 `;
 
 const CloseIconContainer = styled.div`

@@ -18,7 +18,7 @@ import { objectValuesToArray } from 'utils';
 import keyring from '@polkadot/ui-keyring';
 import AddressBook from './AddressBook';
 import AddressPencilIcon from 'assets/svgComponents/PencilIcon';
-import { addressExists, isValidAddressPolkadotAddress } from 'utils/polkadot';
+import { addressExists, isValidPolkadotAddress } from 'utils/polkadot';
 
 type AddAddressFormikValues = {
   addressName: string;
@@ -61,7 +61,7 @@ export default function AddAddress({
       // if(address is correct address)
       // Snackbar
 
-      const isValidAddress = isValidAddressPolkadotAddress(newAddress);
+      const isValidAddress = isValidPolkadotAddress(newAddress);
       if (!isValidAddress) {
         setIsSnackbarOpen(true);
         setSnackbarError('Enter correct address');

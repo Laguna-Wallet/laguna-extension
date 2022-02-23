@@ -1,13 +1,13 @@
-import { Injected } from '@polkadot/extension-inject/types';
-import keyring from '@polkadot/ui-keyring';
-import type { Signer as SignerInterface, SignerResult } from '@polkadot/api/types';
-import { signPayload, signRaw } from './sign';
-import { get, subscribe } from './accounts';
+import { Injected } from "@polkadot/extension-inject/types"
+import keyring from "@polkadot/ui-keyring"
+import type { Signer as SignerInterface, SignerResult } from "@polkadot/api/types"
+import { signPayload, signRaw } from "./sign"
+import { get, subscribe } from "./accounts"
 
 interface Account {
-  address: string;
-  genesisHash?: string;
-  name?: string;
+  address: string
+  genesisHash?: string
+  name?: string
 }
 
 /* tslint:disable-next-line */
@@ -17,16 +17,11 @@ export async function enable(origin: string): Promise<Injected> {
   return {
     accounts: {
       get,
-      subscribe
+      subscribe,
     },
     signer: {
       signPayload,
-      signRaw
-    }
-  };
+      signRaw,
+    },
+  }
 }
-
-//   console.log('wooow');
-//   //   const sendObj: Injected = {};
-//   return new Injected(sendMessage);
-// }
