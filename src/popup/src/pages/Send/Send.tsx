@@ -15,7 +15,7 @@ import {
   getApiInstance,
   getAssets,
   getNetworks,
-  isValidAddressPolkadotAddress,
+  isValidPolkadotAddress,
   recodeAddress
 } from 'utils/polkadot';
 import { useEffect, useReducer, useState } from 'react';
@@ -65,7 +65,7 @@ export default function Send({ initialIsContactsPopupOpen }: Props) {
     async function go() {
       if (
         !reduxSendTokenState.selectedAsset ||
-        !isValidAddressPolkadotAddress(form?.address) ||
+        !isValidPolkadotAddress(form?.address) ||
         !form.amount
       )
         return;

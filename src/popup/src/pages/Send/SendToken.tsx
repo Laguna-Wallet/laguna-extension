@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { goTo, Link } from 'react-chrome-extension-router';
-import { getAccounts, getApiInstance, isValidAddressPolkadotAddress } from 'utils/polkadot';
+import { getAccounts, getApiInstance, isValidPolkadotAddress } from 'utils/polkadot';
 import { Dispatch, useEffect, useState } from 'react';
 import TokenAndAmountSelect from 'pages/Send/TokenAndAmountSelect';
 import ContactsIcon from 'assets/svgComponents/ContactsIcon';
@@ -57,7 +57,7 @@ const validate = (values: any) => {
   if (!values.address) {
     errors.address = 'Please enter address';
   }
-  if (values.address && !isValidAddressPolkadotAddress(values.address)) {
+  if (values.address && !isValidPolkadotAddress(values.address)) {
     errors.address = 'Please enter valid address';
   } else if (!values.amount) {
     errors.amount = 'Please enter amount';

@@ -4,12 +4,7 @@ import Header from './Header';
 import Footer from './Footer';
 import { useAccount } from 'context/AccountContext';
 import ChainItem from './ChainItem';
-import {
-  getAssets,
-  getNetworks,
-  isValidAddressPolkadotAddress,
-  recodeAddress
-} from 'utils/polkadot';
+import { getAssets, getNetworks, isValidPolkadotAddress, recodeAddress } from 'utils/polkadot';
 import NetworkItem from './NetworkItem';
 import walletBG from 'assets/imgs/walletBG.jpg';
 import { Link } from 'react-chrome-extension-router';
@@ -78,17 +73,14 @@ function Wallet({ isMenuOpen }: Props) {
     // const seed = mnemonicToMiniSecret(mnemonic);
     // console.log('~ seed', u8aToHex(seed));
     // const address = keyring.addUri(`${mnemonic}///m/44'/60'/0'/0/0`, 'password', {}, 'ethereum');
-    // const isValid = isValidAddressPolkadotAddress(u8aToHex(seed));
+    // const isValid = isValidPolkadotAddress(u8aToHex(seed));
     // console.log('~ isValid', isValid);
-    
     // 0x026abf52ef19c93a6a1c8c2c0a905f6b2502deb9d6fd6c0e8eac77218059f96e
   }, []);
 
   return (
     <Container bg={walletBG}>
       <Header menuInitialOpenState={isMenuOpen} />
-
-      {console.log('~ overallBalance', overallBalance)}
       <Content>
         <BalanceContainer>
           <span>Balance</span>
