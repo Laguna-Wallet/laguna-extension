@@ -17,7 +17,7 @@ export enum ImportTypeEnum {
 }
 export type ImportType = ImportTypeEnum.SEED | ImportTypeEnum.JSON;
 
-export const DEFAULT_TYPE: KeypairType = 'sr25519';
+export const DEFAULT_TYPE: KeypairType = 'ed25519';
 export const SEED_LENGTHS = [12, 24];
 
 export enum StorageKeys {
@@ -30,7 +30,8 @@ export enum StorageKeys {
   AccountBalances = 'account-balances',
   Transactions = 'transactions',
   IdleTimeout = 'idle-timeout',
-  UnlockedPairs = 'unlocked-pairs'
+  UnlockedPairs = 'unlocked-pairs',
+  TokenDecimals = 'token-decimals'
 }
 
 //==============================================================================
@@ -64,7 +65,14 @@ export enum Messages {
   PriceUpdated = 'PRICES_UPDATED',
   CoinInfoUpdated = 'COIN_INFO_UPDATED',
   AccountsBalanceUpdated = 'ACCOUNTS_BALANCE_UPDATED',
-  TransactionsUpdated = 'TRANSACTIONS_UPDATED'
+  TransactionsUpdated = 'TRANSACTIONS_UPDATED',
+  AuthCheck = 'AUTH_CHECK',
+  AuthUser = 'AUTH_USER',
+  LogOutUser = 'LOG_OUT_USER',
+  TokenDecimalsUpdated = 'TOKEN_DECIMALS_UPDATED',
+  ChangeInterval = 'CHANGE_INTERVAL',
+  SendTransaction = 'SEND_TRANSACTION',
+  TransactionSuccess = 'TRANSACTION_SUCCESS'
 }
 
 //==============================================================================

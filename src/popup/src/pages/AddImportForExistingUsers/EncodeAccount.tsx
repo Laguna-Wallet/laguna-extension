@@ -26,7 +26,7 @@ export default function EncodeAccount({ handleEncode, onClose, onBack }: Props) 
   const [snackbarError, setSnackbarError] = useState<string>('');
   const { nextStep, previousStep } = useWizard();
 
-  const onClick = (password: string) => {
+  const onClick = async (password: string) => {
     const isValid = validatePassword(password);
 
     if (!isValid) {

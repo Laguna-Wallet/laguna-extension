@@ -8,10 +8,13 @@ const infos = getFromStorage(StorageKeys.TokenInfos);
 const accountsBalances = getFromStorage(StorageKeys.AccountBalances);
 const transactions = getFromStorage(StorageKeys.Transactions);
 const idleTimeout = getFromStorage(StorageKeys.IdleTimeout);
+const tokenDecimals = getFromStorage(StorageKeys.TokenDecimals);
 
 const initialState: any = {
   wallet: {
+    tokenDecimals: tokenDecimals ? JSON.parse(tokenDecimals) : {},
     loading: false,
+    isLoggedIn: undefined,
     prices: prices ? JSON.parse(prices) : {},
     infos: infos ? JSON.parse(infos) : [],
     accountsBalances: accountsBalances ? JSON.parse(accountsBalances) : [],
@@ -19,8 +22,7 @@ const initialState: any = {
     idleTimeout: idleTimeout || 10
   }
 };
-
-// todo inject redux dev tools
+// todo maybe inject redux dev tools
 const store: Store<any, any> = createStore(
   rootReducer,
   initialState

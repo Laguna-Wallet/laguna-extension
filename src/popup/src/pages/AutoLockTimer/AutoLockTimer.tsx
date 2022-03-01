@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { changeIdleTimeout } from 'redux/actions';
 import styled from 'styled-components';
 import { saveToStorage } from 'utils/chrome';
-import { StorageKeys } from 'utils/types';
+import { Messages, StorageKeys } from 'utils/types';
 
 function AutoLockTimer() {
   const [isOpen, setOpen] = useState<boolean>(true);
@@ -38,6 +38,7 @@ function AutoLockTimer() {
 
     dispatch(changeIdleTimeout(timeout));
     saveToStorage({ key: StorageKeys.IdleTimeout, value: timeout });
+    chrome.runtime.sendMessage({ type: Messages.ChangeInterval, payload: { timeout } });
     goTo(Wallet);
   };
 
