@@ -42,57 +42,43 @@ function App() {
   }, []);
 
   useEffect(() => {
-    // chrome.runtime.sendMessage({ type: 'AUTH_USER' });
-  });
-
-  useEffect(() => {
-    async function go() {
-      chrome.runtime.sendMessage({ type: 'AUTH_CHECK' });
-      chrome.runtime.onMessage.addListener(async (msg) => {
-        if (msg.type === Messages.AuthCheck && !msg.payload.isLoggedIn) {
-          const signedIn = await getFromStorage(StorageKeys.SignedIn);
-          const createdAccount = Boolean(signedIn);
-          if (createdAccount) {
-            goTo(WelcomeBack);
-          } else {
-            goTo(SignUp);
-          }
+    chrome.runtime.sendMessage({ type: 'AUTH_CHECK' });
+    chrome.runtime.onMessage.addListener((msg) => {
+      if (msg.type === Messages.AuthCheck && !msg.payload.isLoggedIn) {
+        const signedIn = getFromStorage(StorageKeys.SignedIn);
+        const createdAccount = Boolean(signedIn);
+        if (createdAccount) {
+          goTo(WelcomeBack);
+        } else {
+          goTo(SignUp);
         }
-      });
-    }
-
-    go();
+      }
+    });
   }, []);
 
-  // useEffect(() => {
-  //   chrome.runtime.sendMessage({ type: 'AUTH_CHECK' });
-  //   chrome.runtime.onMessage.addListener((msg) => {
-  //     dispatch(changeIsLoggedIn(msg.payload.isLoggedIn));
-  //   });
-  // }, []);
-  return <div className="App">{handlePage(isLoggedIn)}</div>;
+  return <div className="App">{handlePage()}</div>;
 }
 
 // chrome.runtime.onMessage.addListener((msg) => {
 //   console.log('message', msg);
 // });
 
-export default memo(App);
+export default App;
 
-const handlePage = async (isLoggedIn: boolean) => {
-  const createdAccount = Boolean(await getFromStorage(StorageKeys.SignedIn));
-  const loggedOut = Boolean(await getFromStorage(StorageKeys.LoggedOut));
-
+const handlePage = () => {
+  console.log('m');
+  const createdAccount = Boolean(getFromStorage(StorageKeys.SignedIn));
+  const loggedOut = Boolean(getFromStorage(StorageKeys.LoggedOut));
   //todo check for timeout and require password
   // return <WelcomeBack />;
-
+  console.log(1);
   if (loggedOut) {
     return <WelcomeBack />;
   }
-
+  console.log(2);
   if (createdAccount) {
     return <Wallet />;
   }
-
+  console.log(3);
   return <SignUp />;
 };

@@ -6,14 +6,15 @@ import { PageContainer } from 'components/ui';
 import { useFormik } from 'formik';
 import Input from 'components/primitives/Input';
 import { welcomeBackSchema } from 'utils/validations';
-import { validatePassword } from 'utils/polkadot';
+// import { validatePassword } from 'utils/polkadot';
 import Wallet from 'pages/Wallet/Wallet';
 import { clearFromStorage, saveToStorage } from 'utils/chrome';
-import { StorageKeys } from 'utils/types';
+import { Messages, StorageKeys } from 'utils/types';
 import { useEffect, useState } from 'react';
 import Snackbar from 'components/Snackbar/Snackbar';
 import CloseIcon from 'assets/svgComponents/CloseIcon';
 import HumbleInput from 'components/primitives/HumbleInput';
+import { validatePassword } from 'utils/polkadot';
 
 export default function WelcomeBack() {
   const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
@@ -26,11 +27,10 @@ export default function WelcomeBack() {
     validationSchema: welcomeBackSchema,
     onSubmit: ({ password }) => {
       const isValid = validatePassword(password);
-
       if (isValid) {
         saveToStorage({ key: StorageKeys.SignedIn, value: 'true' });
         clearFromStorage(StorageKeys.LoggedOut);
-
+        chrome.runtime.sendMessage({ type: Messages.AuthUser, payload: { password } });
         goTo(Wallet);
       } else {
         setSnackbarError('Incorrect Password');

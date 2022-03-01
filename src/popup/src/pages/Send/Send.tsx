@@ -55,6 +55,8 @@ export default function Send({ initialIsContactsPopupOpen }: Props) {
 
   const [transfer, setTransfer] = useState<any>();
   const [fee, setFee] = useState<any>();
+  const [amountToSend, setAmountToSend] = useState<string>('');
+  const [recoded, setRecoded] = useState<string>('');
   const [loading, setLoading] = useState<any>();
   const [abilityToTransfer, setAbilityToTransfer] = useState<boolean>(true);
 
@@ -80,6 +82,7 @@ export default function Send({ initialIsContactsPopupOpen }: Props) {
       const prefix = api.consts.system.ss58Prefix;
 
       const recoded = recodeAddress(form.address, prefix);
+      setRecoded(recoded);
 
       const transfer = await api.tx.balances.transfer(form.address, amount.toString());
 
@@ -94,6 +97,7 @@ export default function Send({ initialIsContactsPopupOpen }: Props) {
         setAbilityToTransfer(false);
       } else {
         setAbilityToTransfer(true);
+        setAmountToSend(amount.toString());
       }
 
       setFee(`${new BigNumber(partialFee.toNumber()).div(factor)}`);
@@ -115,7 +119,7 @@ export default function Send({ initialIsContactsPopupOpen }: Props) {
           loading={loading}
           abilityToTransfer={abilityToTransfer}
         />
-        <Confirm fee={fee} transfer={transfer} />
+        <Confirm amountToSend={amountToSend} recoded={recoded} fee={fee} transfer={transfer} />
         <TransactionSent />
       </Wizard>
     </Container>

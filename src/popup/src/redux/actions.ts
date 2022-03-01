@@ -78,3 +78,17 @@ export function changeIdleTimeout(idleTimeout: string) {
     payload: { idleTimeout }
   };
 }
+
+export function changeIsLoggedIn(isLoggedIn: string) {
+  return {
+    type: 'CHANGE_IS_LOGGED_IN',
+    payload: { isLoggedIn }
+  };
+}
+
+export function changeTokenDecimals(tokenDecimals: Record<string, string>) {
+  return {
+    type: 'CHANGE_TOKEN_DECIMALS',
+    payload: { tokenDecimals }
+  };
+}

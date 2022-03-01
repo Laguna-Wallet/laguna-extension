@@ -12,6 +12,10 @@ export const walletReducer = (state: any = {}, action: any) => {
       return { ...state, transactions: action.payload.transactions };
     case 'CHANGE_IDLE_TIMEOUT':
       return { ...state, idleTimeout: action.payload.idleTimeout };
+    case 'CHANGE_IS_LOGGED_IN':
+      return { ...state, isLoggedIn: action.payload.isLoggedIn };
+    case 'CHANGE_TOKEN_DECIMALS':
+      return { ...state, tokenDecimals: action.payload.tokenDecimals };
     default:
       return state;
   }
