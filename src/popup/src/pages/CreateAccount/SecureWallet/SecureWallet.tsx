@@ -4,22 +4,19 @@ import EncodeAccount from 'pages/AddImportForExistingUsers/EncodeAccount';
 import { useState } from 'react';
 import { useWizard, Wizard } from 'react-use-wizard';
 import CongratsSecuringWallet from '../Congrats/CongratsSecuringWallet';
+import { SecurityLevelEnum } from '../CreateAccount';
 import ChooseSecurityLevel from './chooseSecurityLevel';
 import ConfirmSeed from './confirmSeed';
 import MnemonicsSeed from './mnemonicsSeed';
 
-export enum LevelEnum {
-  Secured = 'Secured',
-  Skipped = 'Skipped'
-}
-
 type Props = {
   redirectedFromSignUp?: boolean;
+  setLevel: (level: SecurityLevelEnum.Secured | SecurityLevelEnum.Skipped) => void;
+  level: SecurityLevelEnum.Secured | SecurityLevelEnum.Skipped;
 };
 
-export default function SecureWallet({ redirectedFromSignUp }: Props) {
+export default function SecureWallet({ level, setLevel, redirectedFromSignUp }: Props) {
   const { nextStep } = useWizard();
-  const [level, setLevel] = useState('');
 
   // todo refactor
   // pass onClose function instead of redirectedFromSignUp prop
@@ -32,8 +29,10 @@ export default function SecureWallet({ redirectedFromSignUp }: Props) {
         nextStepFromParent={nextStep}
         setLevel={setLevel}
       />
-      {level === LevelEnum.Secured && <MnemonicsSeed redirectedFromSignUp={redirectedFromSignUp} />}
-      {level === LevelEnum.Secured && (
+      {level === SecurityLevelEnum.Secured && (
+        <MnemonicsSeed redirectedFromSignUp={redirectedFromSignUp} />
+      )}
+      {level === SecurityLevelEnum.Secured && (
         <ConfirmSeed redirectedFromSignUp={redirectedFromSignUp} handleNextSection={nextStep} />
       )}
     </Wizard>

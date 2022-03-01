@@ -1,11 +1,33 @@
 import { decodeAddress, encodeAddress } from "@polkadot/keyring"
 import { hexToU8a, isHex } from "@polkadot/util"
+import { StorageKeys } from "./types"
+import * as bcrypt from "bcryptjs"
+import keyring from "@polkadot/ui-keyring"
 
-export function saveToChromeStorage(key: string, value: string) {
-  chrome.storage.local.set({ key: value }, function () {
-    console.log("Value is set to " + JSON.stringify(value))
-  })
-}
+// Note: this utility functions will be needed for manifest V3
+// export const getFromStorage = async function (key) {
+//   return new Promise((resolve, reject) => {
+//     try {
+//       chrome.storage.local.get(key, function (value) {
+//         resolve(value[key])
+//       })
+//     } catch (ex) {
+//       reject(ex)
+//     }
+//   })
+// }
+
+// export const saveToStorage = async function ({ key, value }) {
+//   return new Promise((resolve, reject) => {
+//     try {
+//       chrome.storage.local.set({ [key]: value }, function () {
+//         resolve("")
+//       })
+//     } catch (ex) {
+//       reject(ex)
+//     }
+//   })
+// }
 
 export function saveToStorage({ key, value }: { key: string; value: string }) {
   localStorage.setItem(key, value)
@@ -13,6 +35,28 @@ export function saveToStorage({ key, value }: { key: string; value: string }) {
 
 export function getFromStorage(key: string) {
   return localStorage.getItem(key)
+}
+
+export function clearFromStorage(key: string) {
+  return localStorage.removeItem(key)
+}
+
+export function validatePassword(password: string) {
+  const hashed = getFromStorage(StorageKeys.Encoded)
+
+  if (!hashed) return false
+  return bcrypt.compareSync(password, hashed)
+}
+
+export function handleInitialIdleTimeout() {
+  const timeout = getFromStorage(StorageKeys.IdleTImeout)
+  if (timeout) {
+    return Number(timeout) * 60
+  } else {
+    saveToStorage({ key: StorageKeys.IdleTImeout, value: "15" })
+  }
+
+  return 15 * 50
 }
 
 export function getAccountAddresses() {
@@ -25,7 +69,7 @@ export function getAccountAddresses() {
         const account = localStorage.getItem(key)
         const parsed = JSON.parse(account)
 
-        if (isValidAddressPolkadotAddress(parsed.address)) {
+        if (isValidPolkadotAddress(parsed.address)) {
           accountAddresses.push(parsed.address)
         }
       }
@@ -37,7 +81,7 @@ export function getAccountAddresses() {
   }
 }
 
-export function isValidAddressPolkadotAddress(address: string): boolean {
+export function isValidPolkadotAddress(address: string): boolean {
   try {
     encodeAddress(isHex(address) ? hexToU8a(address) : decodeAddress(address))
     return true
@@ -76,4 +120,18 @@ export function transformTransfers(transfers: any[], chain: string) {
     hash: transfer?.hash,
     timestamp: transfer?.block_timestamp,
   }))
+}
+
+export function unlockKeyPairs(password: string) {
+  const pairs = keyring.getPairs()
+
+  return pairs.map((pair) => {
+    pair.unlock(password)
+    return pair
+  })
+}
+
+export function recodeToPolkadotAddress(address: string): string {
+  const publicKey = decodeAddress(address)
+  return encodeAddress(publicKey, 0)
 }

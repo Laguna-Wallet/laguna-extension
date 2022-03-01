@@ -67,15 +67,24 @@ function Wallet({ isMenuOpen }: Props) {
     //     : pairType === 'ethereum'
     //     ? `${seed}/${derivePath}`
     //     : `${seed}${derivePath}`;
-    // // }
+    // }
     // const mnemonic = mnemonicGenerate();
     // console.log('~ mnemonic', mnemonic);
     // const seed = mnemonicToMiniSecret(mnemonic);
-    // console.log('~ seed', u8aToHex(seed));
-    // const address = keyring.addUri(`${mnemonic}///m/44'/60'/0'/0/0`, 'password', {}, 'ethereum');
-    // const isValid = isValidPolkadotAddress(u8aToHex(seed));
+    // const hash = u8aToHex(seed);
+    // console.log('~ seed', hash);
+    // =============================
+    // const keypair = keyring.createFromUri(
+    //   `${'0x6eab74f9f4d87c8d6626511a1024a940550ccbe48925fdce536815be8aae1285'}///m/44'/60'/0'/0/0`,
+    //   {},
+    //   'ethereum'
+    // );
+    // console.log('~ keypair', keypair);
+    // console.log('~ address', keypair.address);
+    // const isValid = isValidPolkadotAddress(keypair.address);
     // console.log('~ isValid', isValid);
-    // 0x026abf52ef19c93a6a1c8c2c0a905f6b2502deb9d6fd6c0e8eac77218059f96e
+    // 0x046c89938092F61829Ec0130fE200c19E1D235d9
+    //1 0x6eab74f9f4d87c8d6626511a1024a940550ccbe48925fdce536815be8aae1285
   }, []);
 
   return (

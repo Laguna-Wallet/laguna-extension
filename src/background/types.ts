@@ -7,6 +7,8 @@ export enum StorageKeys {
   TokenInfos = "token-infos",
   AccountBalances = "account-balances",
   Transactions = "transactions",
+  TokenDecimals = "token-decimals",
+  IdleTImeout = "idle-timeout",
 }
 
 export enum Messages {
@@ -14,6 +16,13 @@ export enum Messages {
   CoinInfoUpdated = "COIN_INFO_UPDATED",
   AccountsBalanceUpdated = "ACCOUNTS_BALANCE_UPDATED",
   TransactionsUpdated = "TRANSACTIONS_UPDATED",
+  TokenDecimalsUpdated = "TOKEN_DECIMALS_UPDATED",
+  AuthUser = "AUTH_USER",
+  LogOutUser = "LOG_OUT_USER",
+  AuthCheck = "AUTH_CHECK",
+  ChangeInterval = "CHANGE_INTERVAL",
+  SendTransaction = "SEND_TRANSACTION",
+  TransactionSuccess = "TRANSACTION_SUCCESS",
 }
 
 export const chains = ["westend", "polkadot", "kusama", "moonriver", "moonbeam", "shiden", "astar"]

@@ -1,14 +1,14 @@
 import ArrowSmRightIcon from '@heroicons/react/outline/ArrowSmRightIcon';
 import Button from 'components/primitives/Button';
 import Checkbox from 'components/primitives/Checkbox';
-import { LevelEnum } from 'pages/CreateAccount/SecureWallet/SecureWallet';
+import { SecurityLevelEnum } from 'pages/CreateAccount/CreateAccount';
 import { useState } from 'react';
 import styled from 'styled-components';
 
 type Props = {
   nextStep: () => void;
   nextStepFromParent: () => void;
-  setLevel: (level: string) => void;
+  setLevel: (level: SecurityLevelEnum.Secured | SecurityLevelEnum.Skipped) => void;
 };
 
 export function ConfirmSecuritySkip({ nextStep, nextStepFromParent, setLevel }: Props) {
@@ -16,13 +16,13 @@ export function ConfirmSecuritySkip({ nextStep, nextStepFromParent, setLevel }: 
 
   const handleSkip = () => {
     if (checked) {
-      setLevel(LevelEnum.Skipped);
+      setLevel(SecurityLevelEnum.Skipped);
       nextStepFromParent();
     }
   };
 
   const handleSecure = () => {
-    setLevel(LevelEnum.Secured);
+    setLevel(SecurityLevelEnum.Secured);
     nextStep();
   };
 
