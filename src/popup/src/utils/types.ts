@@ -72,7 +72,8 @@ export enum Messages {
   TokenDecimalsUpdated = 'TOKEN_DECIMALS_UPDATED',
   ChangeInterval = 'CHANGE_INTERVAL',
   SendTransaction = 'SEND_TRANSACTION',
-  TransactionSuccess = 'TRANSACTION_SUCCESS'
+  TransactionSuccess = 'TRANSACTION_SUCCESS',
+  ReopenKeyPairs = 'REOPEN_KEYPAIRS'
 }
 
 //==============================================================================

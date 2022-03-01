@@ -49,6 +49,8 @@ function Confirm({ fee, transfer, amountToSend, recoded }: Props) {
 
   const activeAccountAddress = account?.getActiveAccount()?.address;
 
+  const name = account?.getActiveAccount()?.meta?.name;
+
   const handleClick = async () => {
     chrome.runtime.sendMessage({
       type: Messages.SendTransaction,
@@ -107,7 +109,8 @@ function Confirm({ fee, transfer, amountToSend, recoded }: Props) {
             {amount} {token}
           </span>{' '}
           {/* todo actual name of the wallet */}
-          <br /> from <span>SkyWalker</span> <br /> to <span>{truncateString(address)}</span>
+          <br /> from <span>{name.length > 14 ? truncateString(name) : name}</span> <br /> to{' '}
+          <span>{truncateString(address)}</span>
         </Text>
 
         <Info>

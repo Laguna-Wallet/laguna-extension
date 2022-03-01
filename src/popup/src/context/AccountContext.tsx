@@ -16,7 +16,7 @@ import { encryptPassword } from 'utils';
 
 // todoProperTyping
 interface IAccountCtx {
-  mnemonics: string[] | null;
+  mnemonics: string[];
   setMnemonics: (mnemonics: string[]) => void;
   encryptedPassword: string | null;
   setPassword: (password: string) => void;
@@ -29,7 +29,7 @@ interface IAccountCtx {
 
 // todoProperTyping
 const initialContextValue = {
-  mnemonics: null,
+  mnemonics: [],
   setMnemonics: () => undefined,
   setPassword: () => undefined,
   encryptedPassword: null,
@@ -64,7 +64,7 @@ const AccountProvider: FunctionComponent = ({ children }: { children?: ReactNode
     getFromStorage(StorageKeys.Encoded)
   );
 
-  const [mnemonics, setMnemonics] = useState<string[] | null>(mnemonicGenerate().split(' '));
+  const [mnemonics, setMnemonics] = useState<string[]>(mnemonicGenerate().split(' '));
 
   const getActiveAccount = useCallback(() => {
     // if no account in the storage than insert first one from keyring

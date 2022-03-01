@@ -13,6 +13,7 @@ import SecureWallet from './SecureWallet/SecureWallet';
 import { randomAsHex } from '@polkadot/util-crypto';
 import SignUp from 'pages/SignUp/SignUp';
 import { useState } from 'react';
+import { Messages } from 'utils/types';
 
 type Props = {
   existingAccount?: boolean;
@@ -46,6 +47,7 @@ export default function CreateAccount({ redirectedFromSignUp, encodePhase }: Pro
       const { pair } = keyring.addUri(hex, password, {}, 'ed25519');
       keyring.saveAccountMeta(pair, { name: pair.address });
     }
+    chrome.runtime.sendMessage({ type: Messages.ReopenKeyPairs });
   };
 
   const onBack = (backAction: () => void) => {

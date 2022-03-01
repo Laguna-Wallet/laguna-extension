@@ -17,10 +17,11 @@ import { changeIsLoggedIn } from 'redux/actions';
 import { goTo } from 'react-chrome-extension-router';
 // import '@polkadot/extension-inject/crossenv';
 
-// injectExtension(enable, { name: 'myExtension', version: '1.0.1' });
-
+console.log('hi');
+injectExtension(enable, { name: 'laguna-wallet', version: '1.0.0' });
+console.log('hello');
 function App() {
-  // injectExtension(enable, { name: 'myExtension', version: '1.0.1' });
+  injectExtension(enable, { name: 'laguna-wallet', version: '1.0.0' });
   // this a the function that will be exposed to be callable by the dapp. It resolves a promise
   // with the injected interface, (see `Injected`) when the dapp at `originName` (url) is allowed
   // to access functionality
@@ -66,19 +67,17 @@ function App() {
 export default App;
 
 const handlePage = () => {
-  console.log('m');
   const createdAccount = Boolean(getFromStorage(StorageKeys.SignedIn));
   const loggedOut = Boolean(getFromStorage(StorageKeys.LoggedOut));
   //todo check for timeout and require password
   // return <WelcomeBack />;
-  console.log(1);
   if (loggedOut) {
     return <WelcomeBack />;
   }
-  console.log(2);
+
   if (createdAccount) {
     return <Wallet />;
   }
-  console.log(3);
+
   return <SignUp />;
 };

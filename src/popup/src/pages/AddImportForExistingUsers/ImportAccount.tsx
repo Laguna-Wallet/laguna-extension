@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import { keyExtractSuri, mnemonicValidate, randomAsHex } from '@polkadot/util-crypto';
 import { isHex } from '@polkadot/util';
 
-import { SEED_LENGTHS } from 'utils/types';
+import { Messages, SEED_LENGTHS } from 'utils/types';
 import EncodeAccount from './EncodeAccount';
 import {
   accountsChangePassword,
@@ -92,6 +92,10 @@ function ImportAccount({ redirectedFromSignUp }: Props) {
 
       encryptKeyringPair(pair, jsonPassword, password);
     }
+
+    dispatch(reset('AddImportAccount'));
+    chrome.runtime.sendMessage({ type: Messages.ReopenKeyPairs });
+    // reopen keypairs
   };
 
   const onClose = () => {

@@ -3,6 +3,10 @@ import { fetchAccountsBalances, fetchAccountsTransactions, Retrieve_Coin_Decimal
 import { saveToStorage, validatePassword, handleInitialIdleTimeout, unlockKeyPairs } from "./utils"
 import keyring from "@polkadot/ui-keyring"
 import { cryptoWaitReady } from "@polkadot/util-crypto"
+import { injectExtension } from "@polkadot/extension-inject"
+import { enable } from "./inject/enable"
+
+injectExtension(enable, { name: "laguna-wallet", version: "1.0.0" })
 
 // cryptoWaitReady().then(() => {
 keyring.loadAll({ ss58Format: 42, type: "sr25519" })
@@ -31,9 +35,11 @@ chrome.runtime.onMessage.addListener(async (msg) => {
       break
     case Messages.SendTransaction:
       if (msg?.payload) {
-        console.log("~ keyPairs", keyPairs)
         await sendTransaction(keyPairs, msg.payload)
       }
+      break
+    case Messages.ReopenKeyPairs:
+      keyPairs = unlockKeyPairs(msg.payload.password)
       break
   }
 })
