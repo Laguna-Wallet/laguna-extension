@@ -7,9 +7,10 @@ import Bg from '../../assets/imgs/SwipeAndConfirmBg.png';
 
 type Props = {
   handleConfirm: () => void;
+  loading: boolean;
 };
 
-export default function SwipeAndConfirm({ handleConfirm }: Props) {
+export default function SwipeAndConfirm({ handleConfirm, loading }: Props) {
   const [width, setWidth] = useState<number>(56);
   const [isDragging, setIsDragging] = useState(false);
   const position = useMousePosition();
@@ -65,7 +66,7 @@ export default function SwipeAndConfirm({ handleConfirm }: Props) {
     <Container ref={containerRef}>
       <SwipeItem
         confirmed={confirmed}
-        confirming={confirming}
+        confirming={loading}
         ref={swipeItemRef}
         width={width}
         onMouseDown={() => setIsDragging(true)}

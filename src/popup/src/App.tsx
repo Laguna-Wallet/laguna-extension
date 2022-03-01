@@ -15,10 +15,10 @@ import keyring from '@polkadot/ui-keyring';
 import { enable } from 'inject/enable';
 // import '@polkadot/extension-inject/crossenv';
 
-injectExtension(enable, { name: 'myExtension', version: '1.0.1' });
+// injectExtension(enable, { name: 'myExtension', version: '1.0.1' });
 
 function App() {
-  injectExtension(enable, { name: 'myExtension', version: '1.0.1' });
+  // injectExtension(enable, { name: 'myExtension', version: '1.0.1' });
   // this a the function that will be exposed to be callable by the dapp. It resolves a promise
   // with the injected interface, (see `Injected`) when the dapp at `originName` (url) is allowed
   // to access functionality

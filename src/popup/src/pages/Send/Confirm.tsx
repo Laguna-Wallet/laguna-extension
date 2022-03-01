@@ -24,18 +24,19 @@ import { truncateString } from 'utils';
 import BigNumber from 'bignumber.js';
 import { useDispatch, useSelector } from 'react-redux';
 import { setBlockHash } from 'redux/actions';
-import { formValueSelector, getFormValues } from 'redux-form';
-import { getFromStorage } from 'utils/chrome';
-import { StorageKeys } from 'utils/types';
+import { Messages } from 'utils/types';
 
 type Props = {
   fee: string;
   transfer: any;
+  amountToSend: string;
+  recoded: string;
 };
-function Confirm({ fee, transfer }: Props) {
+function Confirm({ fee, transfer, amountToSend, recoded }: Props) {
   const { nextStep, previousStep } = useWizard();
   const account = useAccount();
   const dispatch = useDispatch();
+  const [loadingTransaction, setLoadingTransaction] = useState(false);
 
   const { address, amount, token } = useSelector((state: any) => state.form.sendToken.values);
   const selectedAsset = useSelector((state: any) => state.sendToken.selectedAsset);
@@ -49,25 +50,45 @@ function Confirm({ fee, transfer }: Props) {
   const activeAccountAddress = account?.getActiveAccount()?.address;
 
   const handleClick = async () => {
-    const pair = keyring.getPair(activeAccountAddress);
+    chrome.runtime.sendMessage({
+      type: Messages.SendTransaction,
+      payload: {
+        sendTo: recoded,
+        sendFrom: activeAccountAddress,
+        amount: amountToSend,
+        chain: selectedAsset.chain
+      }
+    });
 
-    pair.unlock('neodzeneodze');
+    setLoadingTransaction(true);
 
-    // Todo Proper handling
-    const unsub = await transfer
-      .signAndSend(pair, ({ status }: any) => {
-        if (status.isInBlock) {
-          console.log(`Completed at block hash #${status.asInBlock.toString()}`);
-          dispatch(setBlockHash(status.asInBlock.toString()));
-          nextStep();
-        } else {
-          console.log(`Current status: ${status.type}`);
-        }
-      })
-      .catch((error: any) => {
-        console.log(':( transaction failed', error);
-      });
+    // const pair = keyring.getPair(activeAccountAddress);
+    // pair.unlock('123123123');
+    // // Todo Proper handling
+    // const unsub = await transfer
+    //   .signAndSend(pair, ({ status }: any) => {
+    //     if (status.isInBlock) {
+    //       console.log(`Completed at block hash #${status.asInBlock.toString()}`);
+    //       dispatch(setBlockHash(status.asInBlock.toString()));
+    //       nextStep();
+    //     } else {
+    //       console.log(`Current status: ${status.type}`);
+    //     }
+    //   })
+    //   .catch((error: any) => {
+    //     console.log(':( transaction failed', error);
+    //   });
   };
+
+  useEffect(() => {
+    chrome.runtime.onMessage.addListener((msg) => {
+      if (msg.type === Messages.TransactionSuccess) {
+        dispatch(setBlockHash(msg.payload.block));
+        setLoadingTransaction(false);
+        nextStep();
+      }
+    });
+  }, []);
 
   const renderTotal = (total: string) => {
     if (!total) return '...';
@@ -106,7 +127,7 @@ function Confirm({ fee, transfer }: Props) {
 
       <BottomSection>
         <BalanceInfo>Remaining Balance: </BalanceInfo>
-        <SwipeAndConfirm handleConfirm={() => handleClick()} />
+        <SwipeAndConfirm loading={loadingTransaction} handleConfirm={() => handleClick()} />
       </BottomSection>
     </Container>
   );

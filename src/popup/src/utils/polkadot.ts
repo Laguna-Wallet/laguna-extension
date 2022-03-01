@@ -1,28 +1,24 @@
-import { keyExtractSuri, mnemonicValidate, randomAsHex } from '@polkadot/util-crypto';
-import { KeypairType } from '@polkadot/util-crypto/types';
-import { assert, hexToU8a, isHex, u8aToString } from '@polkadot/util';
+import { assert, hexToU8a, u8aToHex, isHex, u8aToString } from '@polkadot/util';
+import {
+  keyExtractSuri,
+  mnemonicValidate,
+  randomAsHex,
+  mnemonicToMiniSecret
+} from '@polkadot/util-crypto';
+
 import { Asset, Network, Prices, SEED_LENGTHS, StorageKeys } from './types';
 import { KeyringPair$Json } from '@polkadot/keyring/types';
 import { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
 import keyring from '@polkadot/ui-keyring';
-import { selectableNetworks } from '@polkadot/networks';
-import { Account_Search, getCoinInfo, Price_Converter } from './Api';
-import { getFromStorage, saveToStorage } from './chrome';
+import { getFromStorage } from './chrome';
 import bcrypt from 'bcryptjs';
-import { encryptPassword } from 'utils';
 import { useAccount } from 'context/AccountContext';
 import { ApiPromise, WsProvider } from '@polkadot/api';
-import { formatBalance } from '@polkadot/util/format';
 import { decodeAddress, encodeAddress } from '@polkadot/keyring';
-import { MetadataDef } from '@polkadot/extension-inject/types';
-import settings from '@polkadot/ui-settings';
 import BigNumber from 'bignumber.js';
-import { Json } from '@polkadot/types';
-import { mnemonicToMiniSecret } from '@polkadot/util-crypto';
 import AES from 'crypto-js/aes';
 import Utf8 from 'crypto-js/enc-utf8';
-import { u8aToHex } from '@polkadot/util';
-import { StringMappingType } from 'typescript';
+import { decodePair } from '@polkadot/keyring/pair/decode';
 
 // TODO appropriate typing
 
@@ -45,7 +41,7 @@ export function validatePassword(password: string) {
   const hashed = getFromStorage(StorageKeys.Encoded);
 
   if (!hashed) return false;
-  return bcrypt.compareSync(password, hashed);
+  return bcrypt.compareSync(password, hashed as string);
 }
 
 export function getAddresses() {
@@ -152,7 +148,7 @@ export async function importJson(
     return json;
   } else {
     const pair = keyring.restoreAccount(json, password);
-    return pair.toJson(password);
+    return pair;
   }
 }
 
@@ -334,8 +330,9 @@ export async function getApiInstance(node: string) {
   //CHAIN.api.onfinality.io/ws?apikey=API_KEY
 
   // todo put this into env
+  console.log('~ process.env.REACT_APP_ONFINALITY_KEY', process.env.REACT_APP_ONFINALITY_KEY);
   const wsProvider = new WsProvider(
-    `wss://${node}.api.onfinality.io/ws?apikey=0dcf3660-e510-4df3-b9d2-bba6b16e3ae9`
+    `wss://${node}.api.onfinality.io/ws?apikey=${process.env.REACT_APP_ONFINALITY_KEY}`
   );
 
   return await ApiPromise.create({ provider: wsProvider });
@@ -394,11 +391,46 @@ export function encryptKeyringPairs(oldPassword: string, newPassword: string) {
 
   for (let i = 0; i < pairs.length; i++) {
     const pair = pairs[i];
-    pair.decodePkcs8(oldPassword);
-    pair.encodePkcs8(newPassword);
-  }
+    pair.unlock(oldPassword);
 
-  const pair = keyring.getPairs()[0];
+    const { pair: newPair } = keyring.addPair(pair, newPassword);
+    keyring.saveAccountMeta(newPair, { ...pair.meta });
+  }
+}
+// todo typing keyringPair
+export function encryptKeyringPair(pair: any, oldPassword: string, newPassword: string) {
+  console.log('~ pair', pair);
+  pair.unlock(oldPassword);
+  const { pair: newPair } = keyring.addPair(pair, newPassword);
+  keyring.saveAccountMeta(newPair, { ...pair.meta });
+}
+
+export function encryptMetaData(oldPassword: string, newPassword: string) {
+  const pairs = keyring.getPairs();
+
+  for (let i = 0; i < pairs.length; i++) {
+    const pair = pairs[i];
+    console.log(1);
+    const meta = pair.meta;
+
+    // decode key and encode with new password
+    if (meta?.encodedKey) {
+      const decodedKeyBytes = AES.decrypt(meta?.encodedKey as string, oldPassword);
+      const decodedKey = decodedKeyBytes.toString(Utf8);
+
+      const reEncodedKey = AES.encrypt(decodedKey, newPassword).toString();
+      keyring.saveAccountMeta(pair, { ...pair.meta, encodedKey: reEncodedKey });
+    }
+
+    // decode seed and encode with new password
+    if (meta?.encodedSeed) {
+      const decodedSeedBytes = AES.decrypt(meta?.encodedSeed as string, oldPassword);
+      const decodedSeed = decodedSeedBytes.toString(Utf8);
+
+      const reEncodedSeed = AES.encrypt(decodedSeed, newPassword).toString();
+      keyring.saveAccountMeta(pair, { ...pair.meta, encodedSeed: reEncodedSeed });
+    }
+  }
 }
 
 export function accountsChangePassword(address: string, oldPass: string, newPass: string) {
