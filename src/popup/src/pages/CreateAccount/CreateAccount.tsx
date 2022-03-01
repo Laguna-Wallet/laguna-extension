@@ -32,6 +32,7 @@ export default function CreateAccount({ redirectedFromSignUp, encodePhase }: Pro
       keyring.saveAccountMeta(pair, { name: pair.address });
     } else {
       const hex = randomAsHex(32);
+      console.log('~ hex', hex);
       const { pair } = keyring.addUri(hex, password, {}, 'ed25519');
       keyring.saveAccountMeta(pair, { name: pair.address });
     }

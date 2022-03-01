@@ -1,6 +1,9 @@
 const { CheckerPlugin } = require("awesome-typescript-loader")
 const { optimize } = require("webpack")
 const { join, resolve } = require("path")
+const NodePolyfillPlugin = require("node-polyfill-webpack-plugin")
+const Dotenv = require("dotenv-webpack")
+
 let prodPlugins = []
 if (process.env.NODE_ENV === "production") {
   prodPlugins.push(new optimize.AggressiveMergingPlugin())
@@ -22,12 +25,11 @@ module.exports = {
         exclude: /node_modules/,
         test: /\.ts?$/,
         use: "ts-loader",
-
-        // use: 'awesome-typescript-loader?{configFileName: "tsconfig.json"}',
       },
     ],
   },
-  plugins: [new CheckerPlugin(), ...prodPlugins],
+
+  plugins: [new CheckerPlugin(), new NodePolyfillPlugin(), new Dotenv(), ...prodPlugins],
   resolve: {
     extensions: [".ts", ".js"],
   },

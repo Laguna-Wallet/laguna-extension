@@ -25,22 +25,15 @@ type Props = {
 };
 
 export default function AccountInfo({ transaction }: Props) {
-  const account = useAccount();
   const { from, to, nonce, amount, fee, chain, hash } = transaction;
   const prices = useSelector((state: any) => state.wallet.prices);
   const price = prices[chain];
 
   const symbol = TokenSymbols[chain];
 
-  const accountsBalances = useSelector((state: any) => state?.wallet?.accountsBalances);
+  const { tokenDecimals } = useSelector((state: any) => state?.wallet);
 
-  const currentAccountBalance =
-    accountsBalances &&
-    accountsBalances.find(
-      (balances: any) => balances.address === account.getActiveAccount().address
-    );
-
-  const decimal = currentAccountBalance?.decimals[chain];
+  const decimal = tokenDecimals[symbol.toUpperCase()];
 
   const onClick = (hash: string, chain: string) => {
     chrome.windows.create({ url: `https://${chain}.subscan.io/extrinsic/${hash}` });
