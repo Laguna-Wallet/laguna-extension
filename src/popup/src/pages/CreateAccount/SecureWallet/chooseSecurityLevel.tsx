@@ -12,14 +12,14 @@ import { goTo } from 'react-chrome-extension-router';
 import { useWizard } from 'react-use-wizard';
 import styled from 'styled-components';
 import { SecurityOptions, SecurityOptionsEnum } from 'utils/types';
-import { LevelEnum } from './SecureWallet';
+import { SecurityLevelEnum } from '../CreateAccount';
 import SecurityInfo from './securityInfo';
 import PopupContainer from './securityInfo';
 
 // todo onBack Prop wizard
 
 type Props = {
-  setLevel: (level: string) => void;
+  setLevel: (level: SecurityLevelEnum.Secured | SecurityLevelEnum.Skipped) => void;
   nextStepFromParent: () => void;
   redirectedFromSignUp?: boolean;
 };
@@ -87,7 +87,7 @@ export default function ChooseSecurityLevel({
         <Button
           type="button"
           onClick={() => {
-            setLevel(LevelEnum.Secured);
+            setLevel(SecurityLevelEnum.Secured);
             nextStep();
           }}
           Icon={<RightArrow width={23} fill="#fff" />}
