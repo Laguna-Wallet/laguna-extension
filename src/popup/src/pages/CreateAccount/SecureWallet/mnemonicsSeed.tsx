@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { mnemonicGenerate } from '@polkadot/util-crypto';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { copyToClipboard } from 'utils';
 import ButtonsIcon from 'assets/svgComponents/ButtonsIcon';
 import Button from 'components/primitives/Button';
@@ -19,12 +19,17 @@ type Props = {
 
 export default function MnemonicsSeed({ redirectedFromSignUp }: Props) {
   const { nextStep, previousStep } = useWizard();
+  const [mnemonics, setMnemonics] = useState<string[]>([]);
 
   const handleClick = () => {
     nextStep();
   };
 
-  const { mnemonics } = useAccount();
+  const account = useAccount();
+  useEffect(() => {
+    const mnemonics = account.generateMnemonics();
+    setMnemonics(mnemonics);
+  }, []);
 
   return (
     <Container>

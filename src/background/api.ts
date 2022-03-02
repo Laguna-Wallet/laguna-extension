@@ -7,20 +7,18 @@ import { formatBalance } from "@polkadot/util/format"
 // return formatBalance(balance.toJSON().data.free as number, { withSi: false, forceUnit: "-" }, decimals[index])
 
 export async function sendTransaction(pairs, { sendTo, sendFrom, amount, chain }) {
-  let hex = ""
-
   const pair = pairs.find((pair) => {
     return recodeToPolkadotAddress(pair.address) === recodeToPolkadotAddress(sendFrom)
   })
 
-  const wsProvider = new WsProvider(`wss://${chain}.api.onfinality.io/ws?apikey=${process.env.ONFINALITY_KEY}`)
+  const wsProvider = new WsProvider(`wss://${chain}.api.onfinality.io/public-ws?apikey=${process.env.ONFINALITY_KEY}`)
   const api = await ApiPromise.create({ provider: wsProvider })
 
   const unsub = await api.tx.balances.transfer(sendTo, amount).signAndSend(pair, ({ status }: any) => {
     if (status.isInBlock) {
       console.log(`Completed at block hash #${status.asInBlock.toString()}`)
-      hex = status.asInBlock.toString()
-      chrome.runtime.sendMessage({ type: Messages.TransactionSuccess, payload: hex })
+
+      chrome.runtime.sendMessage({ type: Messages.TransactionSuccess, payload: status?.asInBlock?.toString() })
       unsub()
     } else {
       console.log(`Current status: ${status.type}`)
@@ -117,6 +115,7 @@ export async function fetchAccountsBalances() {
           }
         }, {})
 
+        console.log("here")
         result_obj = { ...result_obj, ...balances }
       }
 
@@ -124,10 +123,11 @@ export async function fetchAccountsBalances() {
       chrome.runtime.sendMessage({ type: Messages.AccountsBalanceUpdated, payload: JSON.stringify({ address, balances: result_obj }) })
     }
     console.log("balances updated")
-    setTimeout(() => fetchAccountsBalances(), 500)
+    setTimeout(() => fetchAccountsBalances(), 1000)
   } catch (err) {
-    fetchAccountsBalances()
+    console.log("in error")
     console.log("err", err)
+    setTimeout(() => fetchAccountsBalances(), 1000)
   }
 }
 

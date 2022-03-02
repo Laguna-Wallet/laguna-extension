@@ -49,6 +49,7 @@
     "dotenv": "^14.2.0",
     "dotenv-webpack": "^7.1.0",
     "googleapis": "^92.0.0",
+    "import-fresh": "^3.3.0",
     "node-polyfill-webpack-plugin": "^1.1.4",
     "tweetnacl": "^1.0.3"
   }

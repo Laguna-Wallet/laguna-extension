@@ -206,14 +206,16 @@ export function getNetworks(prices: Prices, tokenInfos: Network[]): Network[] {
       name: 'Shiden',
       symbol: 'sdn',
       chain: 'shiden',
-      node: 'wss://shiden-rpc.polkadot.io'
+      node: 'wss://shiden.api.onfinality.io/public-ws'
     },
     {
       name: 'Astar',
       symbol: 'astr',
       chain: 'astar',
-      node: 'wss://astar-rpc.polkadot.io'
+      node: 'wss://astar.api.onfinality.io/public-ws'
     }
+
+    // wss://rpc.astar.network
 
     // {
     //   name: 'Acala',
@@ -330,7 +332,6 @@ export async function getApiInstance(node: string) {
   //CHAIN.api.onfinality.io/ws?apikey=API_KEY
 
   // todo put this into env
-  console.log('~ process.env.REACT_APP_ONFINALITY_KEY', process.env.REACT_APP_ONFINALITY_KEY);
   const wsProvider = new WsProvider(
     `wss://${node}.api.onfinality.io/ws?apikey=${process.env.REACT_APP_ONFINALITY_KEY}`
   );
@@ -399,7 +400,6 @@ export function encryptKeyringPairs(oldPassword: string, newPassword: string) {
 }
 // todo typing keyringPair
 export function encryptKeyringPair(pair: any, oldPassword: string, newPassword: string) {
-  console.log('~ pair', pair);
   pair.unlock(oldPassword);
   const { pair: newPair } = keyring.addPair(pair, newPassword);
   keyring.saveAccountMeta(newPair, { ...pair.meta });

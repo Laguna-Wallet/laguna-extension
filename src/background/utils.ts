@@ -3,6 +3,8 @@ import { hexToU8a, isHex } from "@polkadot/util"
 import { StorageKeys } from "./types"
 import * as bcrypt from "bcryptjs"
 import keyring from "@polkadot/ui-keyring"
+import { cryptoWaitReady } from "@polkadot/util-crypto"
+// const importFresh = require("import-fresh")
 
 // Note: this utility functions will be needed for manifest V3
 // export const getFromStorage = async function (key) {
@@ -123,12 +125,43 @@ export function transformTransfers(transfers: any[], chain: string) {
 }
 
 export function unlockKeyPairs(password: string) {
-  const pairs = keyring.getPairs()
+  const a = keyring.keyring.getPairs()
+  console.log("~ a", a)
 
-  return pairs.map((pair) => {
-    pair.unlock(password)
-    return pair
-  })
+  // const keyring = require("@polkadot/ui-keyring")
+
+  // const pairs = keyring.getPairs()
+
+  // // console.log("~ loaded", loaded)
+
+  // const accounts = keyring.getAccounts()
+  // console.log("~ accounts", accounts)
+
+  // return pairs.map((pair) => {
+  //   pair.unlock(password)
+  //   return pair
+  // })
+
+  // class NewKeyring extends keyring {}
+  ;(async () => {
+    i++
+  })()
+  // ;(async () => {
+  //   const b = await import("@polkadot/ui-keyring")
+  //   b.keyring.loadAll({})
+  //   console.log(b.keyring.getPairs())
+  // })()
+
+  // import("@polkadot/ui-keyring")
+  //   .then((obj) => {
+  //     obj.keyring.loadAll({})
+  //     console.log(obj)
+  //   })
+  //   .catch((err) => {
+  //     console.log("ieroriee", err)
+  //   })
+
+  return []
 }
 
 export function recodeToPolkadotAddress(address: string): string {

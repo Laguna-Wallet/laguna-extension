@@ -1,23 +1,25 @@
 import { Messages, StorageKeys } from "./types"
 import { fetchAccountsBalances, fetchAccountsTransactions, Retrieve_Coin_Decimals, Retrieve_Coin_Infos, Retrieve_Coin_Prices, sendTransaction } from "./api"
 import { saveToStorage, validatePassword, handleInitialIdleTimeout, unlockKeyPairs } from "./utils"
-import keyring from "@polkadot/ui-keyring"
+// import keyring from "@polkadot/ui-keyring"
 import { cryptoWaitReady } from "@polkadot/util-crypto"
 import { injectExtension } from "@polkadot/extension-inject"
 import { enable } from "./inject/enable"
+import keyring from "@polkadot/ui-keyring"
 
-injectExtension(enable, { name: "laguna-wallet", version: "1.0.0" })
+// injectExtension(enable, { name: "laguna-wallet", version: "1.0.0" })
 
-// cryptoWaitReady().then(() => {
-keyring.loadAll({ ss58Format: 42, type: "sr25519" })
 let isLoggedIn = false
 let keyPairs = {}
+
+keyring.loadAll({ type: "ed25519" })
 
 chrome.runtime.onMessage.addListener(async (msg) => {
   switch (msg.type) {
     case Messages.AuthUser:
       if (validatePassword(msg.payload.password)) {
         isLoggedIn = true
+        // keyring.loadAll({ ss58Format: 42 })
         keyPairs = unlockKeyPairs(msg.payload.password)
       }
       break
@@ -38,8 +40,8 @@ chrome.runtime.onMessage.addListener(async (msg) => {
         await sendTransaction(keyPairs, msg.payload)
       }
       break
-    case Messages.ReopenKeyPairs:
-      keyPairs = unlockKeyPairs(msg.payload.password)
+    case Messages.AddToKeyring:
+      addToKeyring(msg.payload)
       break
   }
 })
@@ -68,10 +70,10 @@ chrome.runtime.onInstalled.addListener(async () => {
     }
   })
 
-  await Retrieve_Coin_Decimals()
+  // await Retrieve_Coin_Decimals()
 
-  fetchAccountsBalances()
-  fetchAccountsTransactions()
+  // fetchAccountsBalances()
+  // fetchAccountsTransactions()
 })
 
 chrome.runtime.onStartup.addListener(async () => {
@@ -98,10 +100,10 @@ chrome.runtime.onStartup.addListener(async () => {
     }
   })
 
-  await Retrieve_Coin_Decimals()
+  // await Retrieve_Coin_Decimals()
 
-  fetchAccountsBalances()
-  fetchAccountsTransactions()
+  // fetchAccountsBalances()
+  // fetchAccountsTransactions()
 })
 
 chrome.alarms.onAlarm.addListener(async (alarm) => {
@@ -115,4 +117,3 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
   chrome.runtime.sendMessage({ type: Messages.CoinInfoUpdated, payload: JSON.stringify(Infos) })
   saveToStorage({ key: StorageKeys.TokenInfos, value: JSON.stringify(Infos) })
 })
-// })

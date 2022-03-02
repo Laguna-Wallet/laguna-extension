@@ -1,13 +1,13 @@
 import keyring from '@polkadot/ui-keyring';
 import { useAccount } from 'context/AccountContext';
 import Wallet from 'pages/Wallet/Wallet';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { reduxForm } from 'redux-form';
 import styled from 'styled-components';
 import AES from 'crypto-js/aes';
 import Utf8 from 'crypto-js/enc-utf8';
-import { validatePassword } from 'utils/polkadot';
+import { exportAccount, validatePassword } from 'utils/polkadot';
 import { goTo } from 'react-chrome-extension-router';
 import MenuHeader from 'components/MenuHeader/MenuHeader';
 import ExclamationIcon from 'assets/svgComponents/ExclamationIcon';
@@ -15,6 +15,7 @@ import LockIcon from 'assets/svgComponents/LockIcon';
 import HumbleInput from 'components/primitives/HumbleInput';
 import Button from 'components/primitives/Button';
 import Snackbar from 'components/Snackbar/Snackbar';
+import { exportJson } from 'utils';
 
 function BackupAccount() {
   const [isOpen, setOpen] = useState<boolean>(true);
@@ -22,6 +23,8 @@ function BackupAccount() {
   const [snackbarError, setSnackbarError] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [seed, setSeed] = useState<string>('');
+  const [opened, setOpened] = useState<boolean>(false);
+  const [seedExists, setSeedExists] = useState<boolean>(false);
   const account = useAccount();
   const address = account?.getActiveAccount()?.address;
 
@@ -34,14 +37,33 @@ function BackupAccount() {
       return;
     }
 
+    setOpened(true);
+
     const pair = keyring.getPair(address);
     const encodedSeed = pair?.meta?.encodedSeed;
 
-    const bytes = AES.decrypt(encodedSeed as string, password);
-    const decodedSeed = bytes.toString(Utf8);
+    if (encodedSeed) {
+      const bytes = AES.decrypt(encodedSeed as string, password);
+      const decodedSeed = bytes.toString(Utf8);
 
-    setSeed(decodedSeed);
+      setSeed(decodedSeed);
+    }
   };
+
+  const backupJson = async () => {
+    const json = await exportAccount(address, password);
+    await exportJson(json);
+  };
+
+  useEffect(() => {
+    const pair = keyring.getPair(address);
+    const encodedSeed = pair?.meta?.encodedSeed;
+    if (encodedSeed) {
+      setSeedExists(true);
+    } else {
+      setSeedExists(false);
+    }
+  });
 
   return (
     <Container>
@@ -66,11 +88,14 @@ function BackupAccount() {
 
         {!seed.length ? (
           <WarningContainer>
-            Warning: Do not share your seed phrase. This phrase grants full control of your wallet.
+            {seedExists
+              ? `Warning: Do not share your seed phrase. This phrase grants full control of your wallet.`
+              : 'Account has not been secured, only Json file can be exported'}
           </WarningContainer>
         ) : (
           <SeedContainer>{seed}</SeedContainer>
         )}
+
         {!seed.length && (
           <FieldsContainer>
             <HumbleInput
@@ -91,7 +116,7 @@ function BackupAccount() {
         {!seed.length ? (
           <Button
             type="button"
-            text="Reveal Seed Phrase"
+            text={`Reveal ${seedExists ? 'Seed Phrase' : 'Json export'}`}
             color="#111"
             justify="center"
             margin="15px 0 0 0"
@@ -109,6 +134,7 @@ function BackupAccount() {
             onClick={() => goTo(Wallet, { isMenuOpen: true })}
           />
         )}
+        {opened && <ExportJson onClick={backupJson}>Export Json file</ExportJson>}
       </Content>
       <Snackbar
         isOpen={isSnackbarOpen}
@@ -186,6 +212,9 @@ const WarningContainer = styled.div`
   border-radius: 5px;
   padding: 11px 5px 11px 10px;
   box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   margin-top: auto;
   color: #fff;
   font-size: 16px;
@@ -205,6 +234,13 @@ const SeedContainer = styled.div`
   align-items: center;
   justify-content: center;
   text-align: center;
+`;
+
+const ExportJson = styled.div`
+  color: #fff;
+  margin-top: 10px;
+  font-size: 16px;
+  cursor: pointer;
 `;
 
 const LockContainer = styled.div`

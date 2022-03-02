@@ -94,8 +94,11 @@ function ImportAccount({ redirectedFromSignUp }: Props) {
     }
 
     dispatch(reset('AddImportAccount'));
-    chrome.runtime.sendMessage({ type: Messages.ReopenKeyPairs });
-    // reopen keypairs
+
+    chrome.runtime.sendMessage({
+      type: Messages.ReopenKeyPairs,
+      payload: { password, json: file, jsonPassword }
+    });
   };
 
   const onClose = () => {

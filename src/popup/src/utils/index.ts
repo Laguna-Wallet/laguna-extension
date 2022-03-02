@@ -24,6 +24,8 @@ export function validateMnemonicChoice(
   chosenArr: string[],
   targetIndexes: MnemonicsTriple
 ): boolean {
+  if (chosenArr.length !== 3) return false;
+
   let index = 0;
   for (const iterator of chosenArr) {
     const chosenIndex = mnemonics.indexOf(iterator);

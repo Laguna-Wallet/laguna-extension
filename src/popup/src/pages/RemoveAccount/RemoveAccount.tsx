@@ -8,16 +8,20 @@ import { useAccount } from 'context/AccountContext';
 import Wallet from 'pages/Wallet/Wallet';
 import React, { useState } from 'react';
 import { goTo, Link } from 'react-chrome-extension-router';
+import { useDispatch } from 'react-redux';
+import { toggleLoading } from 'redux/actions';
 import styled from 'styled-components';
 import { truncateString } from 'utils';
+import { clearFromStorage } from 'utils/chrome';
 import { validatePassword } from 'utils/polkadot';
+import { StorageKeys } from 'utils/types';
 
 export default function RemoveAccount() {
   const [isOpen, setOpen] = useState<boolean>(true);
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
   const [snackbarError, setSnackbarError] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-
+  const dispatch = useDispatch();
   const account = useAccount();
   const activeAccount = account.getActiveAccount();
 
@@ -36,6 +40,8 @@ export default function RemoveAccount() {
 
     keyring.forgetAccount(address);
     const first = keyring?.getAccounts()[0];
+    clearFromStorage(StorageKeys.AccountBalances);
+    dispatch(toggleLoading(true));
     if (first) {
       account.saveActiveAccount(first);
     } else {

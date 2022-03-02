@@ -35,6 +35,7 @@ function Wallet({ isMenuOpen }: Props) {
     loading: accountsChanging
   } = useSelector((state: any) => state.wallet);
 
+  console.log('~ accountsChanging', accountsChanging);
   const balances = accountsBalances?.balances;
 
   const handleActiveTab = (activeTab: number): void => {

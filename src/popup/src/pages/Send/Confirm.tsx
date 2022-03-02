@@ -32,11 +32,13 @@ type Props = {
   amountToSend: string;
   recoded: string;
 };
+
 function Confirm({ fee, transfer, amountToSend, recoded }: Props) {
   const { nextStep, previousStep } = useWizard();
   const account = useAccount();
   const dispatch = useDispatch();
   const [loadingTransaction, setLoadingTransaction] = useState(false);
+  const [transactionConfirmed, setTransactionConfirmed] = useState(false);
 
   const { address, amount, token } = useSelector((state: any) => state.form.sendToken.values);
   const selectedAsset = useSelector((state: any) => state.sendToken.selectedAsset);
@@ -61,7 +63,6 @@ function Confirm({ fee, transfer, amountToSend, recoded }: Props) {
         chain: selectedAsset.chain
       }
     });
-
     setLoadingTransaction(true);
 
     // const pair = keyring.getPair(activeAccountAddress);
@@ -87,6 +88,7 @@ function Confirm({ fee, transfer, amountToSend, recoded }: Props) {
       if (msg.type === Messages.TransactionSuccess) {
         dispatch(setBlockHash(msg.payload.block));
         setLoadingTransaction(false);
+        setTransactionConfirmed(true);
         nextStep();
       }
     });
@@ -130,7 +132,11 @@ function Confirm({ fee, transfer, amountToSend, recoded }: Props) {
 
       <BottomSection>
         <BalanceInfo>Remaining Balance: </BalanceInfo>
-        <SwipeAndConfirm loading={loadingTransaction} handleConfirm={() => handleClick()} />
+        <SwipeAndConfirm
+          confirmed={transactionConfirmed}
+          loading={loadingTransaction}
+          handleConfirm={() => handleClick()}
+        />
       </BottomSection>
     </Container>
   );

@@ -45,6 +45,7 @@ export default function ConfirmSeed({ handleNextSection, redirectedFromSignUp }:
   }, []);
 
   const handleClick = (name: string) => {
+    if (chosenMnemonics.length === 3) return;
     setChosenMnemonics((prev) => [...prev, name]);
     setMnemonicIndexToChoose((prev) => prev + 1);
   };
@@ -58,7 +59,8 @@ export default function ConfirmSeed({ handleNextSection, redirectedFromSignUp }:
       );
 
       if (isValid) {
-        handleNextSection();
+        console.log('valid');
+        // handleNextSection();
       } else {
         setTimeout(() => {
           setChosenMnemonics([]);
@@ -68,6 +70,10 @@ export default function ConfirmSeed({ handleNextSection, redirectedFromSignUp }:
       }
     }
   }, [chosenMnemonics]);
+
+  console.log(
+    validateMnemonicChoice(mnemonics, chosenMnemonics, mnemonicIndexes as MnemonicsTriple)
+  );
 
   const shuffledMnemonics: string[] = useMemo(() => arrayShuffle([...mnemonics]), []);
 
@@ -116,18 +122,18 @@ export default function ConfirmSeed({ handleNextSection, redirectedFromSignUp }:
 
       <Snackbar
         isOpen={isSnackbarOpen}
+        message="Please choose words in provided order"
         close={() => setIsSnackbarOpen(false)}
         type="warning"
-        bottom="50px">
-        <CloseIconContainer>
-          <CloseIcon stroke="#111" />
-        </CloseIconContainer>
-        <ErrorMessage>Please choose words in provided order</ErrorMessage>
-      </Snackbar>
+        bottom="38px"
+        left="0px"
+      />
 
       <Button
         onClick={() => handleNextSection()}
-        disabled={!mnemonicsAreChecked({})}
+        disabled={
+          !validateMnemonicChoice(mnemonics, chosenMnemonics, mnemonicIndexes as MnemonicsTriple)
+        }
         text={'I’ve Written it Down'}
         Icon={<RightArrow width={23} fill="#fff" />}
         bgColor={'#000000'}
