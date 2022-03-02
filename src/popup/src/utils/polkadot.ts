@@ -144,10 +144,11 @@ export async function importJson(
 ) {
   if (!json) return;
   if (isKeyringPairs$Json(json)) {
-    keyring.restoreAccounts(json, password);
+    const data = keyring.restoreAccounts(json, password);
     return json;
   } else {
     const pair = keyring.restoreAccount(json, password);
+    console.log('~ data', pair);
     return pair;
   }
 }

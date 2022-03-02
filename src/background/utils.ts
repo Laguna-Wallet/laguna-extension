@@ -124,44 +124,39 @@ export function transformTransfers(transfers: any[], chain: string) {
   }))
 }
 
+export function handleUnlockPair(payload) {
+  if (payload?.json) {
+    const pair = keyring.restoreAccount(payload.json, payload.jsonPassword)
+    const newPair = encryptKeyringPair(pair, payload.jsonPassword, payload.password)
+    return newPair
+  }
+
+  if (payload.seed) {
+    const { pair } = keyring.addUri(payload.seed, payload.password)
+    keyring.saveAccountMeta(pair, { name: pair.address })
+    return pair
+  }
+}
+
+export function encryptKeyringPair(pair: any, oldPassword: string, newPassword: string) {
+  pair.unlock(oldPassword)
+  const { pair: newPair } = keyring.addPair(pair, newPassword)
+  keyring.saveAccountMeta(newPair, { ...pair.meta })
+  return newPair
+}
+
 export function unlockKeyPairs(password: string) {
-  const a = keyring.keyring.getPairs()
-  console.log("~ a", a)
+  const pairs = keyring.getPairs()
 
-  // const keyring = require("@polkadot/ui-keyring")
+  return pairs.map((pair) => {
+    pair.unlock(password)
+    return pair
+  })
+}
 
-  // const pairs = keyring.getPairs()
-
-  // // console.log("~ loaded", loaded)
-
-  // const accounts = keyring.getAccounts()
-  // console.log("~ accounts", accounts)
-
-  // return pairs.map((pair) => {
-  //   pair.unlock(password)
-  //   return pair
-  // })
-
-  // class NewKeyring extends keyring {}
-  ;(async () => {
-    i++
-  })()
-  // ;(async () => {
-  //   const b = await import("@polkadot/ui-keyring")
-  //   b.keyring.loadAll({})
-  //   console.log(b.keyring.getPairs())
-  // })()
-
-  // import("@polkadot/ui-keyring")
-  //   .then((obj) => {
-  //     obj.keyring.loadAll({})
-  //     console.log(obj)
-  //   })
-  //   .catch((err) => {
-  //     console.log("ieroriee", err)
-  //   })
-
-  return []
+export function removeFromKeypair(pairs, address) {
+  keyring.forgetAccount(address)
+  return pairs.filter((item) => recodeToPolkadotAddress(item.address) !== recodeToPolkadotAddress(address))
 }
 
 export function recodeToPolkadotAddress(address: string): string {

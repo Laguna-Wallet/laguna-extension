@@ -75,13 +75,18 @@ function ImportAccount({ redirectedFromSignUp }: Props) {
         importFromMnemonic(seedPhase, password);
       }
       // save from private key
-      if (isHex(seedPhase) && isValidPolkadotAddress(seedPhase)) {
-        importFromPrivateKey(seedPhase, password);
-      }
+      // if (isHex(seedPhase) && isValidPolkadotAddress(seedPhase)) {
+      //   importFromPrivateKey(seedPhase, password);
+      // }
       // save from public key
       if (!isHex(seedPhase) && isValidPolkadotAddress(seedPhase)) {
         importFromPublicKey(seedPhase);
       }
+
+      chrome.runtime.sendMessage({
+        type: Messages.AddToKeyring,
+        payload: { seed: seedPhase }
+      });
     }
 
     if (file) {
@@ -91,14 +96,14 @@ function ImportAccount({ redirectedFromSignUp }: Props) {
       );
 
       encryptKeyringPair(pair, jsonPassword, password);
+
+      chrome.runtime.sendMessage({
+        type: Messages.AddToKeyring,
+        payload: { password, json: file, jsonPassword }
+      });
     }
 
     dispatch(reset('AddImportAccount'));
-
-    chrome.runtime.sendMessage({
-      type: Messages.ReopenKeyPairs,
-      payload: { password, json: file, jsonPassword }
-    });
   };
 
   const onClose = () => {

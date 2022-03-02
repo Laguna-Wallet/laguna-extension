@@ -23,7 +23,6 @@ import Wallet from 'pages/Wallet/Wallet';
 import { truncateString } from 'utils';
 import BigNumber from 'bignumber.js';
 import { useDispatch, useSelector } from 'react-redux';
-import { setBlockHash } from 'redux/actions';
 import { Messages } from 'utils/types';
 
 type Props = {
@@ -31,9 +30,10 @@ type Props = {
   transfer: any;
   amountToSend: string;
   recoded: string;
+  setBlockHash: (blockHash: string) => void;
 };
 
-function Confirm({ fee, transfer, amountToSend, recoded }: Props) {
+function Confirm({ fee, transfer, amountToSend, recoded, setBlockHash }: Props) {
   const { nextStep, previousStep } = useWizard();
   const account = useAccount();
   const dispatch = useDispatch();
@@ -86,7 +86,7 @@ function Confirm({ fee, transfer, amountToSend, recoded }: Props) {
   useEffect(() => {
     chrome.runtime.onMessage.addListener((msg) => {
       if (msg.type === Messages.TransactionSuccess) {
-        dispatch(setBlockHash(msg.payload.block));
+        setBlockHash(msg.payload.block);
         setLoadingTransaction(false);
         setTransactionConfirmed(true);
         nextStep();
@@ -111,8 +111,9 @@ function Confirm({ fee, transfer, amountToSend, recoded }: Props) {
             {amount} {token}
           </span>{' '}
           {/* todo actual name of the wallet */}
-          <br /> from <span>{name.length > 14 ? truncateString(name) : name}</span> <br /> to{' '}
-          <span>{truncateString(address)}</span>
+          <br /> from <span>
+            {name && name.length > 14 ? truncateString(name) : name}
+          </span> <br /> to <span>{truncateString(address)}</span>
         </Text>
 
         <Info>

@@ -18,7 +18,8 @@ export async function sendTransaction(pairs, { sendTo, sendFrom, amount, chain }
     if (status.isInBlock) {
       console.log(`Completed at block hash #${status.asInBlock.toString()}`)
 
-      chrome.runtime.sendMessage({ type: Messages.TransactionSuccess, payload: status?.asInBlock?.toString() })
+      console.log("~ status?.asInBlock?.toString()", status?.asInBlock?.toString())
+      chrome.runtime.sendMessage({ type: Messages.TransactionSuccess, payload: { block: status?.asInBlock?.toString() } })
       unsub()
     } else {
       console.log(`Current status: ${status.type}`)
@@ -76,6 +77,7 @@ export async function Retrieve_Coin_Decimals() {
 
 async function searchAccountBallance(chain: string, address: string) {
   if (!chain) return
+  await timer(1000)
   return await fetch(`https://${chain}.api.subscan.io/api/v2/scan/search`, {
     method: "POST",
     mode: "cors",
@@ -91,7 +93,12 @@ async function searchAccountBallance(chain: string, address: string) {
 
 export async function fetchAccountsBalances() {
   try {
+    await timer(3000)
+
     const account = getFromStorage(StorageKeys.ActiveAccount)
+
+    const balances = getFromStorage(StorageKeys.AccountBalances)
+    const parsedBalances = balances ? JSON.parse(balances) : {}
 
     if (account) {
       const address = JSON.parse(account as string).address
@@ -99,10 +106,11 @@ export async function fetchAccountsBalances() {
       let result_obj = {}
 
       for (let i = 0; i < chains.length; i += 1) {
-        let pickedChains = [chains[i]]
+        let pickedChain = [chains[i]]
+        // console.log("~ pickedChains", pickedChains)
 
-        const Promises = pickedChains.map((chain) => searchAccountBallance(chain, address))
-        const jsonPromises = (await Promise.all(Promises)).filter((res) => !!res).map((res) => res && res.json())
+        // const Promises = pickedChains.map((chain) => searchAccountBallance(chain, address))
+        // const jsonPromises = (await Promise.all(Promises)).filter((res) => !!res).map((res) => res && res.json())
 
         const resolved = await Promise.all(jsonPromises)
 
@@ -115,67 +123,76 @@ export async function fetchAccountsBalances() {
           }
         }, {})
 
-        console.log("here")
-        result_obj = { ...result_obj, ...balances }
+        if (parsedBalances.address === address) {
+          result_obj = { ...result_obj, ...balances }
+        } else {
+          result_obj = { ...balances }
+        }
       }
 
       saveToStorage({ key: StorageKeys.AccountBalances, value: JSON.stringify({ address, balances: result_obj }) })
       chrome.runtime.sendMessage({ type: Messages.AccountsBalanceUpdated, payload: JSON.stringify({ address, balances: result_obj }) })
     }
     console.log("balances updated")
-    setTimeout(() => fetchAccountsBalances(), 1000)
+    setTimeout(() => fetchAccountsBalances(), 2000)
   } catch (err) {
-    console.log("in error")
     console.log("err", err)
-    setTimeout(() => fetchAccountsBalances(), 1000)
+    setTimeout(() => fetchAccountsBalances(), 2000)
   }
 }
 
 // Transactions
 export async function fetchAccountsTransactions() {
-  const addresses = getAccountAddresses()
-  let result_obj = {}
+  try {
+    const addresses = getAccountAddresses()
+    let result_obj = {}
 
-  let results = []
-  let retrieved_count = 0
-  let page = 0
-  let accountTransfers = []
-  for (let i = 0; i < addresses.length; i++) {
-    for (let j = 0; j < chains.length; j++) {
-      await timer(500)
-
-      const res = await fetchTransactions(addresses[i], chains[j], page)
-
-      if (!res?.data?.transfers) continue
-
-      results = [...res?.data?.transfers]
-      retrieved_count = res?.data?.count
-      page++
-
-      while (results.length < retrieved_count) {
+    let results = []
+    let retrieved_count = 0
+    let page = 0
+    let accountTransfers = []
+    for (let i = 0; i < addresses.length; i++) {
+      for (let j = 0; j < chains.length; j++) {
         await timer(500)
-        const data = await fetchTransactions(addresses[i], chains[j], page)
-        results = [...results, ...data?.data?.transfers]
+
+        const res = await fetchTransactions(addresses[i], chains[j], page)
+
+        if (!res?.data?.transfers) continue
+
+        results = [...res?.data?.transfers]
+        retrieved_count = res?.data?.count
         page++
+
+        while (results.length < retrieved_count) {
+          await timer(500)
+          const data = await fetchTransactions(addresses[i], chains[j], page)
+          results = [...results, ...data?.data?.transfers]
+          page++
+        }
+
+        retrieved_count = 0
+        page = 0
+
+        result_obj[addresses[i]] = result_obj[addresses[i]] ? [...result_obj[addresses[i]], ...transformTransfers(results, chains[j])] : transformTransfers(results, chains[j])
+
+        results = []
       }
-
-      retrieved_count = 0
-      page = 0
-
-      result_obj[addresses[i]] = result_obj[addresses[i]] ? [...result_obj[addresses[i]], ...transformTransfers(results, chains[j])] : transformTransfers(results, chains[j])
-
-      results = []
     }
+
+    console.log("transactions fetched")
+
+    chrome.runtime.sendMessage({ type: Messages.TransactionsUpdated, payload: JSON.stringify(result_obj) })
+    saveToStorage({ key: StorageKeys.Transactions, value: JSON.stringify(result_obj) })
+
+    setTimeout(() => {
+      fetchAccountsTransactions()
+    }, 1000)
+  } catch (err) {
+    console.log(err)
+    setTimeout(() => {
+      fetchAccountsTransactions()
+    }, 1000)
   }
-
-  console.log("transactions fetched")
-
-  chrome.runtime.sendMessage({ type: Messages.TransactionsUpdated, payload: JSON.stringify(result_obj) })
-  saveToStorage({ key: StorageKeys.Transactions, value: JSON.stringify(result_obj) })
-
-  setTimeout(() => {
-    fetchAccountsTransactions()
-  }, 1000)
 }
 
 export async function fetchTransactions(address: string, chain: string, page: number) {

@@ -1,6 +1,6 @@
 import { Messages, StorageKeys } from "./types"
 import { fetchAccountsBalances, fetchAccountsTransactions, Retrieve_Coin_Decimals, Retrieve_Coin_Infos, Retrieve_Coin_Prices, sendTransaction } from "./api"
-import { saveToStorage, validatePassword, handleInitialIdleTimeout, unlockKeyPairs } from "./utils"
+import { saveToStorage, validatePassword, handleInitialIdleTimeout, unlockKeyPairs, handleUnlockPair, removeFromKeypair } from "./utils"
 // import keyring from "@polkadot/ui-keyring"
 import { cryptoWaitReady } from "@polkadot/util-crypto"
 import { injectExtension } from "@polkadot/extension-inject"
@@ -10,7 +10,7 @@ import keyring from "@polkadot/ui-keyring"
 // injectExtension(enable, { name: "laguna-wallet", version: "1.0.0" })
 
 let isLoggedIn = false
-let keyPairs = {}
+let keyPairs = []
 
 keyring.loadAll({ type: "ed25519" })
 
@@ -19,14 +19,19 @@ chrome.runtime.onMessage.addListener(async (msg) => {
     case Messages.AuthUser:
       if (validatePassword(msg.payload.password)) {
         isLoggedIn = true
-        // keyring.loadAll({ ss58Format: 42 })
         keyPairs = unlockKeyPairs(msg.payload.password)
       }
       break
     case Messages.LogOutUser:
       isLoggedIn = false
-      keyPairs = {}
+      keyPairs = []
       break
+    case Messages.RemoveFromKeyring:
+      isLoggedIn = false
+      keyPairs = removeFromKeypair(keyPairs, msg.payload.address)
+      console.log("~ keyPairs", keyPairs)
+      break
+
     case Messages.AuthCheck:
       chrome.runtime.sendMessage({ type: Messages.AuthCheck, payload: { isLoggedIn } })
       break
@@ -41,7 +46,8 @@ chrome.runtime.onMessage.addListener(async (msg) => {
       }
       break
     case Messages.AddToKeyring:
-      addToKeyring(msg.payload)
+      const pair = handleUnlockPair(msg.payload)
+      keyPairs = [...keyPairs, pair]
       break
   }
 })
@@ -70,9 +76,9 @@ chrome.runtime.onInstalled.addListener(async () => {
     }
   })
 
-  // await Retrieve_Coin_Decimals()
+  await Retrieve_Coin_Decimals()
 
-  // fetchAccountsBalances()
+  fetchAccountsBalances()
   // fetchAccountsTransactions()
 })
 
@@ -100,7 +106,7 @@ chrome.runtime.onStartup.addListener(async () => {
     }
   })
 
-  // await Retrieve_Coin_Decimals()
+  await Retrieve_Coin_Decimals()
 
   // fetchAccountsBalances()
   // fetchAccountsTransactions()

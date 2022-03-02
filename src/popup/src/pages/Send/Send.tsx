@@ -59,6 +59,7 @@ export default function Send({ initialIsContactsPopupOpen }: Props) {
   const [recoded, setRecoded] = useState<string>('');
   const [loading, setLoading] = useState<any>();
   const [abilityToTransfer, setAbilityToTransfer] = useState<boolean>(true);
+  const [blockHash, setBlockHash] = useState<string>('');
 
   const reduxSendTokenState = useSelector((state: any) => state.sendToken);
   const form = useSelector((state: any) => state?.form?.sendToken?.values);
@@ -119,8 +120,14 @@ export default function Send({ initialIsContactsPopupOpen }: Props) {
           loading={loading}
           abilityToTransfer={abilityToTransfer}
         />
-        <Confirm amountToSend={amountToSend} recoded={recoded} fee={fee} transfer={transfer} />
-        <TransactionSent />
+        <Confirm
+          setBlockHash={setBlockHash}
+          amountToSend={amountToSend}
+          recoded={recoded}
+          fee={fee}
+          transfer={transfer}
+        />
+        <TransactionSent blockHash={blockHash} />
       </Wizard>
     </Container>
   );

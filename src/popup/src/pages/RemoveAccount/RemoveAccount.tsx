@@ -14,7 +14,7 @@ import styled from 'styled-components';
 import { truncateString } from 'utils';
 import { clearFromStorage } from 'utils/chrome';
 import { validatePassword } from 'utils/polkadot';
-import { StorageKeys } from 'utils/types';
+import { Messages, StorageKeys } from 'utils/types';
 
 export default function RemoveAccount() {
   const [isOpen, setOpen] = useState<boolean>(true);
@@ -47,6 +47,12 @@ export default function RemoveAccount() {
     } else {
       account.saveActiveAccount({});
     }
+
+    chrome.runtime.sendMessage({
+      type: Messages.RemoveFromKeyring,
+      payload: { address }
+    });
+
     goTo(Wallet);
   };
 
