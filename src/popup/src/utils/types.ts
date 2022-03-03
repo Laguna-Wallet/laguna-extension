@@ -44,6 +44,7 @@ export interface Network {
   node: string;
   price_change_percentage_24h?: number;
   marketCap?: number;
+  recodeType?: string;
 }
 
 export interface Asset {

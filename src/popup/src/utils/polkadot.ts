@@ -194,14 +194,16 @@ export function getNetworks(prices: Prices, tokenInfos: Network[]): Network[] {
       name: 'Moonriver',
       symbol: 'movr',
       chain: 'moonriver',
-      node: 'wss://moonriver-rpc.polkadot.io'
+      node: 'wss://moonriver-rpc.polkadot.io',
+      recodeType: 'eth'
     },
     {
       name: 'Moonbeam',
       symbol: 'glmr',
       chain: 'moonbeam',
       // chain: ' moonbeam-alpha',
-      node: 'wss://moonbeam-rpc.polkadot.io'
+      node: 'wss://moonbeam-rpc.polkadot.io',
+      recodeType: 'eth'
     },
     {
       name: 'Shiden',
@@ -322,7 +324,7 @@ export async function getAssets(
 
 // todo proper typing
 // todo refactor
-export function recodeAddress(address: string, prefix: any): string {
+export function recodeAddress(address: string, prefix: any, type?: string): string {
   const publicKey = decodeAddress(address);
   return encodeAddress(publicKey, prefix);
 }

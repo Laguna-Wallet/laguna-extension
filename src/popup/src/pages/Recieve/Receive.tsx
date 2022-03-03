@@ -37,7 +37,7 @@ export default function Receive() {
       accountsTie({ address: account.getActiveAccount().address, genesisHash });
 
       const prefix = api.consts.system.ss58Prefix;
-      const recoded = recodeAddress(activeAccount.address, prefix);
+      const recoded = recodeAddress(activeAccount.address, prefix, selectedNetwork?.recodeType);
       setRecoded(recoded);
     }
     go();

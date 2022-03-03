@@ -33,7 +33,6 @@ export async function Retrieve_Coin_Prices() {
   const json = await data.json()
   return json
 }
-
 // todo make chains dynamic
 // todo proper typing and get rid of unneeded fields from the return object
 export async function Retrieve_Coin_Infos() {
@@ -46,25 +45,39 @@ export async function Retrieve_Coin_Infos() {
 
 export async function Retrieve_Coin_Decimals() {
   try {
-    let transformedObj = {}
-    const data = []
-    for (let i = 0; i < chains.length; i++) {
-      const chain = chains[i]
-      const res = await fetch(`https://${chain}.api.subscan.io/api/scan/token`, {
-        headers: {
-          "Content-Type": "application/json",
-          "X-API-Key": process.env.SUBSCAN_KEY,
-        },
-      })
+    // let transformedObj = {}
+    // const data = []
+    // for (let i = 0; i < chains.length; i++) {
+    //   const chain = chains[i]
+    //   await timer(500)
 
-      const json = await res.json()
-      const obj: Record<string, Record<string, string>> = json.data.detail
+    //   const res = await fetch(`https://${chain}.api.subscan.io/api/scan/token`, {
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //       "X-API-Key": process.env.SUBSCAN_KEY,
+    //     },
+    //   })
+    //   const json = await res.json()
 
-      for (let [key, value] of Object.entries(obj)) {
-        transformedObj[key] = value?.token_decimals
-      }
+    //   if (!json?.data?.detail) continue
 
-      data.push(json)
+    //   const obj: Record<string, Record<string, string>> = json?.data?.detail
+
+    //   for (let [key, value] of Object.entries(obj)) {
+    //     transformedObj[key] = value?.token_decimals
+    //   }
+
+    //   data.push(json)
+    // }
+    // todo revise with robin if it's ok to left decimals hardcoded for time being
+    const transformedObj = {
+      ASTR: 18,
+      DOT: 10,
+      GLMR: 18,
+      KSM: 12,
+      MOVR: 18,
+      SDN: 18,
+      WND: 12,
     }
 
     saveToStorage({ key: StorageKeys.TokenDecimals, value: JSON.stringify(transformedObj) })
@@ -77,8 +90,7 @@ export async function Retrieve_Coin_Decimals() {
 
 async function searchAccountBallance(chain: string, address: string) {
   if (!chain) return
-  await timer(1000)
-  return await fetch(`https://${chain}.api.subscan.io/api/v2/scan/search`, {
+  const res = await fetch(`https://${chain}.api.subscan.io/api/v2/scan/search`, {
     method: "POST",
     mode: "cors",
     cache: "no-cache",
@@ -89,11 +101,13 @@ async function searchAccountBallance(chain: string, address: string) {
     },
     body: JSON.stringify({ key: address, row: 1, page: 1 }),
   })
+
+  return await res.json()
 }
 
 export async function fetchAccountsBalances() {
   try {
-    await timer(3000)
+    // await timer(3000)
 
     const account = getFromStorage(StorageKeys.ActiveAccount)
 
@@ -102,31 +116,22 @@ export async function fetchAccountsBalances() {
 
     if (account) {
       const address = JSON.parse(account as string).address
-
       let result_obj = {}
-
+      let temp_obj = {}
       for (let i = 0; i < chains.length; i += 1) {
-        let pickedChain = [chains[i]]
-        // console.log("~ pickedChains", pickedChains)
+        await timer(1000)
+        let pickedChain = chains[i]
+        const resolved = await searchAccountBallance(pickedChain, address)
 
-        // const Promises = pickedChains.map((chain) => searchAccountBallance(chain, address))
-        // const jsonPromises = (await Promise.all(Promises)).filter((res) => !!res).map((res) => res && res.json())
-
-        const resolved = await Promise.all(jsonPromises)
-
-        let balances = resolved.reduce((acc, item, index) => {
-          const chain = pickedChains[index]
-          if (item.message === "Success") {
-            const balance = Number(item.data.account.balance)
-            acc[chain] = balance
-            return acc
-          }
-        }, {})
+        if (resolved.message === "Success") {
+          temp_obj[pickedChain] = Number(resolved.data.account.balance)
+        }
 
         if (parsedBalances.address === address) {
-          result_obj = { ...result_obj, ...balances }
+          const accountBalances = parsedBalances?.balances
+          result_obj = { ...accountBalances, ...temp_obj }
         } else {
-          result_obj = { ...balances }
+          result_obj = { ...temp_obj }
         }
       }
 

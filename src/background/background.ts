@@ -54,9 +54,9 @@ chrome.runtime.onMessage.addListener(async (msg) => {
 
 chrome.runtime.onInstalled.addListener(async () => {
   const prices = await Retrieve_Coin_Prices()
-
   chrome.runtime.sendMessage({ type: Messages.PriceUpdated, payload: JSON.stringify(prices) })
   saveToStorage({ key: StorageKeys.TokenPrices, value: JSON.stringify(prices) })
+
   console.log("Prices injected...")
 
   const Infos = await Retrieve_Coin_Infos()
@@ -84,6 +84,7 @@ chrome.runtime.onInstalled.addListener(async () => {
 
 chrome.runtime.onStartup.addListener(async () => {
   const prices = await Retrieve_Coin_Prices()
+  console.log("~ prices", prices)
   chrome.runtime.sendMessage({ type: Messages.PriceUpdated, payload: JSON.stringify(prices) })
 
   saveToStorage({ key: StorageKeys.TokenPrices, value: JSON.stringify(prices) })

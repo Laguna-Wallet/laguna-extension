@@ -15,7 +15,6 @@ import SwipeAndConfirm from 'components/primitives/SwipeAndConfirm';
 import TransactionSent from './TransactionSent';
 import { goTo, Link } from 'react-chrome-extension-router';
 import { useAccount } from 'context/AccountContext';
-import { getApiInstance, recodeAddress } from 'utils/polkadot';
 import { useWizard } from 'react-use-wizard';
 import { memo, useEffect, useState } from 'react';
 import keyring from '@polkadot/ui-keyring';
@@ -45,9 +44,12 @@ function Confirm({ fee, transfer, amountToSend, recoded, setBlockHash }: Props) 
 
   const { prices } = useSelector((state: any) => state.wallet);
 
-  const price = prices[selectedAsset.name.toLowerCase()].usd;
+  const price = prices[selectedAsset.chain.toLowerCase()]?.usd;
 
-  const total = new BigNumber(amount).plus(fee).times(price).toFormat(4);
+  const total = new BigNumber(amount)
+    .plus(fee)
+    .times(price || 0)
+    .toFormat(4);
 
   const activeAccountAddress = account?.getActiveAccount()?.address;
 
@@ -121,7 +123,7 @@ function Confirm({ fee, transfer, amountToSend, recoded, setBlockHash }: Props) 
             Fee ={' '}
             <span>
               {new BigNumber(fee).toFormat(4) + ` ${token.toUpperCase()}`} ( $
-              {new BigNumber(fee).times(price).toFormat(4)} )
+              {new BigNumber(fee).times(price || 0).toFormat(4)} )
             </span>
           </InfoItem>
 
