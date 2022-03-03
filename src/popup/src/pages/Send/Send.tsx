@@ -82,7 +82,11 @@ export default function Send({ initialIsContactsPopupOpen }: Props) {
       const available = `${balance.availableBalance}`;
       const prefix = api.consts.system.ss58Prefix;
 
-      const recoded = recodeAddress(form.address, prefix);
+      const recoded = recodeAddress(
+        form.address,
+        prefix,
+        reduxSendTokenState.selectedAsset.encodeType
+      );
       setRecoded(recoded);
 
       const transfer = await api.tx.balances.transfer(form.address, amount.toString());

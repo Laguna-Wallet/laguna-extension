@@ -44,7 +44,7 @@ export interface Network {
   node: string;
   price_change_percentage_24h?: number;
   marketCap?: number;
-  recodeType?: string;
+  encodeType?: string;
 }
 
 export interface Asset {
@@ -54,6 +54,7 @@ export interface Asset {
   balance: string;
   calculatedPrice: number;
   price: number;
+  encodeType?: string;
 }
 
 export type Prices = Record<string, Record<string, number>>;

@@ -84,7 +84,6 @@ chrome.runtime.onInstalled.addListener(async () => {
 
 chrome.runtime.onStartup.addListener(async () => {
   const prices = await Retrieve_Coin_Prices()
-  console.log("~ prices", prices)
   chrome.runtime.sendMessage({ type: Messages.PriceUpdated, payload: JSON.stringify(prices) })
 
   saveToStorage({ key: StorageKeys.TokenPrices, value: JSON.stringify(prices) })
