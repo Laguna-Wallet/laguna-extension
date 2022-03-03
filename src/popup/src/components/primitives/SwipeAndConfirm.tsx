@@ -8,15 +8,16 @@ import Bg from '../../assets/imgs/SwipeAndConfirmBg.png';
 type Props = {
   handleConfirm: () => void;
   loading: boolean;
+  confirmed: boolean;
 };
 
-export default function SwipeAndConfirm({ handleConfirm, loading }: Props) {
+export default function SwipeAndConfirm({ handleConfirm, loading, confirmed }: Props) {
   const [width, setWidth] = useState<number>(56);
   const [isDragging, setIsDragging] = useState(false);
   const position = useMousePosition();
 
-  const [confirmed, setConfirmed] = useState(false);
-  const [confirming, setConfirming] = useState(false);
+  // const [confirmed, setConfirmed] = useState(false);
+  // const [confirming, setConfirming] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const swipeItemRef = useRef<HTMLDivElement>(null);
@@ -35,25 +36,25 @@ export default function SwipeAndConfirm({ handleConfirm, loading }: Props) {
   }, [position.x, isDragging]);
 
   useEffect(() => {
-    if (confirming || confirmed) return;
+    if (loading || confirmed) return;
 
     async function go() {
       if (
         swipeToItemRef.current?.getBoundingClientRect().right ===
         swipeItemRef.current?.getBoundingClientRect().right
       ) {
-        setConfirming(true);
+        // setConfirming(true);
         await handleConfirm();
-        setConfirmed(true);
+        // setConfirmed(true);
       }
     }
 
     go();
   }, [position.x]);
 
-  const handleConfirmStatus = (confirmed: boolean, confirming: boolean) => {
+  const handleConfirmStatus = (confirmed: boolean, loading: boolean) => {
     if (confirmed) return <span style={{ color: '#fff' }}>Confirmed</span>;
-    if (confirming) return <span style={{ color: '#fff' }}>Confirming...</span>;
+    if (loading) return <span style={{ color: '#fff' }}>Confirming...</span>;
 
     return (
       <>
@@ -74,7 +75,7 @@ export default function SwipeAndConfirm({ handleConfirm, loading }: Props) {
         <RightArrow width={20} height={20} stroke="#fff" />
       </SwipeItem>
 
-      <Text>{handleConfirmStatus(confirmed, confirming)}</Text>
+      <Text>{handleConfirmStatus(confirmed, loading)}</Text>
 
       <SwipeTo ref={swipeToItemRef} Bg={Bg}>
         <SwipeToContent></SwipeToContent>

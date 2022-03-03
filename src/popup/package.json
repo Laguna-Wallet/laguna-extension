@@ -5,7 +5,9 @@
   "dependencies": {
     "@actions/core": "^1.6.0",
     "@babel/plugin-transform-exponentiation-operator": "^7.16.5",
+    "@craco/craco": "^6.4.3",
     "@heroicons/react": "^1.0.5",
+    "@open-wc/webpack-import-meta-loader": "^0.4.7",
     "@polkadot/api": "^6.12.1",
     "@polkadot/extension-chains": "^0.42.4",
     "@polkadot/extension-inject": "0.34.0-beta.12",
@@ -71,7 +73,7 @@
     "start": "react-scripts start",
     "test": "react-scripts test",
     "watch:build": "cra-build-watch -v --build-path ../../dist/popup",
-    "build": "react-scripts build",
+    "build": "craco build",
     "eject": "react-scripts eject"
   },
   "resolutions": {

@@ -23,6 +23,9 @@ export enum Messages {
   ChangeInterval = "CHANGE_INTERVAL",
   SendTransaction = "SEND_TRANSACTION",
   TransactionSuccess = "TRANSACTION_SUCCESS",
+  ReopenKeyPairs = "REOPEN_KEYPAIRS",
+  AddToKeyring = "ADD_TO_KEYRING",
+  RemoveFromKeyring = "REMOVE_FROM_KEYRING",
 }
 
 export const chains = ["westend", "polkadot", "kusama", "moonriver", "moonbeam", "shiden", "astar"]

@@ -24,6 +24,8 @@ export function validateMnemonicChoice(
   chosenArr: string[],
   targetIndexes: MnemonicsTriple
 ): boolean {
+  if (chosenArr.length !== 3) return false;
+
   let index = 0;
   for (const iterator of chosenArr) {
     const chosenIndex = mnemonics.indexOf(iterator);
@@ -126,4 +128,8 @@ export function accountHasChanged(balances: Record<string, string>) {
   const address = JSON.parse(account as string).address;
   if (balances.address === address) return true;
   return false;
+}
+
+export function timer(ms: number) {
+  return new Promise((res) => setTimeout(res, ms));
 }

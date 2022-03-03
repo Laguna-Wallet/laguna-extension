@@ -13,6 +13,7 @@ import SecureWallet from './SecureWallet/SecureWallet';
 import { randomAsHex } from '@polkadot/util-crypto';
 import SignUp from 'pages/SignUp/SignUp';
 import { useState } from 'react';
+import { Messages } from 'utils/types';
 
 type Props = {
   existingAccount?: boolean;
@@ -32,7 +33,7 @@ export default function CreateAccount({ redirectedFromSignUp, encodePhase }: Pro
   const [securityLevel, setSecurityLevel] = useState<
     SecurityLevelEnum.Secured | SecurityLevelEnum.Skipped
   >(SecurityLevelEnum.Secured);
-
+  
   const handleEncode = (password: string) => {
     // note for now seed creation flow saves mnemonic in Account Context
     // would be better to refactor and save data in redux, (just for flow)
@@ -40,11 +41,17 @@ export default function CreateAccount({ redirectedFromSignUp, encodePhase }: Pro
       const mnemonicsStr = account?.mnemonics.join(' ');
       const { pair } = keyring.addUri(mnemonicsStr, password, {}, 'ed25519');
       keyring.saveAccountMeta(pair, { name: pair.address });
+
+      chrome.runtime.sendMessage({
+        type: Messages.AddToKeyring,
+        payload: { seed: mnemonicsStr, password }
+      });
     } else {
       const hex = randomAsHex(32);
-      console.log('~ hex', hex);
       const { pair } = keyring.addUri(hex, password, {}, 'ed25519');
       keyring.saveAccountMeta(pair, { name: pair.address });
+
+      chrome.runtime.sendMessage({ type: Messages.AddToKeyring, payload: { seed: hex, password } });
     }
   };
 

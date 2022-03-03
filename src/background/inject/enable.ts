@@ -14,6 +14,7 @@ interface Account {
 // interface Signer extends SignerInterface {}
 
 export async function enable(origin: string): Promise<Injected> {
+  console.log("hello there")
   return {
     accounts: {
       get,

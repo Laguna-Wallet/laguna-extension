@@ -3,7 +3,10 @@ import {
   keyExtractSuri,
   mnemonicValidate,
   randomAsHex,
-  mnemonicToMiniSecret
+  mnemonicToMiniSecret,
+  base64Decode,
+  encodeAddress as toSS58,
+  ethereumEncode
 } from '@polkadot/util-crypto';
 
 import { Asset, Network, Prices, SEED_LENGTHS, StorageKeys } from './types';
@@ -12,13 +15,13 @@ import { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
 import keyring from '@polkadot/ui-keyring';
 import { getFromStorage } from './chrome';
 import bcrypt from 'bcryptjs';
-import { useAccount } from 'context/AccountContext';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { decodeAddress, encodeAddress } from '@polkadot/keyring';
 import BigNumber from 'bignumber.js';
 import AES from 'crypto-js/aes';
 import Utf8 from 'crypto-js/enc-utf8';
 import { decodePair } from '@polkadot/keyring/pair/decode';
+import { createPair } from '@polkadot/keyring/pair';
 
 // TODO appropriate typing
 
@@ -98,6 +101,7 @@ export function importFromMnemonic(seed: string, password: string) {
   const encodedKey = AES.encrypt(u8aToHex(key), password).toString();
   const encodedSeed = AES.encrypt(seed, password).toString();
   const { pair } = keyring.addUri(seed, password);
+
   keyring.saveAccountMeta(pair, { encodedKey, encodedSeed, name: pair.address });
 }
 
@@ -144,7 +148,7 @@ export async function importJson(
 ) {
   if (!json) return;
   if (isKeyringPairs$Json(json)) {
-    keyring.restoreAccounts(json, password);
+    const data = keyring.restoreAccounts(json, password);
     return json;
   } else {
     const pair = keyring.restoreAccount(json, password);
@@ -193,27 +197,31 @@ export function getNetworks(prices: Prices, tokenInfos: Network[]): Network[] {
       name: 'Moonriver',
       symbol: 'movr',
       chain: 'moonriver',
-      node: 'wss://moonriver-rpc.polkadot.io'
+      node: 'wss://moonriver-rpc.polkadot.io',
+      encodeType: 'ethereum'
     },
     {
       name: 'Moonbeam',
       symbol: 'glmr',
       chain: 'moonbeam',
       // chain: ' moonbeam-alpha',
-      node: 'wss://moonbeam-rpc.polkadot.io'
+      node: 'wss://moonbeam-rpc.polkadot.io',
+      encodeType: 'ethereum'
     },
     {
       name: 'Shiden',
       symbol: 'sdn',
       chain: 'shiden',
-      node: 'wss://shiden-rpc.polkadot.io'
+      node: 'wss://shiden.api.onfinality.io/public-ws'
     },
     {
       name: 'Astar',
       symbol: 'astr',
       chain: 'astar',
-      node: 'wss://astar-rpc.polkadot.io'
+      node: 'wss://astar.api.onfinality.io/public-ws'
     }
+
+    // wss://rpc.astar.network
 
     // {
     //   name: 'Acala',
@@ -286,7 +294,7 @@ export async function getAssets(
 
   for (let i = 0; i < networks.length; i++) {
     try {
-      const { name, symbol, chain, node } = networks[i];
+      const { name, symbol, chain, node, encodeType } = networks[i];
 
       const balance = balances[chain];
 
@@ -307,7 +315,8 @@ export async function getAssets(
         symbol,
         chain,
         calculatedPrice: calculatedPrice.toNumber(),
-        price
+        price,
+        encodeType
       });
     } catch (err) {
       console.log('err', err);
@@ -319,9 +328,14 @@ export async function getAssets(
 
 // todo proper typing
 // todo refactor
-export function recodeAddress(address: string, prefix: any): string {
-  const publicKey = decodeAddress(address);
-  return encodeAddress(publicKey, prefix);
+export function recodeAddress(address: string, prefix: any, type?: string): string {
+  if (type === 'ethereum') {
+    const raw = decodeAddress(address);
+    return ethereumEncode(raw);
+  }
+
+  const raw = decodeAddress(address);
+  return encodeAddress(raw, prefix);
 }
 
 // todo typing node is an enum
@@ -330,7 +344,6 @@ export async function getApiInstance(node: string) {
   //CHAIN.api.onfinality.io/ws?apikey=API_KEY
 
   // todo put this into env
-  console.log('~ process.env.REACT_APP_ONFINALITY_KEY', process.env.REACT_APP_ONFINALITY_KEY);
   const wsProvider = new WsProvider(
     `wss://${node}.api.onfinality.io/ws?apikey=${process.env.REACT_APP_ONFINALITY_KEY}`
   );
@@ -399,7 +412,6 @@ export function encryptKeyringPairs(oldPassword: string, newPassword: string) {
 }
 // todo typing keyringPair
 export function encryptKeyringPair(pair: any, oldPassword: string, newPassword: string) {
-  console.log('~ pair', pair);
   pair.unlock(oldPassword);
   const { pair: newPair } = keyring.addPair(pair, newPassword);
   keyring.saveAccountMeta(newPair, { ...pair.meta });

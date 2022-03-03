@@ -11,6 +11,8 @@ interface Account {
 }
 
 export async function enable(origin: string): Promise<Injected> {
+  console.log(origin);
+
   return {
     accounts: {
       get,

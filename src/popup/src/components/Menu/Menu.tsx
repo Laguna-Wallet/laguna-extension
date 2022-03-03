@@ -50,6 +50,7 @@ export default function Menu({ onClose }: Props) {
             <RightArrow width={25} />
           </StyledLink>
         </ListItem>
+
         <ListItem>
           <StyledLink component={AutoLockTimer}>
             <span>Auto-Lock Timer</span>
@@ -62,6 +63,7 @@ export default function Menu({ onClose }: Props) {
             <RightArrow width={25} />
           </StyledLink>
         </ListItem>
+
         <ListItem>
           <StyledLink color={'#c1c1c154'} component={ExportAllAccounts}>
             <span>Change Language</span>

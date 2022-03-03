@@ -4,7 +4,7 @@ import Header from './Header';
 import Footer from './Footer';
 import { useAccount } from 'context/AccountContext';
 import ChainItem from './ChainItem';
-import { getAssets, getNetworks, isValidPolkadotAddress, recodeAddress } from 'utils/polkadot';
+import { getAssets, getNetworks, isValidPolkadotAddress } from 'utils/polkadot';
 import NetworkItem from './NetworkItem';
 import walletBG from 'assets/imgs/walletBG.jpg';
 import { Link } from 'react-chrome-extension-router';
@@ -35,6 +35,7 @@ function Wallet({ isMenuOpen }: Props) {
     loading: accountsChanging
   } = useSelector((state: any) => state.wallet);
 
+  console.log('~ accountsChanging', accountsChanging);
   const balances = accountsBalances?.balances;
 
   const handleActiveTab = (activeTab: number): void => {
@@ -61,6 +62,7 @@ function Wallet({ isMenuOpen }: Props) {
   }, [prices, infos]);
 
   useEffect(() => {
+    // const pair = keyring.getPairs()[0];
     // function getSuri(seed: string, derivePath: string, pairType: PairType): string {
     //   return pairType === 'ed25519-ledger'
     //     ? u8aToHex(hdLedger(seed, derivePath).secretKey.slice(0, 32))

@@ -1,13 +1,18 @@
 import { Messages, StorageKeys } from "./types"
 import { fetchAccountsBalances, fetchAccountsTransactions, Retrieve_Coin_Decimals, Retrieve_Coin_Infos, Retrieve_Coin_Prices, sendTransaction } from "./api"
-import { saveToStorage, validatePassword, handleInitialIdleTimeout, unlockKeyPairs } from "./utils"
-import keyring from "@polkadot/ui-keyring"
+import { saveToStorage, validatePassword, handleInitialIdleTimeout, unlockKeyPairs, handleUnlockPair, removeFromKeypair } from "./utils"
+// import keyring from "@polkadot/ui-keyring"
 import { cryptoWaitReady } from "@polkadot/util-crypto"
+import { injectExtension } from "@polkadot/extension-inject"
+import { enable } from "./inject/enable"
+import keyring from "@polkadot/ui-keyring"
 
-// cryptoWaitReady().then(() => {
-keyring.loadAll({ ss58Format: 42, type: "sr25519" })
+// injectExtension(enable, { name: "laguna-wallet", version: "1.0.0" })
+
 let isLoggedIn = false
-let keyPairs = {}
+let keyPairs = []
+
+keyring.loadAll({ type: "ed25519" })
 
 chrome.runtime.onMessage.addListener(async (msg) => {
   switch (msg.type) {
@@ -19,8 +24,14 @@ chrome.runtime.onMessage.addListener(async (msg) => {
       break
     case Messages.LogOutUser:
       isLoggedIn = false
-      keyPairs = {}
+      keyPairs = []
       break
+    case Messages.RemoveFromKeyring:
+      isLoggedIn = false
+      keyPairs = removeFromKeypair(keyPairs, msg.payload.address)
+      console.log("~ keyPairs", keyPairs)
+      break
+
     case Messages.AuthCheck:
       chrome.runtime.sendMessage({ type: Messages.AuthCheck, payload: { isLoggedIn } })
       break
@@ -31,18 +42,21 @@ chrome.runtime.onMessage.addListener(async (msg) => {
       break
     case Messages.SendTransaction:
       if (msg?.payload) {
-        console.log("~ keyPairs", keyPairs)
         await sendTransaction(keyPairs, msg.payload)
       }
+      break
+    case Messages.AddToKeyring:
+      const pair = handleUnlockPair(msg.payload)
+      keyPairs = [...keyPairs, pair]
       break
   }
 })
 
 chrome.runtime.onInstalled.addListener(async () => {
   const prices = await Retrieve_Coin_Prices()
-
   chrome.runtime.sendMessage({ type: Messages.PriceUpdated, payload: JSON.stringify(prices) })
   saveToStorage({ key: StorageKeys.TokenPrices, value: JSON.stringify(prices) })
+
   console.log("Prices injected...")
 
   const Infos = await Retrieve_Coin_Infos()
@@ -65,7 +79,7 @@ chrome.runtime.onInstalled.addListener(async () => {
   await Retrieve_Coin_Decimals()
 
   fetchAccountsBalances()
-  fetchAccountsTransactions()
+  // fetchAccountsTransactions()
 })
 
 chrome.runtime.onStartup.addListener(async () => {
@@ -94,8 +108,8 @@ chrome.runtime.onStartup.addListener(async () => {
 
   await Retrieve_Coin_Decimals()
 
-  fetchAccountsBalances()
-  fetchAccountsTransactions()
+  // fetchAccountsBalances()
+  // fetchAccountsTransactions()
 })
 
 chrome.alarms.onAlarm.addListener(async (alarm) => {
@@ -109,4 +123,3 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
   chrome.runtime.sendMessage({ type: Messages.CoinInfoUpdated, payload: JSON.stringify(Infos) })
   saveToStorage({ key: StorageKeys.TokenInfos, value: JSON.stringify(Infos) })
 })
-// })

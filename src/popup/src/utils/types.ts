@@ -44,6 +44,7 @@ export interface Network {
   node: string;
   price_change_percentage_24h?: number;
   marketCap?: number;
+  encodeType?: string;
 }
 
 export interface Asset {
@@ -53,6 +54,7 @@ export interface Asset {
   balance: string;
   calculatedPrice: number;
   price: number;
+  encodeType?: string;
 }
 
 export type Prices = Record<string, Record<string, number>>;
@@ -72,7 +74,10 @@ export enum Messages {
   TokenDecimalsUpdated = 'TOKEN_DECIMALS_UPDATED',
   ChangeInterval = 'CHANGE_INTERVAL',
   SendTransaction = 'SEND_TRANSACTION',
-  TransactionSuccess = 'TRANSACTION_SUCCESS'
+  TransactionSuccess = 'TRANSACTION_SUCCESS',
+  ReopenKeyPairs = 'REOPEN_KEYPAIRS',
+  AddToKeyring = 'ADD_TO_KEYRING',
+  RemoveFromKeyring = 'REMOVE_FROM_KEYRING'
 }
 
 //==============================================================================
@@ -175,3 +180,5 @@ export interface Injected {
   provider?: InjectedProvider;
   signer: InjectedSigner;
 }
+
+export const chains = ['westend', 'polkadot', 'kusama', 'moonriver', 'moonbeam', 'shiden', 'astar'];

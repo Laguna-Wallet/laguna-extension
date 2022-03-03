@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import { keyExtractSuri, mnemonicValidate, randomAsHex } from '@polkadot/util-crypto';
 import { isHex } from '@polkadot/util';
 
-import { SEED_LENGTHS } from 'utils/types';
+import { Messages, SEED_LENGTHS } from 'utils/types';
 import EncodeAccount from './EncodeAccount';
 import {
   accountsChangePassword,
@@ -75,13 +75,18 @@ function ImportAccount({ redirectedFromSignUp }: Props) {
         importFromMnemonic(seedPhase, password);
       }
       // save from private key
-      if (isHex(seedPhase) && isValidPolkadotAddress(seedPhase)) {
-        importFromPrivateKey(seedPhase, password);
-      }
+      // if (isHex(seedPhase) && isValidPolkadotAddress(seedPhase)) {
+      //   importFromPrivateKey(seedPhase, password);
+      // }
       // save from public key
       if (!isHex(seedPhase) && isValidPolkadotAddress(seedPhase)) {
         importFromPublicKey(seedPhase);
       }
+
+      chrome.runtime.sendMessage({
+        type: Messages.AddToKeyring,
+        payload: { seed: seedPhase }
+      });
     }
 
     if (file) {
@@ -91,7 +96,14 @@ function ImportAccount({ redirectedFromSignUp }: Props) {
       );
 
       encryptKeyringPair(pair, jsonPassword, password);
+
+      chrome.runtime.sendMessage({
+        type: Messages.AddToKeyring,
+        payload: { password, json: file, jsonPassword }
+      });
     }
+
+    dispatch(reset('AddImportAccount'));
   };
 
   const onClose = () => {

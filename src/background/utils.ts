@@ -3,6 +3,8 @@ import { hexToU8a, isHex } from "@polkadot/util"
 import { StorageKeys } from "./types"
 import * as bcrypt from "bcryptjs"
 import keyring from "@polkadot/ui-keyring"
+import { cryptoWaitReady } from "@polkadot/util-crypto"
+// const importFresh = require("import-fresh")
 
 // Note: this utility functions will be needed for manifest V3
 // export const getFromStorage = async function (key) {
@@ -122,6 +124,27 @@ export function transformTransfers(transfers: any[], chain: string) {
   }))
 }
 
+export function handleUnlockPair(payload) {
+  if (payload?.json) {
+    const pair = keyring.restoreAccount(payload.json, payload.jsonPassword)
+    const newPair = encryptKeyringPair(pair, payload.jsonPassword, payload.password)
+    return newPair
+  }
+
+  if (payload.seed) {
+    const { pair } = keyring.addUri(payload.seed, payload.password)
+    keyring.saveAccountMeta(pair, { name: pair.address })
+    return pair
+  }
+}
+
+export function encryptKeyringPair(pair: any, oldPassword: string, newPassword: string) {
+  pair.unlock(oldPassword)
+  const { pair: newPair } = keyring.addPair(pair, newPassword)
+  keyring.saveAccountMeta(newPair, { ...pair.meta })
+  return newPair
+}
+
 export function unlockKeyPairs(password: string) {
   const pairs = keyring.getPairs()
 
@@ -129,6 +152,11 @@ export function unlockKeyPairs(password: string) {
     pair.unlock(password)
     return pair
   })
+}
+
+export function removeFromKeypair(pairs, address) {
+  keyring.forgetAccount(address)
+  return pairs.filter((item) => recodeToPolkadotAddress(item.address) !== recodeToPolkadotAddress(address))
 }
 
 export function recodeToPolkadotAddress(address: string): string {

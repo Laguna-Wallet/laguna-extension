@@ -4,17 +4,25 @@ import SuccessfullySentIcon from 'assets/svgComponents/SuccesfullySentIcon';
 import Button from 'components/primitives/Button';
 import Header from 'pages/Wallet/Header';
 import Wallet from 'pages/Wallet/Wallet';
-import { Link } from 'react-chrome-extension-router';
+import { goTo, Link } from 'react-chrome-extension-router';
 import styled from 'styled-components';
 import bg from '../../assets/imgs/transaction-sent.png';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { reset } from 'redux-form';
 
-export default function TransactionSent() {
-  // todo proper typing
-  const blockHash = useSelector((state: any) => state.sendToken.blockHash);
+type Props = {
+  blockHash: string;
+};
+export default function TransactionSent({ blockHash }: Props) {
+  const dispatch = useDispatch();
+  const chain = useSelector((state: any) => state.sendToken.selectedAsset.chain);
+  const onClick = (hash: string, chain: string) => {
+    chrome.windows.create({ url: `https://${chain}.subscan.io/extrinsic/${hash}` });
+  };
 
-  const onClick = () => {
-    chrome.windows.create({ url: `https://polkadot.js.org/apps/#/explorer/query/${blockHash}` });
+  const handleClick = () => {
+    dispatch(reset('sendToken'));
+    goTo(Wallet);
   };
 
   return (
@@ -27,7 +35,7 @@ export default function TransactionSent() {
       </Content>
       <ButtonsContainer>
         <Button
-          onClick={onClick}
+          onClick={() => onClick(blockHash, chain)}
           text="View on Blockchain"
           Icon={<RightArrow width={23} />}
           bgColor="#e2e2e2"
@@ -35,14 +43,13 @@ export default function TransactionSent() {
           borderColor="#e2e2e2"
           justify="center"
         />
-        <StyledLink component={Wallet}>
-          <Button
-            text="Continue"
-            margin="5px 0 0 0"
-            Icon={<RightArrow width={23} />}
-            justify="center"
-          />
-        </StyledLink>
+        <Button
+          onClick={handleClick}
+          text="Continue"
+          margin="5px 0 0 0"
+          Icon={<RightArrow width={23} />}
+          justify="center"
+        />
       </ButtonsContainer>
     </Container>
   );
@@ -99,8 +106,4 @@ const ButtonsContainer = styled.div`
   flex-direction: column;
   padding: 0 15px;
   box-sizing: border-box;
-`;
-
-const StyledLink = styled(Link)`
-  text-decoration: none;
 `;

@@ -105,17 +105,24 @@ export default function AccountInfo({ transaction }: Props) {
         </Row>
         <Row>
           <RowLeft>Amount</RowLeft>
-          <RowRight>{amount}</RowRight>
+          <RowRight>
+            {amount} {symbol}
+          </RowRight>
         </Row>
         <Row>
           <RowLeft>Gas Fee</RowLeft>
-          <RowRight>{gasFee.toFormat(4, 1)}</RowRight>
+          <RowRight>
+            {gasFee.toFormat(4, 1)} {symbol}
+          </RowRight>
         </Row>
         <Row>
           <RowLeft> Total</RowLeft>
           <RowRight>
             <TotalValue>
-              <span> {total.toFormat(4, 1)}</span> <span>${totalInUsd.toFormat(4, 1)} USD</span>
+              <span>
+                {total.toFormat(4, 1)} {symbol}
+              </span>{' '}
+              <span>${totalInUsd.toFormat(4, 1)} USD</span>
             </TotalValue>
           </RowRight>
         </Row>
