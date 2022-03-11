@@ -26,6 +26,7 @@ export default function Header({ title, backAction, iconStyle, menuInitialOpenSt
   const [isHamburgerOpen, setOpen] = useState<boolean>(false);
 
   const name = account?.getActiveAccount()?.meta?.name;
+  const accountImg = account?.getActiveAccount()?.meta?.img;
   const formattedName = name?.length > 15 ? truncateString(name) : name;
 
   return (
@@ -33,7 +34,7 @@ export default function Header({ title, backAction, iconStyle, menuInitialOpenSt
       {isMenuOpen && <Menu onClose={() => setIsMenuOpen(false)} />}
       <Content>
         <UserContainer>
-          <Avatar />
+          <Avatar img={accountImg} />
           <UserName>{formattedName}</UserName>
           <DownIconContainer onClick={() => setIsPopupOpen(true)}>
             <DownArrowIcon />
@@ -95,11 +96,15 @@ const UserContainer = styled.div`
   align-items: center;
 `;
 
-const Avatar = styled.div`
+const Avatar = styled.div<{ img: string }>`
   width: 24px;
   height: 24px;
   border-radius: 100%;
   background-color: #ccc;
+  background-image: ${({ img }) => `url(${img})`};
+  background-size: contain;
+  background-position: center center;
+  background-repeat: no-repeat;
 `;
 
 const UserName = styled.span`
