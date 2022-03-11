@@ -60,8 +60,8 @@ function ImportPhase({ errors, onClose, redirectedFromSignUp }: Props) {
     if (!acceptedFile.length) return;
 
     const json = await convertUploadedFileToJson(acceptedFile);
-
-    if (isKeyringPairs$Json(json) || isKeyringJson(json)) {
+    // isKeyringPairs$Json(json) ||
+    if (isKeyringJson(json)) {
       setUploaded(true);
       dispatch(change('AddImportAccount', 'file', json));
     } else {
@@ -159,7 +159,7 @@ function ImportPhase({ errors, onClose, redirectedFromSignUp }: Props) {
                 name="seedPhase"
                 type="textarea"
                 label="seedPhase"
-                placeholder="Enter your seed phrase, private key, Polkadot address or drag and drop a JSON backup file."
+                placeholder="Enter your seed phrase, or drag and drop a JSON backup file."
                 component={HumbleInput}
                 props={{
                   type: 'textarea',
