@@ -37,20 +37,28 @@
   },
   "dependencies": {
     "@actions/core": "^1.6.0",
+    "@babel/core": "^7.17.5",
+    "@babel/preset-env": "^7.16.11",
+    "@babel/preset-react": "^7.16.7",
     "@polkadot/api": "^7.6.1",
+    "@polkadot/extension-dapp": "^0.42.7",
     "@polkadot/extension-inject": "^0.42.7",
+    "@polkadot/phishing": "^0.8.293",
     "@polkadot/ui-keyring": "^1.0.1",
     "@polkadot/ui-settings": "^1.0.1",
     "@types/bcryptjs": "^2.4.2",
     "@zxing/browser": "^0.1.1",
     "archiver": "^5.3.0",
     "axios": "^0.25.0",
+    "babel-loader": "^8.2.3",
     "bcryptjs": "^2.4.3",
+    "crypto-js": "^4.1.1",
     "dotenv": "^14.2.0",
     "dotenv-webpack": "^7.1.0",
     "googleapis": "^92.0.0",
     "import-fresh": "^3.3.0",
     "node-polyfill-webpack-plugin": "^1.1.4",
-    "tweetnacl": "^1.0.3"
+    "tweetnacl": "^1.0.3",
+    "uuid": "^8.3.2"
   }
 }

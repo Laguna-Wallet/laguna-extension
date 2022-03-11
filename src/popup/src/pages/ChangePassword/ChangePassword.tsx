@@ -16,7 +16,7 @@ import styled from 'styled-components';
 import { encryptPassword, isObjectEmpty, objectToArray, truncateString } from 'utils';
 import { saveToStorage } from 'utils/chrome';
 import { encryptKeyringPairs, encryptMetaData, validatePassword } from 'utils/polkadot';
-import { StorageKeys } from 'utils/types';
+import { Messages, StorageKeys } from 'utils/types';
 
 // todo proper typing
 type Props = {
@@ -77,6 +77,11 @@ function ChangePassword({ handleSubmit }: Props) {
 
     const newEncryptedPassword = encryptPassword({ password: values?.newPassword });
     saveToStorage({ key: StorageKeys.Encoded, value: newEncryptedPassword });
+
+    chrome.runtime.sendMessage({
+      type: Messages.ReEncryptPairs,
+      payload: { oldPassword: values?.currentPassword, newPassword: values?.newPassword }
+    });
 
     goTo(Wallet, { isMenuOpen: true });
   };

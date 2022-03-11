@@ -45,7 +45,6 @@ export async function fetchAccountsTransactions(address: string) {
 }
 
 export async function fetchTransactions(address: string, chain: string, page: number) {
-  console.log('~ process.env.REACT_APP_SUBSCAN_KEY', process.env.REACT_APP_SUBSCAN_KEY);
   const res = await fetch(`https://${chain}.api.subscan.io/api/scan/transfers`, {
     method: 'POST',
     mode: 'cors',

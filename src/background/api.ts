@@ -1,11 +1,13 @@
-import { chains, Messages, StorageKeys } from "./types"
+import { chains, Messages, networks, StorageKeys } from "./types"
 import { ApiPromise, WsProvider } from "@polkadot/api"
-import { executeTemporarily, getAccountAddresses, getFromStorage, recodeToPolkadotAddress, saveToStorage, transformTransfers } from "./utils"
-import { formatBalance } from "@polkadot/util/format"
-// import keyring from "@polkadot/ui-keyring"
+import { getAccountAddresses, getFromStorage, recodeAddress, recodeToPolkadotAddress, saveToStorage, transformTransfers } from "./utils"
+import { decodePair } from "@polkadot/keyring/pair/decode"
+import { base64Decode } from "@polkadot/util-crypto"
+import keyring from "@polkadot/ui-keyring"
+import { ethereumEncode } from "@polkadot/util-crypto"
+import { stringToU8a } from "@polkadot/util"
 
-// return formatBalance(balance.toJSON().data.free as number, { withSi: false, forceUnit: "-" }, decimals[index])
-
+// 0x706558b81A14F1402Eb1e9D2d76dD376119Ed1DB
 export async function sendTransaction(pairs, { sendTo, sendFrom, amount, chain }) {
   const pair = pairs.find((pair) => {
     return recodeToPolkadotAddress(pair.address) === recodeToPolkadotAddress(sendFrom)
@@ -21,10 +23,15 @@ export async function sendTransaction(pairs, { sendTo, sendFrom, amount, chain }
       console.log("~ status?.asInBlock?.toString()", status?.asInBlock?.toString())
       chrome.runtime.sendMessage({ type: Messages.TransactionSuccess, payload: { block: status?.asInBlock?.toString() } })
       unsub()
+      api.disconnect()
     } else {
       console.log(`Current status: ${status.type}`)
     }
   })
+
+  setTimeout(() => {
+    unsub()
+  }, 30000)
 }
 
 // todo make chains dynamic
@@ -118,13 +125,14 @@ export async function fetchAccountsBalances() {
       const address = JSON.parse(account as string).address
       let result_obj = {}
       let temp_obj = {}
-      for (let i = 0; i < chains.length; i += 1) {
+      for (let i = 0; i < networks.length; i += 1) {
         await timer(1000)
-        let pickedChain = chains[i]
-        const resolved = await searchAccountBallance(pickedChain, address)
+        let network = networks[i]
+
+        const resolved = await searchAccountBallance(network.chain, recodeAddress(address, network?.prefix, network?.encodeType))
 
         if (resolved.message === "Success") {
-          temp_obj[pickedChain] = Number(resolved.data.account.balance)
+          temp_obj[network.chain] = Number(resolved.data.account.balance)
         }
 
         if (parsedBalances.address === address) {

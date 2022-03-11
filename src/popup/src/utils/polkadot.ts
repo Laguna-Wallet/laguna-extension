@@ -118,8 +118,17 @@ export function importFromPublicKey(publicAddress: string) {
 // todo proper typing for string
 export function isValidPolkadotAddress(address: string): boolean {
   try {
-    encodeAddress(isHex(address) ? hexToU8a(address) : decodeAddress(address));
-    return true;
+    if (!address) return false;
+
+    if (isHex(address) && hexToU8a(address)) {
+      return true;
+    }
+
+    if (decodeAddress(address)) {
+      return true;
+    }
+
+    return false;
   } catch (error) {
     return false;
   }
@@ -193,27 +202,27 @@ export function getNetworks(prices: Prices, tokenInfos: Network[]): Network[] {
       chain: 'kusama',
       node: 'wss://kusama-rpc.polkadot.io'
     },
-    {
-      name: 'Moonriver',
-      symbol: 'movr',
-      chain: 'moonriver',
-      node: 'wss://moonriver-rpc.polkadot.io',
-      encodeType: 'ethereum'
-    },
-    {
-      name: 'Moonbeam',
-      symbol: 'glmr',
-      chain: 'moonbeam',
-      // chain: ' moonbeam-alpha',
-      node: 'wss://moonbeam-rpc.polkadot.io',
-      encodeType: 'ethereum'
-    },
-    {
-      name: 'Shiden',
-      symbol: 'sdn',
-      chain: 'shiden',
-      node: 'wss://shiden.api.onfinality.io/public-ws'
-    },
+    // {
+    //   name: 'Moonriver',
+    //   symbol: 'movr',
+    //   chain: 'moonriver',
+    //   node: 'wss://moonriver-rpc.polkadot.io',
+    //   encodeType: 'ethereum'
+    // },
+    // {
+    //   name: 'Moonbeam',
+    //   symbol: 'glmr',
+    //   chain: 'moonbeam',
+    //   // chain: ' moonbeam-alpha',
+    //   node: 'wss://moonbeam-rpc.polkadot.io',
+    //   encodeType: 'ethereum'
+    // },
+    // {
+    //   name: 'Shiden',
+    //   symbol: 'sdn',
+    //   chain: 'shiden',
+    //   node: 'wss://shiden.api.onfinality.io/public-ws'
+    // },
     {
       name: 'Astar',
       symbol: 'astr',
@@ -334,6 +343,11 @@ export function recodeAddress(address: string, prefix: any, type?: string): stri
     return ethereumEncode(raw);
   }
 
+  const raw = decodeAddress(address);
+  return encodeAddress(raw, prefix);
+}
+
+export function recodeAddressForTransaction(address: string, prefix: any) {
   const raw = decodeAddress(address);
   return encodeAddress(raw, prefix);
 }
