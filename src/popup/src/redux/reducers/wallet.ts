@@ -16,6 +16,13 @@ export const walletReducer = (state: any = {}, action: any) => {
       return { ...state, isLoggedIn: action.payload.isLoggedIn };
     case 'CHANGE_TOKEN_DECIMALS':
       return { ...state, tokenDecimals: action.payload.tokenDecimals };
+    case 'CHANGE_DAPP_AUTHORIZATION':
+      return { ...state, pendingDappAuthorization: action.payload.pendingDappAuthorization };
+    case 'CHANGE_PENDING_TO_SIGN':
+      return { ...state, pendingToSign: action.payload.pendingToSign };
+    case 'CHANGE_CONNECTED_APPS':
+      return { ...state, connectedApps: action.payload.connectedApps };
+
     default:
       return state;
   }

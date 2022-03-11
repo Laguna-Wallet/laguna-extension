@@ -15,6 +15,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import keyring from '@polkadot/ui-keyring';
 import { u8aToHex } from '@polkadot/util';
 import { mnemonicGenerate, mnemonicToMiniSecret } from '@polkadot/util-crypto';
+import { decodePair } from '@polkadot/keyring/pair/decode';
+import { base64Decode, encodeAddress as toSS58 } from '@polkadot/util-crypto';
+import { createPair } from '@polkadot/keyring/pair';
 
 type Props = {
   isMenuOpen?: boolean;
@@ -35,7 +38,6 @@ function Wallet({ isMenuOpen }: Props) {
     loading: accountsChanging
   } = useSelector((state: any) => state.wallet);
 
-  console.log('~ accountsChanging', accountsChanging);
   const balances = accountsBalances?.balances;
 
   const handleActiveTab = (activeTab: number): void => {
@@ -60,34 +62,6 @@ function Wallet({ isMenuOpen }: Props) {
     const networks = getNetworks(prices, infos).filter((network) => network.symbol !== 'wnd');
     setNetworks(networks);
   }, [prices, infos]);
-
-  useEffect(() => {
-    // const pair = keyring.getPairs()[0];
-    // function getSuri(seed: string, derivePath: string, pairType: PairType): string {
-    //   return pairType === 'ed25519-ledger'
-    //     ? u8aToHex(hdLedger(seed, derivePath).secretKey.slice(0, 32))
-    //     : pairType === 'ethereum'
-    //     ? `${seed}/${derivePath}`
-    //     : `${seed}${derivePath}`;
-    // }
-    // const mnemonic = mnemonicGenerate();
-    // console.log('~ mnemonic', mnemonic);
-    // const seed = mnemonicToMiniSecret(mnemonic);
-    // const hash = u8aToHex(seed);
-    // console.log('~ seed', hash);
-    // =============================
-    // const keypair = keyring.createFromUri(
-    //   `${'0x6eab74f9f4d87c8d6626511a1024a940550ccbe48925fdce536815be8aae1285'}///m/44'/60'/0'/0/0`,
-    //   {},
-    //   'ethereum'
-    // );
-    // console.log('~ keypair', keypair);
-    // console.log('~ address', keypair.address);
-    // const isValid = isValidPolkadotAddress(keypair.address);
-    // console.log('~ isValid', isValid);
-    // 0x046c89938092F61829Ec0130fE200c19E1D235d9
-    //1 0x6eab74f9f4d87c8d6626511a1024a940550ccbe48925fdce536815be8aae1285
-  }, []);
 
   return (
     <Container bg={walletBG}>

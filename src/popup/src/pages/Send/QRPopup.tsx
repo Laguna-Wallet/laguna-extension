@@ -24,7 +24,6 @@ export default function QRPopup({ handleCloseQR }: Props) {
     // const videoInputDevices = await ZXingBrowser.BrowserCodeReader.listVideoInputDevices();
 
     codeReader.decodeFromVideoDevice(undefined, 'webcam-preview', (result, err) => {
-      result;
       console.log('~ result', result);
     });
   });

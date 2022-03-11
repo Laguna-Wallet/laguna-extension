@@ -33,7 +33,7 @@ export default function CreateAccount({ redirectedFromSignUp, encodePhase }: Pro
   const [securityLevel, setSecurityLevel] = useState<
     SecurityLevelEnum.Secured | SecurityLevelEnum.Skipped
   >(SecurityLevelEnum.Secured);
-  
+
   const handleEncode = (password: string) => {
     // note for now seed creation flow saves mnemonic in Account Context
     // would be better to refactor and save data in redux, (just for flow)

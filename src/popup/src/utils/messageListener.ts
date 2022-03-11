@@ -3,7 +3,10 @@ import {
   changeInfo,
   changePrices,
   changeTransactions,
-  toggleLoading
+  toggleLoading,
+  changeDappAuthorization,
+  changePendingToSign,
+  changeConnectedApps
 } from 'redux/actions';
 import { accountHasChanged } from 'utils';
 import { saveToStorage } from './chrome';
@@ -31,22 +34,33 @@ export function MessageListener(message: Message, dispatch: any) {
     case Messages.TransactionsUpdated:
       updateTransactions(message, dispatch);
       break;
+    case Messages.DappAuthorization:
+      updateDappAuthorizationRequest(message, dispatch);
+      break;
+    case Messages.CheckPendingSign:
+      updatePendingToSign(message, dispatch);
+      break;
+    case Messages.ConnectedApps:
+      updateConnectedApps(message, dispatch);
+      break;
+
     default:
       return;
   }
 }
 
+// todo add appropriate typings
 function updatePrice(message: PriceUpdateMessage, dispatch: any) {
   dispatch(changePrices(JSON.parse(message.payload)));
   saveToStorage({ key: StorageKeys.TokenPrices, value: message.payload });
 }
 
-function updateCoinInfo(message: PriceUpdateMessage, dispatch: any) {
+function updateCoinInfo(message: any, dispatch: any) {
   dispatch(changeInfo(JSON.parse(message.payload)));
   saveToStorage({ key: StorageKeys.TokenInfos, value: message.payload });
 }
 
-function updateAccountsBalances(message: PriceUpdateMessage, dispatch: any) {
+function updateAccountsBalances(message: any, dispatch: any) {
   dispatch(changeAccountsBalances(JSON.parse(message.payload)));
   saveToStorage({ key: StorageKeys.AccountBalances, value: message.payload });
 
@@ -57,7 +71,19 @@ function updateAccountsBalances(message: PriceUpdateMessage, dispatch: any) {
   }
 }
 
-function updateTransactions(message: PriceUpdateMessage, dispatch: any) {
+function updateTransactions(message: any, dispatch: any) {
   dispatch(changeTransactions(JSON.parse(message.payload)));
   saveToStorage({ key: StorageKeys.Transactions, value: message.payload });
+}
+
+function updateDappAuthorizationRequest(message: any, dispatch: any) {
+  dispatch(changeDappAuthorization(message.payload));
+}
+
+function updatePendingToSign(message: any, dispatch: any) {
+  dispatch(changePendingToSign(message.payload));
+}
+
+function updateConnectedApps(message: any, dispatch: any) {
+  dispatch(changeConnectedApps(message.payload));
 }

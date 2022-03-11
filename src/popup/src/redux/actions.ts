@@ -92,3 +92,24 @@ export function changeTokenDecimals(tokenDecimals: Record<string, string>) {
     payload: { tokenDecimals }
   };
 }
+
+export function changeDappAuthorization(pendingDappAuthorization: Record<string, string>) {
+  return {
+    type: 'CHANGE_DAPP_AUTHORIZATION',
+    payload: { pendingDappAuthorization }
+  };
+}
+
+export function changePendingToSign(pendingToSign: Record<string, string>) {
+  return {
+    type: 'CHANGE_PENDING_TO_SIGN',
+    payload: { pendingToSign }
+  };
+}
+
+export function changeConnectedApps(connectedApps: Record<string, string>) {
+  return {
+    type: 'CHANGE_CONNECTED_APPS',
+    payload: { connectedApps }
+  };
+}

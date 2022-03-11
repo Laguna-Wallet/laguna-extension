@@ -77,7 +77,15 @@ export enum Messages {
   TransactionSuccess = 'TRANSACTION_SUCCESS',
   ReopenKeyPairs = 'REOPEN_KEYPAIRS',
   AddToKeyring = 'ADD_TO_KEYRING',
-  RemoveFromKeyring = 'REMOVE_FROM_KEYRING'
+  RemoveFromKeyring = 'REMOVE_FROM_KEYRING',
+  ReEncryptPairs = 'RE_ENCRYPT_PAIRS',
+  DappAuthorization = 'DAPP_AUTHORIZATION',
+  CheckPendingDappAuth = 'CHECK_PENDING_DAPP_AUTH',
+  CheckPendingSign = 'CHECK_PENDING_SIGN',
+  SignRequest = 'SIGN_REQUEST',
+  DappAuthRequest = 'DAPP_AUTH_REQUEST',
+  ConnectedApps = 'CONNECTED_APPS',
+  RevokeDapp = 'REVOKE_DAPP'
 }
 
 //==============================================================================

@@ -26,6 +26,80 @@ export enum Messages {
   ReopenKeyPairs = "REOPEN_KEYPAIRS",
   AddToKeyring = "ADD_TO_KEYRING",
   RemoveFromKeyring = "REMOVE_FROM_KEYRING",
+  ReEncryptPairs = "RE_ENCRYPT_PAIRS",
+  DappAuthorization = "DAPP_AUTHORIZATION",
+  CheckPendingDappAuth = "CHECK_PENDING_DAPP_AUTH",
+  DappAuthRequest = "DAPP_AUTH_REQUEST",
+  CheckPendingSign = "CHECK_PENDING_SIGN",
+  SignRequest = "SIGN_REQUEST",
+  ConnectedApps = "CONNECTED_APPS",
+  RevokeDapp = "REVOKE_DAPP",
 }
 
 export const chains = ["westend", "polkadot", "kusama", "moonriver", "moonbeam", "shiden", "astar"]
+
+export interface Network {
+  name: string
+  symbol: string
+  chain: string
+  node: string
+  price_change_percentage_24h?: number
+  marketCap?: number
+  encodeType?: string
+  prefix: number
+}
+
+export const networks: Network[] = [
+  {
+    name: "Polkadot",
+    symbol: "wnd",
+    chain: "westend",
+    node: "wss://westend-rpc.polkadot.io",
+    prefix: 42,
+  },
+  {
+    name: "Polkadot",
+    symbol: "dot",
+    chain: "polkadot",
+    node: "wss://rpc.polkadot.io",
+    prefix: 0,
+  },
+  {
+    name: "Kusama",
+    symbol: "ksm",
+    chain: "kusama",
+    node: "wss://kusama-rpc.polkadot.io",
+    prefix: 2,
+  },
+  {
+    name: "Moonriver",
+    symbol: "movr",
+    chain: "moonriver",
+    node: "wss://moonriver-rpc.polkadot.io",
+    prefix: 1285,
+    encodeType: "ethereum",
+  },
+  {
+    name: "Moonbeam",
+    symbol: "glmr",
+    chain: "moonbeam",
+    // chain: ' moonbeam-alpha',
+    node: "wss://moonbeam-rpc.polkadot.io",
+    encodeType: "ethereum",
+    prefix: 1284,
+  },
+  {
+    name: "Shiden",
+    symbol: "sdn",
+    chain: "shiden",
+    node: "wss://shiden.api.onfinality.io/public-ws",
+    prefix: 5,
+  },
+  {
+    name: "Astar",
+    symbol: "astr",
+    chain: "astar",
+    node: "wss://astar.api.onfinality.io/public-ws",
+    prefix: 5,
+  },
+]

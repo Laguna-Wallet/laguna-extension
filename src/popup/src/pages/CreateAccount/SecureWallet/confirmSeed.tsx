@@ -59,7 +59,6 @@ export default function ConfirmSeed({ handleNextSection, redirectedFromSignUp }:
       );
 
       if (isValid) {
-        console.log('valid');
         // handleNextSection();
       } else {
         setTimeout(() => {

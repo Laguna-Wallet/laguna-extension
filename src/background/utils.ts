@@ -3,7 +3,11 @@ import { hexToU8a, isHex } from "@polkadot/util"
 import { StorageKeys } from "./types"
 import * as bcrypt from "bcryptjs"
 import keyring from "@polkadot/ui-keyring"
-import { cryptoWaitReady } from "@polkadot/util-crypto"
+import AES from "crypto-js/aes"
+import Utf8 from "crypto-js/enc-utf8"
+import { ethereumEncode } from "@polkadot/util-crypto"
+import { checkIfDenied } from "@polkadot/phishing"
+
 // const importFresh = require("import-fresh")
 
 // Note: this utility functions will be needed for manifest V3
@@ -162,4 +166,68 @@ export function removeFromKeypair(pairs, address) {
 export function recodeToPolkadotAddress(address: string): string {
   const publicKey = decodeAddress(address)
   return encodeAddress(publicKey, 0)
+}
+
+export function reEncryptKeyringPairs(oldPassword: string, newPassword: string) {
+  encryptKeyringPairs(oldPassword, newPassword)
+  encryptMetaData(oldPassword, newPassword)
+}
+
+export function encryptKeyringPairs(oldPassword: string, newPassword: string) {
+  const pairs = keyring.getPairs()
+
+  for (let i = 0; i < pairs.length; i++) {
+    const pair = pairs[i]
+    pair.unlock(oldPassword)
+
+    const { pair: newPair } = keyring.addPair(pair, newPassword)
+    keyring.saveAccountMeta(newPair, { ...pair.meta })
+  }
+}
+
+export function recodeAddress(address: string, prefix: any, type?: string): string {
+  if (type === "ethereum") {
+    const raw = decodeAddress(address)
+    return ethereumEncode(raw)
+  }
+
+  const raw = decodeAddress(address)
+  return encodeAddress(raw, prefix)
+}
+
+export function encryptMetaData(oldPassword: string, newPassword: string) {
+  const pairs = keyring.getPairs()
+
+  for (let i = 0; i < pairs.length; i++) {
+    const pair = pairs[i]
+    const meta = pair.meta
+
+    // decode key and encode with new password
+    if (meta?.encodedKey) {
+      const decodedKeyBytes = AES.decrypt(meta?.encodedKey as string, oldPassword)
+      const decodedKey = decodedKeyBytes.toString(Utf8)
+
+      const reEncodedKey = AES.encrypt(decodedKey, newPassword).toString()
+      keyring.saveAccountMeta(pair, { ...pair.meta, encodedKey: reEncodedKey })
+    }
+
+    // decode seed and encode with new password
+    if (meta?.encodedSeed) {
+      const decodedSeedBytes = AES.decrypt(meta?.encodedSeed as string, oldPassword)
+      const decodedSeed = decodedSeedBytes.toString(Utf8)
+
+      const reEncodedSeed = AES.encrypt(decodedSeed, newPassword).toString()
+      keyring.saveAccountMeta(pair, { ...pair.meta, encodedSeed: reEncodedSeed })
+    }
+  }
+}
+
+export async function isInPhishingList(url: string): Promise<boolean> {
+  const isInDenyList = await checkIfDenied(url)
+
+  if (isInDenyList) {
+    return true
+  }
+
+  return false
 }

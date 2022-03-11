@@ -14,6 +14,8 @@ module.exports = {
   devtool: "inline-source-map",
   entry: {
     background: join(__dirname, "src/background/background.ts"),
+    content: join(__dirname, "src/background/content.ts"),
+    page: join(__dirname, "src/background/page.ts"),
   },
   output: {
     path: join(__dirname, "dist"),
@@ -26,11 +28,15 @@ module.exports = {
         test: /\.ts?$/,
         use: "ts-loader",
       },
+      {
+        use: { loader: "babel-loader" },
+        test: /\.(js|jsx)$/,
+        exclude: /node_modules/,
+      },
     ],
   },
-
-  plugins: [new CheckerPlugin(), new NodePolyfillPlugin(), new Dotenv(), ...prodPlugins],
   resolve: {
-    extensions: [".ts", ".js"],
+    extensions: [".ts", ".js", ".jsx"],
   },
+  plugins: [new CheckerPlugin(), new NodePolyfillPlugin(), new Dotenv(), ...prodPlugins],
 }
