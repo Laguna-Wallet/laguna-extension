@@ -6,18 +6,25 @@ import { PageContainer } from 'components/ui';
 import { useFormik } from 'formik';
 import Input from 'components/primitives/Input';
 import { welcomeBackSchema } from 'utils/validations';
-import { validatePassword } from 'utils/polkadot';
+// import { validatePassword } from 'utils/polkadot';
 import Wallet from 'pages/Wallet/Wallet';
 import { clearFromStorage, saveToStorage } from 'utils/chrome';
-import { StorageKeys } from 'utils/types';
+import { Messages, StorageKeys } from 'utils/types';
 import { useEffect, useState } from 'react';
 import Snackbar from 'components/Snackbar/Snackbar';
 import CloseIcon from 'assets/svgComponents/CloseIcon';
 import HumbleInput from 'components/primitives/HumbleInput';
+import { validatePassword } from 'utils/polkadot';
+import { useSelector } from 'react-redux';
+import RequestToConnect from 'pages/RequestToConnect/RequestToConnect';
+import RequestToSign from 'pages/RequestToSign';
 
 export default function WelcomeBack() {
   const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
   const [snackbarError, setSnackbarError] = useState<string | undefined>();
+  const { pendingDappAuthorization, pendingToSign } = useSelector((state: any) => state.wallet);
+
+  const pendingDapps = pendingDappAuthorization?.pendingDappAuthorization;
 
   const formik = useFormik({
     initialValues: {
@@ -26,12 +33,18 @@ export default function WelcomeBack() {
     validationSchema: welcomeBackSchema,
     onSubmit: ({ password }) => {
       const isValid = validatePassword(password);
-
       if (isValid) {
         saveToStorage({ key: StorageKeys.SignedIn, value: 'true' });
         clearFromStorage(StorageKeys.LoggedOut);
+        chrome.runtime.sendMessage({ type: Messages.AuthUser, payload: { password } });
 
-        goTo(Wallet);
+        if (pendingDapps?.length > 0) {
+          goTo(RequestToConnect);
+        } else if (pendingToSign.pending) {
+          goTo(RequestToSign);
+        } else {
+          goTo(Wallet);
+        }
       } else {
         setSnackbarError('Incorrect Password');
         setIsSnackbarOpen(true);
@@ -51,7 +64,7 @@ export default function WelcomeBack() {
     <PageContainer>
       <Logo />
       <MainSection>
-        <Title>Welcome Back, Skywalker</Title>
+        <Title>Welcome Back,</Title>
         <Description>HydroX — The Future of Banking</Description>
         <Form onSubmit={formik.handleSubmit}>
           <HumbleInput
@@ -80,17 +93,15 @@ export default function WelcomeBack() {
           />
         </Form>
         <Text>Contact Support</Text>
-        <Snackbar
-          isOpen={isSnackbarOpen}
-          close={() => setIsSnackbarOpen(false)}
-          type="error"
-          bottom="-20px">
-          <CloseIconContainer onClick={() => setIsSnackbarOpen(false)}>
-            <CloseIcon stroke="#111" />
-          </CloseIconContainer>
-          <ErrorMessage>{snackbarError}</ErrorMessage>
-        </Snackbar>
       </MainSection>
+      <Snackbar
+        message={snackbarError}
+        isOpen={isSnackbarOpen}
+        close={() => setIsSnackbarOpen(false)}
+        type="error"
+        bottom="73px"
+        left="0px"
+      />
     </PageContainer>
   );
 }

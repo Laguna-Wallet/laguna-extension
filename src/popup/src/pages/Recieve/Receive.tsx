@@ -31,13 +31,9 @@ export default function Receive() {
     async function go() {
       if (!selectedNetwork) return;
       const api = await getApiInstance(selectedNetwork.chain);
-      const genesisHash = api.genesisHash;
-
-      // maybe not needed.
-      accountsTie({ address: account.getActiveAccount().address, genesisHash });
-
       const prefix = api.consts.system.ss58Prefix;
-      const recoded = recodeAddress(activeAccount.address, prefix);
+
+      const recoded = recodeAddress(activeAccount.address, prefix, selectedNetwork?.encodeType);
       setRecoded(recoded);
     }
     go();

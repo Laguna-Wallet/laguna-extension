@@ -15,7 +15,6 @@ import SwipeAndConfirm from 'components/primitives/SwipeAndConfirm';
 import TransactionSent from './TransactionSent';
 import { goTo, Link } from 'react-chrome-extension-router';
 import { useAccount } from 'context/AccountContext';
-import { getApiInstance, recodeAddress } from 'utils/polkadot';
 import { useWizard } from 'react-use-wizard';
 import { memo, useEffect, useState } from 'react';
 import keyring from '@polkadot/ui-keyring';
@@ -23,51 +22,79 @@ import Wallet from 'pages/Wallet/Wallet';
 import { truncateString } from 'utils';
 import BigNumber from 'bignumber.js';
 import { useDispatch, useSelector } from 'react-redux';
-import { setBlockHash } from 'redux/actions';
-import { formValueSelector, getFormValues } from 'redux-form';
-import { getFromStorage } from 'utils/chrome';
-import { StorageKeys } from 'utils/types';
+import { Messages } from 'utils/types';
 
 type Props = {
   fee: string;
   transfer: any;
+  amountToSend: string;
+  recoded: string;
+  setBlockHash: (blockHash: string) => void;
 };
-function Confirm({ fee, transfer }: Props) {
+
+function Confirm({ fee, transfer, amountToSend, recoded, setBlockHash }: Props) {
   const { nextStep, previousStep } = useWizard();
   const account = useAccount();
   const dispatch = useDispatch();
+  const [loadingTransaction, setLoadingTransaction] = useState(false);
+  const [transactionConfirmed, setTransactionConfirmed] = useState(false);
 
   const { address, amount, token } = useSelector((state: any) => state.form.sendToken.values);
   const selectedAsset = useSelector((state: any) => state.sendToken.selectedAsset);
 
   const { prices } = useSelector((state: any) => state.wallet);
 
-  const price = prices[selectedAsset.name.toLowerCase()].usd;
+  const price = prices[selectedAsset.chain.toLowerCase()]?.usd;
 
-  const total = new BigNumber(amount).plus(fee).times(price).toFormat(4);
+  const total = new BigNumber(amount)
+    .plus(fee)
+    .times(price || 0)
+    .toFormat(4);
 
   const activeAccountAddress = account?.getActiveAccount()?.address;
 
+  const name = account?.getActiveAccount()?.meta?.name;
+
   const handleClick = async () => {
-    const pair = keyring.getPair(activeAccountAddress);
+    chrome.runtime.sendMessage({
+      type: Messages.SendTransaction,
+      payload: {
+        sendTo: recoded,
+        sendFrom: activeAccountAddress,
+        amount: amountToSend,
+        chain: selectedAsset.chain
+      }
+    });
+    setLoadingTransaction(true);
 
-    pair.unlock('neodzeneodze');
-
-    // Todo Proper handling
-    const unsub = await transfer
-      .signAndSend(pair, ({ status }: any) => {
-        if (status.isInBlock) {
-          console.log(`Completed at block hash #${status.asInBlock.toString()}`);
-          dispatch(setBlockHash(status.asInBlock.toString()));
-          nextStep();
-        } else {
-          console.log(`Current status: ${status.type}`);
-        }
-      })
-      .catch((error: any) => {
-        console.log(':( transaction failed', error);
-      });
+    // const pair = keyring.getPair(activeAccountAddress);
+    // pair.unlock('123123123');
+    // // Todo Proper handling
+    // const unsub = await transfer
+    //   .signAndSend(pair, ({ status }: any) => {
+    //     if (status.isInBlock) {
+    //       console.log(`Completed at block hash #${status.asInBlock.toString()}`);
+    //       dispatch(setBlockHash(status.asInBlock.toString()));
+    //       nextStep();
+    //     } else {
+    //       console.log(`Current status: ${status.type}`);
+    //     }
+    //   })
+    //   .catch((error: any) => {
+    //     console.log(':( transaction failed', error);
+    //   });
   };
+
+  useEffect(() => {
+    chrome.runtime.onMessage.addListener((msg) => {
+      if (msg.type === Messages.TransactionSuccess) {
+        setBlockHash(msg.payload.block);
+        setLoadingTransaction(false);
+        setTransactionConfirmed(true);
+        nextStep();
+      }
+    });
+  }, []);
 
   const renderTotal = (total: string) => {
     if (!total) return '...';
@@ -86,7 +113,9 @@ function Confirm({ fee, transfer }: Props) {
             {amount} {token}
           </span>{' '}
           {/* todo actual name of the wallet */}
-          <br /> from <span>SkyWalker</span> <br /> to <span>{truncateString(address)}</span>
+          <br /> from <span>
+            {name && name.length > 14 ? truncateString(name) : name}
+          </span> <br /> to <span>{truncateString(address)}</span>
         </Text>
 
         <Info>
@@ -94,7 +123,7 @@ function Confirm({ fee, transfer }: Props) {
             Fee ={' '}
             <span>
               {new BigNumber(fee).toFormat(4) + ` ${token.toUpperCase()}`} ( $
-              {new BigNumber(fee).times(price).toFormat(4)} )
+              {new BigNumber(fee).times(price || 0).toFormat(4)} )
             </span>
           </InfoItem>
 
@@ -106,7 +135,11 @@ function Confirm({ fee, transfer }: Props) {
 
       <BottomSection>
         <BalanceInfo>Remaining Balance: </BalanceInfo>
-        <SwipeAndConfirm handleConfirm={() => handleClick()} />
+        <SwipeAndConfirm
+          confirmed={transactionConfirmed}
+          loading={loadingTransaction}
+          handleConfirm={() => handleClick()}
+        />
       </BottomSection>
     </Container>
   );

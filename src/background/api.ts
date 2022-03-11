@@ -1,11 +1,38 @@
-import { chains, Messages, StorageKeys } from "./types"
+import { chains, Messages, networks, StorageKeys } from "./types"
 import { ApiPromise, WsProvider } from "@polkadot/api"
-import { executeTemporarily, getAccountAddresses, getFromStorage, saveToStorage, transformTransfers } from "./utils"
-import { formatBalance } from "@polkadot/util/format"
+import { getAccountAddresses, getFromStorage, recodeAddress, recodeToPolkadotAddress, saveToStorage, transformTransfers } from "./utils"
+import { decodePair } from "@polkadot/keyring/pair/decode"
+import { base64Decode } from "@polkadot/util-crypto"
 import keyring from "@polkadot/ui-keyring"
-import { json } from "stream/consumers"
+import { ethereumEncode } from "@polkadot/util-crypto"
+import { stringToU8a } from "@polkadot/util"
 
-// return formatBalance(balance.toJSON().data.free as number, { withSi: false, forceUnit: "-" }, decimals[index])
+// 0x706558b81A14F1402Eb1e9D2d76dD376119Ed1DB
+export async function sendTransaction(pairs, { sendTo, sendFrom, amount, chain }) {
+  const pair = pairs.find((pair) => {
+    return recodeToPolkadotAddress(pair.address) === recodeToPolkadotAddress(sendFrom)
+  })
+
+  const wsProvider = new WsProvider(`wss://${chain}.api.onfinality.io/public-ws?apikey=${process.env.ONFINALITY_KEY}`)
+  const api = await ApiPromise.create({ provider: wsProvider })
+
+  const unsub = await api.tx.balances.transfer(sendTo, amount).signAndSend(pair, ({ status }: any) => {
+    if (status.isInBlock) {
+      console.log(`Completed at block hash #${status.asInBlock.toString()}`)
+
+      console.log("~ status?.asInBlock?.toString()", status?.asInBlock?.toString())
+      chrome.runtime.sendMessage({ type: Messages.TransactionSuccess, payload: { block: status?.asInBlock?.toString() } })
+      unsub()
+      api.disconnect()
+    } else {
+      console.log(`Current status: ${status.type}`)
+    }
+  })
+
+  setTimeout(() => {
+    unsub()
+  }, 30000)
+}
 
 // todo make chains dynamic
 export async function Retrieve_Coin_Prices() {
@@ -13,111 +40,172 @@ export async function Retrieve_Coin_Prices() {
   const json = await data.json()
   return json
 }
-
 // todo make chains dynamic
+// todo proper typing and get rid of unneeded fields from the return object
 export async function Retrieve_Coin_Infos() {
   const data = await fetch(
     `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=polkadot,kusama,moonriver,moonbeam,shiden,astar&order=market_cap_desc&per_page=100&page=1&sparkline=false`
   )
-  const json = await data.json()
-  return json
+
+  return await data.json()
+}
+
+export async function Retrieve_Coin_Decimals() {
+  try {
+    // let transformedObj = {}
+    // const data = []
+    // for (let i = 0; i < chains.length; i++) {
+    //   const chain = chains[i]
+    //   await timer(500)
+
+    //   const res = await fetch(`https://${chain}.api.subscan.io/api/scan/token`, {
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //       "X-API-Key": process.env.SUBSCAN_KEY,
+    //     },
+    //   })
+    //   const json = await res.json()
+
+    //   if (!json?.data?.detail) continue
+
+    //   const obj: Record<string, Record<string, string>> = json?.data?.detail
+
+    //   for (let [key, value] of Object.entries(obj)) {
+    //     transformedObj[key] = value?.token_decimals
+    //   }
+
+    //   data.push(json)
+    // }
+    // todo revise with robin if it's ok to left decimals hardcoded for time being
+    const transformedObj = {
+      ASTR: 18,
+      DOT: 10,
+      GLMR: 18,
+      KSM: 12,
+      MOVR: 18,
+      SDN: 18,
+      WND: 12,
+    }
+
+    saveToStorage({ key: StorageKeys.TokenDecimals, value: JSON.stringify(transformedObj) })
+    chrome.runtime.sendMessage({ type: Messages.TokenDecimalsUpdated, payload: JSON.stringify({ tokenDecimals: transformedObj }) })
+  } catch (err) {
+    console.log(err)
+    Retrieve_Coin_Decimals()
+  }
 }
 
 async function searchAccountBallance(chain: string, address: string) {
   if (!chain) return
-  return await fetch(`https://${chain}.api.subscan.io/api/v2/scan/search`, {
+  const res = await fetch(`https://${chain}.api.subscan.io/api/v2/scan/search`, {
     method: "POST",
     mode: "cors",
     cache: "no-cache",
     credentials: "same-origin",
     headers: {
       "Content-Type": "application/json",
-      "X-API-Key": "9fee43a931ab8240c6e2e7a5ec676458",
+      "X-API-Key": process.env.SUBSCAN_KEY,
     },
     body: JSON.stringify({ key: address, row: 1, page: 1 }),
   })
+
+  return await res.json()
 }
 
 export async function fetchAccountsBalances() {
-  const account = getFromStorage(StorageKeys.ActiveAccount)
+  try {
+    // await timer(3000)
 
-  if (account) {
-    const address = JSON.parse(account).address
+    const account = getFromStorage(StorageKeys.ActiveAccount)
 
-    let result_obj = {}
+    const balances = getFromStorage(StorageKeys.AccountBalances)
+    const parsedBalances = balances ? JSON.parse(balances) : {}
 
-    for (let i = 0; i < chains.length; i += 1) {
-      let pickedChains = [chains[i]]
+    if (account) {
+      const address = JSON.parse(account as string).address
+      let result_obj = {}
+      let temp_obj = {}
+      for (let i = 0; i < networks.length; i += 1) {
+        await timer(1000)
+        let network = networks[i]
 
-      const Promises = pickedChains.map((chain) => searchAccountBallance(chain, address))
-      const jsonPromises = (await Promise.all(Promises)).filter((res) => !!res).map((res) => res && res.json())
+        const resolved = await searchAccountBallance(network.chain, recodeAddress(address, network?.prefix, network?.encodeType))
 
-      const resolved = await Promise.all(jsonPromises)
-
-      let balances = resolved.reduce((acc, item, index) => {
-        const chain = pickedChains[index]
-        if (item.message === "Success") {
-          const balance = Number(item.data.account.balance)
-          acc[chain] = balance
-          return acc
+        if (resolved.message === "Success") {
+          temp_obj[network.chain] = Number(resolved.data.account.balance)
         }
-      }, {})
 
-      result_obj = { ...result_obj, ...balances }
+        if (parsedBalances.address === address) {
+          const accountBalances = parsedBalances?.balances
+          result_obj = { ...accountBalances, ...temp_obj }
+        } else {
+          result_obj = { ...temp_obj }
+        }
+      }
+
+      saveToStorage({ key: StorageKeys.AccountBalances, value: JSON.stringify({ address, balances: result_obj }) })
+      chrome.runtime.sendMessage({ type: Messages.AccountsBalanceUpdated, payload: JSON.stringify({ address, balances: result_obj }) })
     }
-
-    saveToStorage({ key: StorageKeys.AccountBalances, value: JSON.stringify({ address, balances: result_obj }) })
-    chrome.runtime.sendMessage({ type: Messages.AccountsBalanceUpdated, payload: JSON.stringify({ address, balances: result_obj }) })
+    console.log("balances updated")
+    setTimeout(() => fetchAccountsBalances(), 2000)
+  } catch (err) {
+    console.log("err", err)
+    setTimeout(() => fetchAccountsBalances(), 2000)
   }
-  console.log("balances updated")
-  setTimeout(() => fetchAccountsBalances(), 500)
 }
 
 // Transactions
 export async function fetchAccountsTransactions() {
-  const addresses = getAccountAddresses()
-  let result_obj = {}
+  try {
+    const addresses = getAccountAddresses()
+    let result_obj = {}
 
-  let results = []
-  let retrieved_count = 0
-  let page = 0
-  let accountTransfers = []
-  for (let i = 0; i < addresses.length; i++) {
-    for (let j = 0; j < chains.length; j++) {
-      await timer(500)
-
-      const res = await fetchTransactions(addresses[i], chains[j], page)
-
-      if (!res?.data?.transfers) continue
-
-      results = [...res?.data?.transfers]
-      retrieved_count = res?.data?.count
-      page++
-
-      while (results.length < retrieved_count) {
+    let results = []
+    let retrieved_count = 0
+    let page = 0
+    let accountTransfers = []
+    for (let i = 0; i < addresses.length; i++) {
+      for (let j = 0; j < chains.length; j++) {
         await timer(500)
-        const data = await fetchTransactions(addresses[i], chains[j], page)
-        results = [...results, ...data?.data?.transfers]
+
+        const res = await fetchTransactions(addresses[i], chains[j], page)
+
+        if (!res?.data?.transfers) continue
+
+        results = [...res?.data?.transfers]
+        retrieved_count = res?.data?.count
         page++
+
+        while (results.length < retrieved_count) {
+          await timer(500)
+          const data = await fetchTransactions(addresses[i], chains[j], page)
+          results = [...results, ...data?.data?.transfers]
+          page++
+        }
+
+        retrieved_count = 0
+        page = 0
+
+        result_obj[addresses[i]] = result_obj[addresses[i]] ? [...result_obj[addresses[i]], ...transformTransfers(results, chains[j])] : transformTransfers(results, chains[j])
+
+        results = []
       }
-
-      retrieved_count = 0
-      page = 0
-
-      result_obj[addresses[i]] = result_obj[addresses[i]] ? [...result_obj[addresses[i]], ...transformTransfers(results, chains[j])] : transformTransfers(results, chains[j])
-
-      results = []
     }
+
+    console.log("transactions fetched")
+
+    chrome.runtime.sendMessage({ type: Messages.TransactionsUpdated, payload: JSON.stringify(result_obj) })
+    saveToStorage({ key: StorageKeys.Transactions, value: JSON.stringify(result_obj) })
+
+    setTimeout(() => {
+      fetchAccountsTransactions()
+    }, 1000)
+  } catch (err) {
+    console.log(err)
+    setTimeout(() => {
+      fetchAccountsTransactions()
+    }, 1000)
   }
-
-  console.log("transactions fetched")
-
-  chrome.runtime.sendMessage({ type: Messages.TransactionsUpdated, payload: JSON.stringify(result_obj) })
-  saveToStorage({ key: StorageKeys.Transactions, value: JSON.stringify(result_obj) })
-
-  setTimeout(() => {
-    fetchAccountsTransactions()
-  }, 1000)
 }
 
 export async function fetchTransactions(address: string, chain: string, page: number) {
@@ -128,6 +216,7 @@ export async function fetchTransactions(address: string, chain: string, page: nu
     credentials: "same-origin",
     headers: {
       "Content-Type": "application/json",
+      "X-API-Key": process.env.SUBSCAN_KEY,
     },
     body: JSON.stringify({ address, row: 30, page }),
   })

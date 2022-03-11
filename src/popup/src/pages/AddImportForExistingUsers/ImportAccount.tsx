@@ -6,10 +6,11 @@ import styled from 'styled-components';
 import { keyExtractSuri, mnemonicValidate, randomAsHex } from '@polkadot/util-crypto';
 import { isHex } from '@polkadot/util';
 
-import { SEED_LENGTHS } from 'utils/types';
+import { Messages, SEED_LENGTHS } from 'utils/types';
 import EncodeAccount from './EncodeAccount';
 import {
   accountsChangePassword,
+  encryptKeyringPair,
   importFromMnemonic,
   importFromPrivateKey,
   importFromPublicKey,
@@ -48,7 +49,7 @@ const validate = (values: any) => {
       values.seedPhase.split(' ').length > 2 &&
       !SEED_LENGTHS.includes(values.seedPhase.split(' ').length)
     ) {
-      errors.seedPhase = `Mnemonic needs to contain ${SEED_LENGTHS.join(', ')} words`;
+      errors.seedPhase = `Please enter 12 or 24 words`;
     }
   }
 
@@ -66,11 +67,7 @@ function ImportAccount({ redirectedFromSignUp }: Props) {
   const dispatch = useDispatch();
 
   const formValues = useSelector((state: any) => state?.form?.AddImportAccount?.values);
-  const {
-    seedPhase,
-    // file,
-    password: jsonPassword
-  }: any = { ...formValues };
+  const { seedPhase, file, password: jsonPassword }: any = { ...formValues };
 
   const handleEncode = async (password: string) => {
     if (seedPhase) {
@@ -78,32 +75,35 @@ function ImportAccount({ redirectedFromSignUp }: Props) {
         importFromMnemonic(seedPhase, password);
       }
       // save from private key
-      if (isHex(seedPhase) && isValidPolkadotAddress(seedPhase)) {
-        importFromPrivateKey(seedPhase, password);
-      }
+      // if (isHex(seedPhase) && isValidPolkadotAddress(seedPhase)) {
+      //   importFromPrivateKey(seedPhase, password);
+      // }
       // save from public key
       if (!isHex(seedPhase) && isValidPolkadotAddress(seedPhase)) {
         importFromPublicKey(seedPhase);
       }
+
+      chrome.runtime.sendMessage({
+        type: Messages.AddToKeyring,
+        payload: { seed: seedPhase }
+      });
     }
-    // if (file) {
-    //   const json: any = await importJson(
-    //     file as KeyringPair$Json | KeyringPairs$Json | undefined,
-    //     jsonPassword
-    //   );
-    //   if (json?.accounts) {
-    //     json?.accounts.map((account: any) => {
-    //       const pair = accountsChangePassword(account.address, jsonPassword, password);
-    //       // unlockAndSavePair(pair, password);
-    //     });
-    //   } else {
-    //     const pair = accountsChangePassword(json.address, jsonPassword, password);
-    //     // unlockAndSavePair(pair, password);
-    //   }
-    // } else {
-    //   const pair = importViaSeed(seedPhase, password);
-    //   // unlockAndSavePair(pair, password);
-    // }
+
+    if (file) {
+      const pair: any = await importJson(
+        file as KeyringPair$Json | KeyringPairs$Json | undefined,
+        jsonPassword
+      );
+
+      encryptKeyringPair(pair, jsonPassword, password);
+
+      chrome.runtime.sendMessage({
+        type: Messages.AddToKeyring,
+        payload: { password, json: file, jsonPassword }
+      });
+    }
+
+    dispatch(reset('AddImportAccount'));
   };
 
   const onClose = () => {

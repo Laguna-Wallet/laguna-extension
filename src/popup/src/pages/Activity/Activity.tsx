@@ -6,7 +6,7 @@ import Footer from 'pages/Wallet/Footer';
 import { goTo, Link } from 'react-chrome-extension-router';
 import Wallet from 'pages/Wallet/Wallet';
 import { getApiInstance } from 'utils/polkadot';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import ThreeDotsIcon from 'assets/svgComponents/ThreeDotsIcon';
 import ActivityInfo from './ActivityInfo';
 import { useSelector } from 'react-redux';
@@ -19,6 +19,7 @@ import PolkadotLogoIcon from 'assets/svgComponents/PolkadotLogoIcon';
 import KusamaLogoIcon from 'assets/svgComponents/KusamaLogoIcon';
 import KusamaIcon from 'assets/svgComponents/KusamaIcon';
 import { TokenSymbols, Transaction } from 'utils/types';
+import { fetchAccountsTransactions } from 'utils/fetchTransactions';
 
 type Props = {
   isMenuOpen?: boolean;
@@ -74,7 +75,11 @@ export default function Activity() {
   const account = useAccount();
 
   const wallet = useSelector((state: any) => state.wallet);
-  const transactions = wallet?.transactions[account.getActiveAccount().address];
+  // const transactions = wallet?.transactions[account.getActiveAccount().address];
+  const [transactions, setTransactions] = useState<Transaction[] | []>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const address = account.getActiveAccount().address;
 
   const sortedTransactions =
     transactions &&
@@ -82,17 +87,32 @@ export default function Activity() {
       (a: any, b: any) => (new Date(b.timestamp) as any) - (new Date(a.timestamp) as any)
     );
 
+  useEffect(() => {
+    async function go() {
+      setLoading(true);
+      const transactions: Transaction[] = await fetchAccountsTransactions(address);
+      setTransactions(transactions);
+      setLoading(false);
+    }
+
+    go();
+  }, [address]);
+
   return (
     <Container bg={walletBG}>
       <Header title="Activity" />
 
       <Content>
-        <ActivityItemsContainer>
-          {sortedTransactions &&
-            sortedTransactions.map((transaction: any) => {
-              return <Row key={transaction.hex} transaction={transaction} />;
-            })}
-        </ActivityItemsContainer>
+        {!loading ? (
+          <ActivityItemsContainer>
+            {sortedTransactions &&
+              sortedTransactions.map((transaction: any) => {
+                return <Row key={transaction.hex} transaction={transaction} />;
+              })}
+          </ActivityItemsContainer>
+        ) : (
+          <Loading>Loading...</Loading>
+        )}
       </Content>
 
       <Footer activeItem="activity" />
@@ -148,6 +168,10 @@ const ActivityItemsContainer = styled.div`
   flex-direction: column;
   margin-top: 75px;
   padding-bottom: 20px;
+`;
+
+const Loading = styled.div`
+  margin-top: 90px;
 `;
 
 const ActivityItem = styled.div`

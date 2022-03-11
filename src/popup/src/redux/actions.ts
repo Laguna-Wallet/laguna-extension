@@ -78,3 +78,38 @@ export function changeIdleTimeout(idleTimeout: string) {
     payload: { idleTimeout }
   };
 }
+
+export function changeIsLoggedIn(isLoggedIn: string) {
+  return {
+    type: 'CHANGE_IS_LOGGED_IN',
+    payload: { isLoggedIn }
+  };
+}
+
+export function changeTokenDecimals(tokenDecimals: Record<string, string>) {
+  return {
+    type: 'CHANGE_TOKEN_DECIMALS',
+    payload: { tokenDecimals }
+  };
+}
+
+export function changeDappAuthorization(pendingDappAuthorization: Record<string, string>) {
+  return {
+    type: 'CHANGE_DAPP_AUTHORIZATION',
+    payload: { pendingDappAuthorization }
+  };
+}
+
+export function changePendingToSign(pendingToSign: Record<string, string>) {
+  return {
+    type: 'CHANGE_PENDING_TO_SIGN',
+    payload: { pendingToSign }
+  };
+}
+
+export function changeConnectedApps(connectedApps: Record<string, string>) {
+  return {
+    type: 'CHANGE_CONNECTED_APPS',
+    payload: { connectedApps }
+  };
+}

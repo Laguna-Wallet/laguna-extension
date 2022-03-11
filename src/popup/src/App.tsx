@@ -5,32 +5,29 @@ import { getFromChromeStorage, getFromStorage } from 'utils/chrome';
 import SignUp from 'pages/SignUp/SignUp';
 import WelcomeBack from 'pages/WelcomeBack/WelcomeBack';
 import Wallet from 'pages/Wallet/Wallet';
-import { StorageKeys } from 'utils/types';
-import { useCallback, useEffect, useRef } from 'react';
+import { Messages, StorageKeys } from 'utils/types';
+import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { MessageListener } from 'utils/messageListener';
 import { useDispatch, useSelector } from 'react-redux';
 import { minutesToMilliseconds } from 'date-fns/esm';
 import { injectExtension } from '@polkadot/extension-inject';
 import keyring from '@polkadot/ui-keyring';
-import { enable } from 'inject/enable';
+import { changeIsLoggedIn } from 'redux/actions';
+import { goTo } from 'react-chrome-extension-router';
+import RequestToConnect from 'pages/RequestToConnect/RequestToConnect';
+import RequestToSign from 'pages/RequestToSign';
 // import '@polkadot/extension-inject/crossenv';
 
-injectExtension(enable, { name: 'myExtension', version: '1.0.1' });
-
 function App() {
-  injectExtension(enable, { name: 'myExtension', version: '1.0.1' });
-  // this a the function that will be exposed to be callable by the dapp. It resolves a promise
-  // with the injected interface, (see `Injected`) when the dapp at `originName` (url) is allowed
-  // to access functionality
-  // function enableFn(originName: string): any {
-  //   console.log('enabled');
-  // }
-
-  // injects the extension into the page
-
   const account = useAccount();
   const dispatch = useDispatch();
-  const { idleTimeout } = useSelector((state: any) => state.wallet);
+  const { idleTimeout, pendingDappAuthorization, pendingToSign } = useSelector(
+    (state: any) => state.wallet
+  );
+
+  const { isLoggedIn } = useSelector((state: any) => state.wallet);
+  const [loading, setLoading] = useState<boolean>(false);
+  const pendingDapps = pendingDappAuthorization?.pendingDappAuthorization;
 
   useEffect(() => {
     chrome.runtime.onMessage.addListener((msg) => {
@@ -38,24 +35,54 @@ function App() {
     });
   }, []);
 
-  return <div className="App">{handlePage()}</div>;
-}
+  useEffect(() => {
+    chrome.runtime.sendMessage({ type: Messages.CheckPendingSign });
+    chrome.runtime.sendMessage({ type: Messages.CheckPendingDappAuth });
+    chrome.runtime.sendMessage({ type: 'AUTH_CHECK' });
 
-chrome.runtime.onMessage.addListener((msg) => {
-  console.log('message', msg);
-});
+    chrome.runtime.onMessage.addListener((msg) => {
+      if (msg.type === Messages.AuthCheck && !msg.payload.isLoggedIn) {
+        const signedIn = getFromStorage(StorageKeys.SignedIn);
+        const createdAccount = Boolean(signedIn);
+
+        // if () {
+        //   goTo(RequestToSign);
+        // }
+
+        if (pendingDapps?.length > 0) {
+          goTo(RequestToConnect);
+        }
+
+        if (createdAccount) {
+          goTo(WelcomeBack);
+        } else {
+          goTo(SignUp);
+        }
+      }
+    });
+  }, []);
+
+  return <div className="App">{handlePage(pendingDapps, pendingToSign)}</div>;
+}
 
 export default App;
 
-const handlePage = () => {
+const handlePage = (pendingDapps: any[], pendingToSign: any) => {
   const createdAccount = Boolean(getFromStorage(StorageKeys.SignedIn));
   const loggedOut = Boolean(getFromStorage(StorageKeys.LoggedOut));
-
   //todo check for timeout and require password
   // return <WelcomeBack />;
 
   if (loggedOut) {
     return <WelcomeBack />;
+  }
+
+  if (pendingToSign?.pending) {
+    return <RequestToSign />;
+  }
+
+  if (pendingDapps?.length > 0) {
+    return <RequestToConnect />;
   }
 
   if (createdAccount) {

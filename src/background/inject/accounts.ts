@@ -1,19 +1,26 @@
 import { InjectedAccount, Unsubcall } from "@polkadot/extension-inject/types"
-import keyring from "@polkadot/ui-keyring"
+import { sendMessage } from "../communication"
+import { recodeAddress } from "../utils"
 
 export function get(): Promise<InjectedAccount[]> {
-  return new Promise((resolve, reject) => {
-    const accounts: InjectedAccount[] = keyring.getPairs().map((pair: any) => ({
-      address: pair.address,
-      genesisHash: pair.meta.genesisHash,
+  return new Promise(async (resolve, reject) => {
+    const accounts = await sendMessage("GET_ACCOUNTS")
+    const transformedAccounts: InjectedAccount[] = accounts.map((pair: any) => ({
       name: pair.meta.name,
+      address: pair.address,
+      meta: pair.meta,
+      type: pair.type,
+      addressRaw: pair.addressRaw,
+      publicKey: pair.publicKey,
     }))
-    resolve(accounts)
+
+    resolve(transformedAccounts)
   })
 }
 
 export function subscribe(cb: (accounts: InjectedAccount[]) => unknown): Unsubcall {
   return (): void => {
-    console.log("to be implemented")
+    // const subscription = accountsObservable.subject.subscribe((accounts: SubjectInfo): void => cb(transformAccounts(accounts)))
+    // return true
   }
 }

@@ -17,7 +17,7 @@ export enum ImportTypeEnum {
 }
 export type ImportType = ImportTypeEnum.SEED | ImportTypeEnum.JSON;
 
-export const DEFAULT_TYPE: KeypairType = 'sr25519';
+export const DEFAULT_TYPE: KeypairType = 'ed25519';
 export const SEED_LENGTHS = [12, 24];
 
 export enum StorageKeys {
@@ -30,7 +30,8 @@ export enum StorageKeys {
   AccountBalances = 'account-balances',
   Transactions = 'transactions',
   IdleTimeout = 'idle-timeout',
-  UnlockedPairs = 'unlocked-pairs'
+  UnlockedPairs = 'unlocked-pairs',
+  TokenDecimals = 'token-decimals'
 }
 
 //==============================================================================
@@ -43,6 +44,7 @@ export interface Network {
   node: string;
   price_change_percentage_24h?: number;
   marketCap?: number;
+  encodeType?: string;
 }
 
 export interface Asset {
@@ -52,6 +54,7 @@ export interface Asset {
   balance: string;
   calculatedPrice: number;
   price: number;
+  encodeType?: string;
 }
 
 export type Prices = Record<string, Record<string, number>>;
@@ -64,7 +67,25 @@ export enum Messages {
   PriceUpdated = 'PRICES_UPDATED',
   CoinInfoUpdated = 'COIN_INFO_UPDATED',
   AccountsBalanceUpdated = 'ACCOUNTS_BALANCE_UPDATED',
-  TransactionsUpdated = 'TRANSACTIONS_UPDATED'
+  TransactionsUpdated = 'TRANSACTIONS_UPDATED',
+  AuthCheck = 'AUTH_CHECK',
+  AuthUser = 'AUTH_USER',
+  LogOutUser = 'LOG_OUT_USER',
+  TokenDecimalsUpdated = 'TOKEN_DECIMALS_UPDATED',
+  ChangeInterval = 'CHANGE_INTERVAL',
+  SendTransaction = 'SEND_TRANSACTION',
+  TransactionSuccess = 'TRANSACTION_SUCCESS',
+  ReopenKeyPairs = 'REOPEN_KEYPAIRS',
+  AddToKeyring = 'ADD_TO_KEYRING',
+  RemoveFromKeyring = 'REMOVE_FROM_KEYRING',
+  ReEncryptPairs = 'RE_ENCRYPT_PAIRS',
+  DappAuthorization = 'DAPP_AUTHORIZATION',
+  CheckPendingDappAuth = 'CHECK_PENDING_DAPP_AUTH',
+  CheckPendingSign = 'CHECK_PENDING_SIGN',
+  SignRequest = 'SIGN_REQUEST',
+  DappAuthRequest = 'DAPP_AUTH_REQUEST',
+  ConnectedApps = 'CONNECTED_APPS',
+  RevokeDapp = 'REVOKE_DAPP'
 }
 
 //==============================================================================
@@ -167,3 +188,5 @@ export interface Injected {
   provider?: InjectedProvider;
   signer: InjectedSigner;
 }
+
+export const chains = ['westend', 'polkadot', 'kusama', 'moonriver', 'moonbeam', 'shiden', 'astar'];

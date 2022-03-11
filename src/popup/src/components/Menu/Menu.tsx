@@ -14,6 +14,7 @@ import AutoLockTimer from 'pages/AutoLockTimer/AutoLockTimer';
 import RemoveAccount from 'pages/RemoveAccount/RemoveAccount';
 import ChangePassword from 'pages/ChangePassword/ChangePassword';
 import BackupAccount from 'pages/BackupAccount/BackupAccount';
+import ConnectedSites from 'pages/ConnectedSites/ConnectedSites';
 
 type Props = {
   onClose: () => void;
@@ -45,11 +46,12 @@ export default function Menu({ onClose }: Props) {
           </StyledLink>
         </ListItem>
         <ListItem>
-          <StyledLink color={'#c1c1c154'} component={ExportAllAccounts}>
+          <StyledLink component={ConnectedSites}>
             <span>Connected Sites</span>
             <RightArrow width={25} />
           </StyledLink>
         </ListItem>
+
         <ListItem>
           <StyledLink component={AutoLockTimer}>
             <span>Auto-Lock Timer</span>
@@ -62,12 +64,12 @@ export default function Menu({ onClose }: Props) {
             <RightArrow width={25} />
           </StyledLink>
         </ListItem>
-        <ListItem>
+        {/* <ListItem>
           <StyledLink color={'#c1c1c154'} component={ExportAllAccounts}>
             <span>Change Language</span>
             <RightArrow width={25} />
           </StyledLink>
-        </ListItem>
+        </ListItem> */}
         <ListItem>
           <StyledLink component={BackupAccount}>
             <span>Backup Account</span>
@@ -127,9 +129,9 @@ const ListItem = styled.div`
     margin-top: 0;
     pointer-events: inherit;
   }
-  /* :nth-child(2) {
+  :nth-child(2) {
     pointer-events: inherit;
-  } */
+  }
   :nth-child(3) {
     pointer-events: inherit;
   }
