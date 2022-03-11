@@ -1,8 +1,9 @@
-import { MnemonicsTriple } from './types';
+import { MnemonicsTriple, StorageKeys } from './types';
 import { saveAs } from 'file-saver';
 import { KeyringPair$Json } from '@polkadot/keyring/types';
 import { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
 import bcrypt from 'bcryptjs';
+import { getFromStorage } from './chrome';
 
 //==============================================================================
 // Mnemonics
@@ -23,6 +24,8 @@ export function validateMnemonicChoice(
   chosenArr: string[],
   targetIndexes: MnemonicsTriple
 ): boolean {
+  if (chosenArr.length !== 3) return false;
+
   let index = 0;
   for (const iterator of chosenArr) {
     const chosenIndex = mnemonics.indexOf(iterator);
@@ -87,7 +90,8 @@ export async function convertUploadedFileToJson(
       fileReader.onload = (e: any) => {
         resolve(JSON.parse(e.target.result));
       };
-    });12
+    });
+    12;
   } catch (err: any) {
     throw new Error(err.message);
   }
@@ -113,4 +117,19 @@ export function isObjectEmpty(obj: Record<string, string>): boolean {
 
 export function objectToArray(obj: Record<string, unknown>): any[] {
   return Object.keys(obj).map((key) => [obj[key]]);
+}
+
+export function transformAmount(obj: Record<string, unknown>): any[] {
+  return Object.keys(obj).map((key) => [obj[key]]);
+}
+
+export function accountHasChanged(balances: Record<string, string>) {
+  const account = getFromStorage(StorageKeys.ActiveAccount);
+  const address = JSON.parse(account as string).address;
+  if (balances.address === address) return true;
+  return false;
+}
+
+export function timer(ms: number) {
+  return new Promise((res) => setTimeout(res, ms));
 }

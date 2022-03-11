@@ -37,6 +37,13 @@ export function selectAssetToken(selectedAssetToken: string) {
 }
 
 // wallet
+export function toggleLoading(loading: boolean) {
+  return {
+    type: 'TOGGLE_LOADING',
+    payload: { loading }
+  };
+}
+
 export function changePrices(prices: Record<string, number>) {
   return {
     type: 'CHANGE_PRICES',
@@ -69,5 +76,40 @@ export function changeIdleTimeout(idleTimeout: string) {
   return {
     type: 'CHANGE_IDLE_TIMEOUT',
     payload: { idleTimeout }
+  };
+}
+
+export function changeIsLoggedIn(isLoggedIn: string) {
+  return {
+    type: 'CHANGE_IS_LOGGED_IN',
+    payload: { isLoggedIn }
+  };
+}
+
+export function changeTokenDecimals(tokenDecimals: Record<string, string>) {
+  return {
+    type: 'CHANGE_TOKEN_DECIMALS',
+    payload: { tokenDecimals }
+  };
+}
+
+export function changeDappAuthorization(pendingDappAuthorization: Record<string, string>) {
+  return {
+    type: 'CHANGE_DAPP_AUTHORIZATION',
+    payload: { pendingDappAuthorization }
+  };
+}
+
+export function changePendingToSign(pendingToSign: Record<string, string>) {
+  return {
+    type: 'CHANGE_PENDING_TO_SIGN',
+    payload: { pendingToSign }
+  };
+}
+
+export function changeConnectedApps(connectedApps: Record<string, string>) {
+  return {
+    type: 'CHANGE_CONNECTED_APPS',
+    payload: { connectedApps }
   };
 }

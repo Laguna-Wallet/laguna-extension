@@ -15,7 +15,9 @@ import {
   getApiInstance,
   getAssets,
   getNetworks,
-  isValidAddressPolkadotAddress
+  isValidPolkadotAddress,
+  recodeAddress,
+  recodeAddressForTransaction
 } from 'utils/polkadot';
 import { useEffect, useReducer, useState } from 'react';
 import { Asset, Network, SelectType } from 'utils/types';
@@ -39,18 +41,13 @@ export default function Send({ initialIsContactsPopupOpen }: Props) {
   const { prices, infos } = useSelector((state: any) => state.wallet);
 
   const { accountsBalances } = useSelector((state: any) => state.wallet);
-  // todo proper typing
-  const currentAccountBalance =
-    accountsBalances &&
-    accountsBalances.find(
-      (balances: any) => balances.address === account.getActiveAccount().address
-    );
+
+  const balances = accountsBalances?.balances;
 
   // TODO REFETCH NETWORKS FROM STORAGE
   useEffect(() => {
     async function go() {
-      const { assets }: any = await getAssets(prices, infos, currentAccountBalance);
-      console.log('~ assets', assets);
+      const { assets }: any = await getAssets(prices, infos, balances);
       setAssets(assets);
     }
 
@@ -59,8 +56,11 @@ export default function Send({ initialIsContactsPopupOpen }: Props) {
 
   const [transfer, setTransfer] = useState<any>();
   const [fee, setFee] = useState<any>();
+  const [amountToSend, setAmountToSend] = useState<string>('');
+  const [recoded, setRecoded] = useState<string>('');
   const [loading, setLoading] = useState<any>();
   const [abilityToTransfer, setAbilityToTransfer] = useState<boolean>(true);
+  const [blockHash, setBlockHash] = useState<string>('');
 
   const reduxSendTokenState = useSelector((state: any) => state.sendToken);
   const form = useSelector((state: any) => state?.form?.sendToken?.values);
@@ -69,38 +69,48 @@ export default function Send({ initialIsContactsPopupOpen }: Props) {
     async function go() {
       if (
         !reduxSendTokenState.selectedAsset ||
-        !isValidAddressPolkadotAddress(form?.address) ||
+        !isValidPolkadotAddress(form?.address) ||
         !form.amount
       )
         return;
 
       setLoading(true);
       const api = await getApiInstance(reduxSendTokenState.selectedAsset.chain);
-
       const factor = new BigNumber(10).pow(new BigNumber(api.registry.chainDecimals[0]));
       const amount = new BigNumber(form.amount).multipliedBy(factor);
-
       const balance = await api.derive.balances.all(account.getActiveAccount().address);
-      const available = balance.availableBalance.toNumber();
+      const available = `${balance.availableBalance}`;
+      const prefix = api.consts.system.ss58Prefix;
 
-      const transfer = await api.tx.balances.transfer(form.address, amount.toNumber());
+      const recoded = recodeAddress(
+        form.address,
+        prefix,
+        reduxSendTokenState.selectedAsset.encodeType
+      );
 
-      const { partialFee, weight } = await transfer.paymentInfo(form.address);
+      // const recoded = recodeAddressForTransaction(form.address, prefix);
 
-      const fees = partialFee.muln(110).divn(100);
+      setRecoded(recoded);
 
-      const total = amount
-        .plus(fees.toNumber())
-        .plus(api.consts.balances.existentialDeposit.toNumber());
+      const transfer = await api.tx.balances.transfer(form.address, amount.toString());
 
-      if (total.gt(available)) {
+      const { partialFee, weight } = await transfer.paymentInfo(recoded);
+
+      const fees = new BigNumber(`{partialFee}`).multipliedBy(110).dividedBy(100);
+
+      const total = amount.plus(fees).plus(api.consts.balances.existentialDeposit.toNumber());
+
+      api.disconnect();
+      if (total.gt(new BigNumber(available))) {
         console.error(`Cannot transfer ${total} with ${available}`);
         setAbilityToTransfer(false);
       } else {
         setAbilityToTransfer(true);
+        setAmountToSend(amount.toString());
       }
 
-      setFee(`${new BigNumber(partialFee.toNumber()).div(factor)}`);
+      setFee(`${new BigNumber(partialFee.toString()).div(factor)}`);
+      console.log(2);
       setTransfer(transfer);
       setLoading(false);
     }
@@ -119,8 +129,14 @@ export default function Send({ initialIsContactsPopupOpen }: Props) {
           loading={loading}
           abilityToTransfer={abilityToTransfer}
         />
-        <Confirm fee={fee} transfer={transfer} />
-        <TransactionSent />
+        <Confirm
+          setBlockHash={setBlockHash}
+          amountToSend={amountToSend}
+          recoded={recoded}
+          fee={fee}
+          transfer={transfer}
+        />
+        <TransactionSent blockHash={blockHash} />
       </Wizard>
     </Container>
   );

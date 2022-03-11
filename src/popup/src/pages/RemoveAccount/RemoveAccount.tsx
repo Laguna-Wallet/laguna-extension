@@ -2,18 +2,26 @@ import keyring from '@polkadot/ui-keyring';
 import RemoveAccountIcon from 'assets/svgComponents/RemoveAccountIcon';
 import MenuHeader from 'components/MenuHeader/MenuHeader';
 import Button from 'components/primitives/Button';
+import HumbleInput from 'components/primitives/HumbleInput';
 import Snackbar from 'components/Snackbar/Snackbar';
 import { useAccount } from 'context/AccountContext';
 import Wallet from 'pages/Wallet/Wallet';
 import React, { useState } from 'react';
 import { goTo, Link } from 'react-chrome-extension-router';
+import { useDispatch } from 'react-redux';
+import { toggleLoading } from 'redux/actions';
 import styled from 'styled-components';
 import { truncateString } from 'utils';
+import { clearFromStorage } from 'utils/chrome';
+import { validatePassword } from 'utils/polkadot';
+import { Messages, StorageKeys } from 'utils/types';
 
 export default function RemoveAccount() {
   const [isOpen, setOpen] = useState<boolean>(true);
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
   const [snackbarError, setSnackbarError] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const dispatch = useDispatch();
   const account = useAccount();
   const activeAccount = account.getActiveAccount();
 
@@ -21,11 +29,30 @@ export default function RemoveAccount() {
   const address = activeAccount?.address;
   const handleRemove = () => {
     if (!address) return;
+
+    const isValid = validatePassword(password);
+
+    if (!isValid) {
+      setIsSnackbarOpen(true);
+      setSnackbarError('Password is not valid');
+      return;
+    }
+
     keyring.forgetAccount(address);
     const first = keyring?.getAccounts()[0];
+    clearFromStorage(StorageKeys.AccountBalances);
+    dispatch(toggleLoading(true));
     if (first) {
       account.saveActiveAccount(first);
+    } else {
+      account.saveActiveAccount({});
     }
+
+    chrome.runtime.sendMessage({
+      type: Messages.RemoveFromKeyring,
+      payload: { address }
+    });
+
     goTo(Wallet);
   };
 
@@ -38,15 +65,33 @@ export default function RemoveAccount() {
         onClose={() => goTo(Wallet)}
         backAction={() => goTo(Wallet, { isMenuOpen: true })}
       />
+
       <Content>
         <IconContainer>
           <RemoveAccountIcon />
         </IconContainer>
 
         <Text>
-          This will remove the current wallet ({name && name > 12 ? truncateString(name) : name}){' '}
-          {address && truncateString(address)} from your account. Please confirm below.
+          This will remove the current wallet{' '}
+          <span>
+            ({name?.length > 12 ? truncateString(name) : name}) {address && truncateString(address)}{' '}
+          </span>
+          from your account. Please confirm below.
         </Text>
+
+        <HumbleInput
+          id="password"
+          type="password"
+          value={password}
+          placeholder="Enter your password"
+          onChange={(e: any) => setPassword(e.target.value)}
+          height="45px"
+          bgColor="#303030"
+          borderColor="#303030"
+          color="#9c9c9c"
+          marginTop="auto"
+        />
+
         <ButtonContainer>
           <Button
             onClick={() => goTo(Wallet, { isMenuOpen: true })}
@@ -55,7 +100,7 @@ export default function RemoveAccount() {
             bgColor="#ececec"
             borderColor="#ececec"
             justify="center"
-            margin="auto 0 0 0"
+            margin="10px 0 0 0"
           />
 
           <Button
@@ -65,7 +110,7 @@ export default function RemoveAccount() {
             bgColor="#fb5a5a"
             borderColor="#fb5a5a"
             justify="center"
-            margin="auto 0 0 10px"
+            margin="10px 0 0 10px"
           />
         </ButtonContainer>
       </Content>
@@ -75,7 +120,7 @@ export default function RemoveAccount() {
         message={snackbarError}
         type="error"
         left="0px"
-        bottom="110px"
+        bottom="145px"
       />
     </Container>
   );
@@ -131,10 +176,12 @@ const Text = styled.div`
   border: 1px solid #fffa7d;
   padding: 10px;
   box-sizing: border-box;
+  span {
+    font-weight: 600;
+  }
 `;
 
 const ButtonContainer = styled.div`
   width: 100%;
   display: flex;
-  margin-top: auto;
 `;

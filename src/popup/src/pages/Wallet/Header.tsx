@@ -118,7 +118,11 @@ const ButtonsIconContainer = styled.div`
   margin-left: 8px;
 `;
 
-const BurgerMenu = styled.div``;
+const BurgerMenu = styled.div`
+  .hamburger-react {
+    width: 35px !important;
+  }
+`;
 
 const TitleContainer = styled.div`
   width: 100%;

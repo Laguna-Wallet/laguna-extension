@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { goTo, Link } from 'react-chrome-extension-router';
-import { getAccounts, getApiInstance, isValidAddressPolkadotAddress } from 'utils/polkadot';
+import { getAccounts, getApiInstance, isValidPolkadotAddress } from 'utils/polkadot';
 import { Dispatch, useEffect, useState } from 'react';
 import TokenAndAmountSelect from 'pages/Send/TokenAndAmountSelect';
 import ContactsIcon from 'assets/svgComponents/ContactsIcon';
@@ -57,7 +57,7 @@ const validate = (values: any) => {
   if (!values.address) {
     errors.address = 'Please enter address';
   }
-  if (values.address && !isValidAddressPolkadotAddress(values.address)) {
+  if (values.address && !isValidPolkadotAddress(values.address)) {
     errors.address = 'Please enter valid address';
   } else if (!values.amount) {
     errors.amount = 'Please enter amount';
@@ -109,7 +109,6 @@ function SendToken({
   amount
 }: Props) {
   const dispatch = useDispatch();
-  const account = useAccount();
   const { nextStep, previousStep } = useWizard();
   const [isAccountsPopupOpen, setIsAccountsPopupOpen] = useState<boolean>(false);
   const [isQRPopupOpen, setIsQRPopupOpen] = useState<boolean>(false);
@@ -164,8 +163,8 @@ function SendToken({
   };
 
   const handleCloseContacts = (address: string) => {
-    dispatch(changeAddress(address));
-    // setIsContactsPopupOpen(false);
+    dispatch(change('sendToken', 'address', address));
+    setIsContactsPopupOpen(false);
   };
 
   const submit = (values: any) => {
@@ -308,7 +307,10 @@ function SendToken({
               Balance: {new BigNumber(selectedAsset.balance).toFormat(2)}{' '}
               {selectedAsset?.symbol.toUpperCase()}
             </span>
-            <span>Estimated Fee: {loading ? '...' : new BigNumber(fee).toFormat(4)}</span>
+            <span>
+              Estimated Fee: {loading ? '...' : new BigNumber(fee).toFormat(4)}{' '}
+              {selectedAsset?.symbol.toUpperCase()}
+            </span>
           </Info>
           <Button
             type="submit"
@@ -341,7 +343,15 @@ function SendToken({
       )}
 
       {isQRPopupOpen && <QRPopup handleCloseQR={handleCloseQR} />}
-      {isContactsPopupOpen && <ContactsPopup handleCloseContacts={handleCloseContacts} />}
+      {isContactsPopupOpen && (
+        <ContactsPopup
+          onBack={() => {
+            setIsContactsPopupOpen(false);
+            setFlow(undefined);
+          }}
+          handleCloseContacts={handleCloseContacts}
+        />
+      )}
     </Container>
   );
 }

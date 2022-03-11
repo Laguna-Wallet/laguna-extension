@@ -2,6 +2,7 @@ import { FormikProps } from 'formik/dist/types';
 import { Field } from 'redux-form';
 import styled from 'styled-components';
 import { Asset } from 'utils/types';
+import { parseNumeric } from 'utils/validations';
 
 type Props = {
   tokens: string[];
@@ -44,7 +45,11 @@ const renderSelect = (props: any) => {
 };
 
 const Input = ({ input: { value, onChange } }: any) => (
-  <StyledInput value={value} onChange={onChange} placeholder="Enter Amount" />
+  <StyledInput
+    value={value}
+    onChange={(e) => onChange(parseNumeric(e.target.value))}
+    placeholder="Enter Amount"
+  />
 );
 
 const Container = styled.div`

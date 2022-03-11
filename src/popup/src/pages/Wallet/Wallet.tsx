@@ -1,28 +1,23 @@
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { ApiPromise, WsProvider, Keyring } from '@polkadot/api';
-import Config from 'config/config.json';
 import Header from './Header';
 import Footer from './Footer';
 import { useAccount } from 'context/AccountContext';
-import Accounts from 'components/popups/Accounts';
-import Popup from 'components/Popup/Popup';
-import Menu from 'components/Menu/Menu';
 import ChainItem from './ChainItem';
-import config from 'config/config.json';
-import { Account_Search } from 'utils/Api';
-import { getApiInstance, getAssets, getNetworks } from 'utils/polkadot';
+import { getAssets, getNetworks, isValidPolkadotAddress } from 'utils/polkadot';
 import NetworkItem from './NetworkItem';
 import walletBG from 'assets/imgs/walletBG.jpg';
-import { goTo, Link } from 'react-chrome-extension-router';
-import SelectAsset from 'pages/Send/SelectAsset';
+import { Link } from 'react-chrome-extension-router';
 import Send from 'pages/Send/Send';
 import Receive from 'pages/Recieve/Receive';
 import BigNumber from 'bignumber.js';
+import { useDispatch, useSelector } from 'react-redux';
 import keyring from '@polkadot/ui-keyring';
-import { useSelector } from 'react-redux';
-import { mnemonicGenerate } from '@polkadot/util-crypto';
-import { randomAsHex } from '@polkadot/util-crypto';
+import { u8aToHex } from '@polkadot/util';
+import { mnemonicGenerate, mnemonicToMiniSecret } from '@polkadot/util-crypto';
+import { decodePair } from '@polkadot/keyring/pair/decode';
+import { base64Decode, encodeAddress as toSS58 } from '@polkadot/util-crypto';
+import { createPair } from '@polkadot/keyring/pair';
 
 type Props = {
   isMenuOpen?: boolean;
@@ -30,25 +25,22 @@ type Props = {
 
 function Wallet({ isMenuOpen }: Props) {
   const account = useAccount();
+  const dispatch = useDispatch();
   const [assets, setAssets] = useState<any>([]);
   const [networks, setNetworks] = useState<any>([]);
   const [activeTab, setActiveTab] = useState<number>(1);
-  const [loading, setLoading] = useState<boolean>(false);
   const [overallBalance, setOverallBalance] = useState<number | undefined>(undefined);
 
-  const { prices, infos, accountsBalances } = useSelector((state: any) => state.wallet);
+  const {
+    prices,
+    infos,
+    accountsBalances,
+    loading: accountsChanging
+  } = useSelector((state: any) => state.wallet);
 
-  // todo proper typing
-  const currentAccountBalance =
-    accountsBalances &&
-    accountsBalances.find(
-      (balances: any) => balances.address === account.getActiveAccount().address
-    );
+  const balances = accountsBalances?.balances;
 
   const handleActiveTab = (activeTab: number): void => {
-    if (loading) {
-      setLoading(false);
-    }
     setActiveTab(activeTab);
   };
 
@@ -56,18 +48,15 @@ function Wallet({ isMenuOpen }: Props) {
 
   useEffect(() => {
     async function go() {
-      setLoading(true);
-      const { overallBalance, assets }: any = await getAssets(prices, infos, currentAccountBalance);
-
+      const { overallBalance, assets }: any = await getAssets(prices, infos, balances);
       setAssets(assets);
       setOverallBalance(overallBalance);
-      setLoading(false);
     }
 
-    if (activeAccount && currentAccountBalance) {
+    if (activeAccount && balances) {
       go();
     }
-  }, [activeAccount, currentAccountBalance]);
+  }, [activeAccount, balances]);
 
   useEffect(() => {
     const networks = getNetworks(prices, infos).filter((network) => network.symbol !== 'wnd');
@@ -77,7 +66,6 @@ function Wallet({ isMenuOpen }: Props) {
   return (
     <Container bg={walletBG}>
       <Header menuInitialOpenState={isMenuOpen} />
-
       <Content>
         <BalanceContainer>
           <span>Balance</span>
@@ -85,7 +73,7 @@ function Wallet({ isMenuOpen }: Props) {
             <span>
               {' '}
               $
-              {(overallBalance || overallBalance === 0) && !loading
+              {(overallBalance || overallBalance === 0) && !accountsChanging
                 ? new BigNumber(overallBalance).toFixed(2)
                 : '...'}{' '}
             </span>
@@ -111,7 +99,7 @@ function Wallet({ isMenuOpen }: Props) {
             </ListHeaderItem>
           </ListHeader>
           <ListContentParent>
-            {loading ? (
+            {accountsChanging ? (
               'Loading...'
             ) : (
               <ListContentChild>
@@ -135,7 +123,7 @@ function Wallet({ isMenuOpen }: Props) {
           </ListContentParent>
         </List>
       </Content>
-      <Footer />
+      <Footer activeItem="wallet" />
     </Container>
   );
 }

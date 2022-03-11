@@ -6,7 +6,7 @@ import Footer from 'pages/Wallet/Footer';
 import { goTo, Link } from 'react-chrome-extension-router';
 import Wallet from 'pages/Wallet/Wallet';
 import { getApiInstance } from 'utils/polkadot';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import ThreeDotsIcon from 'assets/svgComponents/ThreeDotsIcon';
 import ActivityInfo from './ActivityInfo';
 import { useSelector } from 'react-redux';
@@ -18,27 +18,31 @@ import { PlusIcon } from '@heroicons/react/outline';
 import PolkadotLogoIcon from 'assets/svgComponents/PolkadotLogoIcon';
 import KusamaLogoIcon from 'assets/svgComponents/KusamaLogoIcon';
 import KusamaIcon from 'assets/svgComponents/KusamaIcon';
+import { TokenSymbols, Transaction } from 'utils/types';
+import { fetchAccountsTransactions } from 'utils/fetchTransactions';
 
 type Props = {
   isMenuOpen?: boolean;
+  transaction: Transaction;
 };
 
-const Row = ({ transaction }: any) => {
+const Row = ({ transaction }: Props) => {
   const account = useAccount();
 
-  const isSent = (accountAddress: string, from: string) => {
+  const handleIsSent = (accountAddress: string, from: string) => {
     if (accountAddress === from) return true;
     return false;
   };
 
-  const currAccountAddress = account.getActiveAccount().address;
+  const currAccountAddress = account?.getActiveAccount()?.address;
 
+  const isSent = handleIsSent(currAccountAddress, transaction.from);
   return (
     <ActivityItem>
       <StyledLink component={ActivityInfo} props={{ transaction }}>
         <Icon>
           {handleIcons(transaction.chain)}
-          {isSent(currAccountAddress, transaction.from) ? (
+          {isSent ? (
             <IconContainer bgColor="#0324ff">
               <RightArrow width={15} stroke="#fff" />
             </IconContainer>
@@ -49,9 +53,13 @@ const Row = ({ transaction }: any) => {
           )}
         </Icon>
         <Info>
-          <InfoTop>{transaction.amount} </InfoTop>
+          <InfoTop>
+            {transaction.amount} <span>{TokenSymbols[transaction?.chain]} </span>{' '}
+          </InfoTop>
           <InfoBottom>
-            {truncateString(transaction.to)}
+            {isSent
+              ? 'to ' + truncateString(transaction.to)
+              : 'from ' + truncateString(transaction.from)}
             {'  '} {format(new Date(transaction.timestamp), 'dd MMM yyyy')}
           </InfoBottom>
         </Info>
@@ -67,7 +75,11 @@ export default function Activity() {
   const account = useAccount();
 
   const wallet = useSelector((state: any) => state.wallet);
-  const transactions = wallet?.transactions[account.getActiveAccount().address];
+  // const transactions = wallet?.transactions[account.getActiveAccount().address];
+  const [transactions, setTransactions] = useState<Transaction[] | []>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const address = account.getActiveAccount().address;
 
   const sortedTransactions =
     transactions &&
@@ -75,16 +87,32 @@ export default function Activity() {
       (a: any, b: any) => (new Date(b.timestamp) as any) - (new Date(a.timestamp) as any)
     );
 
+  useEffect(() => {
+    async function go() {
+      setLoading(true);
+      const transactions: Transaction[] = await fetchAccountsTransactions(address);
+      setTransactions(transactions);
+      setLoading(false);
+    }
+
+    go();
+  }, [address]);
+
   return (
     <Container bg={walletBG}>
       <Header title="Activity" />
 
       <Content>
-        <ActivityItemsContainer>
-          {sortedTransactions.map((transaction: any) => {
-            return <Row key={transaction.hex} transaction={transaction} />;
-          })}
-        </ActivityItemsContainer>
+        {!loading ? (
+          <ActivityItemsContainer>
+            {sortedTransactions &&
+              sortedTransactions.map((transaction: any) => {
+                return <Row key={transaction.hex} transaction={transaction} />;
+              })}
+          </ActivityItemsContainer>
+        ) : (
+          <Loading>Loading...</Loading>
+        )}
       </Content>
 
       <Footer activeItem="activity" />
@@ -118,6 +146,7 @@ const Container = styled.div<{ bg: string }>`
   background-image: ${({ bg }) => `url(${bg})`};
   background-size: cover;
   padding-top: 50px;
+  padding-bottom: 50px;
   overflow: hidden;
 `;
 
@@ -139,6 +168,10 @@ const ActivityItemsContainer = styled.div`
   flex-direction: column;
   margin-top: 75px;
   padding-bottom: 20px;
+`;
+
+const Loading = styled.div`
+  margin-top: 90px;
 `;
 
 const ActivityItem = styled.div`
@@ -194,6 +227,9 @@ const InfoTop = styled.span`
   font-size: 14px;
   color: #000000;
   font-family: 'Sequel100Wide55Wide';
+  span {
+    text-transform: capitalize;
+  }
 `;
 
 const InfoBottom = styled.div`

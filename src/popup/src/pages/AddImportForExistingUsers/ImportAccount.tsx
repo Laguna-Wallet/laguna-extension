@@ -1,12 +1,25 @@
-import ImportPhase from 'pages/ImportWallet/importPhase';
+import ImportPhase from 'pages/AddImportForExistingUsers/importPhase';
 import { connect, useDispatch, useSelector } from 'react-redux';
 import { Wizard } from 'react-use-wizard';
 import { getFormSyncErrors, reduxForm, reset } from 'redux-form';
 import styled from 'styled-components';
-import { mnemonicValidate } from '@polkadot/util-crypto';
-import { SEED_LENGTHS } from 'utils/types';
+import { keyExtractSuri, mnemonicValidate, randomAsHex } from '@polkadot/util-crypto';
+import { isHex } from '@polkadot/util';
+
+import { Messages, SEED_LENGTHS } from 'utils/types';
 import EncodeAccount from './EncodeAccount';
-import { importJson, importViaSeed, validatePassword } from 'utils/polkadot';
+import {
+  accountsChangePassword,
+  encryptKeyringPair,
+  importFromMnemonic,
+  importFromPrivateKey,
+  importFromPublicKey,
+  importJson,
+  importViaSeed,
+  isValidPolkadotAddress,
+  // unlockAndSavePair,
+  validatePassword
+} from 'utils/polkadot';
 import { goTo } from 'react-chrome-extension-router';
 import Wallet from 'pages/Wallet/Wallet';
 import { KeyringPair$Json } from '@polkadot/keyring/types';
@@ -20,16 +33,23 @@ const validate = (values: any) => {
   const errors: any = {};
 
   if (values.seedPhase) {
-    if (!mnemonicValidate(values.seedPhase)) {
-      errors.seedPhase = `Not a valid mnemonic seed`;
-    }
-
-    if (!SEED_LENGTHS.includes(values.seedPhase.split(' ').length)) {
-      errors.seedPhase = `Mnemonic needs to contain ${SEED_LENGTHS.join(', ')} words`;
+    if (
+      !isHex(values.seedPhase) &&
+      !isValidPolkadotAddress(values.seedPhase) &&
+      !mnemonicValidate(values.seedPhase)
+    ) {
+      errors.seedPhase = `Please enter mnemonic seed or valid public address or private key`;
     }
 
     if (/[!@#$%^&*(),.?":{}|<>]/g.test(values.seedPhase.toString())) {
       errors.seedPhase = `Please remove special characters (!,#:*)`;
+    }
+
+    if (
+      values.seedPhase.split(' ').length > 2 &&
+      !SEED_LENGTHS.includes(values.seedPhase.split(' ').length)
+    ) {
+      errors.seedPhase = `Please enter 12 or 24 words`;
     }
   }
 
@@ -50,11 +70,40 @@ function ImportAccount({ redirectedFromSignUp }: Props) {
   const { seedPhase, file, password: jsonPassword }: any = { ...formValues };
 
   const handleEncode = async (password: string) => {
-    if (file) {
-      await importJson(file as KeyringPair$Json | KeyringPairs$Json | undefined, jsonPassword);
-    } else {
-      importViaSeed(seedPhase, password);
+    if (seedPhase) {
+      if (mnemonicValidate(seedPhase)) {
+        importFromMnemonic(seedPhase, password);
+      }
+      // save from private key
+      // if (isHex(seedPhase) && isValidPolkadotAddress(seedPhase)) {
+      //   importFromPrivateKey(seedPhase, password);
+      // }
+      // save from public key
+      if (!isHex(seedPhase) && isValidPolkadotAddress(seedPhase)) {
+        importFromPublicKey(seedPhase);
+      }
+
+      chrome.runtime.sendMessage({
+        type: Messages.AddToKeyring,
+        payload: { seed: seedPhase }
+      });
     }
+
+    if (file) {
+      const pair: any = await importJson(
+        file as KeyringPair$Json | KeyringPairs$Json | undefined,
+        jsonPassword
+      );
+
+      encryptKeyringPair(pair, jsonPassword, password);
+
+      chrome.runtime.sendMessage({
+        type: Messages.AddToKeyring,
+        payload: { password, json: file, jsonPassword }
+      });
+    }
+
+    dispatch(reset('AddImportAccount'));
   };
 
   const onClose = () => {
