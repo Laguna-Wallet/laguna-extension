@@ -371,8 +371,12 @@ export function isKeyringPairs$Json(
   return json.encoding.content.includes('batch-pkcs8');
 }
 
-export function isKeyringJson(json: KeyringPair$Json): json is KeyringPair$Json {
+export function isKeyringJson(
+  json: KeyringPair$Json | KeyringPairs$Json
+): json is KeyringPair$Json {
   try {
+    if (isKeyringPairs$Json(json)) return false;
+
     const {
       address,
       meta: { genesisHash, name },
