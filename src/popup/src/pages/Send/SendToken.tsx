@@ -277,7 +277,21 @@ function SendToken({
 
           <ContentItem>
             <ContentItemTitle>Add Note</ContentItemTitle>
-            <HumbleInput
+            <Field
+              id="note"
+              name="note"
+              type="text"
+              placeholder="Enter note here"
+              component={HumbleInput}
+              props={{
+                type: 'text',
+                bgColor: '#f3f3f3',
+                color: '#111',
+                height: '53px',
+                marginTop: '5px'
+              }}
+            />
+            {/* <HumbleInput
               id="note"
               placeholder="Enter note here"
               type="text"
@@ -288,7 +302,7 @@ function SendToken({
               bgColor="#f3f3f3"
               height="53px"
               marginTop="5px"
-            />
+            /> */}
           </ContentItem>
 
           <Snackbar
