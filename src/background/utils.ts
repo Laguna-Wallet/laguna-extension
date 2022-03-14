@@ -70,7 +70,7 @@ export function getAccountAddresses() {
     const local = localStorage
     const accountAddresses: string[] = []
 
-    for (var key in local) {
+    for (const key in local) {
       if (key.startsWith("account")) {
         const account = localStorage.getItem(key)
         const parsed = JSON.parse(account)

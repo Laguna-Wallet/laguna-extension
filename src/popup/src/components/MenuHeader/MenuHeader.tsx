@@ -4,7 +4,7 @@ import LeftArrowIcon from 'assets/svgComponents/LeftArrowIcon';
 import Wallet from 'pages/Wallet/Wallet';
 import { goTo } from 'react-chrome-extension-router';
 import { useAccount } from 'context/AccountContext';
-import { truncateString } from 'utils';
+import { getBase64, truncateString } from 'utils';
 import { useRef, useState } from 'react';
 import { PencilAltIcon, PencilIcon } from '@heroicons/react/outline';
 import useOutsideClick from 'hooks/useOutsideClick';
@@ -12,6 +12,8 @@ import { addAccountMeta } from 'utils/polkadot';
 import { saveToStorage } from 'utils/chrome';
 import { StorageKeys } from 'utils/types';
 import AddressBook from 'pages/AddressBook/AddressBook';
+import ContactsIcon from 'assets/svgComponents/ContactsIcon';
+import EditIcon from 'assets/svgComponents/EditIcon';
 
 type Props = {
   isOpen: boolean;
@@ -21,6 +23,19 @@ type Props = {
   title?: string;
   backAction?: () => void;
 };
+
+const fileTypes = [
+  'image/apng',
+  'image/bmp',
+  'image/gif',
+  'image/jpeg',
+  'image/pjpeg',
+  'image/png',
+  'image/svg+xml',
+  'image/tiff',
+  'image/webp',
+  'image/x-icon'
+];
 
 export default function MenuHeader({
   isOpen,
@@ -33,8 +48,10 @@ export default function MenuHeader({
   const account = useAccount();
   const [name, setName] = useState(account?.getActiveAccount()?.meta?.name);
   const [editMode, setEditMode] = useState<boolean>(false);
+  const inputFile = useRef<HTMLInputElement>(null);
 
   const address = account?.getActiveAccount()?.address;
+  const accountImg = account?.getActiveAccount()?.meta?.img;
 
   const editAccount = () => {
     const val = name ? name : address;
@@ -60,10 +77,27 @@ export default function MenuHeader({
     return name && name?.length > 12 ? truncateString(name) : name;
   };
 
+  const onButtonClick = () => {
+    // `current` points to the mounted file input element
+    if (inputFile.current) {
+      inputFile.current.click();
+    }
+  };
+
+  const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!event.target.files) {
+      return;
+    }
+    const base64 = await getBase64(event.target.files[0]);
+
+    const newAccount = addAccountMeta(address, { img: base64 });
+    account.saveActiveAccount(newAccount);
+  };
+
   return (
     <Container>
       <Header>
-        <span>HYDROX</span>
+        <span>Laguna Wallet</span>
         <BurgerMenu>
           <Hamburger toggled={isOpen} toggle={onClose} size={20} color="#fff" />
         </BurgerMenu>
@@ -78,7 +112,19 @@ export default function MenuHeader({
       )}
       {showUser && (
         <User>
-          <IconContainer></IconContainer>
+          <IconContainer img={accountImg} onClick={onButtonClick}>
+            <ImageContainerOverlay>
+              <EditIcon width={25} height={25} fill="#fff" />
+            </ImageContainerOverlay>
+          </IconContainer>
+          <input
+            type="file"
+            id="file"
+            ref={inputFile}
+            onChange={handleUpload}
+            style={{ display: 'none' }}
+            accept="image/png, image/jpeg, image/svg+xml"
+          />
           <Text>
             <Name>
               <NameInput
@@ -169,11 +215,32 @@ const Address = styled.div`
   font-size: 12px;
 `;
 
-const IconContainer = styled.div`
+const ImageContainerOverlay = styled.div`
+  display: none;
+  width: 100%;
+  height: 100%;
+  background-color: #1111118c;
+  position: absolute;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+`;
+
+const IconContainer = styled.div<{ img: string }>`
   width: 67px;
   height: 67px;
   border-radius: 100%;
   background-color: #ccc;
+  cursor: pointer;
+  background-image: ${({ img }) => `url(${img})`};
+  background-size: contain;
+  background-position: center center;
+  background-repeat: no-repeat;
+  position: relative;
+
+  &:hover ${ImageContainerOverlay} {
+    display: flex;
+  }
 `;
 
 const Title = styled.span`

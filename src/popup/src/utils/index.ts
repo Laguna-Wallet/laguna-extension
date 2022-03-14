@@ -133,3 +133,16 @@ export function accountHasChanged(balances: Record<string, string>) {
 export function timer(ms: number) {
   return new Promise((res) => setTimeout(res, ms));
 }
+
+export function getBase64(file: File) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = function () {
+      resolve(reader.result);
+    };
+    reader.onerror = function (error) {
+      reject(error);
+    };
+  });
+}
