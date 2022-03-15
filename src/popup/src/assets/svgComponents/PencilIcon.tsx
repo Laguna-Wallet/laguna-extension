@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { SVGProps } from 'react';
 
-const AddressPencilIcon = (props: SVGProps<SVGSVGElement>) => (
-  <svg width={45} height={45} fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+const PencilIcon = (props: SVGProps<SVGSVGElement>) => (
+  <svg width={14} height={15} fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
     <path
-      d="M30.55 4.3a1.875 1.875 0 0 1 2.65 0l7.5 7.5a1.872 1.872 0 0 1 0 2.65L16.327 38.827a1.875 1.875 0 0 1-1.326.549H7.5A1.875 1.875 0 0 1 5.625 37.5V30c0-.497.198-.974.55-1.326l18.749-18.75L30.549 4.3zm-4.3 9.602L9.375 30.777v4.848h4.848L31.098 18.75l-4.848-4.848zm7.5 2.196 2.973-2.973-4.848-4.848-2.973 2.973 4.848 4.848z"
-      fill="#999"
+      d="M9.504 1.839a.583.583 0 0 1 .825 0l2.333 2.333a.583.583 0 0 1 0 .825L5.08 12.58a.583.583 0 0 1-.412.171H2.333a.583.583 0 0 1-.583-.583V9.835c0-.155.061-.303.17-.413L7.755 3.59l1.75-1.75zM8.167 4.826l-5.25 5.25v1.509h1.508l5.25-5.25-1.508-1.509zm2.333.684.925-.925-1.508-1.509-.925.925L10.5 5.51z"
+      fill="#777E91"
     />
   </svg>
 );
 
-export default AddressPencilIcon;
+export default PencilIcon;

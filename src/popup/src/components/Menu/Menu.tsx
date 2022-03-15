@@ -15,6 +15,13 @@ import RemoveAccount from 'pages/RemoveAccount/RemoveAccount';
 import ChangePassword from 'pages/ChangePassword/ChangePassword';
 import BackupAccount from 'pages/BackupAccount/BackupAccount';
 import ConnectedSites from 'pages/ConnectedSites/ConnectedSites';
+import AddressMenuIcon from 'assets/svgComponents/MenuIcons/AddressMenuIcon';
+import ConnectedSitesMenuIcon from 'assets/svgComponents/MenuIcons/ConnectedSitesMenuIcon';
+import AutoLockTimerMenuIcon from 'assets/svgComponents/MenuIcons/AutoLockTimerMenuIcon';
+import ChangePasswordMenuIcon from 'assets/svgComponents/MenuIcons/ChangePasswordMenuIcon';
+import BackupMenuIcon from 'assets/svgComponents/MenuIcons/BackupMenuIcon';
+import RemoveWalletMenuIcon from 'assets/svgComponents/MenuIcons/RemoveWalletMenuIcon';
+import RightArrowMenuIcon from 'assets/svgComponents/MenuIcons/RightArrowMenuIcon';
 
 type Props = {
   onClose: () => void;
@@ -31,7 +38,6 @@ export default function Menu({ onClose }: Props) {
   return (
     <Container>
       <MenuHeader isOpen={isOpen} setOpen={setOpen} onClose={() => onClose()} showUser={true} />
-
       <List>
         {/* <ListItem>
           <StyledLink component={ExportAllAccounts}>
@@ -41,27 +47,31 @@ export default function Menu({ onClose }: Props) {
         </ListItem> */}
         <ListItem>
           <StyledLink component={AddressBook}>
+            <AddressMenuIcon />
             <span>Address Book</span>
-            <RightArrow width={25} />
+            <RightArrowMenuIcon width={15} fill="#777e90" />
           </StyledLink>
         </ListItem>
         <ListItem>
           <StyledLink component={ConnectedSites}>
+            <ConnectedSitesMenuIcon />
             <span>Connected Sites</span>
-            <RightArrow width={25} />
+            <RightArrowMenuIcon width={15} fill="#777e90" />
           </StyledLink>
         </ListItem>
 
         <ListItem>
           <StyledLink component={AutoLockTimer}>
+            <AutoLockTimerMenuIcon />
             <span>Auto-Lock Timer</span>
-            <RightArrow width={25} />
+            <RightArrowMenuIcon width={15} fill="#777e90" />
           </StyledLink>
         </ListItem>
         <ListItem>
           <StyledLink component={ChangePassword}>
+            <ChangePasswordMenuIcon />
             <span>Change Password</span>
-            <RightArrow width={25} />
+            <RightArrowMenuIcon width={15} fill="#777e90" />
           </StyledLink>
         </ListItem>
         {/* <ListItem>
@@ -72,15 +82,17 @@ export default function Menu({ onClose }: Props) {
         </ListItem> */}
         <ListItem>
           <StyledLink component={BackupAccount}>
+            <BackupMenuIcon />
             <span>Backup Account</span>
-            <RightArrow width={25} />
+            <RightArrowMenuIcon width={15} fill="#777e90" />
           </StyledLink>
         </ListItem>
 
         <ListItem>
           <StyledLink component={RemoveAccount}>
+            <RemoveWalletMenuIcon />
             <span>Remove Wallet</span>
-            <RightArrow width={25} />
+            <RightArrowMenuIcon width={15} fill="#777e90" />
           </StyledLink>
         </ListItem>
       </List>
@@ -121,9 +133,8 @@ const ListItem = styled.div`
   width: 100%;
   display: flex;
   justify-content: space-between;
-  font-size: 18px;
   cursor: pointer;
-  margin-top: 12px;
+  margin-top: 15px;
   pointer-events: none;
   :nth-child(1) {
     margin-top: 0;
@@ -152,11 +163,17 @@ const ListItem = styled.div`
 const StyledLink = styled(Link)<{ color?: string }>`
   width: 100%;
   display: flex;
-  justify-content: space-between;
+  /* justify-content: space-between; */
   text-decoration: none;
   color: #fff;
   cursor: pointer;
+  font-family: Inter;
+  font-size: 18px;
   color: ${({ color }) => color || '#fff'};
+  span {
+    margin-left: 13px;
+    margin-right: auto;
+  }
 `;
 
 const StyledLogoutLink = styled(Link)`
@@ -164,10 +181,11 @@ const StyledLogoutLink = styled(Link)`
   display: flex;
   text-decoration: none;
   color: #fff;
-  font-size: 12px;
+  font-family: Inter;
+  font-size: 18px;
   cursor: pointer;
-  font-family: 'Sequel100Wide55Wide';
+
   span {
-    margin-left: 4px;
+    margin-left: 13px;
   }
 `;

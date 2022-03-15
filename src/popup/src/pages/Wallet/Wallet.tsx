@@ -18,6 +18,7 @@ import { mnemonicGenerate, mnemonicToMiniSecret } from '@polkadot/util-crypto';
 import { decodePair } from '@polkadot/keyring/pair/decode';
 import { base64Decode, encodeAddress as toSS58 } from '@polkadot/util-crypto';
 import { createPair } from '@polkadot/keyring/pair';
+import RightArrow from 'assets/svgComponents/RightArrow';
 
 type Props = {
   isMenuOpen?: boolean;
@@ -67,8 +68,10 @@ function Wallet({ isMenuOpen }: Props) {
     <Container bg={walletBG}>
       <Header menuInitialOpenState={isMenuOpen} />
       <Content>
+        <FirstTimeUserBalance></FirstTimeUserBalance>
+
         <BalanceContainer>
-          <span>Balance</span>
+          {/* <span>Balance</span> */}
           <Balance>
             <span>
               {' '}
@@ -82,7 +85,12 @@ function Wallet({ isMenuOpen }: Props) {
         </BalanceContainer>
         <Buttons>
           <StyledLink component={Send}>
-            <Button>Send</Button>
+            <Button>
+              <RightArrowContainer>
+                <RightArrow width={20} height={20} stroke="#111" />
+              </RightArrowContainer>
+              <span>Send</span>
+            </Button>
           </StyledLink>
           <StyledLink component={Receive}>
             <Button>Recieve</Button>
@@ -145,51 +153,60 @@ const Container = styled.div<{ bg: string }>`
 `;
 
 const Content = styled.div`
-  display: flex;
   width: 100%;
+  display: flex;
   flex-direction: column;
-  padding: 15px;
+  align-items: center;
   box-sizing: border-box;
+  padding: 0 15px 15px 15px;
 `;
 
 const BalanceContainer = styled.div`
-  text-align: left;
-  margin-top: 30px;
-  font-family: 'Sequel100Wide55Wide';
+  text-align: center;
+  margin-top: 59px;
+  font-size: 44px;
+  font-weight: 500;
   span {
     font-size: 10px;
   }
 `;
 
+const FirstTimeUserBalance = styled.div``;
+
 const Balance = styled.div`
   display: flex;
+  justify-content: center;
   span {
-    font-size: 29px;
+    font-family: 'IBM Plex Sans';
+    font-size: 44px;
+    font-weight: 500;
   }
-`;
-
-const DailyChange = styled.div`
-  font-size: 14px;
-  margin-left: 10px;
-  color: #62c660;
 `;
 
 const Buttons = styled.div`
   display: flex;
+  justify-content: center;
   color: #fff;
   margin-top: 30px;
-  font-family: 'Sequel100Wide55Wide';
+`;
+
+const RightArrowContainer = styled.div`
+  transform: rotate(-45deg);
+  margin-top: 3px;
 `;
 
 const Button = styled.div`
   width: 112px;
   height: 37px;
-  background: #000000;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-family: Inter;
+  font-size: 14px;
+  font-weight: 500;
   border-radius: 4px;
-  font-size: 12px;
+  background: #ffffff;
+  color: #111;
   cursor: pointer;
   :nth-child(2) {
     margin-left: 10px;
@@ -197,10 +214,10 @@ const Button = styled.div`
 `;
 
 const List = styled.div`
-  width: 100%;
+  width: 323px;
   display: flex;
   flex-direction: column;
-  margin-top: 40px;
+  margin-top: 75px;
 `;
 
 const ListHeader = styled.div`
@@ -210,9 +227,15 @@ const ListHeader = styled.div`
 
 const ListHeaderItem = styled.div<{ index: number; active: number }>`
   cursor: pointer;
-  font-family: 'Sequel100Wide55Wide';
-  cursor: pointer;
-  color: ${({ index, active }) => (index === active ? '#111' : '#8C8C8C')};
+  font-family: Inter;
+  font-size: 12px;
+  font-weight: normal;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: 1.44;
+  letter-spacing: 0.96px;
+  text-align: left;
+  color: ${({ index, active }) => (index === active ? '#18191a' : '#b1b5c3')};
   :nth-child(2) {
     margin-left: 10px;
   }
@@ -231,13 +254,15 @@ const ListContentParent = styled.div`
 
 const ListContentChild = styled.div`
   width: 100%;
+  overflow-y: scroll;
   position: absolute;
   top: 0;
   left: 0px;
   bottom: -20px;
   right: -20px;
   overflow: scroll;
-  padding-bottom: 20px;
+  padding-bottom: 80px;
+  padding-right: 20px;
 `;
 
 const StyledLink = styled(Link)`

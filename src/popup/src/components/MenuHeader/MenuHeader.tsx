@@ -1,19 +1,13 @@
 import styled from 'styled-components';
 import { Turn as Hamburger } from 'hamburger-react';
 import LeftArrowIcon from 'assets/svgComponents/LeftArrowIcon';
-import Wallet from 'pages/Wallet/Wallet';
-import { goTo } from 'react-chrome-extension-router';
 import { useAccount } from 'context/AccountContext';
 import { getBase64, truncateString } from 'utils';
 import { useRef, useState } from 'react';
-import { PencilAltIcon, PencilIcon } from '@heroicons/react/outline';
 import useOutsideClick from 'hooks/useOutsideClick';
 import { addAccountMeta } from 'utils/polkadot';
-import { saveToStorage } from 'utils/chrome';
-import { StorageKeys } from 'utils/types';
-import AddressBook from 'pages/AddressBook/AddressBook';
-import ContactsIcon from 'assets/svgComponents/ContactsIcon';
 import EditIcon from 'assets/svgComponents/EditIcon';
+import PencilIcon from 'assets/svgComponents/PencilIcon';
 
 type Props = {
   isOpen: boolean;
@@ -97,7 +91,7 @@ export default function MenuHeader({
   return (
     <Container>
       <Header>
-        <span>Laguna Wallet</span>
+        <span>Laguna</span>
         <BurgerMenu>
           <Hamburger toggled={isOpen} toggle={onClose} size={20} color="#fff" />
         </BurgerMenu>
@@ -141,10 +135,10 @@ export default function MenuHeader({
                   setEditMode(true);
                   inputRef && inputRef?.current?.focus();
                 }}>
-                <PencilIcon width={15} />
+                <PencilIcon />
               </PencilIconContainer>
             </Name>
-            <Address>{address && truncateString(address)}</Address>
+            {/* <Address>{address && truncateString(address)}</Address> */}
           </Text>
         </User>
       )}
@@ -163,8 +157,9 @@ const Header = styled.div`
   justify-content: space-between;
   align-items: center;
   color: #fff;
-  font-size: 13px;
-  font-family: 'Sequel100Wide55Wide';
+  font-size: 17px;
+  font-family: 'Work Sans';
+  font-weight: 500;
 `;
 
 const BurgerMenu = styled.div`
@@ -184,10 +179,12 @@ const Text = styled.div`
   display: flex;
   flex-direction: column;
   text-align: left;
-  margin-left: 20px;
-  color: #fff;
-  font-family: 'Sequel100Wide55Wide';
   flex: 1;
+  margin-left: 18px;
+  color: #fff;
+  font-family: 'IBM Plex Sans';
+  font-size: 23px;
+  font-weight: 500;
 `;
 
 const Name = styled.div`
@@ -201,7 +198,8 @@ const NameInput = styled.input`
   background-color: transparent;
   color: #fff;
   font-size: 23px;
-  font-family: 'Sequel100Wide55Wide';
+  font-family: 'IBM Plex Sans';
+  font-weight: 500;
   border: 0;
   outline: 0;
 `;

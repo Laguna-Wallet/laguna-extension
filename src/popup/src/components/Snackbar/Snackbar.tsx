@@ -14,6 +14,7 @@ type Props = {
   close: () => void;
   type: 'error' | 'success' | 'warning';
   message?: string;
+  align?: string;
 };
 
 function detectColor(type: string) {
@@ -22,7 +23,18 @@ function detectColor(type: string) {
   return '#fff';
 }
 
-function Snackbar({ children, type, top, bottom, left, right, isOpen, close, message }: Props) {
+function Snackbar({
+  children,
+  type,
+  top,
+  bottom,
+  left,
+  right,
+  isOpen,
+  close,
+  message,
+  align
+}: Props) {
   useEffect(() => {
     const timer = setTimeout(() => {
       close();
@@ -37,9 +49,9 @@ function Snackbar({ children, type, top, bottom, left, right, isOpen, close, mes
           {children || (
             <>
               <CloseIconContainer>
-                <CloseIcon stroke="#111" />
+                <CloseIcon stroke="#fb5a5a" />
               </CloseIconContainer>
-              <ErrorMessage>{message}</ErrorMessage>
+              <ErrorMessage align={align}>{message}</ErrorMessage>
             </>
           )}
         </Content>
@@ -56,6 +68,7 @@ const Container = styled.div<{
   left?: string;
   right?: string;
   isOpen?: boolean;
+  padding?: string;
 }>`
   width: 100%;
   height: 46px;
@@ -63,7 +76,8 @@ const Container = styled.div<{
   box-sizing: border-box;
   position: absolute;
   border-radius: 5px;
-  padding: 0 16px;
+  /* 0 16px */
+  padding: ${({ padding }) => padding || '0px'};
   box-sizing: border-box;
   top: ${({ top }) => top && top};
   bottom: ${({ bottom }) => bottom && bottom};
@@ -85,12 +99,14 @@ const Content = styled.div<{
   border-radius: 5px;
 `;
 
-const ErrorMessage = styled.div`
-  color: #fff;
-  font-size: 13px;
-  font-weight: 600;
-  margin-left: 5px;
+const ErrorMessage = styled.div<{ align?: string }>`
   flex: 1;
+  font-family: 'Work Sans';
+  font-size: 14px;
+  font-weight: 500;
+  color: #fff;
+  margin-left: 10px;
+  text-align: ${({ align }) => align || 'center'};
 `;
 
 const CloseIconContainer = styled.div`

@@ -183,7 +183,7 @@ const StyledTextarea = styled.textarea<{
   outline: none;
   resize: none;
   font-size: 20px;
-  font-family: 'SFCompactDisplayRegular';
+  font-family: Inter;
 `;
 
 const Paste = styled.div``;
@@ -197,7 +197,7 @@ const Copy = styled.div`
   border-radius: 5px;
   color: #fff;
   font-size: 16px;
-  font-family: 'SFCompactDisplayRegular';
+  font-family: Inter;
   display: flex;
   align-items: center;
   justify-content: center;

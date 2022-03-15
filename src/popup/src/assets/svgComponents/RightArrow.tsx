@@ -7,7 +7,7 @@ function RightArrow(props: React.SVGProps<SVGSVGElement>) {
       className="prefix__h-6 prefix__w-6"
       fill="none"
       viewBox="0 0 24 24"
-      stroke="currentColor"
+      stroke={props.stroke || 'currentColor'}
       {...props}>
       <path
         strokeLinecap="round"

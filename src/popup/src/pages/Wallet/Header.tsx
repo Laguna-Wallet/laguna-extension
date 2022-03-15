@@ -39,9 +39,9 @@ export default function Header({ title, backAction, iconStyle, menuInitialOpenSt
           <DownIconContainer onClick={() => setIsPopupOpen(true)}>
             <DownArrowIcon />
           </DownIconContainer>
-          <ButtonsIconContainer>
+          {/* <ButtonsIconContainer>
             <ButtonsIcon />
-          </ButtonsIconContainer>
+          </ButtonsIconContainer> */}
         </UserContainer>
         <BurgerMenu onClick={() => setIsMenuOpen(true)}>
           <Hamburger toggled={isHamburgerOpen} size={20} />
@@ -74,8 +74,7 @@ const Container = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
-  background-color: #f1f1f1;
-  padding: 15px;
+  padding: 15px 15px 0 15px;
   box-sizing: border-box;
   position: absolute;
   top: 0;
@@ -108,9 +107,11 @@ const Avatar = styled.div<{ img: string }>`
 `;
 
 const UserName = styled.span`
-  font-size: 14px;
   margin-left: 8px;
-  font-family: 'Sequel100Wide55Wide';
+  font-family: 'IBM Plex Sans';
+  font-size: 14px;
+  font-weight: 500;
+  color: #18191a;
   letter-spacing: 0.28px;
 `;
 

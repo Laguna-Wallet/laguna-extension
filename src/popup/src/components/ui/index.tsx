@@ -14,7 +14,7 @@ export const PageContainer = styled.div<{
   flex-direction: column;
   justify-content: space-between;
   padding-top: ${({ paddingTop }) => paddingTop || '10px'};
-  padding-bottom: ${({ paddingBottom }) => paddingBottom || '35px'};
+  padding-bottom: ${({ paddingBottom }) => paddingBottom || '20px'};
   padding-left: ${({ paddingLeft }) => paddingLeft || '26px'};
   padding-right: ${({ paddingRight }) => paddingRight || '26px'};
   box-sizing: border-box;
