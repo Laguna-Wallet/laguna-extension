@@ -14,6 +14,7 @@ import { useWizard } from 'react-use-wizard';
 import { useDispatch } from 'react-redux';
 import { selectAsset } from 'redux/actions';
 import NetworkItem from 'pages/Wallet/NetworkItem';
+import LoopIcon from 'assets/svgComponents/loopIcon';
 
 type Props = {
   networks: undefined | Network[];
@@ -59,9 +60,11 @@ export default function SelectNetwork({ networks, setSelectedNetwork }: Props) {
           bgColor={'#f2f2f2'}
           borderColor={'#f2f2f2'}
           color="#777e90"
-          placeholder="search"
+          placeholderColor="#777e90"
+          placeholder="Search"
           height="45px"
           marginTop="20px"
+          Icon={<LoopIcon />}
         />
         <List>
           {networks

@@ -28,7 +28,7 @@ export default function ReceiveToken({ selectedNetwork, recoded }: Props) {
   const handleChange = () => {
     console.log('change');
   };
-
+  
   return (
     <Container>
       <Header
@@ -41,7 +41,7 @@ export default function ReceiveToken({ selectedNetwork, recoded }: Props) {
         {recoded && <QRCode value={recoded} size={180} />}
 
         <ContentItem>
-          <Text>Address:</Text>
+          <Text>ADDRESS:</Text>
           <HumbleInput
             id="address"
             type={'text'}

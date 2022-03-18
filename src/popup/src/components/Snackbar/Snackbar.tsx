@@ -50,7 +50,9 @@ function Snackbar({
     if (type === 'error') {
       return (
         <>
-          <CloseIconContainer></CloseIconContainer>
+          <CloseIconContainer>
+            <CloseIcon stroke="#111" />
+          </CloseIconContainer>
           <ErrorMessage align={align}>{message}</ErrorMessage>
         </>
       );

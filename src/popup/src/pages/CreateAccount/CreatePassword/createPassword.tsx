@@ -7,13 +7,14 @@ import { calculatePasswordCheckerColor } from 'utils';
 import { createPasswordSchema } from 'utils/validations';
 import Snackbar from 'components/Snackbar/Snackbar';
 import { useAccount } from 'context/AccountContext';
-import { memo, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import RightArrow from 'assets/svgComponents/RightArrow';
 import HumbleInput from 'components/primitives/HumbleInput';
 
 function CreatePassword() {
   const { nextStep } = useWizard();
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
+  const [snackbarMessage, setSnackbarMessage] = useState<string>('Please fix the existing errors');
 
   const account = useAccount();
   // todo refactor, change formik to redux-form
@@ -39,6 +40,15 @@ function CreatePassword() {
 
     if (!formik.isValid) {
       setIsSnackbarOpen(true);
+      console.log('~ formik.errors', formik.errors);
+      if (
+        formik.errors['password'] === 'Passwords do not match' &&
+        formik.errors['confirmPassword'] === 'Passwords do not match'
+      ) {
+        setSnackbarMessage("Passwords Don't Match");
+      } else {
+        setSnackbarMessage('Please fix existing errors');
+      }
       return;
     }
 
@@ -92,12 +102,13 @@ function CreatePassword() {
           />
         </MainContent>
         <Snackbar
-          width="80%"
+          width="90%"
           isOpen={isSnackbarOpen}
-          message="Please fix the existing errors"
+          message={snackbarMessage}
           close={() => setIsSnackbarOpen(false)}
-          type="warning"
+          type="error"
           bottom="90px"
+          align="left"
         />
 
         <Button
