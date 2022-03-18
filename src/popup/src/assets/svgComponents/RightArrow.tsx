@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-function RightArrow(props: React.SVGProps<SVGSVGElement>) {
+function RightArrow(props: React.SVGProps<SVGSVGElement> | { stroke: string }) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

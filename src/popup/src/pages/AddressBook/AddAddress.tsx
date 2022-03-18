@@ -115,6 +115,14 @@ export default function AddAddress({
     }
   };
 
+  const back = () => {
+    if (redirectedFromSend) {
+      backAction();
+    } else {
+      goTo(AddressBook);
+    }
+  };
+
   return (
     <Container edit={edit}>
       <MenuHeader
@@ -122,7 +130,7 @@ export default function AddAddress({
         setOpen={setOpen}
         title={`${edit ? 'Edit' : 'Add'} Address`}
         onClose={closeAction}
-        backAction={() => goTo(AddressBook)}
+        backAction={back}
       />
       <Content>
         <Form onSubmit={formik.handleSubmit}>
@@ -145,6 +153,7 @@ export default function AddAddress({
             onChange={formik.handleChange}
             bgColor="#303030"
             color="#adadad"
+            placeholderColor="#adadad"
             borderColor="#303030"
           />
           <HumbleInput
@@ -158,6 +167,7 @@ export default function AddAddress({
             error={formik.errors.address}
             bgColor="#303030"
             color="#adadad"
+            placeholderColor="#adadad"
             borderColor="#303030"
           />
           <HumbleInput
@@ -170,6 +180,7 @@ export default function AddAddress({
             onChange={formik.handleChange}
             bgColor="#303030"
             color="#adadad"
+            placeholderColor="#adadad"
             borderColor="#303030"
           />
 

@@ -39,8 +39,15 @@ export default function SelectNetwork({ networks, setSelectedNetwork }: Props) {
   };
 
   return (
-    <Container bg={walletBG}>
-      <Header title="SELECT NETWORK" backAction={() => goTo(Wallet)} />
+    <Container>
+      <Header
+        title="SELECT NETWORK"
+        bgColor="#f2f2f2"
+        closeAction={() => {
+          goTo(Wallet);
+        }}
+        backAction={() => goTo(Wallet)}
+      />
       <Content>
         <HumbleInput
           id="id"
@@ -49,10 +56,11 @@ export default function SelectNetwork({ networks, setSelectedNetwork }: Props) {
           onChange={(e: any) => {
             setNetworksFilter(e.target.value);
           }}
-          bgColor={'#ececec'}
-          borderColor={'#ececec'}
+          bgColor={'#f2f2f2'}
+          borderColor={'#f2f2f2'}
+          color="#777e90"
           placeholder="search"
-          height="38.9px"
+          height="45px"
           marginTop="20px"
         />
         <List>
@@ -73,22 +81,24 @@ export default function SelectNetwork({ networks, setSelectedNetwork }: Props) {
   );
 }
 
-const Container = styled.div<{ bg: string }>`
+const Container = styled.div`
   width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
-  background-color: #f1f1f1;
+  background-color: #f2f2f2;
   box-sizing: border-box;
   position: relative;
   position: relative;
-  background-image: ${({ bg }) => `url(${bg})`};
   background-size: cover;
   padding-top: 110px;
 `;
 
 const Content = styled.div`
   padding: 15px;
+  background-color: #fff;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
 `;
 
 const List = styled.div`

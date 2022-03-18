@@ -56,8 +56,8 @@ function ConnectedSites({ handleSubmit }: Props) {
 
       <Content>
         {connectedApps?.connectedApps?.length ? (
-          connectedApps?.connectedApps.map((item: string) => (
-            <ConnectedAppItem key={item}>
+          connectedApps?.connectedApps.map((item: string, index: number) => (
+            <ConnectedAppItem key={`${item}-${index}`}>
               <CheckIcon width={25} height={25} stroke="#68dd65" />
               <AppName>{item}</AppName>
               <RevokeBtn onClick={() => handleRevoke(item)}>Revoke</RevokeBtn>

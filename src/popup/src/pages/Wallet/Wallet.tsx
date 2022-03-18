@@ -4,9 +4,9 @@ import Header from './Header';
 import Footer from './Footer';
 import { useAccount } from 'context/AccountContext';
 import ChainItem from './ChainItem';
-import { getAssets, getNetworks, isValidPolkadotAddress } from 'utils/polkadot';
+import { addAccountMeta, getAssets, getNetworks, isValidPolkadotAddress } from 'utils/polkadot';
 import NetworkItem from './NetworkItem';
-import walletBG from 'assets/imgs/walletBG.jpg';
+import dashboardBG from 'assets/imgs/dashboard-bg.png';
 import { Link } from 'react-chrome-extension-router';
 import Send from 'pages/Send/Send';
 import Receive from 'pages/Recieve/Receive';
@@ -19,18 +19,26 @@ import { decodePair } from '@polkadot/keyring/pair/decode';
 import { base64Decode, encodeAddress as toSS58 } from '@polkadot/util-crypto';
 import { createPair } from '@polkadot/keyring/pair';
 import RightArrow from 'assets/svgComponents/RightArrow';
+import BarcodeIcon from 'assets/svgComponents/BarcodeIcon';
+import Snackbar from 'components/Snackbar/Snackbar';
 
 type Props = {
   isMenuOpen?: boolean;
+  showTransactionSendMessage?: boolean;
 };
 
-function Wallet({ isMenuOpen }: Props) {
+function Wallet({ isMenuOpen, showTransactionSendMessage }: Props) {
   const account = useAccount();
   const dispatch = useDispatch();
   const [assets, setAssets] = useState<any>([]);
   const [networks, setNetworks] = useState<any>([]);
   const [activeTab, setActiveTab] = useState<number>(1);
   const [overallBalance, setOverallBalance] = useState<number | undefined>(undefined);
+  const hasViewedDashboard = account?.getActiveAccount()?.meta?.hasViewedDashboard;
+  const currentAccountAddress = account?.getActiveAccount()?.address;
+  const activeAccount = useCallback(account.getActiveAccount(), [account]);
+  const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
+  const [snackbarMessage, setSnackbarMessage] = useState<string>('');
 
   const {
     prices,
@@ -44,8 +52,6 @@ function Wallet({ isMenuOpen }: Props) {
   const handleActiveTab = (activeTab: number): void => {
     setActiveTab(activeTab);
   };
-
-  const activeAccount = useCallback(account.getActiveAccount(), [account]);
 
   useEffect(() => {
     async function go() {
@@ -64,39 +70,75 @@ function Wallet({ isMenuOpen }: Props) {
     setNetworks(networks);
   }, [prices, infos]);
 
+  useEffect(() => {
+    if (showTransactionSendMessage) {
+      setTimeout(() => {
+        setIsSnackbarOpen(true);
+        setSnackbarMessage('Transaction Sent');
+      }, 300);
+    }
+  }, []);
+  // snackbarMessage
+  // useEffect(() => {
+  //   if (!hasViewedDashboard) {
+  //     addAccountMeta(currentAccountAddress, { hasViewedDashboard: true });
+  //     account.saveActiveAccount(currentAccountAddress);
+  //   }
+  // }, []);
+
   return (
-    <Container bg={walletBG}>
+    <Container bg={dashboardBG}>
       <Header menuInitialOpenState={isMenuOpen} />
       <Content>
-        <FirstTimeUserBalance></FirstTimeUserBalance>
+        {/* {!true ? (
+          <FirstTimeUserBalance>
+            <h6>welcome, to get started</h6>
+            <h2>Deposit your first asset!</h2>
+            <StyledLink component={Receive}>
+              <Button>
+                <BarcodeIconContainer>
+                  <BarcodeIcon />
+                </BarcodeIconContainer>
+                <span>Recieve</span>
+              </Button>
+            </StyledLink>
+          </FirstTimeUserBalance>
+        ) : ( */}
+        <>
+          <BalanceContainer>
+            {/* <span>Balance</span> */}
+            <Balance>
+              <span>
+                {' '}
+                $
+                {(overallBalance || overallBalance === 0) && !accountsChanging
+                  ? new BigNumber(overallBalance).toFixed(2)
+                  : '...'}{' '}
+              </span>
+              {/* <DailyChange>+ 8.88%</DailyChange> */}
+            </Balance>
+          </BalanceContainer>
 
-        <BalanceContainer>
-          {/* <span>Balance</span> */}
-          <Balance>
-            <span>
-              {' '}
-              $
-              {(overallBalance || overallBalance === 0) && !accountsChanging
-                ? new BigNumber(overallBalance).toFixed(2)
-                : '...'}{' '}
-            </span>
-            {/* <DailyChange>+ 8.88%</DailyChange> */}
-          </Balance>
-        </BalanceContainer>
-        <Buttons>
-          <StyledLink component={Send}>
-            <Button>
-              <RightArrowContainer>
-                <RightArrow width={20} height={20} stroke="#111" />
-              </RightArrowContainer>
-              <span>Send</span>
-            </Button>
-          </StyledLink>
-          <StyledLink component={Receive}>
-            <Button>Recieve</Button>
-          </StyledLink>
-        </Buttons>
-
+          <Buttons>
+            <StyledLink component={Send}>
+              <Button>
+                <RightArrowContainer>
+                  <RightArrow width={20} height={20} stroke="#111" />
+                </RightArrowContainer>
+                <span>Send</span>
+              </Button>
+            </StyledLink>
+            <StyledLink component={Receive}>
+              <Button>
+                <BarcodeIconContainer>
+                  <BarcodeIcon />
+                </BarcodeIconContainer>
+                <span>Recieve</span>
+              </Button>
+            </StyledLink>
+          </Buttons>
+        </>
+        {/* )} */}
         <List>
           <ListHeader>
             <ListHeaderItem onClick={() => handleActiveTab(1)} index={1} active={activeTab}>
@@ -130,6 +172,14 @@ function Wallet({ isMenuOpen }: Props) {
             )}
           </ListContentParent>
         </List>
+        <Snackbar
+          isOpen={isSnackbarOpen}
+          close={() => setIsSnackbarOpen(false)}
+          message={snackbarMessage}
+          type="success"
+          left="110px"
+          bottom="70px"
+        />
       </Content>
       <Footer activeItem="wallet" />
     </Container>
@@ -161,6 +211,28 @@ const Content = styled.div`
   padding: 0 15px 15px 15px;
 `;
 
+const FirstTimeUserBalance = styled.div`
+  width: 100%;
+  margin-top: 59px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  h6 {
+    font-family: Inter;
+    font-size: 11px;
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+
+  h2 {
+    font-family: 'IBM Plex Sans';
+    font-size: 22px;
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+`;
+
 const BalanceContainer = styled.div`
   text-align: center;
   margin-top: 59px;
@@ -170,8 +242,6 @@ const BalanceContainer = styled.div`
     font-size: 10px;
   }
 `;
-
-const FirstTimeUserBalance = styled.div``;
 
 const Balance = styled.div`
   display: flex;
@@ -193,6 +263,11 @@ const Buttons = styled.div`
 const RightArrowContainer = styled.div`
   transform: rotate(-45deg);
   margin-top: 3px;
+`;
+
+const BarcodeIconContainer = styled.div`
+  margin-top: 3px;
+  margin-right: 5px;
 `;
 
 const Button = styled.div`

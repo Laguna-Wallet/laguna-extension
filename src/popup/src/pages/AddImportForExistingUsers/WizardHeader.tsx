@@ -5,10 +5,11 @@ import LeftArrowIcon from 'assets/svgComponents/LeftArrowIcon';
 import { goTo } from 'react-chrome-extension-router';
 import SignUp from 'pages/SignUp/SignUp';
 import Wallet from 'pages/Wallet/Wallet';
+import LeftArrowThinIcon from 'assets/svgComponents/LeftArrowThinIcon';
 
 type Props = {
-  title: string;
-  onClose: () => void;
+  title?: string;
+  onClose?: () => void;
   onBack?: () => void;
 };
 
@@ -32,23 +33,33 @@ export default function WizardHeader({ title, onClose, onBack }: Props) {
     }
   };
 
+  const handleIconClick = () => {
+    if (onClose) {
+      onClose();
+    } else if (onBack) {
+      onBack();
+    }
+  };
+
   return (
     <Container>
       <TopSection>
-        <IconContainer onClick={onClose}>
-          <CloseIcon stroke="#111" />
+        <IconContainer onClick={handleIconClick}>
+          {onClose ? <CloseIcon stroke="#777e90" /> : <LeftArrowThinIcon stroke="#777e90" />}
         </IconContainer>
         <Line>
           <Progress activeStep={activeStep} calcProgressBarSize={calcProgressBarSize}></Progress>
         </Line>
-        <div>{activeStep + 1}/3</div>
+        <StepNumber>{activeStep + 1}/3</StepNumber>
       </TopSection>
-      <BottomSection>
-        <LeftIconContainer onClick={handleBack}>
-          <LeftArrowIcon stroke="#111" />
-        </LeftIconContainer>
-        <Title>{title}</Title>
-      </BottomSection>
+      {title && (
+        <BottomSection>
+          <LeftIconContainer onClick={handleBack}>
+            <LeftArrowThinIcon stroke="#777e90" />
+          </LeftIconContainer>
+          <Title>{title}</Title>
+        </BottomSection>
+      )}
     </Container>
   );
 }
@@ -78,7 +89,21 @@ const Progress = styled.div<{
   calcProgressBarSize: (activeStep: number) => string | undefined;
 }>`
   width: ${({ activeStep }) => calcProgressBarSize(activeStep)};
-  background-color: #111;
+  background-image: linear-gradient(
+    to right top,
+    #d7cce2,
+    #ddcde1,
+    #e3cee0,
+    #e8cfdf,
+    #edd0dd,
+    #f1d1db,
+    #f4d2d8,
+    #f6d4d6,
+    #f8d6d3,
+    #f8d8d0,
+    #f7dbcd,
+    #f5decc
+  );
   border-radius: 120px;
   height: 8px;
 `;
@@ -103,12 +128,20 @@ const LeftIconContainer = styled.div`
   cursor: pointer;
 `;
 
+const StepNumber = styled.div`
+  font-family: Inter;
+  font-size: 12px;
+  font-weight: 600;
+  color: #353945;
+`;
+
 const Title = styled.div`
   line-height: 1.45;
   letter-spacing: 0.85px;
   text-align: center;
   color: #000;
+  font-family: 'IBM Plex Sans';
   font-size: 17px;
-  font-family: 'Sequel100Wide55Wide';
+  font-weight: 500;
   margin-right: auto;
 `;

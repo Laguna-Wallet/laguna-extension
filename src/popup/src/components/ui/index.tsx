@@ -6,6 +6,7 @@ export const PageContainer = styled.div<{
   paddingLeft?: string;
   paddingRight?: string;
   bgColor?: string;
+  bgImage?: string;
 }>`
   width: 100%;
   height: 100%;
@@ -19,4 +20,5 @@ export const PageContainer = styled.div<{
   padding-right: ${({ paddingRight }) => paddingRight || '26px'};
   box-sizing: border-box;
   background-color: ${({ bgColor }) => bgColor || '#f8f8f8'};
+  background-image: ${({ bgImage }) => `url(${bgImage})` || 'none'};
 `;

@@ -22,14 +22,16 @@ let signRequestPending = false
 let signRequest = {}
 const registry = new TypeRegistry()
 
-export let authorizedDapps = []
-export let declinedDapps = []
-export let pendingRequests = []
+let authorizedDapps = []
+let pendingRequests = []
+let declinedDapps = []
 
 keyring.loadAll({ type: "ed25519" })
 
 chrome.runtime.onConnect.addListener(function (port) {
   chrome.runtime.onMessage.addListener(async (msg) => {
+    console.log("~ vazaga", authorizedDapps)
+
     if (msg.type === Messages.DappAuthRequest) {
       if (msg.payload.approved) {
         pendingRequests = []
@@ -181,6 +183,7 @@ chrome.runtime.onMessage.addListener(async (msg) => {
     case Messages.RevokeDapp:
       authorizedDapps = authorizedDapps.filter((item) => item !== msg.payload.dappName)
       chrome.runtime.sendMessage({ type: Messages.ConnectedApps, payload: { connectedApps: authorizedDapps } })
+      break
     case Messages.ChangeInterval:
       if (msg?.payload?.timeout) {
         chrome.idle.setDetectionInterval(Number(msg.payload.timeout) * 60)

@@ -15,6 +15,7 @@ type InputProps = {
   error?: string | undefined;
   touched?: boolean | undefined;
   borderColor?: string;
+  placeholderColor?: string;
   height?: string;
   marginTop?: string;
   marginBottom?: string;
@@ -27,6 +28,7 @@ type InputProps = {
   truncate?: boolean;
   copy?: boolean;
   rightLabel?: string;
+  Icon?: any;
 };
 
 function HumbleInput({
@@ -51,7 +53,9 @@ function HumbleInput({
   input,
   copy,
   truncate,
-  rightLabel
+  rightLabel,
+  placeholderColor,
+  Icon
 }: InputProps) {
   const handleValue = (value: string) => {
     if (!value) return '';
@@ -69,6 +73,7 @@ function HumbleInput({
         bgColor={bgColor}
         color={color}
         height={height}>
+        {Icon && <IconContainer>{Icon}</IconContainer>}
         {type === 'textarea' ? (
           <StyledTextarea
             id={id}
@@ -76,6 +81,7 @@ function HumbleInput({
             onChange={onChange || input?.onChange}
             placeholder={placeholder}
             fontSize={fontSize}
+            placeholderColor={placeholderColor}
             textAlign={textAlign}
             bgColor={bgColor}
             color={color}
@@ -90,6 +96,7 @@ function HumbleInput({
               placeholder={placeholder}
               fontSize={fontSize}
               bgColor={bgColor}
+              placeholderColor={placeholderColor}
               autoFocus={!!autoFocus}
               color={color}
             />
@@ -118,6 +125,12 @@ function HumbleInput({
           </>
         )}
       </InputContainer>
+
+      {error && (
+        <ErrorContainer>
+          <ErrorMessage>{error}</ErrorMessage>
+        </ErrorContainer>
+      )}
     </Container>
   );
 }
@@ -141,7 +154,8 @@ const InputContainer = styled.div<{
   width: 100%;
   height: ${({ height }) => (height ? height : 'auto')};
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  /* flex-direction: column; */
   padding: 8px 8px 5px 16px;
   box-sizing: border-box;
   border: 1px solid;
@@ -151,39 +165,62 @@ const InputContainer = styled.div<{
   position: relative;
 `;
 
-const StyledInput = styled.input<{ fontSize?: string; bgColor?: string; color?: string }>`
+const IconContainer = styled.div`
+  margin-right: 5px;
+`;
+
+const StyledInput = styled.input<{
+  fontSize?: string;
+  bgColor?: string;
+  color?: string;
+  placeholderColor?: string;
+  fontWeight?: string;
+}>`
   width: 100%;
   height: 100%;
   border: none;
-  font-size: ${({ fontSize }) => (fontSize ? fontSize : '14px')};
+  font-size: ${({ fontSize }) => (fontSize ? fontSize : '14.8px')};
   padding: 0;
   appearance: none;
   outline: none;
   background-color: ${({ bgColor }) => (bgColor ? bgColor : '#fff')};
   color: ${({ color }) => (color ? color : '#111')};
-
+  font-family: Inter;
+  font-weight: ${({ fontWeight }) => fontWeight || 400};
   &:focus {
     outline: none;
+  }
+
+  &::placeholder {
+    color: ${({ placeholderColor }) => placeholderColor || '#111'};
   }
 `;
 
 const StyledTextarea = styled.textarea<{
   fontSize?: string;
-  textAlign?: string;
   bgColor?: string;
+  color?: string;
+  placeholderColor?: string;
+  fontWeight?: string;
+  textAlign?: string;
 }>`
   width: 100%;
   height: 100%;
   border: none;
-  font-size: ${({ fontSize }) => (fontSize ? fontSize : '12px')};
+  color: ${({ color }) => (color ? color : '#111')};
+  font-size: ${({ fontSize }) => (fontSize ? fontSize : '20px')};
+  font-weight: ${({ fontWeight }) => fontWeight || 400};
   text-align: ${({ textAlign }) => (textAlign ? textAlign : 'left')};
   background-color: ${({ bgColor }) => bgColor || '#fff'};
   padding: 0;
   appearance: none;
   outline: none;
   resize: none;
-  font-size: 20px;
   font-family: Inter;
+
+  &::placeholder {
+    color: ${({ placeholderColor }) => placeholderColor || '#111'};
+  }
 `;
 
 const Paste = styled.div``;
@@ -219,7 +256,7 @@ const ErrorContainer = styled.div`
 `;
 
 const ErrorMessage = styled.div`
-  color: #fb5a5a;
+  color: #353945;
   font-size: 12px;
-  margin-left: 5px;
+  margin-left: 16px;
 `;

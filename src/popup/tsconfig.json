@@ -17,5 +17,6 @@
     "noEmit": true,
     "jsx": "react-jsx"
   },
-  "include": ["src", "../background/inject"]
+
+  "include": ["src", "../background/inject", "custom.d.ts"]
 }

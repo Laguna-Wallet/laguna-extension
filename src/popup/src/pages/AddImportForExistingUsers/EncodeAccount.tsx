@@ -11,16 +11,17 @@ import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { importJson, importViaSeed, validatePassword } from 'utils/polkadot';
 import WizardHeader from './WizardHeader';
-
+import encodeBg from 'assets/imgs/encode-bg.png';
 import { useWizard } from 'react-use-wizard';
 
 type Props = {
   handleEncode: (password: string) => void;
   onClose: () => void;
   onBack: (backAction: () => void) => void;
+  title: string;
 };
 
-export default function EncodeAccount({ handleEncode, onClose, onBack }: Props) {
+export default function EncodeAccount({ handleEncode, title, onClose, onBack }: Props) {
   const [password, setPassword] = useState<string>('');
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
   const [snackbarError, setSnackbarError] = useState<string>('');
@@ -37,7 +38,7 @@ export default function EncodeAccount({ handleEncode, onClose, onBack }: Props) 
 
     try {
       handleEncode(password);
-      nextStep();
+      goTo(Wallet);
     } catch (err: any) {
       // todo proper typing
       setIsSnackbarOpen(true);
@@ -46,25 +47,13 @@ export default function EncodeAccount({ handleEncode, onClose, onBack }: Props) 
   };
 
   return (
-    <Container>
-      <WizardHeader
-        title={'IMPORT COMPLETE!'}
-        onClose={onClose}
-        onBack={() => onBack(previousStep)}
-      />
+    <Container bg={encodeBg}>
       <Content>
         <IconContainer>
-          <CheckMarkContainer>
-            <CheckMarkIcon />
-          </CheckMarkContainer>
-          <Circle>
-            <CircleInner />
-          </Circle>
-          <LockContainer>
-            <LockIcon />
-          </LockContainer>
+          <CheckMarkIcon fill="#111" />
         </IconContainer>
-        <Title>To encrypt your new wallet please enter your password:</Title>
+        <Title>{title}</Title>
+        <Description>To encrypt your new wallet please enter your password below:</Description>
         <BottomContainer>
           {/* todo proper event typing */}
           <HumbleInput
@@ -80,9 +69,9 @@ export default function EncodeAccount({ handleEncode, onClose, onBack }: Props) 
           <Button
             type="button"
             margin="10px 0 0 0"
-            Icon={<RightArrow width={23} />}
-            text={'Import'}
+            text={'Finish'}
             onClick={() => onClick(password)}
+            justify="center"
           />
         </BottomContainer>
         <Snackbar
@@ -98,16 +87,17 @@ export default function EncodeAccount({ handleEncode, onClose, onBack }: Props) 
   );
 }
 
-const Container = styled.div`
+const Container = styled.div<{ bg?: string }>`
   width: 100%;
   height: 100%;
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #fff;
   padding: 30px 16px 38px 16px;
   box-sizing: border-box;
+  background-image: ${({ bg }) => `url(${bg})`};
+  background-size: cover;
 `;
 
 const Content = styled.div`
@@ -120,11 +110,16 @@ const Content = styled.div`
 `;
 
 const IconContainer = styled.div`
+  width: 167.3px;
+  height: 167.3px;
+  border-radius: 100%;
+  background-color: #fff;
+  box-shadow: 5px 5px 50px 0 rgba(0, 0, 0, 0.15);
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
-  margin-top: 40px;
+  margin-top: auto;
 `;
 
 const Circle = styled.div`
@@ -156,11 +151,23 @@ const LockContainer = styled.div`
 `;
 
 const Title = styled.div`
+  font-size: 22px;
+  margin-top: 28px;
+  font-family: 'IBM Plex Sans';
+  font-weight: 500;
   text-align: center;
-  color: #000;
-  font-size: 17px;
-  margin-top: 50px;
-  font-family: 'SFCompactDisplayRegular';
+  color: #18191a;
+`;
+
+const Description = styled.div`
+  width: 251px;
+  height: 38px;
+  margin-top: 10px;
+  font-family: Inter;
+  font-size: 14px;
+  text-align: center;
+  color: #353945;
+  margin-bottom: 40px;
 `;
 
 const BottomContainer = styled.div`

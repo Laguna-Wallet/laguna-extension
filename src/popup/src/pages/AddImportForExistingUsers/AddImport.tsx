@@ -24,7 +24,7 @@ export default function AddImport({ setPhase }: Props) {
     <Container>
       <WizardHeader title={'ADD / IMPORT WALLET'} onClose={() => goTo(Wallet)} />
       <PlusIconContainer>
-        <PlusIcon width={46} stroke="#999999" />
+        <PlusIcon width={66} stroke="#111" />
       </PlusIconContainer>
       <ButtonContainer>
         <Button
@@ -32,6 +32,7 @@ export default function AddImport({ setPhase }: Props) {
           Icon={<RightArrow width={23} />}
           text={'Create a New Wallet'}
           onClick={() => handleClick(PhaseEnum.Create)}
+          justify="center"
         />
         <Button
           type="button"
@@ -39,6 +40,7 @@ export default function AddImport({ setPhase }: Props) {
           text={'Import a Wallet'}
           margin="10px 0 0 0"
           onClick={() => handleClick(PhaseEnum.Import)}
+          justify="center"
         />
       </ButtonContainer>
     </Container>
@@ -58,14 +60,15 @@ const Container = styled.div`
 `;
 
 const PlusIconContainer = styled.div`
-  width: 149px;
-  height: 149px;
+  width: 167.3px;
+  height: 167.3px;
   display: flex;
   justify-content: center;
   align-items: center;
   border-radius: 100%;
   margin-top: 110px;
-  background-color: #f4f4f6;
+  background-color: #fff;
+  box-shadow: 5px 5px 50px 0 rgba(0, 0, 0, 0.05);
 `;
 
 const StepHeading = styled.div`

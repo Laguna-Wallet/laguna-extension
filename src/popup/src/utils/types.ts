@@ -59,6 +59,16 @@ export interface Asset {
 
 export type Prices = Record<string, Record<string, number>>;
 
+export enum Prefixes {
+  westend = 42,
+  polkadot = 0,
+  kusama = 2,
+  moonriver = 1285,
+  moonbeam = 1284,
+  shiden = 5,
+  astar = 5
+}
+
 //==============================================================================
 // Messaging
 //==============================================================================

@@ -80,7 +80,7 @@ export default function ConfirmSeed({ handleNextSection, redirectedFromSignUp }:
     <Container>
       <MainContent>
         <WizardHeader
-          title={'CONFIRM YOUR SEED'}
+          // title={'CONFIRM YOUR SEED'}
           onClose={() => {
             if (redirectedFromSignUp) {
               goTo(SignUp);
@@ -92,6 +92,8 @@ export default function ConfirmSeed({ handleNextSection, redirectedFromSignUp }:
             previousStep();
           }}
         />
+
+        <Title>Confirm Your Backup</Title>
 
         <SelectWords>
           <Description>Select each word in the order it was presented to you:</Description>
@@ -120,12 +122,12 @@ export default function ConfirmSeed({ handleNextSection, redirectedFromSignUp }:
       </MainContent>
 
       <Snackbar
+        width="90%"
         isOpen={isSnackbarOpen}
         message="Please choose words in provided order"
         close={() => setIsSnackbarOpen(false)}
         type="warning"
-        bottom="38px"
-        left="0px"
+        bottom="36px"
       />
 
       <Button
@@ -137,6 +139,7 @@ export default function ConfirmSeed({ handleNextSection, redirectedFromSignUp }:
         Icon={<RightArrow width={23} fill="#fff" />}
         bgColor={'#000000'}
         borderColor="#000000"
+        justify="center"
       />
     </Container>
   );
@@ -149,7 +152,7 @@ const Container = styled.div`
   flex-direction: column;
   justify-content: space-between;
   position: relative;
-  background-color: #f8f8f8;
+  background-color: #f9fafb;
   padding: 30px 16px 38px 16px;
   box-sizing: border-box;
 `;
@@ -161,22 +164,25 @@ const SelectWords = styled.div`
   height: 130px;
   background-color: #fff;
   border-radius: 5px;
-  margin-top: 20px;
   padding: 12px;
   box-sizing: border-box;
+  margin-top: 12px;
 `;
 
 const Title = styled.div`
-  margin-top: 28px;
-  font-size: 17px;
-  font-family: 'Sequel100Wide55Wide';
+  font-family: 'IBM Plex Sans';
+  font-size: 22px;
+  font-weight: 500;
+  color: #18191a;
+  margin-top: 30px;
 `;
 
 const Description = styled.div`
+  font-family: Inter;
   font-size: 16px;
   line-height: 1.45;
-  color: #767e93;
-  font-family: 'SFCompactDisplayRegular';
+  text-align: left;
+  color: #18191a;
 `;
 
 const WordsContainer = styled.div`
@@ -189,7 +195,7 @@ const MnemonicsContainer = styled.div`
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
-  margin-top: 60px;
+  margin-top: 28px;
 `;
 
 const Mnemonic = styled.div<{ indexesHt?: Record<string, string>; active: boolean }>`

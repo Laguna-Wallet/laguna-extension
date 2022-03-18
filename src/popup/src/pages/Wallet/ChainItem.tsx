@@ -65,6 +65,7 @@ const ListItemText = styled.div`
 
 const Title = styled.div<{ fs: string }>`
   font-size: ${({ fs }) => fs || '17px'};
+  text-transform: capitalize;
 `;
 
 const Tag = styled.div`
@@ -72,6 +73,7 @@ const Tag = styled.div`
   font-family: 'IBM Plex Sans';
   box-sizing: border-box;
   color: #777e90;
+  text-transform: capitalize;
 `;
 
 const Value = styled.div`

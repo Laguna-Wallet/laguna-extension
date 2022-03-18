@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { useAccount } from 'context/AccountContext';
-import walletBG from 'assets/imgs/walletBG.jpg';
+import activityBg from 'assets/imgs/activity-bg.png';
 import Header from 'pages/Wallet/Header';
 import Footer from 'pages/Wallet/Footer';
 import { goTo, Link } from 'react-chrome-extension-router';
@@ -20,13 +20,15 @@ import KusamaLogoIcon from 'assets/svgComponents/KusamaLogoIcon';
 import KusamaIcon from 'assets/svgComponents/KusamaIcon';
 import { TokenSymbols, Transaction } from 'utils/types';
 import { fetchAccountsTransactions } from 'utils/fetchTransactions';
+import Popup from 'components/Popup/Popup';
 
 type Props = {
   isMenuOpen?: boolean;
   transaction: Transaction;
+  onClick?: () => void;
 };
 
-const Row = ({ transaction }: Props) => {
+const Row = ({ transaction, onClick }: Props) => {
   const account = useAccount();
 
   const handleIsSent = (accountAddress: string, from: string) => {
@@ -38,35 +40,35 @@ const Row = ({ transaction }: Props) => {
 
   const isSent = handleIsSent(currAccountAddress, transaction.from);
   return (
-    <ActivityItem>
-      <StyledLink component={ActivityInfo} props={{ transaction }}>
-        <Icon>
-          {handleIcons(transaction.chain)}
-          {isSent ? (
-            <IconContainer bgColor="#0324ff">
-              <RightArrow width={15} stroke="#fff" />
-            </IconContainer>
-          ) : (
-            <IconContainer bgColor="#b9e260">
-              <PlusIcon width={15} stroke="#fff" />
-            </IconContainer>
-          )}
-        </Icon>
-        <Info>
-          <InfoTop>
-            {transaction.amount} <span>{TokenSymbols[transaction?.chain]} </span>{' '}
-          </InfoTop>
-          <InfoBottom>
-            {isSent
-              ? 'to ' + truncateString(transaction.to)
-              : 'from ' + truncateString(transaction.from)}
-            {'  '} {format(new Date(transaction.timestamp), 'dd MMM yyyy')}
-          </InfoBottom>
-        </Info>
-        <Actions>
-          <ThreeDotsIcon />
-        </Actions>
-      </StyledLink>
+    <ActivityItem onClick={onClick}>
+      {/* <StyledLink component={ActivityInfo} props={{ transaction }}> */}
+      <Icon>
+        {handleIcons(transaction.chain)}
+        {isSent ? (
+          <IconContainer bgColor="#0324ff">
+            <RightArrow width={15} stroke="#fff" />
+          </IconContainer>
+        ) : (
+          <IconContainer bgColor="#b9e260">
+            <PlusIcon width={15} stroke="#fff" />
+          </IconContainer>
+        )}
+      </Icon>
+      <Info>
+        <InfoTop>
+          {transaction.amount} <span>{TokenSymbols[transaction?.chain]} </span>{' '}
+        </InfoTop>
+        <InfoBottom>
+          {isSent
+            ? 'to ' + truncateString(transaction.to)
+            : 'from ' + truncateString(transaction.from)}
+          {'  '} {format(Number(transaction.timestamp) * 1000, 'dd MMM yyyy')}
+        </InfoBottom>
+      </Info>
+      <Actions>
+        <ThreeDotsIcon />
+      </Actions>
+      {/* </StyledLink> */}
     </ActivityItem>
   );
 };
@@ -77,7 +79,9 @@ export default function Activity() {
   const wallet = useSelector((state: any) => state.wallet);
   // const transactions = wallet?.transactions[account.getActiveAccount().address];
   const [transactions, setTransactions] = useState<Transaction[] | []>([]);
+  const [transaction, setTransaction] = useState<Transaction>();
   const [loading, setLoading] = useState<boolean>(false);
+  const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false);
 
   const address = account.getActiveAccount().address;
 
@@ -98,8 +102,13 @@ export default function Activity() {
     go();
   }, [address]);
 
+  const handleClick = (transaction: Transaction) => {
+    setIsPopupOpen(true);
+    setTransaction(transaction);
+  };
+
   return (
-    <Container bg={walletBG}>
+    <Container bg={activityBg}>
       <Header title="Activity" />
 
       <Content>
@@ -107,13 +116,27 @@ export default function Activity() {
           <ActivityItemsContainer>
             {sortedTransactions &&
               sortedTransactions.map((transaction: any) => {
-                return <Row key={transaction.hex} transaction={transaction} />;
+                return (
+                  <Row
+                    onClick={() => handleClick(transaction)}
+                    key={transaction.hex}
+                    transaction={transaction}
+                  />
+                );
               })}
           </ActivityItemsContainer>
         ) : (
           <Loading>Loading...</Loading>
         )}
       </Content>
+
+      {isPopupOpen && transaction && (
+        <Popup justify="center" align="center" onClose={() => setIsPopupOpen(false)}>
+          <ActivityContainer>
+            <ActivityInfo transaction={transaction} />
+          </ActivityContainer>
+        </Popup>
+      )}
 
       <Footer activeItem="activity" />
     </Container>
@@ -177,20 +200,15 @@ const Loading = styled.div`
 const ActivityItem = styled.div`
   width: 100%;
   height: 60px;
-  background-color: #fff;
-  border-radius: 4px;
-  cursor: pointer;
   margin-top: 10px;
-`;
-
-const StyledLink = styled(Link)`
-  width: 100%;
   display: flex;
   align-items: center;
   padding: 14px;
   box-sizing: border-box;
-  cursor: pointer;
   text-decoration: none;
+  background-color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
 `;
 
 const Icon = styled.div`
@@ -224,21 +242,28 @@ const Info = styled.span`
 `;
 
 const InfoTop = styled.span`
+  font-family: 'IBM Plex Sans';
   font-size: 14px;
-  color: #000000;
-  font-family: 'Sequel100Wide55Wide';
+  font-weight: 500;
+  color: #18191a;
+
   span {
     text-transform: capitalize;
   }
 `;
 
 const InfoBottom = styled.div`
-  font-weight: 500;
+  font-family: 'IBM Plex Sans';
   font-size: 12px;
-  color: #757575;
+  color: #777e90;
 `;
 
 const Actions = styled.div`
   cursor: pointer;
   margin-left: auto;
+`;
+
+const ActivityContainer = styled.div`
+  width: 323px;
+  height: 429px;
 `;

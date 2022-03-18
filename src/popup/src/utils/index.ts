@@ -2,8 +2,10 @@ import { MnemonicsTriple, StorageKeys } from './types';
 import { saveAs } from 'file-saver';
 import { KeyringPair$Json } from '@polkadot/keyring/types';
 import { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
+import type { KeyringPair } from '@polkadot/keyring/types';
 import bcrypt from 'bcryptjs';
 import { getFromStorage } from './chrome';
+import keyring from '@polkadot/ui-keyring';
 
 //==============================================================================
 // Mnemonics
@@ -56,6 +58,11 @@ export function mnemonicsAreChecked(ht: Record<string, boolean>): boolean {
 //==============================================================================
 // Shared
 //==============================================================================
+
+export function getAccountNameByAddress(address: string): string | undefined {
+  const pair: KeyringPair = keyring.getPair(address);
+  return (pair?.meta?.name as string) || undefined;
+}
 
 export function isFormikErrorEmpty(errors: Record<string, string>): boolean {
   return !Object.keys(errors).length;

@@ -14,8 +14,8 @@ const UploadFinishedIcon = (props: SVGProps<SVGSVGElement>) => (
         x2={-7.485}
         y2={-15.142}
         gradientUnits="userSpaceOnUse">
-        <stop stopColor="#1CC3CE" />
-        <stop offset={1} stopColor="#B9E260" />
+        <stop stopColor="#d7cce2" />
+        <stop offset={1} stopColor="#f5decc" />
       </linearGradient>
     </defs>
   </svg>

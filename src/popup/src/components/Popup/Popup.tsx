@@ -4,22 +4,24 @@ import styled from 'styled-components';
 type Props = {
   onClose: () => void;
   children: React.ReactChild | React.ReactChildren;
+  justify?: string;
+  align?: string;
 };
 
-export default function Popup({ children, onClose }: Props) {
+export default function Popup({ children, onClose, ...rest }: Props) {
   const handleClose = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
     onClose();
   };
 
   return (
-    <Container onClick={(e: React.MouseEvent<HTMLDivElement>) => handleClose(e)}>
+    <Container {...rest} onClick={(e: React.MouseEvent<HTMLDivElement>) => handleClose(e)}>
       {children}
     </Container>
   );
 }
 
-const Container = styled.div`
+const Container = styled.div<{ justify?: string; align?: string }>`
   width: 100%;
   height: 100vh;
   background: rgba(26, 26, 26, 0.7);
@@ -27,6 +29,9 @@ const Container = styled.div`
   top: 0;
   left: 0;
   z-index: 9999;
+  display: flex;
+  justify-content: ${({ justify }) => justify || 'inherit'};
+  align-items: ${({ align }) => align || 'inherit'};
   /* top: 45px;
   left: 50%;
   transform: translate(-50%); */

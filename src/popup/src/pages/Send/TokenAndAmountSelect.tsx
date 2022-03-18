@@ -1,7 +1,5 @@
-import { FormikProps } from 'formik/dist/types';
 import { Field } from 'redux-form';
 import styled from 'styled-components';
-import { Asset } from 'utils/types';
 import { parseNumeric } from 'utils/validations';
 
 type Props = {
@@ -55,22 +53,28 @@ const Input = ({ input: { value, onChange } }: any) => (
 const Container = styled.div`
   width: 100%;
   display: flex;
-  margin-top: 5px;
+  margin-top: 8px;
   padding: 0 10px;
-  background-color: #f3f3f3;
+  border-radius: 5px;
+  background-color: #f2f2f2;
   box-sizing: border-box;
 `;
 
 const StyledInput = styled.input`
   width: 100%;
-  height: 53px;
+  height: 48px;
   border: 0;
   border-top-left-radius: 5px;
   border-bottom-left-radius: 5px;
-  background-color: #f3f3f3;
-  color: #898989;
-  font-family: 'SFCompactDisplayRegular';
+  background-color: #f2f2f2;
+  color: #b1b5c3;
+  font-family: Inter;
   font-size: 16px;
+  color: #18191a;
+
+  &::placeholder {
+    color: #b1b5c3;
+  }
 
   &:focus {
     outline: none;
@@ -79,15 +83,15 @@ const StyledInput = styled.input`
 
 const StyledSelect = styled.select`
   width: 70px;
-  height: 53px;
+  height: 48px;
   border: 0;
   border-top-right-radius: 5px;
   border-bottom-right-radius: 5px;
   background-color: #f3f3f3;
+  font-family: Inter;
   font-size: 16px;
   font-weight: 600;
-  color: #141414;
-  font-family: 'SFCompactDisplayRegular';
+  color: #18191a;
 
   &:focus {
     outline: none;

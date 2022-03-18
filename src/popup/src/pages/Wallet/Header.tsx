@@ -14,11 +14,20 @@ import { truncateString } from 'utils';
 type Props = {
   title?: string;
   backAction?: () => void;
+  closeAction?: () => void;
   iconStyle?: 'Close' | 'LeftArrow';
   menuInitialOpenState?: boolean;
+  bgColor?: string;
 };
 
-export default function Header({ title, backAction, iconStyle, menuInitialOpenState }: Props) {
+export default function Header({
+  title,
+  backAction,
+  iconStyle,
+  closeAction,
+  menuInitialOpenState,
+  bgColor
+}: Props) {
   const account = useAccount();
 
   const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false);
@@ -30,7 +39,7 @@ export default function Header({ title, backAction, iconStyle, menuInitialOpenSt
   const formattedName = name?.length > 15 ? truncateString(name) : name;
 
   return (
-    <Container>
+    <Container bgColor={bgColor}>
       {isMenuOpen && <Menu onClose={() => setIsMenuOpen(false)} />}
       <Content>
         <UserContainer>
@@ -51,11 +60,18 @@ export default function Header({ title, backAction, iconStyle, menuInitialOpenSt
       {title && (
         <TitleContainer>
           {backAction && (
-            <LeftArrowContainer onClick={backAction}>
-              {iconStyle === 'Close' ? <CloseIcon stroke="#111" /> : <LeftArrowIcon />}
-            </LeftArrowContainer>
+            <TopIconContainer onClick={backAction}>
+              <LeftArrowIcon width={8} height={12} />
+            </TopIconContainer>
           )}
+
           <Title>{title}</Title>
+
+          {closeAction && (
+            <TopIconContainer onClick={closeAction}>
+              <CloseIcon stroke="#111" />
+            </TopIconContainer>
+          )}
         </TitleContainer>
       )}
 
@@ -68,17 +84,18 @@ export default function Header({ title, backAction, iconStyle, menuInitialOpenSt
   );
 }
 
-const Container = styled.div`
+const Container = styled.div<{ bgColor?: string }>`
   width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
-  padding: 15px 15px 0 15px;
+  padding: 15px 15px 7px 15px;
   box-sizing: border-box;
   position: absolute;
   top: 0;
   z-index: 5;
+  background-color: ${({ bgColor }) => bgColor || 'transparent'};
 `;
 
 const Content = styled.div`
@@ -138,15 +155,17 @@ const TitleContainer = styled.div`
   text-transform: uppercase;
 `;
 
-const LeftArrowContainer = styled.div`
+const TopIconContainer = styled.div`
   cursor: pointer;
 `;
 
 const Title = styled.span`
   margin-left: auto;
   margin-right: auto;
-  font-family: 'Sequel100Wide55Wide';
+  font-family: 'IBM Plex Sans';
+  color: #18191a;
+  font-weight: 500;
   font-size: 17px;
   line-height: 2.35;
-  letter-spacing: 0.85px;
+  letter-spacing: 1.7px;
 `;

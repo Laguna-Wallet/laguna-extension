@@ -1,5 +1,6 @@
 import ArrowSmRightIcon from '@heroicons/react/outline/ArrowSmRightIcon';
 import RightArrow from 'assets/svgComponents/RightArrow';
+import SecureWalletLogo from 'assets/svgComponents/SecureWalletLogo';
 import { ConfirmSecuritySkip } from 'components/popups/ConfirmSecuritySkip';
 import { MnemonicsDescription } from 'components/popups/MnemonicsDescription';
 import Button from 'components/primitives/Button';
@@ -37,7 +38,7 @@ export default function ChooseSecurityLevel({
   return (
     <Container>
       <WizardHeader
-        title={'SECURE YOUR WALLET'}
+        // title={'SECURE YOUR WALLET'}
         onClose={() => {
           if (redirectedFromSignUp) {
             goTo(SignUp);
@@ -65,25 +66,20 @@ export default function ChooseSecurityLevel({
         />
       )}
 
+      <Title>Secure Your Wallet</Title>
+
       <IconContainer>
-        <Icon></Icon>
+        <Icon>
+          <SecureWalletLogo />
+        </Icon>
       </IconContainer>
       <TextContainer>
-        To secure your wallet you&apos;ll be given a 12 word{' '}
-        <span onClick={() => setIsMnemonicDescriptionOpen(true)}>Mnemonic seed phrase.</span> Store
-        this in a safe place. It&apos;s the only way to recover your wallet if you get locked out or
-        get a new device.
+        To secure your wallet you&apos;ll be given a
+        <span onClick={() => setIsMnemonicDescriptionOpen(true)}>seed phrase.</span> Store this in a
+        safe place. It&apos;s the only way to recover your wallet if you get locked out of the app
+        or get a new device.
       </TextContainer>
       <Buttons>
-        <Button
-          type="button"
-          onClick={() => setConfirmSkipOpen(true)}
-          Icon={<RightArrow width={23} />}
-          text={'Remind me Later'}
-          borderColor="#ececec"
-          bgColor="#ececec"
-          color={'#111'}
-        />
         <Button
           type="button"
           onClick={() => {
@@ -93,7 +89,20 @@ export default function ChooseSecurityLevel({
           Icon={<RightArrow width={23} fill="#fff" />}
           text={'Start'}
           margin="14px 0px 0px 0px"
+          justify="center"
         />
+
+        <SkipButton onClick={() => setConfirmSkipOpen(true)}>Skip Security</SkipButton>
+
+        {/* <Button
+          type="button"
+          onClick={() => setConfirmSkipOpen(true)}
+          Icon={<RightArrow width={23} />}
+          text={'Remind me Later'}
+          borderColor="#ececec"
+          bgColor="#ececec"
+          color={'#111'}
+        /> */}
       </Buttons>
     </Container>
   );
@@ -106,45 +115,64 @@ const Container = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   background-color: #fff;
-  padding: 30px 16px 38px 16px;
+  padding: 30px 16px 11px 16px;
   box-sizing: border-box;
 `;
 
 const Title = styled.span`
-  font-family: 'Sequel100Wide55Wide';
-  font-size: 17px;
-  letter-spacing: 0.85px;
+  font-family: 'IBM Plex Sans';
+  font-size: 22px;
+  font-weight: 500;
   margin-top: 30px;
+  color: #18191a;
 `;
 
 const IconContainer = styled.div`
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 24px;
-`;
-
-const Icon = styled.div`
   width: 153px;
   height: 153px;
   border-radius: 100%;
   background-color: #efefef;
+  display: flex;
+  margin: 24px auto 0 auto;
+  position: relative;
+`;
+
+const Icon = styled.div`
+  position: absolute;
+  top: 70px;
+  left: -20px;
 `;
 
 const TextContainer = styled.div`
+  font-family: Inter;
   font-size: 16px;
   margin-top: auto;
-  font-family: 'SFCompactDisplayRegular';
-  color: #767e93;
-  line-height: 1.45;
+  text-align: left;
+  color: #353945;
+  line-height: 1.5;
 
   span {
     cursor: pointer;
     color: #111;
+    font-weight: 600;
   }
 `;
 
 const Buttons = styled.div`
   margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const SkipButton = styled.div`
+  width: 89px;
+  height: 24px;
+  font-family: Inter;
+  font-size: 14px;
+  font-weight: 500;
+  color: #18191a;
+  border-bottom: 1px solid #18191a;
+  margin-top: 8px;
+  cursor: pointer;
 `;

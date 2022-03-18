@@ -23,11 +23,11 @@ export default function NetworkItem({ network }: Props) {
               .replace(/,/g, '')
               .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
         </Title>
-        <Value>
+        {/* <Value>
           {' '}
           {network?.price_change_percentage_24h &&
             `${Number(network?.price_change_percentage_24h).toFixed(2)}%`}
-        </Value>
+        </Value> */}
       </ListItemText>
     </Container>
   );
@@ -69,6 +69,7 @@ const Title = styled.div`
   font-family: 'IBM Plex Sans';
   font-size: 14px;
   font-weight: 500;
+  text-transform: capitalize;
 `;
 
 const Tag = styled.div`

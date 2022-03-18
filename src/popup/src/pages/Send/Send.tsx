@@ -108,9 +108,8 @@ export default function Send({ initialIsContactsPopupOpen }: Props) {
         setAbilityToTransfer(true);
         setAmountToSend(amount.toString());
       }
-
+      
       setFee(`${new BigNumber(partialFee.toString()).div(factor)}`);
-      console.log(2);
       setTransfer(transfer);
       setLoading(false);
     }

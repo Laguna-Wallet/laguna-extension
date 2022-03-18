@@ -34,7 +34,7 @@ export default function MnemonicsSeed({ redirectedFromSignUp }: Props) {
   return (
     <Container>
       <WizardHeader
-        title={'SECURE YOUR WALLET'}
+        // title={'SECURE YOUR WALLET'}
         onClose={() => {
           if (redirectedFromSignUp) {
             goTo(SignUp);
@@ -47,9 +47,11 @@ export default function MnemonicsSeed({ redirectedFromSignUp }: Props) {
         }}
       />
       <MainContent>
+        <Title>Backup Seed Phrase</Title>
         <Description>
-          Please write this 12 word mnemonic seed phrase down in the exact order that it is shown
-          below. Do not reveal this information to anyone.
+          To secure your wallets please write down this 12 word mnemonic seed phrase. Store this in
+          a safe place. It&apos;s the only way to recover your wallet if you get locked out or get a
+          new device.
         </Description>
         <MnemonicsContainer>
           {mnemonics?.map((name, index) => (
@@ -62,7 +64,8 @@ export default function MnemonicsSeed({ redirectedFromSignUp }: Props) {
 
         {mnemonics && (
           <CopyBtn onClick={() => copyToClipboard(mnemonics?.join(' '))}>
-            <span>Copy</span> <ButtonsIcon fill="#fff" />
+            <ButtonsIcon fill="#18191a" />
+            <span>Copy</span>
           </CopyBtn>
         )}
       </MainContent>
@@ -71,6 +74,7 @@ export default function MnemonicsSeed({ redirectedFromSignUp }: Props) {
         onClick={handleClick}
         text={'I’ve Written it Down'}
         Icon={<RightArrow width={23} />}
+        margin="auto 0px 0px 0px"
       />
     </Container>
   );
@@ -81,26 +85,29 @@ const Container = styled.div`
   height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  background-color: #f8f8f8;
+  background-color: #f9fafb;
   padding: 30px 16px 38px 16px;
   box-sizing: border-box;
 `;
 
-const MainContent = styled.div``;
+const MainContent = styled.div`
+  margin-top: 30px;
+`;
 
-const Title = styled.div`
-  font-size: 17px;
-  margin-top: 28px;
-  font-family: 'Sequel100Wide55Wide';
+const Title = styled.span`
+  font-family: 'IBM Plex Sans';
+  font-size: 22px;
+  font-weight: 500;
+  color: #18191a;
+  margin-top: 30px;
 `;
 
 const Description = styled.div`
   margin-top: 20px;
-  color: #767e93;
-  line-height: 1.45;
-  font-family: 'SFCompactDisplayRegular';
+  font-family: Inter;
   font-size: 16px;
+  line-height: 1.45;
+  color: #353945;
   text-align: left;
 `;
 
@@ -109,7 +116,7 @@ const MnemonicsContainer = styled.div`
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
-  margin-top: 60px;
+  margin-top: 30px;
 `;
 
 const Mnemonic = styled.div`
@@ -122,15 +129,16 @@ const Mnemonic = styled.div`
   align-items: center;
   margin-bottom: 10px;
   margin-right: 10px;
-  font-size: 13.4px;
+
   &:nth-child(3n + 3) {
     margin-right: 0;
   }
 `;
 
 const MnemonicName = styled.span`
+  font-family: Inter;
+  font-size: 12px;
   font-weight: 500;
-  font-family: 'SFCompactDisplayRegular';
 `;
 
 const MnemonicIndex = styled.span`
@@ -149,12 +157,12 @@ const CopyBtn = styled.div`
   margin-left: auto;
   margin-top: 5px;
   border-radius: 20px;
-  background-color: #111;
-  color: #fff;
+  background-color: #e6e8ec;
+  color: #18191a;
   font-size: 12px;
   font-weight: 500;
   cursor: pointer;
-  font-family: 'SFCompactDisplayRegular';
+  font-family: 'IBM Plex Sans';
 
   span {
     margin-right: 5px;
