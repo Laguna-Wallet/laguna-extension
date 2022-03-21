@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import Header from 'pages/Wallet/Header';
@@ -17,7 +17,7 @@ import NetworkItem from 'pages/Wallet/NetworkItem';
 import LoopIcon from 'assets/svgComponents/loopIcon';
 
 type Props = {
-  networks: undefined | Network[];
+  networks: Network[];
   setSelectedNetwork: (network: Network) => void;
 };
 

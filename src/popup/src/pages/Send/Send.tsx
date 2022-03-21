@@ -29,12 +29,14 @@ import { useFormik } from 'formik';
 import { isNumeric, sendTokenSchema } from 'utils/validations';
 import BigNumber from 'bignumber.js';
 import { useSelector } from 'react-redux';
+import { PropsFromTokenDashboard } from 'pages/Recieve/Receive';
 
 type Props = {
   initialIsContactsPopupOpen?: boolean;
+  propsFromTokenDashboard: PropsFromTokenDashboard;
 };
 
-export default function Send({ initialIsContactsPopupOpen }: Props) {
+export default function Send({ initialIsContactsPopupOpen, propsFromTokenDashboard }: Props) {
   const account = useAccount();
   const [flow, setFlow] = useState<string | undefined>(undefined);
   const [assets, setAssets] = useState<Asset[] | undefined>(undefined);
@@ -108,7 +110,7 @@ export default function Send({ initialIsContactsPopupOpen }: Props) {
         setAbilityToTransfer(true);
         setAmountToSend(amount.toString());
       }
-      
+
       setFee(`${new BigNumber(partialFee.toString()).div(factor)}`);
       setTransfer(transfer);
       setLoading(false);
@@ -116,11 +118,12 @@ export default function Send({ initialIsContactsPopupOpen }: Props) {
 
     go();
   }, [reduxSendTokenState.selectedAsset, form?.address, form?.amount]);
-
+  
   return (
     <Container>
       <Wizard>
-        <SelectAsset assets={assets} />
+        {!propsFromTokenDashboard.fromTokenDashboard && <SelectAsset assets={assets} />}
+
         <SendToken
           flow={flow}
           setFlow={setFlow}

@@ -45,6 +45,7 @@ export interface Network {
   price_change_percentage_24h?: number;
   marketCap?: number;
   encodeType?: string;
+  prefix: number;
 }
 
 export interface Asset {
@@ -199,4 +200,22 @@ export interface Injected {
   signer: InjectedSigner;
 }
 
-export const chains = ['westend', 'polkadot', 'kusama', 'moonriver', 'moonbeam', 'shiden', 'astar'];
+export const chains = [
+  'westend',
+  'polkadot',
+  'kusama',
+  // 'moonriver',
+  //  'moonbeam',
+  // 'shiden',
+  'astar'
+];
+
+export interface TokenInfo {
+  current_price: number;
+  id: string;
+  market_cap: number;
+  market_cap_change_24h: number;
+  market_cap_change_percentage_24h: number;
+  name: string;
+  symbol: string;
+}

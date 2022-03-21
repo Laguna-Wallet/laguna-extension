@@ -5,7 +5,7 @@ import { useAccount } from 'context/AccountContext';
 import { getBase64, truncateString } from 'utils';
 import { useRef, useState } from 'react';
 import useOutsideClick from 'hooks/useOutsideClick';
-import { addAccountMeta } from 'utils/polkadot';
+import { addAccountMeta, changeAccountPicture } from 'utils/polkadot';
 import EditIcon from 'assets/svgComponents/EditIcon';
 import PencilIcon from 'assets/svgComponents/PencilIcon';
 import Resizer from 'react-image-file-resizer';
@@ -88,9 +88,8 @@ export default function MenuHeader({
     }
 
     const base64 = await resizeFile(event.target.files[0]);
-    console.log('~ base64', base64);
 
-    const newAccount = addAccountMeta(address, { img: base64 });
+    const newAccount = changeAccountPicture(address, { img: base64 });
     account.saveActiveAccount(newAccount);
   };
 

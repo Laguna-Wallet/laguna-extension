@@ -153,3 +153,8 @@ export function getBase64(file: File) {
     };
   });
 }
+
+export function getAccountImage(address: string): string {
+  const pair = keyring.getPair(address);
+  return pair?.meta?.img as string;
+}

@@ -6,17 +6,20 @@ import HumbleInput from 'components/primitives/HumbleInput';
 import ReceiveSelect from './components/ReceiveSelect';
 import { useState } from 'react';
 
-import { Network } from 'utils/types';
+import { Asset, Network } from 'utils/types';
 import { useWizard } from 'react-use-wizard';
 import { goTo } from 'react-chrome-extension-router';
 import Wallet from 'pages/Wallet/Wallet';
+import TokenDashboard from 'pages/TokenDashboard/TokenDashboard';
+import { PropsFromTokenDashboard } from './Receive';
 
 type Props = {
   selectedNetwork: Network | undefined;
   recoded: string;
+  propsFromTokenDashboard?: PropsFromTokenDashboard;
 };
 
-export default function ReceiveToken({ selectedNetwork, recoded }: Props) {
+export default function ReceiveToken({ selectedNetwork, recoded, propsFromTokenDashboard }: Props) {
   const { previousStep } = useWizard();
 
   const account = useAccount();
@@ -28,12 +31,16 @@ export default function ReceiveToken({ selectedNetwork, recoded }: Props) {
   const handleChange = () => {
     console.log('change');
   };
-  
+
   return (
     <Container>
       <Header
         title={`Receive ${selectedNetwork?.chain.toLocaleUpperCase()}`}
-        backAction={() => previousStep()}
+        backAction={() =>
+          propsFromTokenDashboard?.fromTokenDashboard
+            ? goTo(TokenDashboard, { asset: propsFromTokenDashboard.asset })
+            : previousStep()
+        }
         closeAction={() => goTo(Wallet)}
         bgColor="#f2f2f2"
       />

@@ -172,6 +172,14 @@ export function accountsTie({ address, genesisHash }: any): any {
   return keyring.getPair(address);
 }
 
+export function changeAccountPicture(address: string, obj: Record<string, any>): any {
+  const pair = keyring.getPair(address);
+  const { img, ...oldMeta } = pair.meta;
+  keyring.saveAccountMeta(pair, { ...oldMeta, ...obj });
+  const newPair = keyring.getPair(address);
+  return newPair;
+}
+
 export function addAccountMeta(address: string, obj: Record<string, any>): any {
   const pair = keyring.getPair(address);
   keyring.saveAccountMeta(pair, { ...pair.meta, ...obj });
@@ -188,19 +196,22 @@ export function getNetworks(prices: Prices, tokenInfos: Network[]): Network[] {
       name: 'Polkadot',
       symbol: 'wnd',
       chain: 'westend',
-      node: 'wss://westend-rpc.polkadot.io'
+      node: 'wss://westend-rpc.polkadot.io',
+      prefix: 42
     },
     {
       name: 'Polkadot',
       symbol: 'dot',
       chain: 'polkadot',
-      node: 'wss://rpc.polkadot.io'
+      node: 'wss://rpc.polkadot.io',
+      prefix: 0
     },
     {
       name: 'Kusama',
       symbol: 'ksm',
       chain: 'kusama',
-      node: 'wss://kusama-rpc.polkadot.io'
+      node: 'wss://kusama-rpc.polkadot.io',
+      prefix: 2
     },
     // {
     //   name: 'Moonriver',
@@ -227,7 +238,8 @@ export function getNetworks(prices: Prices, tokenInfos: Network[]): Network[] {
       name: 'Astar',
       symbol: 'astr',
       chain: 'astar',
-      node: 'wss://astar.api.onfinality.io/public-ws'
+      node: 'wss://astar.api.onfinality.io/public-ws',
+      prefix: 5
     }
 
     // wss://rpc.astar.network
