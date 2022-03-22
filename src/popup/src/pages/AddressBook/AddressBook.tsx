@@ -4,16 +4,24 @@ import AddressBookIcon from 'assets/svgComponents/AdressBookIcon';
 import AlternateEmail from 'assets/svgComponents/AlternateEmailIcon';
 import MenuHeader from 'components/MenuHeader/MenuHeader';
 import Button from 'components/primitives/Button';
-import Wallet from 'pages/Wallet/Wallet';
+import Snackbar from 'components/Snackbar/Snackbar';
+import Wallet, { ShowSnackbar } from 'pages/Wallet/Wallet';
 import { useEffect, useState } from 'react';
 import { goTo, Link } from 'react-chrome-extension-router';
 import styled from 'styled-components';
 import { truncateString } from 'utils';
 import AddAddress from './AddAddress';
 
-export default function AddressBook() {
+type Props = {
+  snackbar: ShowSnackbar;
+};
+
+export default function AddressBook({ snackbar }: Props) {
   const [isOpen, setOpen] = useState<boolean>(true);
   const [addresses, setAddresses] = useState<any[] | undefined>(undefined);
+
+  const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
+  const [snackbarMessage, setSnackbarMessage] = useState<string>('');
 
   useEffect(() => {
     // todo proper typing
@@ -24,6 +32,13 @@ export default function AddressBook() {
     });
 
     setAddresses(addresses);
+  }, []);
+
+  useEffect(() => {
+    if (snackbar?.show) {
+      setIsSnackbarOpen(true);
+      setSnackbarMessage(snackbar?.message);
+    }
   }, []);
 
   return (
@@ -41,7 +56,7 @@ export default function AddressBook() {
             <AddressBookContainer>
               <AddressBookIcon />
             </AddressBookContainer>
-            <Text>No Addresses</Text>
+            <Text marginTop="10px">No Addresses</Text>
           </>
         ) : (
           <AddressesContainer>
@@ -72,6 +87,16 @@ export default function AddressBook() {
           />
         </StyledLink>
       </Content>
+
+      <Snackbar
+        width="194.9px"
+        isOpen={isSnackbarOpen}
+        close={() => setIsSnackbarOpen(false)}
+        message={snackbarMessage}
+        type="success"
+        // left="110px"
+        bottom="100px"
+      />
     </Container>
   );
 }
@@ -112,12 +137,13 @@ const AddressBookContainer = styled.div`
 `;
 
 const StyledLink = styled(Link)`
-  text-decoration: none;
   width: 100%;
+  text-decoration: none;
   margin-top: auto;
 `;
 
-const Text = styled.div`
+const Text = styled.div<{ marginTop?: string }>`
+  margin-top: ${({ marginTop }) => marginTop};
   font-family: SFCompactDisplayRegular;
   font-size: 18px;
   color: #fff;

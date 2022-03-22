@@ -1,22 +1,33 @@
 import Header from 'pages/Wallet/Header';
 import styled from 'styled-components';
-import { Asset, TokenInfo } from 'utils/types';
+import { Asset, TokenInfo, Transaction } from 'utils/types';
 import dashboardBG from 'assets/imgs/dashboard-bg.png';
 import { goTo, Link } from 'react-chrome-extension-router';
 import Wallet from 'pages/Wallet/Wallet';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import NetworkIcons from 'components/primitives/NetworkIcons';
 import BigNumber from 'bignumber.js';
 import RightArrow from 'assets/svgComponents/RightArrow';
 import Send from 'pages/Send/Send';
 import Receive from 'pages/Recieve/Receive';
 import BarcodeIcon from 'assets/svgComponents/BarcodeIcon';
+import { selectAsset } from 'redux/actions';
+import { ActivityItem } from 'pages/Activity/Activity';
+import { useEffect, useState } from 'react';
+import { getLatestTransactionsForSingleChain } from 'utils/polkadot';
+import { useAccount } from 'context/AccountContext';
+import Footer from 'pages/Wallet/Footer';
+import ChainActivity from 'pages/Activity/ChainActivity';
 
 type Props = {
   asset: Asset;
 };
 
 export default function TokenDashboard({ asset }: Props) {
+  const dispatch = useDispatch();
+  const account = useAccount();
+  const currAccountAddress = account?.getActiveAccount()?.address;
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
   const {
     prices,
     infos,
@@ -33,33 +44,52 @@ export default function TokenDashboard({ asset }: Props) {
   const balance = accountsBalances?.balances[chain];
   const balanceInUsd = price ? new BigNumber(balance).multipliedBy(price).toFormat(4) : 0;
 
+  const handleSendRoute = () => {
+    goTo(Send, { propsFromTokenDashboard: { chain, fromTokenDashboard: true, asset } });
+    dispatch(selectAsset(asset));
+  };
+
+  useEffect(() => {
+    async function go() {
+      const { transactions } = await getLatestTransactionsForSingleChain(
+        currAccountAddress,
+        chain,
+        0,
+        10
+      );
+
+      setTransactions(transactions);
+    }
+
+    go();
+  }, []);
+
   return (
     <Container bg={dashboardBG}>
       <Header title={`${chain} Balance`} backAction={() => goTo(Wallet)}></Header>
       <Content>
-        <Card>
-          <Balance>
-            <NetworkIcons chain={chain} />
-            <span>{new BigNumber(balance).toFormat(4)}</span>
-            <span>{symbol}</span>
-          </Balance>
-          <BalanceInUsd>${balanceInUsd}</BalanceInUsd>
-          <CardBottom>
-            <Tag>Polkadot Main Network</Tag>
-            <Rate>+ 8.34%</Rate>
-          </CardBottom>
-        </Card>
+        <CardContainer>
+          <Card>
+            <Balance>
+              <NetworkIcons chain={chain} />
+              <span>{new BigNumber(balance).toFormat(4)}</span>
+              <span>{symbol}</span>
+            </Balance>
+            <BalanceInUsd>${balanceInUsd}</BalanceInUsd>
+            <CardBottom>
+              <Tag>Polkadot Main Network</Tag>
+              <Rate>+ 8.34%</Rate>
+            </CardBottom>
+          </Card>
+        </CardContainer>
         <ButtonsContainer>
-          <StyledLink
-            component={Send}
-            props={{ propsFromTokenDashboard: { chain, fromTokenDashboard: true, asset } }}>
-            <Button>
-              <RightArrowContainer>
-                <RightArrow width={20} height={20} stroke="#111" />
-              </RightArrowContainer>
-              <span>Send</span>
-            </Button>
-          </StyledLink>
+          <Button onClick={handleSendRoute}>
+            <RightArrowContainer>
+              <RightArrow width={20} height={20} stroke="#111" />
+            </RightArrowContainer>
+            <span>Send</span>
+          </Button>
+
           <StyledLink
             component={Receive}
             props={{ propsFromTokenDashboard: { chain, fromTokenDashboard: true, asset } }}>
@@ -71,6 +101,29 @@ export default function TokenDashboard({ asset }: Props) {
             </Button>
           </StyledLink>
         </ButtonsContainer>
+        <Transactions>
+          <TransactionsHeader>
+            <TransactionsTitle>TRANSACTIONS</TransactionsTitle>
+            <TransactionsTitle
+              onClick={() => {
+                goTo(ChainActivity, { chain, asset });
+                // ChainActivity;
+              }}>
+              SEE ALL
+            </TransactionsTitle>
+          </TransactionsHeader>
+          {transactions &&
+            transactions
+              .slice(0, 2)
+              .map((transaction, index) => (
+                <ActivityItem
+                  key={`chain-actvity-${transaction.chain}-${index}`}
+                  transaction={transaction}
+                  bgColor={'#f9fafb'}
+                />
+              ))}
+        </Transactions>
+        <Footer />
       </Content>
     </Container>
   );
@@ -94,7 +147,12 @@ const Content = styled.div`
   width: 100%;
   height: 100%;
   margin-top: 60px;
-  padding: 0 15px 15px 15px;
+  box-sizing: border-box;
+`;
+
+const CardContainer = styled.div`
+  width: 100%;
+  padding: 0px 15px 15px 15px;
   box-sizing: border-box;
 `;
 
@@ -213,4 +271,33 @@ const RightArrowContainer = styled.div`
 const BarcodeIconContainer = styled.div`
   margin-top: 3px;
   margin-right: 5px;
+`;
+
+const Transactions = styled.div`
+  width: 100%;
+  height: 253px;
+  flex-direction: column;
+  background-color: #ffffff;
+  border-top-left-radius: 14.8px;
+  border-top-right-radius: 14.8px;
+  margin-top: 20px;
+  padding: 20px 15px 0px 15px;
+  box-sizing: border-box;
+`;
+
+const TransactionsHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
+
+const TransactionsTitle = styled.div`
+  height: 14px;
+  font-family: Inter;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.44;
+  color: #18191a;
+  :nth-child(2) {
+    cursor: pointer;
+  }
 `;

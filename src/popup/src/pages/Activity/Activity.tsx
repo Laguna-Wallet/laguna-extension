@@ -26,9 +26,10 @@ type Props = {
   isMenuOpen?: boolean;
   transaction: Transaction;
   onClick?: () => void;
+  bgColor?: string;
 };
 
-const Row = ({ transaction, onClick }: Props) => {
+export const ActivityItem = ({ transaction, onClick, bgColor }: Props) => {
   const account = useAccount();
 
   const handleIsSent = (accountAddress: string, from: string) => {
@@ -39,8 +40,9 @@ const Row = ({ transaction, onClick }: Props) => {
   const currAccountAddress = account?.getActiveAccount()?.address;
 
   const isSent = handleIsSent(currAccountAddress, transaction.from);
+
   return (
-    <ActivityItem onClick={onClick}>
+    <ActivityItemContainer bgColor={bgColor} onClick={onClick}>
       {/* <StyledLink component={ActivityInfo} props={{ transaction }}> */}
       <Icon>
         {handleIcons(transaction.chain)}
@@ -69,7 +71,7 @@ const Row = ({ transaction, onClick }: Props) => {
         <ThreeDotsIcon />
       </Actions>
       {/* </StyledLink> */}
-    </ActivityItem>
+    </ActivityItemContainer>
   );
 };
 
@@ -117,9 +119,9 @@ export default function Activity() {
             {sortedTransactions &&
               sortedTransactions.map((transaction: any) => {
                 return (
-                  <Row
-                    onClick={() => handleClick(transaction)}
+                  <ActivityItem
                     key={transaction.hex}
+                    onClick={() => handleClick(transaction)}
                     transaction={transaction}
                   />
                 );
@@ -197,8 +199,8 @@ const Loading = styled.div`
   margin-top: 90px;
 `;
 
-const ActivityItem = styled.div`
-  width: 100%;
+const ActivityItemContainer = styled.div<{ bgColor?: string }>`
+  width: 323px;
   height: 60px;
   margin-top: 10px;
   display: flex;
@@ -206,7 +208,7 @@ const ActivityItem = styled.div`
   padding: 14px;
   box-sizing: border-box;
   text-decoration: none;
-  background-color: #fff;
+  background-color: ${({ bgColor }) => bgColor || '#fff'};
   border-radius: 4px;
   cursor: pointer;
 `;

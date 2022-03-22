@@ -9,27 +9,28 @@ type Props = {
   accountAddress: string;
   // Todo Appropriate typing
   asset: Asset;
+  handleClick: () => void;
 };
 
-export default function ChainItem({ asset, accountAddress }: Props) {
+export default function ChainItem({ asset, accountAddress, handleClick }: Props) {
   return (
-    <StyledLink component={TokenDashboard} props={{ asset }}>
-      <Container>
-        <ListItemIcon>
-          <NetworkIcons chain={asset.chain} />
-        </ListItemIcon>
-        <ListItemText>
-          <Title fs="17px">{asset.chain}</Title>
-          <Tag>{asset.chain}</Tag>
-        </ListItemText>
-        <ListItemText>
-          <Title fs="14px">
-            {new BigNumber(asset?.balance).toFormat(4, 1) || 0} {asset.symbol}
-          </Title>
-          <Value>${new BigNumber(asset.calculatedPrice).toFixed(2)}</Value>
-        </ListItemText>
-      </Container>
-    </StyledLink>
+    // <StyledLink component={TokenDashboard} props={{ asset }}>
+    <Container onClick={handleClick}>
+      <ListItemIcon>
+        <NetworkIcons chain={asset.chain} />
+      </ListItemIcon>
+      <ListItemText>
+        <Title fs="17px">{asset.chain}</Title>
+        <Tag>{asset.chain}</Tag>
+      </ListItemText>
+      <ListItemText>
+        <Title fs="14px">
+          {new BigNumber(asset?.balance).toFormat(4, 1) || 0} {asset.symbol}
+        </Title>
+        <Value>${new BigNumber(asset.calculatedPrice).toFixed(2)}</Value>
+      </ListItemText>
+    </Container>
+    // </StyledLink>
   );
 }
 

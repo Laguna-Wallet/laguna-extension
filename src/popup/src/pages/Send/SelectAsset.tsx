@@ -72,10 +72,11 @@ export default function SelectAsset({ assets }: Props) {
               ? 'no assets'
               : renderAssets(assets, assetsFilter).map((asset: Asset) => {
                   return (
-                    <ChainItemContainer onClick={() => handleClick(asset)} key={asset.symbol}>
+                    <ChainItemContainer key={asset.symbol}>
                       <ChainItem
                         asset={asset}
                         accountAddress={account.getActiveAccount()?.address}
+                        handleClick={() => handleClick(asset)}
                       />
                     </ChainItemContainer>
                   );

@@ -18,7 +18,7 @@ import styled from 'styled-components';
 import { encryptPassword, isObjectEmpty, objectToArray, truncateString } from 'utils';
 import { saveToStorage } from 'utils/chrome';
 import { encryptKeyringPairs, encryptMetaData, validatePassword } from 'utils/polkadot';
-import { Messages, StorageKeys } from 'utils/types';
+import { Messages, SnackbarMessages, StorageKeys } from 'utils/types';
 
 // todo proper typing
 type Props = {
@@ -27,8 +27,10 @@ type Props = {
 
 function ConnectedSites({ handleSubmit }: Props) {
   const [isOpen, setOpen] = useState<boolean>(true);
+
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
-  const [snackbarError, setSnackbarError] = useState<string>('');
+  const [snackbarMessage, setSnackbarMessage] = useState<string>('');
+
   const account = useAccount();
   const activeAccount = account.getActiveAccount();
 
@@ -42,6 +44,8 @@ function ConnectedSites({ handleSubmit }: Props) {
 
   const handleRevoke = (dappName: string) => {
     chrome.runtime.sendMessage({ type: Messages.RevokeDapp, payload: { dappName } });
+    setIsSnackbarOpen(true);
+    setSnackbarMessage(SnackbarMessages.AccessRevoked);
   };
 
   return (
@@ -73,12 +77,13 @@ function ConnectedSites({ handleSubmit }: Props) {
         )}
       </Content>
       <Snackbar
+        width="194.9px"
         isOpen={isSnackbarOpen}
         close={() => setIsSnackbarOpen(false)}
-        message={snackbarError}
-        type="error"
-        left="0px"
-        bottom="94px"
+        message={snackbarMessage}
+        type="success"
+        // left="110px"
+        bottom="50px"
       />
     </Container>
   );

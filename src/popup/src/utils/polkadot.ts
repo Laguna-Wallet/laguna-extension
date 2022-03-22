@@ -9,7 +9,7 @@ import {
   ethereumEncode
 } from '@polkadot/util-crypto';
 
-import { Asset, Network, Prices, SEED_LENGTHS, StorageKeys } from './types';
+import { Asset, Network, Prices, SEED_LENGTHS, StorageKeys, Transaction } from './types';
 import { KeyringPair$Json } from '@polkadot/keyring/types';
 import { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
 import keyring from '@polkadot/ui-keyring';
@@ -22,6 +22,7 @@ import AES from 'crypto-js/aes';
 import Utf8 from 'crypto-js/enc-utf8';
 import { decodePair } from '@polkadot/keyring/pair/decode';
 import { createPair } from '@polkadot/keyring/pair';
+import { fetchTransactions, transformTransfers } from './fetchTransactions';
 
 // TODO appropriate typing
 
@@ -482,6 +483,19 @@ export function accountsChangePassword(address: string, oldPass: string, newPass
 
   keyring.encryptAccount(pair, newPass);
   return pair;
+}
+
+export async function getLatestTransactionsForSingleChain(
+  address: string,
+  chain: string,
+  page: number,
+  row: number
+): Promise<{ count: number; transactions: Transaction[] }> {
+  const data = await fetchTransactions(address, chain, row, page);
+  return {
+    count: data?.data?.count,
+    transactions: data?.data?.transfers ? transformTransfers(data?.data?.transfers, chain) : []
+  };
 }
 
 // todo pair proper typing

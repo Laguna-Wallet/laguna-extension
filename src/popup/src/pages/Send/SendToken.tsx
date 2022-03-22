@@ -40,6 +40,8 @@ import Wallet from 'pages/Wallet/Wallet';
 import NetworkIcons from 'components/primitives/NetworkIcons';
 import AccountsPopup from './AccountsPopup';
 import BarcodeSendIcon from 'assets/svgComponents/BarcodeSendIcon';
+import { PropsFromTokenDashboard } from 'pages/Recieve/Receive';
+import TokenDashboard from 'pages/TokenDashboard/TokenDashboard';
 
 // const renderInputElement = ({ input, label, type, meta: { touched, error, warning } }: any) => (
 //   <SelectContainer>
@@ -88,6 +90,7 @@ type Props = {
   errors?: any;
   abilityToTransfer: boolean;
   amount: string;
+  propsFromTokenDashboard: PropsFromTokenDashboard;
 };
 
 const handleShowAccountInput = (flow: string | undefined, address: string | undefined): boolean => {
@@ -109,7 +112,8 @@ function SendToken({
   handleSubmit,
   errors,
   abilityToTransfer,
-  amount
+  amount,
+  propsFromTokenDashboard
 }: Props) {
   const dispatch = useDispatch();
   const { nextStep, previousStep } = useWizard();
@@ -184,9 +188,13 @@ function SendToken({
   };
 
   const handleBack = () => {
-    previousStep();
-    dispatch(reset('sendToken'));
-    setFlow(undefined);
+    if (propsFromTokenDashboard?.fromTokenDashboard) {
+      goTo(TokenDashboard, { asset: propsFromTokenDashboard.asset });
+    } else {
+      previousStep();
+      dispatch(reset('sendToken'));
+      setFlow(undefined);
+    }
   };
 
   useEffect(() => {

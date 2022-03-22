@@ -14,7 +14,7 @@ import WizardHeader from './WizardHeader';
 
 import { useWizard } from 'react-use-wizard';
 import { saveToStorage } from 'utils/chrome';
-import { StorageKeys } from 'utils/types';
+import { SnackbarMessages, StorageKeys } from 'utils/types';
 import DiscordIcon from 'assets/svgComponents/DiscordIcon';
 import TwitterIcon from 'assets/svgComponents/twitterIcon';
 
@@ -67,7 +67,9 @@ export default function EncodeAccount() {
             justify="center"
             margin="10px 0 0 0"
             text={'Finish'}
-            onClick={() => goTo(Wallet)}
+            onClick={() =>
+              goTo(Wallet, { snackbar: { show: true, message: SnackbarMessages.WalletCreated } })
+            }
           />
         </BottomContainer>
         <Snackbar

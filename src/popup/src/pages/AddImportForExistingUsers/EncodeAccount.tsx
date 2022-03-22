@@ -38,7 +38,8 @@ export default function EncodeAccount({ handleEncode, title, onClose, onBack }: 
 
     try {
       handleEncode(password);
-      goTo(Wallet);
+      nextStep();
+      // goTo(Wallet);
     } catch (err: any) {
       // todo proper typing
       setIsSnackbarOpen(true);

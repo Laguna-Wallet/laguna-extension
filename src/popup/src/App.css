@@ -12,3 +12,27 @@
   justify-content: center;
   flex-direction: column;
 }
+/* transitions */
+.my-node-enter {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: 0.2s;
+}
+.my-node-enter-active {
+  opacity: 1;
+  transition: 0.2s;
+  transform: translateY(0px);
+}
+
+.my-node-exit {
+  opacity: 1;
+  transition: 0.2s;
+  transform: translateY(0px);
+}
+
+.my-node-exit-active {
+  opacity: 0;
+  transition: 0.2s;
+  /* transition: opacity 200ms; */
+  transform: translateY(20px);
+}

@@ -129,6 +129,18 @@ export interface Transaction {
   timestamp: string;
 }
 
+export enum SnackbarMessages {
+  WalletCreated = 'New Wallet Created',
+  AddressCopied = 'Address Copied',
+  TransactionSent = 'Transaction Sent',
+  AddressAdded = 'New Address Added',
+  AddressRemoved = 'Address Removed',
+  AutoLockUpdated = 'Auto-Lock Updated',
+  WalletRemoved = 'Wallet Removed',
+  AccessRevoked = 'Access Revoked',
+  DepositRecieved = 'New Deposit Recieved'
+}
+
 //==============================================================================
 // Inject
 //==============================================================================

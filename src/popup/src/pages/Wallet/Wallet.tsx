@@ -7,7 +7,7 @@ import ChainItem from './ChainItem';
 import { addAccountMeta, getAssets, getNetworks, isValidPolkadotAddress } from 'utils/polkadot';
 import NetworkItem from './NetworkItem';
 import dashboardBG from 'assets/imgs/dashboard-bg.png';
-import { Link } from 'react-chrome-extension-router';
+import { goTo, Link } from 'react-chrome-extension-router';
 import Send from 'pages/Send/Send';
 import Receive from 'pages/Recieve/Receive';
 import BigNumber from 'bignumber.js';
@@ -21,13 +21,19 @@ import { createPair } from '@polkadot/keyring/pair';
 import RightArrow from 'assets/svgComponents/RightArrow';
 import BarcodeIcon from 'assets/svgComponents/BarcodeIcon';
 import Snackbar from 'components/Snackbar/Snackbar';
+import TokenDashboard from 'pages/TokenDashboard/TokenDashboard';
+
+export interface ShowSnackbar {
+  message: string;
+  show: boolean;
+}
 
 type Props = {
   isMenuOpen?: boolean;
-  showTransactionSendMessage?: boolean;
+  snackbar?: ShowSnackbar;
 };
 
-function Wallet({ isMenuOpen, showTransactionSendMessage }: Props) {
+function Wallet({ isMenuOpen, snackbar }: Props) {
   const account = useAccount();
   const dispatch = useDispatch();
   const [assets, setAssets] = useState<any>([]);
@@ -71,13 +77,14 @@ function Wallet({ isMenuOpen, showTransactionSendMessage }: Props) {
   }, [prices, infos]);
 
   useEffect(() => {
-    if (showTransactionSendMessage) {
+    if (snackbar?.show) {
       setTimeout(() => {
         setIsSnackbarOpen(true);
-        setSnackbarMessage('Transaction Sent');
-      }, 300);
+        setSnackbarMessage(snackbar.message);
+      }, 400);
     }
   }, []);
+
   // snackbarMessage
   // useEffect(() => {
   //   if (!hasViewedDashboard) {
@@ -161,6 +168,9 @@ function Wallet({ isMenuOpen, showTransactionSendMessage }: Props) {
                           key={asset.chain}
                           asset={asset}
                           accountAddress={account.getActiveAccount()?.address}
+                          handleClick={() => {
+                            goTo(TokenDashboard, { asset });
+                          }}
                         />
                       );
                     })
@@ -173,11 +183,12 @@ function Wallet({ isMenuOpen, showTransactionSendMessage }: Props) {
           </ListContentParent>
         </List>
         <Snackbar
+          width="194.9px"
           isOpen={isSnackbarOpen}
           close={() => setIsSnackbarOpen(false)}
           message={snackbarMessage}
           type="success"
-          left="110px"
+          // left="110px"
           bottom="70px"
         />
       </Content>

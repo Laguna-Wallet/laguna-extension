@@ -19,6 +19,7 @@ import keyring from '@polkadot/ui-keyring';
 import AddressBook from './AddressBook';
 import AddressPencilIcon from 'assets/svgComponents/PencilIcon';
 import { addressExists, isValidPolkadotAddress } from 'utils/polkadot';
+import { SnackbarMessages } from 'utils/types';
 
 type AddAddressFormikValues = {
   addressName: string;
@@ -83,7 +84,7 @@ export default function AddAddress({
       if (redirectedFromSend) {
         backAction();
       } else {
-        goTo(AddressBook);
+        goTo(AddressBook, { snackbar: { show: true, message: SnackbarMessages.AddressAdded } });
       }
     }
   });
@@ -111,7 +112,7 @@ export default function AddAddress({
     if (redirectedFromSend) {
       backAction();
     } else {
-      goTo(AddressBook);
+      goTo(AddressBook, { snackbar: { show: true, message: SnackbarMessages.AddressRemoved } });
     }
   };
 

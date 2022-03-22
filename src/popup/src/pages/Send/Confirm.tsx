@@ -23,7 +23,7 @@ import Wallet from 'pages/Wallet/Wallet';
 import { getAccountNameByAddress, truncateString } from 'utils';
 import BigNumber from 'bignumber.js';
 import { useDispatch, useSelector } from 'react-redux';
-import { Messages } from 'utils/types';
+import { Messages, SnackbarMessages } from 'utils/types';
 import NetworkIcons from 'components/primitives/NetworkIcons';
 import { reset } from 'redux-form';
 import Popup from 'components/Popup/Popup';
@@ -80,7 +80,7 @@ function Confirm({ fee, transfer, amountToSend, recoded, setBlockHash }: Props) 
         setBlockHash(msg.payload.block);
         setLoadingTransaction(false);
         setTransactionConfirmed(true);
-        goTo(Wallet, { showTransactionSendMessage: true });
+        goTo(Wallet, { snackbar: { show: true, message: SnackbarMessages.TransactionSent } });
       }
     });
   }, []);
