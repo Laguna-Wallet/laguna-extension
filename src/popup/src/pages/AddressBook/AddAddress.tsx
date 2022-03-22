@@ -19,6 +19,7 @@ import keyring from '@polkadot/ui-keyring';
 import AddressBook from './AddressBook';
 import AddressPencilIcon from 'assets/svgComponents/PencilIcon';
 import { addressExists, isValidPolkadotAddress } from 'utils/polkadot';
+import { SnackbarMessages } from 'utils/types';
 
 type AddAddressFormikValues = {
   addressName: string;
@@ -83,7 +84,7 @@ export default function AddAddress({
       if (redirectedFromSend) {
         backAction();
       } else {
-        goTo(AddressBook);
+        goTo(AddressBook, { snackbar: { show: true, message: SnackbarMessages.AddressAdded } });
       }
     }
   });
@@ -111,6 +112,14 @@ export default function AddAddress({
     if (redirectedFromSend) {
       backAction();
     } else {
+      goTo(AddressBook, { snackbar: { show: true, message: SnackbarMessages.AddressRemoved } });
+    }
+  };
+
+  const back = () => {
+    if (redirectedFromSend) {
+      backAction();
+    } else {
       goTo(AddressBook);
     }
   };
@@ -122,7 +131,7 @@ export default function AddAddress({
         setOpen={setOpen}
         title={`${edit ? 'Edit' : 'Add'} Address`}
         onClose={closeAction}
-        backAction={() => goTo(AddressBook)}
+        backAction={back}
       />
       <Content>
         <Form onSubmit={formik.handleSubmit}>
@@ -145,6 +154,7 @@ export default function AddAddress({
             onChange={formik.handleChange}
             bgColor="#303030"
             color="#adadad"
+            placeholderColor="#adadad"
             borderColor="#303030"
           />
           <HumbleInput
@@ -158,6 +168,7 @@ export default function AddAddress({
             error={formik.errors.address}
             bgColor="#303030"
             color="#adadad"
+            placeholderColor="#adadad"
             borderColor="#303030"
           />
           <HumbleInput
@@ -170,6 +181,7 @@ export default function AddAddress({
             onChange={formik.handleChange}
             bgColor="#303030"
             color="#adadad"
+            placeholderColor="#adadad"
             borderColor="#303030"
           />
 

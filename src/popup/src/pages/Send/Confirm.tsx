@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import walletBG from 'assets/imgs/walletBG.jpg';
+import loadingTransactionBg from 'assets/imgs/loading-transaction.png';
 import Header from 'pages/Wallet/Header';
 import SelectAsset from './SelectAsset';
 import Select from 'pages/Send/TokenAndAmountSelect';
@@ -19,10 +20,13 @@ import { useWizard } from 'react-use-wizard';
 import { memo, useEffect, useState } from 'react';
 import keyring from '@polkadot/ui-keyring';
 import Wallet from 'pages/Wallet/Wallet';
-import { truncateString } from 'utils';
+import { getAccountNameByAddress, truncateString } from 'utils';
 import BigNumber from 'bignumber.js';
 import { useDispatch, useSelector } from 'react-redux';
-import { Messages } from 'utils/types';
+import { Messages, SnackbarMessages } from 'utils/types';
+import NetworkIcons from 'components/primitives/NetworkIcons';
+import { reset } from 'redux-form';
+import Popup from 'components/Popup/Popup';
 
 type Props = {
   fee: string;
@@ -46,13 +50,14 @@ function Confirm({ fee, transfer, amountToSend, recoded, setBlockHash }: Props) 
 
   const price = prices[selectedAsset.chain.toLowerCase()]?.usd;
 
+  const chain = selectedAsset?.chain;
+
   const total = new BigNumber(amount)
     .plus(fee)
     .times(price || 0)
     .toFormat(4);
 
   const activeAccountAddress = account?.getActiveAccount()?.address;
-
   const name = account?.getActiveAccount()?.meta?.name;
 
   const handleClick = async () => {
@@ -62,27 +67,11 @@ function Confirm({ fee, transfer, amountToSend, recoded, setBlockHash }: Props) 
         sendTo: recoded,
         sendFrom: activeAccountAddress,
         amount: amountToSend,
-        chain: selectedAsset.chain
+        chain
       }
     });
-    setLoadingTransaction(true);
 
-    // const pair = keyring.getPair(activeAccountAddress);
-    // pair.unlock('123123123');
-    // // Todo Proper handling
-    // const unsub = await transfer
-    //   .signAndSend(pair, ({ status }: any) => {
-    //     if (status.isInBlock) {
-    //       console.log(`Completed at block hash #${status.asInBlock.toString()}`);
-    //       dispatch(setBlockHash(status.asInBlock.toString()));
-    //       nextStep();
-    //     } else {
-    //       console.log(`Current status: ${status.type}`);
-    //     }
-    //   })
-    //   .catch((error: any) => {
-    //     console.log(':( transaction failed', error);
-    //   });
+    setLoadingTransaction(true);
   };
 
   useEffect(() => {
@@ -91,7 +80,7 @@ function Confirm({ fee, transfer, amountToSend, recoded, setBlockHash }: Props) 
         setBlockHash(msg.payload.block);
         setLoadingTransaction(false);
         setTransactionConfirmed(true);
-        nextStep();
+        goTo(Wallet, { snackbar: { show: true, message: SnackbarMessages.TransactionSent } });
       }
     });
   }, []);
@@ -102,45 +91,105 @@ function Confirm({ fee, transfer, amountToSend, recoded, setBlockHash }: Props) 
     return total;
   };
 
+  const toName = getAccountNameByAddress(recoded);
+
   return (
     <Container>
-      <Header title="CONFIRM" backAction={() => previousStep()} />
+      <Header
+        title="CONFIRM"
+        bgColor="#f2f2f2"
+        closeAction={() => {
+          dispatch(reset('sendToken'));
+          goTo(Wallet);
+        }}
+        backAction={() => previousStep()}
+      />
       <Content>
-        <Text>
-          I want to <br />
-          send{' '}
-          <span>
+        <TextContainer>
+          <Text>
+            <NetworkIcons chain={chain} /> <span>I want to send</span>
+          </Text>{' '}
+          <Text>
             {amount} {token}
-          </span>{' '}
-          {/* todo actual name of the wallet */}
-          <br /> from <span>
-            {name && name.length > 14 ? truncateString(name) : name}
-          </span> <br /> to <span>{truncateString(address)}</span>
-        </Text>
-
-        <Info>
-          <InfoItem>
-            Fee ={' '}
-            <span>
-              {new BigNumber(fee).toFormat(4) + ` ${token.toUpperCase()}`} ( $
-              {new BigNumber(fee).times(price || 0).toFormat(4)} )
-            </span>
-          </InfoItem>
-
-          <InfoItem>
-            Total = <span> ${renderTotal(total)}</span>
-          </InfoItem>
-        </Info>
+          </Text>{' '}
+          <Text>
+            on the <Tag>{chain} Network</Tag>
+          </Text>
+          <AddressesInfo>
+            <AddressesInfoItem>
+              <span>From</span>
+              <span>
+                {name?.length > 10 ? truncateString(name, 5) : name}(
+                {truncateString(activeAccountAddress, 5)})
+              </span>
+            </AddressesInfoItem>
+            <AddressesInfoItem>
+              <span>To</span>
+              {toName && (
+                <span>
+                  {toName?.length > 10 ? truncateString(toName, 5) : toName}(
+                  {truncateString(recoded, 5)})
+                </span>
+              )}
+            </AddressesInfoItem>
+            <AddressesInfoItem>
+              <span>Total</span>
+              <span>
+                {new BigNumber(fee).plus(amount).toFormat(4)} {token.toUpperCase()}
+              </span>
+            </AddressesInfoItem>
+          </AddressesInfo>
+          {/* <span>{name && name.length > 14 ? truncateString(name) : name}</span> <br /> to{' '}
+          <span>{truncateString(address)}</span> */}
+        </TextContainer>
       </Content>
 
+      <Info>
+        <InfoItem>
+          <span>USD AMOUNT</span>
+          <span> ${renderTotal(total)}</span>
+        </InfoItem>
+
+        <InfoItem>
+          <span>Fee</span>
+          <span>
+            {new BigNumber(fee).toFormat(4) + ` ${token.toUpperCase()}`}
+            (${new BigNumber(fee).times(price || 0).toFormat(4)})
+          </span>
+        </InfoItem>
+      </Info>
+
       <BottomSection>
-        <BalanceInfo>Remaining Balance: </BalanceInfo>
-        <SwipeAndConfirm
-          confirmed={transactionConfirmed}
-          loading={loadingTransaction}
-          handleConfirm={() => handleClick()}
+        <Button
+          onClick={() => {
+            goTo(Wallet);
+            dispatch(reset('sendToken'));
+          }}
+          text="Cancel"
+          color="#111"
+          bgColor="#ececec"
+          borderColor="#ececec"
+          justify="center"
+          margin="10px 10px 0  0"
+        />
+        <Button
+          onClick={() => {
+            handleClick();
+          }}
+          text="Send"
+          color="#fff"
+          bgColor="#111"
+          borderColor="#111"
+          justify="center"
+          margin="10px 0 0 0"
         />
       </BottomSection>
+
+      {loadingTransaction && (
+        <Popup justify="center" align="center" onClose={() => undefined}>
+          <LoadingContainer bg={loadingTransactionBg}></LoadingContainer>
+        </Popup>
+      )}
     </Container>
   );
 }
@@ -165,56 +214,133 @@ const Container = styled.div<{ bg?: string }>`
 
 const Content = styled.div`
   padding: 0 15px;
-  margin-top: 50px;
+  margin-top: 15px;
 `;
 
-const Text = styled.span`
-  font-family: Sequel100Wide55Wide;
-  font-size: 26px;
-  color: #7c7c7c;
+const TextContainer = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  font-family: Inter;
+  font-size: 18px;
+  line-height: 1.35;
+  color: #18191a;
+  text-align: center;
+`;
+const Text = styled.div`
+  :nth-child(1) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  :nth-child(2) {
+    font-family: 'Work Sans';
+    font-size: 27px;
+    font-weight: 600;
+    color: #18191a;
+    text-transform: uppercase;
+  }
+
+  :nth-child(3) {
+    display: flex;
+    justify-content: center;
+  }
+
   span {
-    font-family: SFCompactDisplayRegular;
-    font-size: 20px;
+    margin-left: 5px;
+  }
+`;
+
+const AddressesInfo = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  margin-top: 15px;
+`;
+
+const AddressesInfoItem = styled.div`
+  width: 100%;
+  height: 48px;
+  border-radius: 4.1px;
+  background-color: #f3f3f3;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 16px;
+  box-sizing: border-box;
+  font-family: Inter;
+  font-size: 16px;
+  color: #000000;
+  margin-bottom: 12px;
+  span:nth-child(1) {
     font-weight: 600;
     color: #141414;
-    overflow: hidden;
-    width: 50px;
+  }
+
+  :last-child {
+    font-weight: 600;
   }
 `;
 
 const BottomSection = styled.div`
   width: 100%;
   display: flex;
-  flex-direction: column;
   padding: 0 15px;
   box-sizing: border-box;
   margin-top: auto;
 `;
 
-const BalanceInfo = styled.div`
-  font-size: 13.4px;
-  color: #0c0c0c;
+const Tag = styled.div`
+  width: 97px;
+  height: 23px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 60px;
+  font-family: 'IBM Plex Sans';
+  font-size: 10px;
+  color: #000;
+
+  background-image: linear-gradient(
+    to left,
+    #f5decc 85%,
+    #f2d2db 32%,
+    #d7cce2 -29%,
+    #c7dfe4 -90%,
+    #edf1e1 -145%,
+    #fff -192%
+  );
 `;
 
 const Info = styled.div`
   display: flex;
-  height: 72px;
   flex-direction: column;
   justify-content: center;
-  margin-top: 50px;
-  background-color: #f3f3f3;
-  border-radius: 5px;
-  padding: 0 15px;
-
-  span {
-    font-family: 'SFCompactDisplayRegular';
-    font-size: 13.4px;
-  }
+  margin-top: 32px;
+  padding: 0 20px;
+  box-sizing: border-box;
 `;
 
 const InfoItem = styled.div`
-  font-size: 13.4px;
-  span {
-    font-weight: 600;
-  }
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: Inter;
+  font-size: 14px;
+  color: #18191a;
+  margin-top: 5px;
+`;
+
+const LoadingContainer = styled.div<{ bg: string }>`
+  width: 100%;
+  height: 100%;
+  background-image: ${({ bg }) => `url(${bg})`};
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;

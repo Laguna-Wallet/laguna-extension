@@ -1,15 +1,9 @@
 import { chrome } from "@polkadot/extension-inject/chrome"
 
-export function parseEssentialDetails() {
-  let main: any = {}
-
-  main.performance = JSON.parse(JSON.stringify(window.performance)) || null
-  return main
-}
-// todo asap from .env
 const port = chrome.runtime.connect({ name: process.env.MESSAGING_PORT })
 // handles from background to page
 port.onMessage.addListener(function (data) {
+  console.log("~ aba aq ra xdeba ? data", data)
   // if (data.message === "GET_ACCOUNTS") {
   window.postMessage({ ...data, origin: process.env.MESSAGE_ORIGIN_CONTENT }, "*")
   // }
@@ -21,6 +15,7 @@ window.addEventListener("message", ({ data, source }) => {
     return
   }
 
+  console.log("~ aba aq ?", data)
   port.postMessage({ ...data, origin: process.env.MESSAGE_ORIGIN_CONTENT })
   // if (data.message === "GET_ACCOUNTS") {
   // }

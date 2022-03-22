@@ -45,6 +45,7 @@ export interface Network {
   price_change_percentage_24h?: number;
   marketCap?: number;
   encodeType?: string;
+  prefix: number;
 }
 
 export interface Asset {
@@ -58,6 +59,16 @@ export interface Asset {
 }
 
 export type Prices = Record<string, Record<string, number>>;
+
+export enum Prefixes {
+  westend = 42,
+  polkadot = 0,
+  kusama = 2,
+  moonriver = 1285,
+  moonbeam = 1284,
+  shiden = 5,
+  astar = 5
+}
 
 //==============================================================================
 // Messaging
@@ -116,6 +127,18 @@ export interface Transaction {
   nonce: string;
   hash: string;
   timestamp: string;
+}
+
+export enum SnackbarMessages {
+  WalletCreated = 'New Wallet Created',
+  AddressCopied = 'Address Copied',
+  TransactionSent = 'Transaction Sent',
+  AddressAdded = 'New Address Added',
+  AddressRemoved = 'Address Removed',
+  AutoLockUpdated = 'Auto-Lock Updated',
+  WalletRemoved = 'Wallet Removed',
+  AccessRevoked = 'Access Revoked',
+  DepositRecieved = 'New Deposit Recieved'
 }
 
 //==============================================================================
@@ -189,4 +212,22 @@ export interface Injected {
   signer: InjectedSigner;
 }
 
-export const chains = ['westend', 'polkadot', 'kusama', 'moonriver', 'moonbeam', 'shiden', 'astar'];
+export const chains = [
+  'westend',
+  'polkadot',
+  'kusama',
+  // 'moonriver',
+  //  'moonbeam',
+  // 'shiden',
+  'astar'
+];
+
+export interface TokenInfo {
+  current_price: number;
+  id: string;
+  market_cap: number;
+  market_cap_change_24h: number;
+  market_cap_change_percentage_24h: number;
+  name: string;
+  symbol: string;
+}

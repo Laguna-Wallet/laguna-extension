@@ -1,19 +1,30 @@
 import styled from 'styled-components';
 import { Turn as Hamburger } from 'hamburger-react';
 import LeftArrowIcon from 'assets/svgComponents/LeftArrowIcon';
-import Wallet from 'pages/Wallet/Wallet';
-import { goTo } from 'react-chrome-extension-router';
 import { useAccount } from 'context/AccountContext';
 import { getBase64, truncateString } from 'utils';
 import { useRef, useState } from 'react';
-import { PencilAltIcon, PencilIcon } from '@heroicons/react/outline';
 import useOutsideClick from 'hooks/useOutsideClick';
-import { addAccountMeta } from 'utils/polkadot';
-import { saveToStorage } from 'utils/chrome';
-import { StorageKeys } from 'utils/types';
-import AddressBook from 'pages/AddressBook/AddressBook';
-import ContactsIcon from 'assets/svgComponents/ContactsIcon';
+import { addAccountMeta, changeAccountPicture } from 'utils/polkadot';
 import EditIcon from 'assets/svgComponents/EditIcon';
+import PencilIcon from 'assets/svgComponents/PencilIcon';
+import Resizer from 'react-image-file-resizer';
+
+const resizeFile = (file: File) =>
+  new Promise((resolve) => {
+    Resizer.imageFileResizer(
+      file,
+      300,
+      300,
+      'JPEG',
+      100,
+      0,
+      (uri) => {
+        resolve(uri);
+      },
+      'base64'
+    );
+  });
 
 type Props = {
   isOpen: boolean;
@@ -23,19 +34,6 @@ type Props = {
   title?: string;
   backAction?: () => void;
 };
-
-const fileTypes = [
-  'image/apng',
-  'image/bmp',
-  'image/gif',
-  'image/jpeg',
-  'image/pjpeg',
-  'image/png',
-  'image/svg+xml',
-  'image/tiff',
-  'image/webp',
-  'image/x-icon'
-];
 
 export default function MenuHeader({
   isOpen,
@@ -88,16 +86,17 @@ export default function MenuHeader({
     if (!event.target.files) {
       return;
     }
-    const base64 = await getBase64(event.target.files[0]);
 
-    const newAccount = addAccountMeta(address, { img: base64 });
+    const base64 = await resizeFile(event.target.files[0]);
+
+    const newAccount = changeAccountPicture(address, { img: base64 });
     account.saveActiveAccount(newAccount);
   };
 
   return (
     <Container>
       <Header>
-        <span>Laguna Wallet</span>
+        <span>Laguna</span>
         <BurgerMenu>
           <Hamburger toggled={isOpen} toggle={onClose} size={20} color="#fff" />
         </BurgerMenu>
@@ -141,10 +140,10 @@ export default function MenuHeader({
                   setEditMode(true);
                   inputRef && inputRef?.current?.focus();
                 }}>
-                <PencilIcon width={15} />
+                <PencilIcon />
               </PencilIconContainer>
             </Name>
-            <Address>{address && truncateString(address)}</Address>
+            {/* <Address>{address && truncateString(address)}</Address> */}
           </Text>
         </User>
       )}
@@ -163,8 +162,9 @@ const Header = styled.div`
   justify-content: space-between;
   align-items: center;
   color: #fff;
-  font-size: 13px;
-  font-family: 'Sequel100Wide55Wide';
+  font-size: 17px;
+  font-family: 'Work Sans';
+  font-weight: 500;
 `;
 
 const BurgerMenu = styled.div`
@@ -184,10 +184,12 @@ const Text = styled.div`
   display: flex;
   flex-direction: column;
   text-align: left;
-  margin-left: 20px;
-  color: #fff;
-  font-family: 'Sequel100Wide55Wide';
   flex: 1;
+  margin-left: 18px;
+  color: #fff;
+  font-family: 'IBM Plex Sans';
+  font-size: 23px;
+  font-weight: 500;
 `;
 
 const Name = styled.div`
@@ -201,7 +203,8 @@ const NameInput = styled.input`
   background-color: transparent;
   color: #fff;
   font-size: 23px;
-  font-family: 'Sequel100Wide55Wide';
+  font-family: 'IBM Plex Sans';
+  font-weight: 500;
   border: 0;
   outline: 0;
 `;

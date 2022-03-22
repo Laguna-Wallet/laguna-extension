@@ -1,41 +1,46 @@
 import BigNumber from 'bignumber.js';
 import NetworkIcons from 'components/primitives/NetworkIcons';
-import { useEffect, useState } from 'react';
+import TokenDashboard from 'pages/TokenDashboard/TokenDashboard';
+import { Link } from 'react-chrome-extension-router';
 import styled from 'styled-components';
-import { Account_Search, Price_Converter } from 'utils/Api';
-import { getApiInstance } from 'utils/polkadot';
 import { Asset } from 'utils/types';
-import { isNumeric } from 'utils/validations';
 
 type Props = {
   accountAddress: string;
   // Todo Appropriate typing
   asset: Asset;
+  handleClick: () => void;
 };
 
-export default function ChainItem({ asset, accountAddress }: Props) {
+export default function ChainItem({ asset, accountAddress, handleClick }: Props) {
   return (
-    <Container>
+    // <StyledLink component={TokenDashboard} props={{ asset }}>
+    <Container onClick={handleClick}>
       <ListItemIcon>
         <NetworkIcons chain={asset.chain} />
       </ListItemIcon>
       <ListItemText>
-        <Title>{asset.chain}</Title>
+        <Title fs="17px">{asset.chain}</Title>
         <Tag>{asset.chain}</Tag>
       </ListItemText>
       <ListItemText>
-        <Title>
+        <Title fs="14px">
           {new BigNumber(asset?.balance).toFormat(4, 1) || 0} {asset.symbol}
         </Title>
         <Value>${new BigNumber(asset.calculatedPrice).toFixed(2)}</Value>
       </ListItemText>
     </Container>
+    // </StyledLink>
   );
 }
 
+const StyledLink = styled(Link)`
+  text-decoration: none;
+`;
+
 const Container = styled.div`
-  width: 99%;
-  height: 65px;
+  width: 323px;
+  height: 59px;
   display: flex;
   align-items: center;
   background-color: #ffffff;
@@ -43,7 +48,7 @@ const Container = styled.div`
   padding: 14px 12px;
   box-sizing: border-box;
   border-radius: 4px;
-  font-family: 'Sequel100Wide55Wide';
+  cursor: pointer;
 `;
 
 const ListItemIcon = styled.div`
@@ -58,6 +63,9 @@ const ListItemText = styled.div`
   flex-direction: column;
   margin-left: 15px;
   text-align: left;
+  font-family: 'IBM Plex Sans';
+  font-size: 17px;
+  font-weight: 500;
 
   :nth-child(3) {
     text-align: right;
@@ -65,23 +73,22 @@ const ListItemText = styled.div`
   }
 `;
 
-const Title = styled.div`
-  font-size: 14px;
+const Title = styled.div<{ fs: string }>`
+  font-size: ${({ fs }) => fs || '17px'};
+  text-transform: capitalize;
+  color: #000;
 `;
 
 const Tag = styled.div`
   font-size: 10px;
-  background-color: #eeeeee;
-  text-align: center;
-  padding: 2px 5px;
+  font-family: 'IBM Plex Sans';
   box-sizing: border-box;
-  border-radius: 50px;
-  color: #757575;
-  font-family: 'SFCompactDisplayRegular';
-  margin-top: 3px;
+  color: #777e90 !important;
+  text-transform: capitalize;
 `;
 
 const Value = styled.div`
-  font-size: 12px;
-  font-family: 'SFCompactDisplayRegular';
+  font-size: 10px;
+  font-family: 'IBM Plex Sans';
+  color: #23262f;
 `;

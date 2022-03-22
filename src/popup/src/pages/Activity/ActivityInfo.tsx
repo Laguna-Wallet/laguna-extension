@@ -18,7 +18,8 @@ import BN from 'bn.js';
 import RightArrow from 'assets/svgComponents/RightArrow';
 import ExportTransactionIcon from 'assets/svgComponents/ExportTransactionIcon';
 import { TokenSymbols, Transaction } from 'utils/types';
-import { CSVLink, CSVDownload } from 'react-csv';
+import { CSVLink } from 'react-csv';
+import { format } from 'date-fns';
 
 type Props = {
   transaction: Transaction;
@@ -52,7 +53,8 @@ export default function AccountInfo({ transaction }: Props) {
     ['Amount', `${amount} ${symbol}`],
     ['Gas Fee', `${gasFee} ${symbol}`],
     ['Total', `${total} ${symbol}`],
-    ['Total in currency', `${totalInUsd} usd`]
+    ['Total in currency', `${totalInUsd} usd`],
+    ['Date', `${format(Number(transaction.timestamp) * 1000, 'dd/MMM/yyyy pp')}`]
   ];
 
   return (
@@ -70,7 +72,7 @@ export default function AccountInfo({ transaction }: Props) {
             View on Polkadot explorer
           </RowRight>
         </Row>
-        <Row>
+        <Row marginTop="8px">
           <RowLeft>Confirmed</RowLeft>
           <RowRight
             style={{ cursor: 'pointer' }}
@@ -80,7 +82,7 @@ export default function AccountInfo({ transaction }: Props) {
             Copy Transaction ID
           </RowRight>
         </Row>
-        <Row>
+        <Row marginTop="23px">
           <Direction>
             <span>From</span>
             <Address>{truncateString(from)}</Address>
@@ -99,23 +101,23 @@ export default function AccountInfo({ transaction }: Props) {
         <Title>
           <span>Transaction</span>
         </Title>
-        <Row>
+        <Row marginTop="20px">
           <RowLeft>Nonce</RowLeft>
           <RowRight>{nonce}</RowRight>
         </Row>
-        <Row>
+        <Row marginTop="8px">
           <RowLeft>Amount</RowLeft>
           <RowRight>
             {amount} {symbol}
           </RowRight>
         </Row>
-        <Row>
+        <Row marginTop="8px">
           <RowLeft>Gas Fee</RowLeft>
           <RowRight>
             {gasFee.toFormat(4, 1)} {symbol}
           </RowRight>
         </Row>
-        <Row>
+        <Row marginTop="8px">
           <RowLeft> Total</RowLeft>
           <RowRight>
             <TotalValue>
@@ -146,7 +148,7 @@ const Container = styled.div`
   background-color: #f1f1f1;
   position: relative;
   background-size: cover;
-  padding: 15px;
+  padding: 23px;
   box-sizing: border-box;
   overflow: hidden;
 `;
@@ -155,7 +157,7 @@ const ContentItem = styled.div`
   display: flex;
   flex-direction: column;
   :nth-child(2) {
-    margin-top: 50px;
+    margin-top: 30px;
   }
 `;
 
@@ -165,9 +167,10 @@ const Title = styled.div`
   align-items: center;
   padding-bottom: 10px;
   span {
+    font-family: 'IBM Plex Sans';
     font-size: 17px;
-    color: #000000;
-    font-family: 'Sequel100Wide55Wide';
+    font-weight: 500;
+    color: #18191a;
   }
   border-bottom: 1px solid #111;
 `;
@@ -176,21 +179,22 @@ const CloseIconContainer = styled.div`
   cursor: pointer;
 `;
 
-const Row = styled.div`
+const Row = styled.div<{ marginTop?: string }>`
   display: flex;
   justify-content: space-between;
-  margin-top: 15px;
+  margin-top: ${({ marginTop }) => marginTop || '15px'};
 `;
 
 const RowLeft = styled.span`
-  font-family: SFCompactDisplayRegular;
-  font-size: 16px;
-  font-weight: 600;
+  font-family: 'IBM Plex Sans';
+  font-size: 12px;
+  color: #18191a;
 `;
 
 const RowRight = styled.span`
-  font-family: SFCompactDisplayRegular;
-  font-size: 14px;
+  font-family: 'IBM Plex Sans';
+  font-size: 12px;
+  color: #18191a;
 `;
 
 const TotalValue = styled.div`
@@ -207,10 +211,14 @@ const TotalValue = styled.div`
 const Direction = styled.div`
   display: flex;
   flex-direction: column;
+  color: #18191a;
+  :nth-child(2) {
+    align-items: flex-end;
+  }
   span {
-    font-family: SFCompactDisplayRegular;
+    font-family: Inter;
     font-size: 16px;
-    font-weight: 600;
+    font-weight: 500;
   }
   :nth-child(2) {
     span {
@@ -245,6 +253,9 @@ const ExportButton = styled.div`
   justify-content: center;
   cursor: pointer;
   text-decoration: none;
+  font-family: 'IBM Plex Sans';
+  font-size: 12px;
+
   span {
     margin-left: 5px;
   }

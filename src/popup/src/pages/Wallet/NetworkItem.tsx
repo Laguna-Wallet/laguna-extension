@@ -23,11 +23,11 @@ export default function NetworkItem({ network }: Props) {
               .replace(/,/g, '')
               .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
         </Title>
-        <Value>
+        {/* <Value>
           {' '}
           {network?.price_change_percentage_24h &&
             `${Number(network?.price_change_percentage_24h).toFixed(2)}%`}
-        </Value>
+        </Value> */}
       </ListItemText>
     </Container>
   );
@@ -35,7 +35,7 @@ export default function NetworkItem({ network }: Props) {
 
 const Container = styled.div`
   width: 99%;
-  height: 65px;
+  height: 59px;
   display: flex;
   align-items: center;
   background-color: #ffffff;
@@ -66,22 +66,21 @@ const ListItemText = styled.div`
 `;
 
 const Title = styled.div`
+  font-family: 'IBM Plex Sans';
   font-size: 14px;
+  font-weight: 500;
+  text-transform: capitalize;
 `;
 
 const Tag = styled.div`
   font-size: 10px;
-  background-color: #eeeeee;
-  padding: 2px 5px;
-  box-sizing: border-box;
-  border-radius: 50px;
-  color: #757575;
-  font-family: 'SFCompactDisplayRegular';
+  color: #777e90;
+  font-family: 'IBM Plex Sans';
   margin-top: 3px;
 `;
 
 const Value = styled.div`
-  font-size: 12px;
-  font-family: 'SFCompactDisplayRegular';
-  color: #62c660;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: 'IBM Plex Sans';
 `;

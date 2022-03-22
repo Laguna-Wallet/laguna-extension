@@ -3,32 +3,41 @@ import CreateAccount from 'pages/CreateAccount/CreateAccount';
 import { Link } from 'react-chrome-extension-router';
 import styled from 'styled-components';
 import { PageContainer } from 'components/ui';
-import DonutIcon from 'assets/svgComponents/DonutIcon';
-// import donut from '../../assets/imgs/donut.png';
-import donut from 'assets/imgs/donut.png';
+
+import signUpBg from 'assets/imgs/sign-up-bg.png';
+import mainLogoSvg from 'assets/imgs/main-logo-white.svg';
 
 import ImportAccount from 'pages/AddImportForExistingUsers/ImportAccount';
 
 export default function SignUp() {
   return (
-    <PageContainer>
+    <PageContainer bgImage={signUpBg}>
       <IconSection>
-        <IconContainer donut={donut}>{/* <DonutIcon /> */}</IconContainer>
+        <IconContainer img={mainLogoSvg}>{/* <DonutIcon /> */}</IconContainer>
       </IconSection>
       <MainSection>
-        <Title>HYDROX</Title>
+        <Title>Laguna</Title>
         <Description>Polkadot Wallet for Web 3.0</Description>
         <StyledLink component={CreateAccount} props={{ redirectedFromSignUp: true }}>
-          <Button text="Create New Wallet" margin="40px 0 0 0" justify="center" />
+          <Button
+            width="226px"
+            text="Create New Wallet"
+            borderColor="#111"
+            margin="26px 0 0 0"
+            justify="center"
+            boxShadow="0 4px 33px 0 rgba(30, 35, 53, 0.15)"
+          />
         </StyledLink>
         <StyledLink component={ImportAccount} props={{ redirectedFromSignUp: true }}>
           <Button
+            width="226px"
             text="Import Wallet"
             bgColor="#fff"
             color="#111"
-            borderColor="#111"
+            borderColor="#fff"
             margin="12px 0 0 0"
             justify="center"
+            boxShadow="0 4px 50px 0 rgba(0, 0, 0, 0.1)"
           />
         </StyledLink>
         <Text>Contact Support</Text>
@@ -43,18 +52,20 @@ const IconSection = styled.div`
   position: relative;
 `;
 
-const IconContainer = styled.div<{ donut: string }>`
+const IconContainer = styled.div<{ img: string }>`
   width: 279px;
   height: 279px;
-  background-image: ${({ donut }) => `url(${donut})`};
+  background-image: ${({ img }) => `url(${img})`};
   background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center cen;
   position: absolute;
-  left: 69px;
+  left: -26px;
   top: -10px;
 `;
 
 const StyledLink = styled(Link)`
-  width: 100%;
+  width: 226px;
   text-decoration: none;
   cursor: pointer;
 `;
@@ -62,26 +73,30 @@ const StyledLink = styled(Link)`
 const MainSection = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
+  justify-content: center;
+  margin-top: auto;
 `;
 
 const Title = styled.div`
-  font-size: 22px;
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  font-family: 'Sequel100Wide55Wide';
+  font-size: 38.1px;
+  font-weight: 500;
+  letter-spacing: -1.14px;
+  font-family: 'Work Sans';
+  color: #18191a;
 `;
 
 const Description = styled.div`
-  color: #808080;
-  font-size: 14px;
+  color: #777e90;
+  font-size: 16px;
   font-weight: 400;
-  font-family: 'SFCompactDisplayRegular';
-  margin-top: 5px;
+  font-family: Inter;
+  margin-top: 6px;
 `;
 
 const Text = styled.div`
+  font-family: 'IBM Plex Sans';
+  margin-top: 20px;
+  color: #777e90;
   font-size: 12px;
-  color: #808080;
-  margin-top: 24px;
 `;

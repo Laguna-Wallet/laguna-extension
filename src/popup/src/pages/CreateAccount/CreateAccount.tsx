@@ -76,7 +76,12 @@ export default function CreateAccount({ redirectedFromSignUp, encodePhase }: Pro
         setLevel={setSecurityLevel}
         redirectedFromSignUp={redirectedFromSignUp}
       />
-      <EncodeAccount handleEncode={handleEncode} onClose={onClose} onBack={onBack} />
+      <EncodeAccount
+        title="Account Created"
+        handleEncode={handleEncode}
+        onClose={onClose}
+        onBack={onBack}
+      />
       <SetupComplete />
     </Wizard>
   );

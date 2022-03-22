@@ -146,7 +146,8 @@ function ImportPhase({ errors, onClose, redirectedFromSignUp }: Props) {
                 </IconContainerBorder>
               ) : (
                 <IconContainer onClick={open}>
-                  {isDragActive ? <ActiveImportIcon /> : <FileUploadIcon />}
+                  {/* {isDragActive ? <ActiveImportIcon /> : <FileUploadIcon fill="#777e90" />} */}
+                  <FileUploadIcon fill="#777e90" />
                 </IconContainer>
               )}
               {uploaded ? <Text>Upload Complete</Text> : ''}
@@ -163,12 +164,14 @@ function ImportPhase({ errors, onClose, redirectedFromSignUp }: Props) {
                 component={HumbleInput}
                 props={{
                   type: 'textarea',
-                  height: '120px',
-                  fontSize: '20px',
+                  height: '72px',
+                  fontSize: '18px',
                   marginTop: '20px',
                   textAlign: 'center',
                   bgColor: '#fff',
                   borderColor: '#fff',
+                  color: '#b1b5c3',
+                  placeholderColor: '#b1b5c3',
                   hideErrorMsg: false,
                   autoFocus: true
                 }}
@@ -176,7 +179,6 @@ function ImportPhase({ errors, onClose, redirectedFromSignUp }: Props) {
             </InputContainer>
           )}
         </DndContainer>
-
         {uploaded && (
           <Field
             id="password"
@@ -188,10 +190,12 @@ function ImportPhase({ errors, onClose, redirectedFromSignUp }: Props) {
             props={{
               type: 'password',
               height: '45px',
+              fontSize: '14px',
               marginTop: '20px',
               textAlign: 'center',
-              bgColor: '#ececec',
-              color: '#434343',
+              bgColor: '#f2f2f2',
+              color: '#b1b5c3',
+              placeholderColor: '#b1b5c3',
               hideErrorMsg: false,
               autoFocus: true
             }}
@@ -204,15 +208,16 @@ function ImportPhase({ errors, onClose, redirectedFromSignUp }: Props) {
           disabled={isDisabled()}
           text="import"
           margin="10px 0 0 0"
+          justify="center"
           Icon={<RightArrow width={23} fill="#fff" />}
         />
-
         <Snackbar
+          width={'90%'}
           isOpen={isSnackbarOpen}
           message={snackbarError}
           close={() => setIsSnackbarOpen(false)}
           type="error"
-          left="0px"
+          align="left"
           bottom={seedPhase ? '100px' : file ? '150px' : '100px'}
         />
       </Content>
@@ -243,7 +248,21 @@ const IconContainerBorder = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-image: linear-gradient(146deg, #1cc3ce -9%, #b5f400 118%);
+  background-image: linear-gradient(
+    to right top,
+    #d7cce2,
+    #ddcde1,
+    #e3cee0,
+    #e8cfdf,
+    #edd0dd,
+    #f1d1db,
+    #f4d2d8,
+    #f6d4d6,
+    #f8d6d3,
+    #f8d8d0,
+    #f7dbcd,
+    #f5decc
+  );
   padding: 5px;
   border-radius: 100%;
 `;
@@ -280,13 +299,13 @@ const IconContainer = styled.div<{ isDragActive?: boolean; acceptedFilesLength?:
   border-radius: 100%;
   cursor: pointer;
   background-color: ${({ isDragActive, acceptedFilesLength }) =>
-    isDragActive || acceptedFilesLength ? '#f4f4f6' : '#f4f4f6'};
+    isDragActive || acceptedFilesLength ? '#f9fafb' : '#f9fafb'};
 `;
 
 const UploadedIconContainer = styled.div`
   width: 100%;
   height: 100%;
-  background-color: #f4f4f6;
+  background-color: #f9fafb;
   border-radius: 100%;
   display: flex;
   align-items: center;

@@ -17,17 +17,17 @@ export default function Footer({ activeItem }: Props) {
   return (
     <Container>
       <StyledLink component={Wallet}>
-        {activeItem === 'wallet' ? <WalletIcon fill="" /> : <WalletIcon fill="" />}
+        {activeItem === 'wallet' ? (
+          <WalletIcon stroke="#18191a" />
+        ) : (
+          <WalletIcon stroke="#b1b5c3" />
+        )}
       </StyledLink>
       <StyledLink component={Wallet}>
-        <ArrowsIcon />
+        <ArrowsIcon stroke="#b1b5c3" />
       </StyledLink>
       <StyledLink component={Activity}>
-        {activeItem === 'activity' ? (
-          <ActiveActivities activeActivities={activeActivities} />
-        ) : (
-          <LightingIcon />
-        )}
+        {activeItem === 'activity' ? <LightingIcon fill="#18191a" /> : <LightingIcon />}
       </StyledLink>
     </Container>
   );
@@ -39,7 +39,7 @@ const Container = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-around;
-  background-color: #111;
+  background-color: #fff;
   position: absolute;
   bottom: 0;
   left: 0;
@@ -58,10 +58,10 @@ const StyledLink = styled(Link)`
   }
 `;
 
-const ActiveActivities = styled.div<{ activeActivities: string }>`
-  width: 12px;
-  height: 20px;
-  background-image: ${({ activeActivities }) => `url(${activeActivities})`};
-  background-repeat: no-repeat;
-  background-size: cover;
-`;
+// const ActiveActivities = styled.div<{ activeActivities: string }>`
+//   width: 12px;
+//   height: 20px;
+//   background-image: ${({ activeActivities }) => `url(${activeActivities})`};
+//   background-repeat: no-repeat;
+//   background-size: cover;
+// `;

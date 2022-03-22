@@ -1,0 +1,31 @@
+{
+  "files": {
+    "main.css": "./static/css/main.768bf798.chunk.css",
+    "main.js": "./static/js/main.199f77e0.chunk.js",
+    "main.js.map": "./static/js/main.199f77e0.chunk.js.map",
+    "runtime-main.js": "./static/js/runtime-main.988b9386.js",
+    "runtime-main.js.map": "./static/js/runtime-main.988b9386.js.map",
+    "static/js/2.a093e90e.chunk.js": "./static/js/2.a093e90e.chunk.js",
+    "static/js/2.a093e90e.chunk.js.map": "./static/js/2.a093e90e.chunk.js.map",
+    "static/js/3.3f041b2f.chunk.js": "./static/js/3.3f041b2f.chunk.js",
+    "static/js/3.3f041b2f.chunk.js.map": "./static/js/3.3f041b2f.chunk.js.map",
+    "index.html": "./index.html",
+    "static/css/main.768bf798.chunk.css.map": "./static/css/main.768bf798.chunk.css.map",
+    "static/js/2.a093e90e.chunk.js.LICENSE.txt": "./static/js/2.a093e90e.chunk.js.LICENSE.txt",
+    "static/media/index.css": "./static/media/Sequel100Wide-55Wide.ef241fea.svg",
+    "static/media/activity-bg.30ba5a6a.png": "./static/media/activity-bg.30ba5a6a.png",
+    "static/media/dashboard-bg.2743236f.png": "./static/media/dashboard-bg.2743236f.png",
+    "static/media/encode-bg.4c6fc58c.png": "./static/media/encode-bg.4c6fc58c.png",
+    "static/media/loading-transaction.2c293b2b.png": "./static/media/loading-transaction.2c293b2b.png",
+    "static/media/main-logo-white.4446f71e.svg": "./static/media/main-logo-white.4446f71e.svg",
+    "static/media/sign-up-bg.4c6fc58c.png": "./static/media/sign-up-bg.4c6fc58c.png",
+    "static/media/transaction-sent.dc8dd420.png": "./static/media/transaction-sent.dc8dd420.png",
+    "static/media/walletBG.d7434262.jpg": "./static/media/walletBG.d7434262.jpg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.988b9386.js",
+    "static/js/2.a093e90e.chunk.js",
+    "static/css/main.768bf798.chunk.css",
+    "static/js/main.199f77e0.chunk.js"
+  ]
+}

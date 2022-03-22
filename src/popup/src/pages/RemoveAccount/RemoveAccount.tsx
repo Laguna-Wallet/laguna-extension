@@ -14,7 +14,7 @@ import styled from 'styled-components';
 import { truncateString } from 'utils';
 import { clearFromStorage } from 'utils/chrome';
 import { validatePassword } from 'utils/polkadot';
-import { Messages, StorageKeys } from 'utils/types';
+import { Messages, SnackbarMessages, StorageKeys } from 'utils/types';
 
 export default function RemoveAccount() {
   const [isOpen, setOpen] = useState<boolean>(true);
@@ -53,7 +53,7 @@ export default function RemoveAccount() {
       payload: { address }
     });
 
-    goTo(Wallet);
+    goTo(Wallet, { snackbar: { show: true, message: SnackbarMessages.WalletRemoved } });
   };
 
   return (
@@ -85,10 +85,11 @@ export default function RemoveAccount() {
           value={password}
           placeholder="Enter your password"
           onChange={(e: any) => setPassword(e.target.value)}
-          height="45px"
+          height="48px"
           bgColor="#303030"
-          borderColor="#303030"
+          borderColor="#color"
           color="#9c9c9c"
+          placeholderColor="#9c9c9c"
           marginTop="auto"
         />
 

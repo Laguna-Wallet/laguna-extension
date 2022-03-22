@@ -1,21 +1,20 @@
 import styled from 'styled-components';
-import ArrowSmRightIcon from '@heroicons/react/outline/ArrowSmRightIcon';
 import Button from 'components/primitives/Button';
-import Input from 'components/primitives/Input';
 import { useWizard } from 'react-use-wizard';
 import { useFormik } from 'formik';
 import { passwordStrength } from 'check-password-strength';
 import { calculatePasswordCheckerColor } from 'utils';
 import { createPasswordSchema } from 'utils/validations';
 import Snackbar from 'components/Snackbar/Snackbar';
-import CloseIcon from 'assets/svgComponents/CloseIcon';
 import { useAccount } from 'context/AccountContext';
-import { memo, ReactEventHandler, useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import RightArrow from 'assets/svgComponents/RightArrow';
+import HumbleInput from 'components/primitives/HumbleInput';
 
 function CreatePassword() {
   const { nextStep } = useWizard();
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
+  const [snackbarMessage, setSnackbarMessage] = useState<string>('Please fix the existing errors');
 
   const account = useAccount();
   // todo refactor, change formik to redux-form
@@ -41,6 +40,15 @@ function CreatePassword() {
 
     if (!formik.isValid) {
       setIsSnackbarOpen(true);
+      console.log('~ formik.errors', formik.errors);
+      if (
+        formik.errors['password'] === 'Passwords do not match' &&
+        formik.errors['confirmPassword'] === 'Passwords do not match'
+      ) {
+        setSnackbarMessage("Passwords Don't Match");
+      } else {
+        setSnackbarMessage('Please fix existing errors');
+      }
       return;
     }
 
@@ -51,20 +59,24 @@ function CreatePassword() {
     <Container>
       <Form>
         <MainContent>
-          <Title>CREATE PASSWORD</Title>
+          <Title>Create Password</Title>
           <Description>Please create a secure password to unlock your HydroX wallet:</Description>
-          <Input
+          <HumbleInput
             id="password"
             value={formik.values.password}
             onChange={formik.handleChange}
             type="password"
-            placeholder="password"
+            placeholder="Password"
             label="New password"
             error={formik.errors['password']}
             touched={formik.touched['password']}
             marginTop="24px"
-            height="60px"
+            height="48.7px"
             autoFocus={true}
+            borderColor="#e6e8ec"
+            fontSize="14px"
+            color="#b1b5c3"
+            placeholderColor="#b1b5c3"
           />
           <PasswordStrength>
             Password strength:{' '}
@@ -73,32 +85,39 @@ function CreatePassword() {
             </LengthIndicator>
           </PasswordStrength>
 
-          <Input
+          <HumbleInput
             id="confirmPassword"
             value={formik.values.confirmPassword}
             onChange={formik.handleChange}
             type="password"
-            placeholder="password"
+            placeholder="Password"
             label="Confirm password"
             error={formik.errors['confirmPassword']}
             touched={formik.touched['confirmPassword']}
+            height="48.7px"
             marginTop="16px"
-            height="60px"
+            fontSize="14px"
+            color="#b1b5c3"
+            placeholderColor="#b1b5c3"
           />
         </MainContent>
         <Snackbar
+          width="90%"
           isOpen={isSnackbarOpen}
-          message="Please fix the existing errors"
+          message={snackbarMessage}
           close={() => setIsSnackbarOpen(false)}
           type="error"
-          left="0"
           bottom="90px"
+          align="left"
         />
+
         <Button
           type="button"
           onClick={handleSubmit}
           Icon={<RightArrow width={23} />}
           text={'Create Password'}
+          margin="auto 0px 0px 0px"
+          justify="center"
         />
       </Form>
     </Container>
@@ -112,7 +131,7 @@ const Container = styled.div`
   height: 100%;
   box-sizing: border-box;
   position: relative;
-  background-color: #f8f8f8;
+  background-color: #ffffff;
   padding: 30px 16px 38px 16px;
   box-sizing: border-box;
 `;
@@ -122,26 +141,30 @@ const Form = styled.form`
   height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: center;
 `;
 
 const Title = styled.span`
-  font-size: 17px;
-  font-family: 'Sequel100Wide55Wide';
-  letter-spacing: 0.85px;
-  color: #000000;
+  font-family: 'IBM Plex Sans';
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 1.82;
+  text-align: left;
+  color: #18191a;
 `;
 
 const Description = styled.span`
-  margin-top: 16px;
-  font-family: 'SFCompactDisplayRegular';
+  margin-top: 12px;
+  font-family: Inter;
   font-size: 16px;
-  color: #767e93;
+  line-height: 1.45;
+  color: #353945;
 `;
 
 const MainContent = styled.div`
   display: flex;
   flex-direction: column;
+  margin-top: auto;
 `;
 
 const PasswordStrength = styled.div`

@@ -5,7 +5,6 @@ import { Dispatch, useEffect, useState } from 'react';
 import TokenAndAmountSelect from 'pages/Send/TokenAndAmountSelect';
 import ContactsIcon from 'assets/svgComponents/ContactsIcon';
 import WalletIcon from 'assets/svgComponents/WalletIcon';
-import BarcodeIcon from 'assets/svgComponents/BarcodeIcon';
 import SharpIcon from 'assets/svgComponents/SharpIcon';
 import HumbleInput from 'components/primitives/HumbleInput';
 import Button from 'components/primitives/Button';
@@ -36,7 +35,13 @@ import {
   formValueSelector
 } from 'redux-form';
 import Snackbar from 'components/Snackbar/Snackbar';
-import { isObjectEmpty, objectToArray } from 'utils';
+import { isObjectEmpty, objectToArray, truncateString } from 'utils';
+import Wallet from 'pages/Wallet/Wallet';
+import NetworkIcons from 'components/primitives/NetworkIcons';
+import AccountsPopup from './AccountsPopup';
+import BarcodeSendIcon from 'assets/svgComponents/BarcodeSendIcon';
+import { PropsFromTokenDashboard } from 'pages/Recieve/Receive';
+import TokenDashboard from 'pages/TokenDashboard/TokenDashboard';
 
 // const renderInputElement = ({ input, label, type, meta: { touched, error, warning } }: any) => (
 //   <SelectContainer>
@@ -85,6 +90,7 @@ type Props = {
   errors?: any;
   abilityToTransfer: boolean;
   amount: string;
+  propsFromTokenDashboard: PropsFromTokenDashboard;
 };
 
 const handleShowAccountInput = (flow: string | undefined, address: string | undefined): boolean => {
@@ -106,7 +112,8 @@ function SendToken({
   handleSubmit,
   errors,
   abilityToTransfer,
-  amount
+  amount,
+  propsFromTokenDashboard
 }: Props) {
   const dispatch = useDispatch();
   const { nextStep, previousStep } = useWizard();
@@ -181,9 +188,13 @@ function SendToken({
   };
 
   const handleBack = () => {
-    previousStep();
-    dispatch(reset('sendToken'));
-    setFlow(undefined);
+    if (propsFromTokenDashboard?.fromTokenDashboard) {
+      goTo(TokenDashboard, { asset: propsFromTokenDashboard.asset });
+    } else {
+      previousStep();
+      dispatch(reset('sendToken'));
+      setFlow(undefined);
+    }
   };
 
   useEffect(() => {
@@ -206,12 +217,19 @@ function SendToken({
 
   return (
     <Container>
-      <Header title={`SEND ${selectedAsset?.chain}`} backAction={handleBack} />
+      <Header
+        title={`SEND ${selectedAsset?.symbol}  (${selectedAsset?.chain})`}
+        closeAction={() => {
+          dispatch(reset('sendToken'));
+          goTo(Wallet);
+        }}
+        backAction={handleBack}
+        bgColor="#f2f2f2"
+      />
       <Form onSubmit={handleSubmit(submit)}>
         <Content>
           <ContentItem>
             <ContentItemTitle>Amount</ContentItemTitle>
-
             <TokenAndAmountSelect tokens={[selectedAsset.symbol]} />
 
             <Price>
@@ -223,7 +241,7 @@ function SendToken({
           </ContentItem>
           {handleShowAccountInput(flow, 'address') ? (
             <ContentItem>
-              <AddressContainer>To</AddressContainer>
+              <AddressContainer>Send to</AddressContainer>
               <Field
                 id="address"
                 name="address"
@@ -234,23 +252,19 @@ function SendToken({
                 props={{
                   type: 'text',
                   bgColor: '#f3f3f3',
-                  color: '#111',
-                  height: '53px',
+                  color: '#18191a',
+                  placeholderColor: '#b1b5c3',
+                  fontSize: '16px',
+                  height: '48px',
                   marginTop: '5px'
+                  // Icon: <NetworkIcons chain={selectedAsset?.chain} />
                 }}
               />
             </ContentItem>
           ) : (
             <ContentItem>
-              <ContentItemTitle>To</ContentItemTitle>
+              <ContentItemTitle>Send to</ContentItemTitle>
               <SendTypes>
-                <SendTypeItem onClick={handleClickContacts}>
-                  <IconContainer>
-                    <ContactsIcon stroke="#111" />
-                  </IconContainer>
-                  <Text>Contacts</Text>
-                </SendTypeItem>
-
                 <SendTypeItem onClick={() => setFlow(SendAccountFlowEnum.SendToAddress)}>
                   <IconContainer>
                     <SharpIcon />
@@ -265,9 +279,16 @@ function SendToken({
                   <Text>Accounts</Text>
                 </SendTypeItem>
 
+                <SendTypeItem onClick={handleClickContacts}>
+                  <IconContainer>
+                    <ContactsIcon stroke="#111" />
+                  </IconContainer>
+                  <Text>Contacts</Text>
+                </SendTypeItem>
+
                 <SendTypeItem onClick={handleClickQR}>
                   <IconContainer>
-                    <BarcodeIcon stroke="#111" />
+                    <BarcodeSendIcon stroke="#111" />
                   </IconContainer>
                   <Text>Scan QR</Text>
                 </SendTypeItem>
@@ -276,8 +297,24 @@ function SendToken({
           )}
 
           <ContentItem>
-            <ContentItemTitle>Add Note</ContentItemTitle>
-            <HumbleInput
+            <ContentItemTitle>Add Note (Optional)</ContentItemTitle>
+            <Field
+              id="note"
+              name="note"
+              type="text"
+              placeholder="Enter note here"
+              component={HumbleInput}
+              props={{
+                type: 'text',
+                bgColor: '#f2f2f2',
+                color: '#18191a',
+                placeholderColor: '#b1b5c3',
+                height: '53px',
+                marginTop: '5px',
+                fontSize: '14px'
+              }}
+            />
+            {/* <HumbleInput
               id="note"
               placeholder="Enter note here"
               type="text"
@@ -288,7 +325,7 @@ function SendToken({
               bgColor="#f3f3f3"
               height="53px"
               marginTop="5px"
-            />
+            /> */}
           </ContentItem>
 
           <Snackbar
@@ -314,7 +351,7 @@ function SendToken({
           </Info>
           <Button
             type="submit"
-            text={loading ? 'Calculating ability to transfer...' : 'Preview'}
+            text={loading ? 'Calculating ability to transfer...' : 'Preview Send'}
             justify="center"
             Icon={<RightArrow width={23} fill="#fff" />}
             disabled={isDisabled(errors, loading, abilityToTransfer)}
@@ -323,25 +360,14 @@ function SendToken({
       </Form>
 
       {isAccountsPopupOpen && (
-        <AccountsSection>
-          <AccountsSectionContent>
-            <AccountsSectionContentHeader>
-              <span>Select Receiving Account</span>
-              <CloseIconContainer onClick={handleCloseAccount}>
-                <CloseIcon stroke="#111" />
-              </CloseIconContainer>
-            </AccountsSectionContentHeader>
-            <AccountsSectionList>
-              {getAccounts().map(({ address }) => (
-                <AccountsSectionItem onClick={() => handleClickAccount(address)} key={address}>
-                  {address}
-                </AccountsSectionItem>
-              ))}
-            </AccountsSectionList>
-          </AccountsSectionContent>
-        </AccountsSection>
+        <AccountsPopup
+          onBack={() => {
+            setIsAccountsPopupOpen(false);
+            setFlow(undefined);
+          }}
+          handleClickAccount={handleClickAccount}
+        />
       )}
-
       {isQRPopupOpen && <QRPopup handleCloseQR={handleCloseQR} />}
       {isContactsPopupOpen && (
         <ContactsPopup
@@ -373,69 +399,41 @@ export default connect((state: any) => ({
   })(SendToken)
 );
 
-const Container = styled.div<{ bg?: string }>`
+const Container = styled.div`
   width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  background-color: #fff;
+  background-color: #f2f2f2;
   box-sizing: border-box;
   position: relative;
-  background-image: ${({ bg }) => `url(${bg})`};
   background-size: cover;
-  padding-bottom: 38px;
   padding-top: 110px;
 `;
 
 const Content = styled.div`
   padding: 0 15px;
+  border-top-right-radius: 15px;
 `;
 
 const ContentItem = styled.div`
   margin-top: 15px;
+
+  :nth-child(3) {
+    margin-top: 28px;
+  }
 `;
 
 const Form = styled.form`
   display: flex;
   flex-direction: column;
   height: 100%;
+  background-color: #fff;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+  padding-bottom: 38px;
 `;
-
-const StyledInput = styled.input`
-  width: 100%;
-  height: 53px;
-  border: 0;
-  border-top-left-radius: 5px;
-  border-bottom-left-radius: 5px;
-  background-color: #f3f3f3;
-  color: #898989;
-  font-family: 'SFCompactDisplayRegular';
-  font-size: 16px;
-
-  &:focus {
-    outline: none;
-  }
-`;
-
-const StyledSelect = styled.select`
-  width: 70px;
-  height: 53px;
-  border: 0;
-  border-top-right-radius: 5px;
-  border-bottom-right-radius: 5px;
-  background-color: #f3f3f3;
-  font-size: 16px;
-  font-weight: 600;
-  color: #141414;
-  font-family: 'SFCompactDisplayRegular';
-
-  &:focus {
-    outline: none;
-  }
-`;
-
-const StyledOption = styled.option``;
 
 const Price = styled.div`
   width: 100%;
@@ -444,18 +442,25 @@ const Price = styled.div`
   align-items: center;
   margin-top: 5px;
   color: #111;
-  font-family: SFCompactDisplayRegular;
+  font-family: 'IBM Plex Sans';
+  font-size: 12px;
+  line-height: 1.35;
+  text-align: right;
+  color: #18191a;
 `;
 
 const ExchangeIconContainer = styled.div`
-  margin-left: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 2px;
   cursor: pointer;
 `;
 
 const ContentItemTitle = styled.span`
-  font-family: 'SFCompactDisplayRegular';
-  font-size: 16px;
-  color: #141414;
+  font-size: 12px;
+  color: #18191a;
+  font-family: 'IBM Plex Sans';
 `;
 
 const SendTypes = styled.div`
@@ -474,7 +479,7 @@ const SendTypeItem = styled.div`
   justify-content: flex-end;
   padding: 10px 0;
   box-sizing: border-box;
-  background-color: #f3f3f3;
+  background-color: #f2f2f2;
   border-radius: 5.8px;
   cursor: pointer;
 `;
@@ -487,11 +492,10 @@ const IconContainer = styled.div`
 `;
 
 const Text = styled.span`
-  font-family: 'SFCompactDisplayRegular';
+  font-family: 'IBM Plex Sans';
   font-size: 12px;
-  color: #898989;
+  color: #353945;
   margin-top: 3px;
-  font-weight: 500;
 `;
 
 const BottomSection = styled.div`
@@ -507,8 +511,8 @@ const Info = styled.div`
   display: flex;
   justify-content: space-between;
   span {
-    font-family: SFCompactDisplayRegular;
-    font-size: 13.4px;
+    font-family: 'IBM Plex Sans';
+    font-size: 12px;
   }
 `;
 

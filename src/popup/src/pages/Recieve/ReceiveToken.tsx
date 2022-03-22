@@ -6,15 +6,20 @@ import HumbleInput from 'components/primitives/HumbleInput';
 import ReceiveSelect from './components/ReceiveSelect';
 import { useState } from 'react';
 
-import { Network } from 'utils/types';
+import { Asset, Network } from 'utils/types';
 import { useWizard } from 'react-use-wizard';
+import { goTo } from 'react-chrome-extension-router';
+import Wallet from 'pages/Wallet/Wallet';
+import TokenDashboard from 'pages/TokenDashboard/TokenDashboard';
+import { PropsFromTokenDashboard } from './Receive';
 
 type Props = {
   selectedNetwork: Network | undefined;
   recoded: string;
+  propsFromTokenDashboard?: PropsFromTokenDashboard;
 };
 
-export default function ReceiveToken({ selectedNetwork, recoded }: Props) {
+export default function ReceiveToken({ selectedNetwork, recoded, propsFromTokenDashboard }: Props) {
   const { previousStep } = useWizard();
 
   const account = useAccount();
@@ -31,13 +36,19 @@ export default function ReceiveToken({ selectedNetwork, recoded }: Props) {
     <Container>
       <Header
         title={`Receive ${selectedNetwork?.chain.toLocaleUpperCase()}`}
-        backAction={() => previousStep()}
+        backAction={() =>
+          propsFromTokenDashboard?.fromTokenDashboard
+            ? goTo(TokenDashboard, { asset: propsFromTokenDashboard.asset })
+            : previousStep()
+        }
+        closeAction={() => goTo(Wallet)}
+        bgColor="#f2f2f2"
       />
       <Content>
         {recoded && <QRCode value={recoded} size={180} />}
 
         <ContentItem>
-          <Text>Address:</Text>
+          <Text>ADDRESS:</Text>
           <HumbleInput
             id="address"
             type={'text'}
@@ -95,23 +106,20 @@ const Content = styled.div`
   box-sizing: border-box;
 `;
 
-const QRContainer = styled.div`
-  width: 226px;
-  height: 227.23px;
-`;
-
 const ContentItem = styled.div`
   width: 100%;
   margin-top: 15px;
 `;
 
 const Text = styled.div`
-  font-size: 14px;
-  color: #8c8c8c;
-  font-family: 'Sequel100Wide55Wide';
+  font-family: Inter;
+  font-size: 11px;
+  font-weight: 500;
+  color: #777e90;
 `;
 
 const BottomText = styled.div`
+  width: 230px;
   font-family: 'SFCompactDisplayRegular';
   font-weight: 400;
   font-size: 14px;

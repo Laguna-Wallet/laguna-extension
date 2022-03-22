@@ -13,7 +13,7 @@ import styled from 'styled-components';
 import { getAccounts } from 'utils/polkadot';
 import SignUp from 'pages/SignUp/SignUp';
 import AddImportForExistingUsers from 'pages/AddImportForExistingUsers/AddImportForExistingUsers';
-import { truncateString } from 'utils';
+import { getAccountImage, truncateString } from 'utils';
 import { useDispatch } from 'react-redux';
 import { changeAccountsBalances, toggleLoading } from 'redux/actions';
 
@@ -73,7 +73,7 @@ export default function Accounts({ setActiveAccount }: Props) {
                   handleSetActiveAccount(e, account, index);
                 }}
                 key={account.address}>
-                <AccountIcon />
+                <Avatar img={getAccountImage(account.address)} />
                 <span>{account?.meta?.name && formatName(account?.meta?.name)}</span>
 
                 <Icons>
@@ -166,6 +166,17 @@ const Connected = styled.div`
   border-radius: 50px;
   background-color: #2c2c2c;
   padding: 5px 20px;
+`;
+
+const Avatar = styled.div<{ img: string }>`
+  width: 24px;
+  height: 24px;
+  border-radius: 100%;
+  background-color: #ccc;
+  background-image: ${({ img }) => `url(${img})`};
+  background-size: contain;
+  background-position: center center;
+  background-repeat: no-repeat;
 `;
 
 const ConnectedRibbon = styled.div`

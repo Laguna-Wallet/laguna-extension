@@ -18,6 +18,8 @@ import { validatePassword } from 'utils/polkadot';
 import { useSelector } from 'react-redux';
 import RequestToConnect from 'pages/RequestToConnect/RequestToConnect';
 import RequestToSign from 'pages/RequestToSign';
+import backgroundImage from 'assets/imgs/sign-up-bg.png';
+import mainLogoSvg from 'assets/imgs/main-logo-white.svg';
 
 export default function WelcomeBack() {
   const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
@@ -61,24 +63,30 @@ export default function WelcomeBack() {
   }, [formik.submitCount]);
 
   return (
-    <PageContainer>
-      <Logo />
+    <PageContainer bgImage={backgroundImage}>
+      <IconSection>
+        <IconContainer img={mainLogoSvg}>{/* <DonutIcon /> */}</IconContainer>
+      </IconSection>
       <MainSection>
-        <Title>Welcome Back,</Title>
-        <Description>HydroX — The Future of Banking</Description>
+        <Title>Welcome Back</Title>
+        {/* <Description>HydroX — The Future of Banking</Description> */}
         <Form onSubmit={formik.handleSubmit}>
           <HumbleInput
             id="password"
             label="password"
             type="password"
-            placeholder="Password"
+            placeholder="Enter your password"
             value={formik.values.password}
             onChange={formik.handleChange}
             error={formik.errors.password}
             touched={formik.touched.password}
+            color="#18191a"
+            placeholderColor="#777e90"
             height="50px"
-            borderColor={formik?.errors?.password?.length ? '#fff' : '#e4e4e4'}
-            bgColor={formik?.errors?.password?.length ? '#fff' : '#e4e4e4'}
+            borderColor={'#e6e8ec'}
+            bgColor={'transparent'}
+            // borderColor={formik?.errors?.password?.length ? '#fff' : '#e6e8ec'}
+            // bgColor={formik?.errors?.password?.length ? '#fff' : 'transparent'}
             autoFocus={true}
           />
 
@@ -93,31 +101,42 @@ export default function WelcomeBack() {
           />
         </Form>
         <Text>Contact Support</Text>
+        <Snackbar
+          // message={snackbarError}
+          message={'Incorrect Password'}
+          isOpen={isSnackbarOpen}
+          close={() => setIsSnackbarOpen(false)}
+          type="error"
+          bottom="0px"
+          left="0px"
+          align="left"
+        />
       </MainSection>
-      <Snackbar
-        message={snackbarError}
-        isOpen={isSnackbarOpen}
-        close={() => setIsSnackbarOpen(false)}
-        type="error"
-        bottom="73px"
-        left="0px"
-      />
     </PageContainer>
   );
 }
 
-const Logo = styled.div`
+const IconSection = styled.div`
   width: 100%;
   height: 330px;
+  position: relative;
 `;
 
-const StyledLink = styled(Link)`
-  width: 100%;
+const IconContainer = styled.div<{ img: string }>`
+  width: 279px;
+  height: 279px;
+  background-image: ${({ img }) => `url(${img})`};
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center cen;
+  position: absolute;
+  left: -26px;
+  top: -10px;
 `;
 
 const Form = styled.form`
   width: 100%;
-  margin-top: 20px;
+  margin-top: 16px;
 `;
 
 const MainSection = styled.div`
@@ -128,40 +147,16 @@ const MainSection = styled.div`
 `;
 
 const Title = styled.div`
-  font-size: 17px;
-  font-weight: 600;
+  font-size: 22px;
+  font-weight: 500;
   letter-spacing: 0.05em;
-  font-family: 'Sequel100Wide55Wide';
-`;
-
-const Description = styled.div`
-  color: #808080;
-  font-size: 14px;
-  font-weight: 400;
-  font-family: 'SFCompactDisplayRegular';
-  margin-top: 5px;
+  color: #18191a;
+  font-family: 'IBM Plex Sans';
 `;
 
 const Text = styled.div`
   font-size: 12px;
-  color: #808080;
-  font-family: 'SFCompactDisplayRegular';
-  margin-top: 24px;
-`;
-
-const ErrorMessage = styled.div`
-  color: #fff;
-  font-size: 13px;
-  font-weight: 600;
-  margin-left: 5px;
-`;
-
-const CloseIconContainer = styled.div`
-  width: 24px;
-  height: 24px;
-  background-color: #fff;
-  border-radius: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  color: #777e90;
+  font-family: 'IBM Plex Sans';
+  margin-top: 38px;
 `;

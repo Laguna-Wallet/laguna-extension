@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import Header from 'pages/Wallet/Header';
@@ -14,9 +14,10 @@ import { useWizard } from 'react-use-wizard';
 import { useDispatch } from 'react-redux';
 import { selectAsset } from 'redux/actions';
 import NetworkItem from 'pages/Wallet/NetworkItem';
+import LoopIcon from 'assets/svgComponents/loopIcon';
 
 type Props = {
-  networks: undefined | Network[];
+  networks: Network[];
   setSelectedNetwork: (network: Network) => void;
 };
 
@@ -39,8 +40,15 @@ export default function SelectNetwork({ networks, setSelectedNetwork }: Props) {
   };
 
   return (
-    <Container bg={walletBG}>
-      <Header title="SELECT NETWORK" backAction={() => goTo(Wallet)} />
+    <Container>
+      <Header
+        title="SELECT NETWORK"
+        bgColor="#f2f2f2"
+        closeAction={() => {
+          goTo(Wallet);
+        }}
+        backAction={() => goTo(Wallet)}
+      />
       <Content>
         <HumbleInput
           id="id"
@@ -49,11 +57,14 @@ export default function SelectNetwork({ networks, setSelectedNetwork }: Props) {
           onChange={(e: any) => {
             setNetworksFilter(e.target.value);
           }}
-          bgColor={'#ececec'}
-          borderColor={'#ececec'}
-          placeholder="search"
-          height="38.9px"
+          bgColor={'#f2f2f2'}
+          borderColor={'#f2f2f2'}
+          color="#777e90"
+          placeholderColor="#777e90"
+          placeholder="Search"
+          height="45px"
           marginTop="20px"
+          Icon={<LoopIcon />}
         />
         <List>
           {networks
@@ -73,22 +84,24 @@ export default function SelectNetwork({ networks, setSelectedNetwork }: Props) {
   );
 }
 
-const Container = styled.div<{ bg: string }>`
+const Container = styled.div`
   width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
-  background-color: #f1f1f1;
+  background-color: #f2f2f2;
   box-sizing: border-box;
   position: relative;
   position: relative;
-  background-image: ${({ bg }) => `url(${bg})`};
   background-size: cover;
   padding-top: 110px;
 `;
 
 const Content = styled.div`
   padding: 15px;
+  background-color: #fff;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
 `;
 
 const List = styled.div`

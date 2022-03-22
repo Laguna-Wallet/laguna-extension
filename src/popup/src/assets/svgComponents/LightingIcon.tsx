@@ -1,10 +1,10 @@
 import { SVGProps } from 'react';
 
 const LightingIcon = (props: SVGProps<SVGSVGElement>) => (
-  <svg width={12} height={20} fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+  <svg width={24} height={24} fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
     <path
-      d="M4.4 19.8H3.3l1.1-7.7H.55c-.638 0-.627-.352-.418-.726.209-.374.055-.088.077-.132C1.628 8.734 3.762 4.994 6.599 0h1.1L6.6 7.7h3.85c.54 0 .617.363.518.561l-.077.165C6.556 16.006 4.4 19.8 4.4 19.8Z"
-      fill="#fff"
+      d="M11.4 22.8h-1.1l1.1-7.7H7.55c-.638 0-.627-.352-.418-.726.209-.374.055-.088.077-.132C8.628 11.734 10.762 7.994 13.599 3h1.1l-1.1 7.7h3.851c.539 0 .616.363.517.561l-.077.165A5276.85 5276.85 0 0 0 11.4 22.8z"
+      fill={props.fill || '#B1B5C4'}
     />
   </svg>
 );

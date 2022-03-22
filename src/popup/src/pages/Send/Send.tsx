@@ -28,14 +28,19 @@ import { useAccount } from 'context/AccountContext';
 import { useFormik } from 'formik';
 import { isNumeric, sendTokenSchema } from 'utils/validations';
 import BigNumber from 'bignumber.js';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { PropsFromTokenDashboard } from 'pages/Recieve/Receive';
+import { selectAsset } from 'redux/actions';
 
 type Props = {
   initialIsContactsPopupOpen?: boolean;
+  propsFromTokenDashboard: PropsFromTokenDashboard;
 };
 
-export default function Send({ initialIsContactsPopupOpen }: Props) {
+export default function Send({ initialIsContactsPopupOpen, propsFromTokenDashboard }: Props) {
   const account = useAccount();
+  const dispatch = useDispatch();
+
   const [flow, setFlow] = useState<string | undefined>(undefined);
   const [assets, setAssets] = useState<Asset[] | undefined>(undefined);
   const { prices, infos } = useSelector((state: any) => state.wallet);
@@ -110,7 +115,6 @@ export default function Send({ initialIsContactsPopupOpen }: Props) {
       }
 
       setFee(`${new BigNumber(partialFee.toString()).div(factor)}`);
-      console.log(2);
       setTransfer(transfer);
       setLoading(false);
     }
@@ -121,14 +125,17 @@ export default function Send({ initialIsContactsPopupOpen }: Props) {
   return (
     <Container>
       <Wizard>
-        <SelectAsset assets={assets} />
+        {!propsFromTokenDashboard?.fromTokenDashboard && <SelectAsset assets={assets} />}
+
         <SendToken
           flow={flow}
           setFlow={setFlow}
           fee={fee}
           loading={loading}
           abilityToTransfer={abilityToTransfer}
+          propsFromTokenDashboard={propsFromTokenDashboard}
         />
+
         <Confirm
           setBlockHash={setBlockHash}
           amountToSend={amountToSend}

@@ -9,7 +9,7 @@ import {
   ethereumEncode
 } from '@polkadot/util-crypto';
 
-import { Asset, Network, Prices, SEED_LENGTHS, StorageKeys } from './types';
+import { Asset, Network, Prices, SEED_LENGTHS, StorageKeys, Transaction } from './types';
 import { KeyringPair$Json } from '@polkadot/keyring/types';
 import { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
 import keyring from '@polkadot/ui-keyring';
@@ -22,6 +22,7 @@ import AES from 'crypto-js/aes';
 import Utf8 from 'crypto-js/enc-utf8';
 import { decodePair } from '@polkadot/keyring/pair/decode';
 import { createPair } from '@polkadot/keyring/pair';
+import { fetchTransactions, transformTransfers } from './fetchTransactions';
 
 // TODO appropriate typing
 
@@ -172,6 +173,14 @@ export function accountsTie({ address, genesisHash }: any): any {
   return keyring.getPair(address);
 }
 
+export function changeAccountPicture(address: string, obj: Record<string, any>): any {
+  const pair = keyring.getPair(address);
+  const { img, ...oldMeta } = pair.meta;
+  keyring.saveAccountMeta(pair, { ...oldMeta, ...obj });
+  const newPair = keyring.getPair(address);
+  return newPair;
+}
+
 export function addAccountMeta(address: string, obj: Record<string, any>): any {
   const pair = keyring.getPair(address);
   keyring.saveAccountMeta(pair, { ...pair.meta, ...obj });
@@ -188,19 +197,22 @@ export function getNetworks(prices: Prices, tokenInfos: Network[]): Network[] {
       name: 'Polkadot',
       symbol: 'wnd',
       chain: 'westend',
-      node: 'wss://westend-rpc.polkadot.io'
+      node: 'wss://westend-rpc.polkadot.io',
+      prefix: 42
     },
     {
       name: 'Polkadot',
       symbol: 'dot',
       chain: 'polkadot',
-      node: 'wss://rpc.polkadot.io'
+      node: 'wss://rpc.polkadot.io',
+      prefix: 0
     },
     {
       name: 'Kusama',
       symbol: 'ksm',
       chain: 'kusama',
-      node: 'wss://kusama-rpc.polkadot.io'
+      node: 'wss://kusama-rpc.polkadot.io',
+      prefix: 2
     },
     // {
     //   name: 'Moonriver',
@@ -227,7 +239,8 @@ export function getNetworks(prices: Prices, tokenInfos: Network[]): Network[] {
       name: 'Astar',
       symbol: 'astr',
       chain: 'astar',
-      node: 'wss://astar.api.onfinality.io/public-ws'
+      node: 'wss://astar.api.onfinality.io/public-ws',
+      prefix: 5
     }
 
     // wss://rpc.astar.network
@@ -470,6 +483,19 @@ export function accountsChangePassword(address: string, oldPass: string, newPass
 
   keyring.encryptAccount(pair, newPass);
   return pair;
+}
+
+export async function getLatestTransactionsForSingleChain(
+  address: string,
+  chain: string,
+  page: number,
+  row: number
+): Promise<{ count: number; transactions: Transaction[] }> {
+  const data = await fetchTransactions(address, chain, row, page);
+  return {
+    count: data?.data?.count,
+    transactions: data?.data?.transfers ? transformTransfers(data?.data?.transfers, chain) : []
+  };
 }
 
 // todo pair proper typing

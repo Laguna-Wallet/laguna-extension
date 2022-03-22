@@ -11,10 +11,10 @@ isInPhishingList(window.location.host).then((isDenied) => {
 
 window.addEventListener("message", ({ data, source }): void => {
   // || data.origin !== MESSAGE_ORIGIN_CONTENT
-  if (source !== window && data.origin !== "MESSAGE_ORIGIN_CONTENT") {
+  if (source !== window && data.origin !== process.env.MESSAGE_ORIGIN_CONTENT) {
     return
   }
-
+  
   if (data.id && data.payload) {
     handleResponse(data)
   }

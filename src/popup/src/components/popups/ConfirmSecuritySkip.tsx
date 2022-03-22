@@ -38,17 +38,20 @@ export function ConfirmSecuritySkip({ nextStep, nextStepFromParent, setLevel }: 
 
         <ButtonContainer>
           <Button
-            onClick={handleSecure}
+            onClick={handleSkip}
+            bgColor="#f2f2f2"
+            borderColor="#f2f2f2"
+            color="#18191a"
             Icon={<ArrowSmRightIcon width={23} />}
-            text={'Secure Now'}
+            text={'Skip'}
           />
           <Gap />
           <Button
-            onClick={handleSkip}
-            bgColor="transparent"
-            color="#111"
+            bgColor="#18191a"
+            color="#ffffff"
+            onClick={handleSecure}
             Icon={<ArrowSmRightIcon width={23} />}
-            text={'Skip'}
+            text={'Secure Now'}
           />
         </ButtonContainer>
       </MainContent>
@@ -66,6 +69,7 @@ const Container = styled.div`
   position: absolute;
   top: 0;
   left: 0;
+  z-index: 9999;
 `;
 
 const MainContent = styled.div`
@@ -83,9 +87,10 @@ const MainContent = styled.div`
 
 const Title = styled.h3`
   width: 100%;
-  font-size: 18px;
-  font-weight: 600;
-  line-height: 1.35;
+  font-family: 'IBM Plex Sans';
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 1.82;
   text-align: left;
   color: #090a0b;
   margin: 0;
@@ -93,10 +98,11 @@ const Title = styled.h3`
 
 const Description = styled.div`
   display: flex;
-  color: #767e93;
-  line-height: 1.45;
+  color: #353945;
+  font-family: Inter;
   font-size: 16px;
   margin-top: 20px;
+  line-height: 1.45;
   span {
     margin-left: 11px;
   }
