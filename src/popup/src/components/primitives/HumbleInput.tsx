@@ -2,6 +2,7 @@ import ErrorIcon from 'assets/svgComponents/ErrorIcon';
 import { memo, useRef } from 'react';
 import styled from 'styled-components/macro';
 import { truncateString } from 'utils';
+import { AccountMeta } from 'utils/types';
 
 type InputProps = {
   id: string;
@@ -27,8 +28,12 @@ type InputProps = {
   input?: any;
   truncate?: boolean;
   copy?: boolean;
+  handleClickCopy?: (value: string) => void;
   rightLabel?: string;
+  // todo asap
   Icon?: any;
+  accountMeta?: AccountMeta;
+  readOnly?: boolean;
 };
 
 function HumbleInput({
@@ -52,10 +57,13 @@ function HumbleInput({
   color,
   input,
   copy,
+  handleClickCopy,
   truncate,
   rightLabel,
   placeholderColor,
-  Icon
+  Icon,
+  accountMeta,
+  readOnly
 }: InputProps) {
   const handleValue = (value: string) => {
     if (!value) return '';
@@ -88,6 +96,7 @@ function HumbleInput({
           />
         ) : (
           <>
+            {accountMeta && <AccountAvatar img={accountMeta.img} />}
             <StyledInput
               id={id}
               value={handleValue(value || input?.value)}
@@ -99,14 +108,10 @@ function HumbleInput({
               placeholderColor={placeholderColor}
               autoFocus={!!autoFocus}
               color={color}
+              disabled={readOnly}
             />
-            {copy && (
-              <Copy
-                onClick={() => {
-                  navigator.clipboard.writeText(value || input?.value);
-                }}>
-                Copy
-              </Copy>
+            {copy && handleClickCopy && (
+              <Copy onClick={() => handleClickCopy(value || input?.value)}>Copy</Copy>
             )}
             {rightLabel && <RightLabel>{rightLabel}</RightLabel>}
 
@@ -176,7 +181,7 @@ const StyledInput = styled.input<{
   placeholderColor?: string;
   fontWeight?: string;
 }>`
-  width: 100%;
+  flex: 1;
   height: 100%;
   border: none;
   font-size: ${({ fontSize }) => (fontSize ? fontSize : '14.8px')};
@@ -221,6 +226,18 @@ const StyledTextarea = styled.textarea<{
   &::placeholder {
     color: ${({ placeholderColor }) => placeholderColor || '#111'};
   }
+`;
+
+const AccountAvatar = styled.div<{ img: string }>`
+  width: 24px;
+  height: 24px;
+  border-radius: 100%;
+  background-color: #ccc;
+  background-image: ${({ img }) => `url(${img})`};
+  background-size: contain;
+  background-position: center center;
+  background-repeat: no-repeat;
+  margin-right: 5px;
 `;
 
 const Paste = styled.div``;

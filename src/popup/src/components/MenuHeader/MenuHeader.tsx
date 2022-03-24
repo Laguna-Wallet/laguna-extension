@@ -2,29 +2,12 @@ import styled from 'styled-components';
 import { Turn as Hamburger } from 'hamburger-react';
 import LeftArrowIcon from 'assets/svgComponents/LeftArrowIcon';
 import { useAccount } from 'context/AccountContext';
-import { getBase64, truncateString } from 'utils';
+import { getBase64, resizeFile, truncateString } from 'utils';
 import { useRef, useState } from 'react';
 import useOutsideClick from 'hooks/useOutsideClick';
 import { addAccountMeta, changeAccountPicture } from 'utils/polkadot';
 import EditIcon from 'assets/svgComponents/EditIcon';
 import PencilIcon from 'assets/svgComponents/PencilIcon';
-import Resizer from 'react-image-file-resizer';
-
-const resizeFile = (file: File) =>
-  new Promise((resolve) => {
-    Resizer.imageFileResizer(
-      file,
-      300,
-      300,
-      'JPEG',
-      100,
-      0,
-      (uri) => {
-        resolve(uri);
-      },
-      'base64'
-    );
-  });
 
 type Props = {
   isOpen: boolean;

@@ -37,7 +37,7 @@ export default function EncodeAccount({ handleEncode, title, onClose, onBack }: 
     }
 
     try {
-      handleEncode(password);
+      await handleEncode(password);
       nextStep();
       // goTo(Wallet);
     } catch (err: any) {

@@ -28,8 +28,8 @@ export default function ContactsPopup({ handleCloseContacts, onBack }: Props) {
     // todo proper typing
     const accounts: any[] = [];
     keyring.getAddresses().forEach((account) => {
-      const { addressName, memo } = account.meta;
-      accounts.push({ address: account.address, name: addressName, memo });
+      const { name, memo } = account.meta;
+      accounts.push({ address: account.address, name, memo });
     });
 
     setAccounts(accounts);

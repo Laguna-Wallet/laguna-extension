@@ -35,27 +35,16 @@ import {
   formValueSelector
 } from 'redux-form';
 import Snackbar from 'components/Snackbar/Snackbar';
-import { isObjectEmpty, objectToArray, truncateString } from 'utils';
+import { getAccountImage, isObjectEmpty, objectToArray, truncateString } from 'utils';
 import Wallet from 'pages/Wallet/Wallet';
 import NetworkIcons from 'components/primitives/NetworkIcons';
 import AccountsPopup from './AccountsPopup';
 import BarcodeSendIcon from 'assets/svgComponents/BarcodeSendIcon';
 import { PropsFromTokenDashboard } from 'pages/Recieve/Receive';
 import TokenDashboard from 'pages/TokenDashboard/TokenDashboard';
-
-// const renderInputElement = ({ input, label, type, meta: { touched, error, warning } }: any) => (
-//   <SelectContainer>
-//     <StyledInput placeholder="Enter Amount" type {...input} />
-
-//     {/* <StyledSelect defaultValue={defaultValue} onChange={handleChange} name="dots" id="dots">
-//       {options.map((symbol) => (
-//         <StyledOption key={symbol} value={symbol}>
-//           {symbol.toUpperCase()}
-//         </StyledOption>
-//       ))}
-//     </StyledSelect> */}
-//   </SelectContainer>
-// );
+import keyring from '@polkadot/ui-keyring';
+import { AccountMeta } from 'utils/types';
+import { FlowValue, SendAccountFlowEnum } from './Send';
 
 const validate = (values: any) => {
   const errors: any = {};
@@ -73,17 +62,10 @@ const validate = (values: any) => {
   return errors;
 };
 
-enum SendAccountFlowEnum {
-  SendToTrustedContact = 'SendToTrustedContact',
-  SendToAddress = 'SendToAddress',
-  SendToAccount = 'SendToAccount',
-  ScanQR = 'ScanQR'
-}
-
 // todo handleSubmit Typing
 type Props = {
-  flow: string | undefined;
-  setFlow: (flow: string | undefined) => void;
+  flow: FlowValue | undefined;
+  setFlow: (flow: FlowValue | undefined) => void;
   fee: string;
   loading: boolean;
   handleSubmit?: any;
@@ -117,6 +99,7 @@ function SendToken({
 }: Props) {
   const dispatch = useDispatch();
   const { nextStep, previousStep } = useWizard();
+
   const [isAccountsPopupOpen, setIsAccountsPopupOpen] = useState<boolean>(false);
   const [isQRPopupOpen, setIsQRPopupOpen] = useState<boolean>(false);
   const [isContactsPopupOpen, setIsContactsPopupOpen] = useState<boolean>(false);
@@ -124,35 +107,38 @@ function SendToken({
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
   const [snackbarError, setSnackbarError] = useState<string>('');
 
+  const [accountMeta, setAccountMeta] = useState<AccountMeta>();
+
   // todo proper typing
   const { selectedAsset } = useSelector((state: any) => state.sendToken);
   const { prices } = useSelector((state: any) => state.wallet);
 
   const price = selectedAsset?.chain && prices[selectedAsset.chain]?.usd;
 
-  const handleClick = (isValid: boolean) => {
-    if (!isValid) return;
-    nextStep();
-    // todo show error message
-  };
+  // const handleClick = (isValid: boolean) => {
+  //   if (!isValid) return;
+  //   nextStep();
+  //   // todo show error message
+  // };
 
   // Todo revise if this can be refactored into single function
   const handleClickAccounts = () => {
     setIsAccountsPopupOpen(true);
-    setFlow(SendAccountFlowEnum.SendToAddress);
+    setFlow(SendAccountFlowEnum.SendToAccount);
   };
 
   const handleClickAccount = (address: string) => {
     dispatch(change('sendToken', 'address', address));
     setIsAccountsPopupOpen(false);
 
-    // change
+    const pair = keyring.getPair(address);
+    setAccountMeta({ name: pair?.meta?.name as string, img: pair?.meta?.img as string });
   };
 
-  const handleCloseAccount = () => {
-    setIsAccountsPopupOpen(false);
-    setFlow(undefined);
-  };
+  // const handleCloseAccount = () => {
+  //   setIsAccountsPopupOpen(false);
+  //   setFlow(undefined);
+  // };
 
   const handleClickQR = () => {
     setFlow(SendAccountFlowEnum.ScanQR);
@@ -172,6 +158,9 @@ function SendToken({
   const handleCloseContacts = (address: string) => {
     dispatch(change('sendToken', 'address', address));
     setIsContactsPopupOpen(false);
+
+    const pair = keyring.getAddress(address);
+    setAccountMeta({ name: pair?.meta?.name as string, img: pair?.meta?.img as string });
   };
 
   const submit = (values: any) => {
@@ -215,6 +204,18 @@ function SendToken({
     return false;
   };
 
+  const formatAddressValue = (value: string, flow: FlowValue | undefined) => {
+    if (
+      value &&
+      (flow === SendAccountFlowEnum.SendToTrustedContact ||
+        flow === SendAccountFlowEnum.SendToAccount)
+    ) {
+      return `${truncateString(accountMeta?.name as string)} (${truncateString(value)})`;
+    }
+
+    return value;
+  };
+
   return (
     <Container>
       <Header
@@ -249,6 +250,7 @@ function SendToken({
                 label="address"
                 placeholder="address"
                 component={HumbleInput}
+                format={(value: string) => formatAddressValue(value, flow)}
                 props={{
                   type: 'text',
                   bgColor: '#f3f3f3',
@@ -256,7 +258,12 @@ function SendToken({
                   placeholderColor: '#b1b5c3',
                   fontSize: '16px',
                   height: '48px',
-                  marginTop: '5px'
+                  marginTop: '5px',
+                  accountMeta,
+                  readOnly:
+                    flow === SendAccountFlowEnum.SendToTrustedContact ||
+                    flow === SendAccountFlowEnum.SendToAccount
+
                   // Icon: <NetworkIcons chain={selectedAsset?.chain} />
                 }}
               />

@@ -53,7 +53,7 @@ export const sendTokenSchema = yup.object().shape({
 });
 
 export const addAddressSchema = yup.object({
-  addressName: yup.string().required('Please fill out this field'),
+  name: yup.string().required('Please fill out this field'),
   address: yup.string().required('Please fill out this field')
 });
 

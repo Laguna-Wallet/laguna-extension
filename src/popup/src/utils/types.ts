@@ -96,7 +96,8 @@ export enum Messages {
   SignRequest = 'SIGN_REQUEST',
   DappAuthRequest = 'DAPP_AUTH_REQUEST',
   ConnectedApps = 'CONNECTED_APPS',
-  RevokeDapp = 'REVOKE_DAPP'
+  RevokeDapp = 'REVOKE_DAPP',
+  TokenReceived = 'TOKEN_RECEIVED'
 }
 
 //==============================================================================
@@ -230,4 +231,18 @@ export interface TokenInfo {
   market_cap_change_percentage_24h: number;
   name: string;
   symbol: string;
+}
+
+//==============================================================================
+// Polkadot
+//==============================================================================
+
+//==============================================================================
+// Inject
+//==============================================================================
+
+export interface AccountMeta {
+  img: string;
+  name: string;
+  whenCreated?: number;
 }

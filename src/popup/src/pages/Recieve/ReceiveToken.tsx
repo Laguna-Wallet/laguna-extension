@@ -12,6 +12,7 @@ import { goTo } from 'react-chrome-extension-router';
 import Wallet from 'pages/Wallet/Wallet';
 import TokenDashboard from 'pages/TokenDashboard/TokenDashboard';
 import { PropsFromTokenDashboard } from './Receive';
+import Snackbar from 'components/Snackbar/Snackbar';
 
 type Props = {
   selectedNetwork: Network | undefined;
@@ -25,11 +26,20 @@ export default function ReceiveToken({ selectedNetwork, recoded, propsFromTokenD
   const account = useAccount();
   const activeAccount = account.getActiveAccount();
 
+  const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
+  const [snackbarMessage, setSnackbarMessage] = useState<string>('');
+
   // todo case when there are multiple symbols
   const [selectedToken, setSelectedToken] = useState<string>();
   const tokens = selectedNetwork && [selectedNetwork.symbol];
   const handleChange = () => {
     console.log('change');
+  };
+
+  const handleClickCopy = (value: string) => {
+    navigator.clipboard.writeText(value);
+    setIsSnackbarOpen(true);
+    setSnackbarMessage('Address Copied');
   };
 
   return (
@@ -60,6 +70,7 @@ export default function ReceiveToken({ selectedNetwork, recoded, propsFromTokenD
             borderColor="#F2F2F2"
             truncate={true}
             copy={true}
+            handleClickCopy={handleClickCopy}
           />
         </ContentItem>
 
@@ -77,6 +88,15 @@ export default function ReceiveToken({ selectedNetwork, recoded, propsFromTokenD
           This address can only be used to receive assets on the{' '}
           <span>{selectedNetwork?.chain}</span> chain.
         </BottomText>
+        <Snackbar
+          width="194.9px"
+          isOpen={isSnackbarOpen}
+          close={() => setIsSnackbarOpen(false)}
+          message={snackbarMessage}
+          type="success"
+          // left="110px"
+          bottom="30px"
+        />
       </Content>
     </Container>
   );

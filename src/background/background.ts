@@ -30,8 +30,6 @@ keyring.loadAll({ type: "ed25519" })
 
 chrome.runtime.onConnect.addListener(function (port) {
   chrome.runtime.onMessage.addListener(async (msg) => {
-    console.log("~ vazaga", authorizedDapps)
-
     if (msg.type === Messages.DappAuthRequest) {
       if (msg.payload.approved) {
         pendingRequests = []

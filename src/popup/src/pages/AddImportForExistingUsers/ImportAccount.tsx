@@ -131,7 +131,7 @@ function ImportAccount({ redirectedFromSignUp }: Props) {
           onBack={onBack}
           onClose={onClose}
         />
-        {/* <SetupComplete /> */}
+        <SetupComplete />
       </Wizard>
     </Form>
   );

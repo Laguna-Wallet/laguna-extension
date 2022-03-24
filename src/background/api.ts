@@ -1,6 +1,6 @@
 import { chains, Messages, networks, StorageKeys } from "./types"
 import { ApiPromise, WsProvider } from "@polkadot/api"
-import { getAccountAddresses, getFromStorage, recodeAddress, recodeToPolkadotAddress, saveToStorage, transformTransfers } from "./utils"
+import { checkBalanceChange, getAccountAddresses, getFromStorage, recodeAddress, recodeToPolkadotAddress, saveToStorage, transformTransfers } from "./utils"
 import { decodePair } from "@polkadot/keyring/pair/decode"
 import { base64Decode } from "@polkadot/util-crypto"
 import keyring from "@polkadot/ui-keyring"
@@ -143,8 +143,14 @@ export async function fetchAccountsBalances() {
         }
       }
 
+      const hasReceived: boolean = checkBalanceChange(result_obj, address)
+
       saveToStorage({ key: StorageKeys.AccountBalances, value: JSON.stringify({ address, balances: result_obj }) })
       chrome.runtime.sendMessage({ type: Messages.AccountsBalanceUpdated, payload: JSON.stringify({ address, balances: result_obj }) })
+
+      if (hasReceived) {
+        chrome.runtime.sendMessage({ type: Messages.TokenReceived, payload: JSON.stringify({ hasReceived }) })
+      }
     }
     console.log("balances updated")
     setTimeout(() => fetchAccountsBalances(), 2000)

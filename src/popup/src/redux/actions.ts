@@ -113,3 +113,10 @@ export function changeConnectedApps(connectedApps: Record<string, string>) {
     payload: { connectedApps }
   };
 }
+
+export function changeTokenReceived(tokenReceived: { tokenReceived: boolean }) {
+  return {
+    type: 'TOKEN_RECEIVED',
+    payload: { tokenReceived }
+  };
+}

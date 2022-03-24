@@ -50,7 +50,8 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
     prices,
     infos,
     accountsBalances,
-    loading: accountsChanging
+    loading: accountsChanging,
+    tokenReceived
   } = useSelector((state: any) => state.wallet);
 
   const balances = accountsBalances?.balances;
@@ -92,6 +93,8 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
   //     account.saveActiveAccount(currentAccountAddress);
   //   }
   // }, []);
+
+  console.log('~ tokenReceived', tokenReceived);
 
   return (
     <Container bg={dashboardBG}>
