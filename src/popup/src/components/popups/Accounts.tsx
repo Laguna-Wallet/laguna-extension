@@ -8,6 +8,7 @@ import Button from 'components/primitives/Button';
 import { useAccount } from 'context/AccountContext';
 import CreateAccount from 'pages/CreateAccount/CreateAccount';
 import ExportAccount from 'pages/ExportAccount/ExportAccount';
+import type { KeyringPair } from '@polkadot/keyring/types';
 import { Link } from 'react-chrome-extension-router';
 import styled from 'styled-components';
 import { getAccounts } from 'utils/polkadot';
@@ -16,6 +17,7 @@ import AddImportForExistingUsers from 'pages/AddImportForExistingUsers/AddImport
 import { getAccountImage, truncateString } from 'utils';
 import { useDispatch } from 'react-redux';
 import { changeAccountsBalances, toggleLoading } from 'redux/actions';
+import keyring from '@polkadot/ui-keyring';
 
 type Props = {
   // todo find out proper account typing
@@ -25,7 +27,7 @@ type Props = {
 export default function Accounts({ setActiveAccount }: Props) {
   const accountCtx = useAccount();
   // todo save in storage
-  const [accounts, setAccounts] = useState(getAccounts());
+  const [accounts, setAccounts] = useState<KeyringPair[]>(keyring.getPairs());
   const [activeAccountIndex, setActiveAccountIndex] = useState(0);
   const dispatch = useDispatch();
 
@@ -74,7 +76,9 @@ export default function Accounts({ setActiveAccount }: Props) {
                 }}
                 key={account.address}>
                 <Avatar img={getAccountImage(account.address)} />
-                <span>{account?.meta?.name && formatName(account?.meta?.name)}</span>
+                <span>
+                  {(account?.meta?.name as string) && formatName(account?.meta?.name as string)}
+                </span>
 
                 <Icons>
                   {/* <Link component={ExportAccount} props={{ address: account.address }}>

@@ -14,6 +14,7 @@ import { randomAsHex } from '@polkadot/util-crypto';
 import SignUp from 'pages/SignUp/SignUp';
 import { useState } from 'react';
 import { Messages } from 'utils/types';
+import { generateRandomBase64Avatar } from 'utils';
 
 type Props = {
   existingAccount?: boolean;
@@ -34,13 +35,16 @@ export default function CreateAccount({ redirectedFromSignUp, encodePhase }: Pro
     SecurityLevelEnum.Secured | SecurityLevelEnum.Skipped
   >(SecurityLevelEnum.Secured);
 
-  const handleEncode = (password: string) => {
+  const handleEncode = async (password: string) => {
     // note for now seed creation flow saves mnemonic in Account Context
     // would be better to refactor and save data in redux, (just for flow)
     if (securityLevel === SecurityLevelEnum.Secured && account?.mnemonics) {
       const mnemonicsStr = account?.mnemonics.join(' ');
       const { pair } = keyring.addUri(mnemonicsStr, password, {}, 'ed25519');
-      keyring.saveAccountMeta(pair, { name: pair.address });
+      keyring.saveAccountMeta(pair, {
+        name: pair.address,
+        img: await generateRandomBase64Avatar()
+      });
 
       chrome.runtime.sendMessage({
         type: Messages.AddToKeyring,
@@ -48,8 +52,16 @@ export default function CreateAccount({ redirectedFromSignUp, encodePhase }: Pro
       });
     } else {
       const hex = randomAsHex(32);
-      const { pair } = keyring.addUri(hex, password, {}, 'ed25519');
-      keyring.saveAccountMeta(pair, { name: pair.address });
+      const { pair } = keyring.addUri(
+        hex,
+        password,
+        { img: await generateRandomBase64Avatar() },
+        'ed25519'
+      );
+      keyring.saveAccountMeta(pair, {
+        ...pair.meta,
+        name: pair.address
+      });
 
       chrome.runtime.sendMessage({ type: Messages.AddToKeyring, payload: { seed: hex, password } });
     }
@@ -85,4 +97,7 @@ export default function CreateAccount({ redirectedFromSignUp, encodePhase }: Pro
       <SetupComplete />
     </Wizard>
   );
+}
+function generateRandomBage64Avatar(): unknown {
+  throw new Error('Function not implemented.');
 }

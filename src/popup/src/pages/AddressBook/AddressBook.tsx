@@ -27,8 +27,8 @@ export default function AddressBook({ snackbar }: Props) {
     // todo proper typing
     const addresses: any[] = [];
     keyring.getAddresses().forEach((address) => {
-      const { addressName, memo } = address.meta;
-      addresses.push({ address: address.address, addressName, memo });
+      const { name, memo } = address.meta;
+      addresses.push({ address: address.address, name, memo });
     });
 
     setAddresses(addresses);
@@ -67,7 +67,7 @@ export default function AddressBook({ snackbar }: Props) {
                 props={{ edit: true, closeAction: () => goTo(Wallet), ...address }}>
                 <AddressComponent>
                   <Text>
-                    {address.addressName}({truncateString(address.address)}){' '}
+                    {address.name}({truncateString(address.address)}){' '}
                   </Text>
                   <AlternateEmail />
                 </AddressComponent>

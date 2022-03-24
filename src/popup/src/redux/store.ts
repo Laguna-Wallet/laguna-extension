@@ -25,7 +25,8 @@ const initialState: any = {
     infos: infos ? JSON.parse(infos) : [],
     accountsBalances: accountsBalances ? JSON.parse(accountsBalances) : [],
     transactions: transactions ? JSON.parse(transactions) : [],
-    idleTimeout: idleTimeout || 10
+    idleTimeout: idleTimeout || 10,
+    tokenReceived: false
   }
 };
 // todo maybe inject redux dev tools

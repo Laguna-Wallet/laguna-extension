@@ -32,6 +32,19 @@ import { useDispatch, useSelector } from 'react-redux';
 import { PropsFromTokenDashboard } from 'pages/Recieve/Receive';
 import { selectAsset } from 'redux/actions';
 
+export enum SendAccountFlowEnum {
+  SendToTrustedContact = 'SendToTrustedContact',
+  SendToAddress = 'SendToAddress',
+  SendToAccount = 'SendToAccount',
+  ScanQR = 'ScanQR'
+}
+
+export type FlowValue =
+  | SendAccountFlowEnum.ScanQR
+  | SendAccountFlowEnum.SendToAccount
+  | SendAccountFlowEnum.SendToAddress
+  | SendAccountFlowEnum.SendToTrustedContact;
+
 type Props = {
   initialIsContactsPopupOpen?: boolean;
   propsFromTokenDashboard: PropsFromTokenDashboard;
@@ -41,7 +54,7 @@ export default function Send({ initialIsContactsPopupOpen, propsFromTokenDashboa
   const account = useAccount();
   const dispatch = useDispatch();
 
-  const [flow, setFlow] = useState<string | undefined>(undefined);
+  const [flow, setFlow] = useState<FlowValue | undefined>(undefined);
   const [assets, setAssets] = useState<Asset[] | undefined>(undefined);
   const { prices, infos } = useSelector((state: any) => state.wallet);
 
@@ -142,6 +155,7 @@ export default function Send({ initialIsContactsPopupOpen, propsFromTokenDashboa
           recoded={recoded}
           fee={fee}
           transfer={transfer}
+          flow={flow}
         />
         <TransactionSent blockHash={blockHash} />
       </Wizard>

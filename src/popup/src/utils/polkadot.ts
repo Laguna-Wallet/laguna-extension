@@ -23,6 +23,7 @@ import Utf8 from 'crypto-js/enc-utf8';
 import { decodePair } from '@polkadot/keyring/pair/decode';
 import { createPair } from '@polkadot/keyring/pair';
 import { fetchTransactions, transformTransfers } from './fetchTransactions';
+import { generateRandomBase64Avatar } from 'utils';
 
 // TODO appropriate typing
 
@@ -97,13 +98,15 @@ export function importViaSeed(suri: string, password: string) {
 }
 
 // Imports
-export function importFromMnemonic(seed: string, password: string) {
+export async function importFromMnemonic(seed: string, password: string) {
   const key = mnemonicToMiniSecret(seed);
   const encodedKey = AES.encrypt(u8aToHex(key), password).toString();
   const encodedSeed = AES.encrypt(seed, password).toString();
   const { pair } = keyring.addUri(seed, password);
 
-  keyring.saveAccountMeta(pair, { encodedKey, encodedSeed, name: pair.address });
+  const img = await generateRandomBase64Avatar();
+
+  keyring.saveAccountMeta(pair, { encodedKey, encodedSeed, name: pair.address, img });
 }
 
 export function importFromPrivateKey(secretKey: string, password: string) {
@@ -442,10 +445,11 @@ export function encryptKeyringPairs(oldPassword: string, newPassword: string) {
   }
 }
 // todo typing keyringPair
-export function encryptKeyringPair(pair: any, oldPassword: string, newPassword: string) {
+export async function encryptKeyringPair(pair: any, oldPassword: string, newPassword: string) {
   pair.unlock(oldPassword);
   const { pair: newPair } = keyring.addPair(pair, newPassword);
-  keyring.saveAccountMeta(newPair, { ...pair.meta });
+  const img = await generateRandomBase64Avatar();
+  keyring.saveAccountMeta(newPair, { img, ...pair.meta });
 }
 
 export function encryptMetaData(oldPassword: string, newPassword: string) {
@@ -453,7 +457,6 @@ export function encryptMetaData(oldPassword: string, newPassword: string) {
 
   for (let i = 0; i < pairs.length; i++) {
     const pair = pairs[i];
-    console.log(1);
     const meta = pair.meta;
 
     // decode key and encode with new password

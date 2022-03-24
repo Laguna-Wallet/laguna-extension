@@ -231,3 +231,21 @@ export async function isInPhishingList(url: string): Promise<boolean> {
 
   return false
 }
+
+export function checkBalanceChange(newBalance: Record<string, string>, newAddress: string): boolean {
+  const oldBalance = getFromStorage(StorageKeys.AccountBalances)
+  if (!oldBalance) return false
+
+  const oldAddress = JSON.parse(oldBalance)?.address
+  if (newAddress !== oldAddress) return false
+
+  const parsedOldBallance = JSON.parse(oldBalance)?.balances
+
+  for (const [key, balance] of Object.entries(newBalance)) {
+    if (balance > parsedOldBallance[key]) {
+      return true
+    }
+  }
+
+  return false
+}

@@ -19,7 +19,7 @@ import keyring from '@polkadot/ui-keyring';
 import AddressBook from './AddressBook';
 
 type AddAddressFormikValues = {
-  addressName: string;
+  name: string;
   address: string;
   memo: string;
 };
@@ -31,13 +31,13 @@ export default function AddAddress() {
 
   const formik = useFormik<AddAddressFormikValues>({
     initialValues: {
-      addressName: '',
+      name: '',
       address: '',
       memo: ''
     },
     validationSchema: addAddressSchema,
-    onSubmit: ({ address, addressName, memo }) => {
-      keyring.saveAddress(address, { addressName, memo });
+    onSubmit: ({ address, name, memo }) => {
+      keyring.saveAddress(address, { name, memo });
       goTo(AddressBook);
     }
   });
@@ -64,15 +64,14 @@ export default function AddAddress() {
           <PlusIconContainer>
             <PlusIcon width={46} stroke="#999999" />
           </PlusIconContainer>
-          {/* addressName address memo */}
           <HumbleInput
-            id={'addressName'}
+            id={'name'}
             height="48px"
             marginTop="12px"
             placeholder="Name of Address"
             type="text"
-            value={formik.values.addressName}
-            error={formik.errors.addressName}
+            value={formik.values.name}
+            error={formik.errors.name}
             onChange={formik.handleChange}
             bgColor="#303030"
             color="#adadad"

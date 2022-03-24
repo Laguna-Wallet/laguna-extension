@@ -22,6 +22,8 @@ export const walletReducer = (state: any = {}, action: any) => {
       return { ...state, pendingToSign: action.payload.pendingToSign };
     case 'CHANGE_CONNECTED_APPS':
       return { ...state, connectedApps: action.payload.connectedApps };
+    case 'TOKEN_RECEIVED':
+      return { ...state, tokenReceived: action.payload.tokenReceived };
 
     default:
       return state;

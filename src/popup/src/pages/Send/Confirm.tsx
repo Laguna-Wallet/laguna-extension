@@ -11,16 +11,15 @@ import ContactsIcon from 'assets/svgComponents/ContactsIcon';
 import HumbleInput from 'components/primitives/HumbleInput';
 import Button from 'components/primitives/Button';
 import RightArrow from 'assets/svgComponents/RightArrow';
-import Send from './Send';
+import Send, { FlowValue, SendAccountFlowEnum } from './Send';
 import SwipeAndConfirm from 'components/primitives/SwipeAndConfirm';
 import TransactionSent from './TransactionSent';
 import { goTo, Link } from 'react-chrome-extension-router';
 import { useAccount } from 'context/AccountContext';
 import { useWizard } from 'react-use-wizard';
 import { memo, useEffect, useState } from 'react';
-import keyring from '@polkadot/ui-keyring';
 import Wallet from 'pages/Wallet/Wallet';
-import { getAccountNameByAddress, truncateString } from 'utils';
+import { getAccountNameByAddress, getContactNameByAddress, truncateString } from 'utils';
 import BigNumber from 'bignumber.js';
 import { useDispatch, useSelector } from 'react-redux';
 import { Messages, SnackbarMessages } from 'utils/types';
@@ -34,9 +33,10 @@ type Props = {
   amountToSend: string;
   recoded: string;
   setBlockHash: (blockHash: string) => void;
+  flow: FlowValue | undefined;
 };
 
-function Confirm({ fee, transfer, amountToSend, recoded, setBlockHash }: Props) {
+function Confirm({ fee, transfer, amountToSend, recoded, setBlockHash, flow }: Props) {
   const { nextStep, previousStep } = useWizard();
   const account = useAccount();
   const dispatch = useDispatch();
@@ -91,7 +91,17 @@ function Confirm({ fee, transfer, amountToSend, recoded, setBlockHash }: Props) 
     return total;
   };
 
-  const toName = getAccountNameByAddress(recoded);
+  const handleGetName = (flow: FlowValue | undefined) => {
+    if (flow === SendAccountFlowEnum.SendToAccount) {
+      return getAccountNameByAddress(recoded);
+    } else if (flow === SendAccountFlowEnum.SendToTrustedContact) {
+      return getContactNameByAddress(recoded);
+    }
+
+    return '';
+  };
+
+  const toName = handleGetName(flow);
 
   return (
     <Container>

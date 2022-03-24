@@ -6,6 +6,7 @@ import type { KeyringPair } from '@polkadot/keyring/types';
 import bcrypt from 'bcryptjs';
 import { getFromStorage } from './chrome';
 import keyring from '@polkadot/ui-keyring';
+import Resizer from 'react-image-file-resizer';
 
 //==============================================================================
 // Mnemonics
@@ -64,6 +65,17 @@ export function getAccountNameByAddress(address: string): string | undefined {
   return (pair?.meta?.name as string) || undefined;
 }
 
+export function getContactNameByAddress(address: string): string | undefined {
+  const pair = keyring.getAddress(address);
+  return (pair?.meta?.name as string) || undefined;
+}
+
+export async function generateRandomBase64Avatar() {
+  const random = Math.floor(Math.random() * 10);
+  const image = (await import(`../assets/imgs/avatars/avatar-${random}.png`)).default;
+  return image;
+}
+
 export function isFormikErrorEmpty(errors: Record<string, string>): boolean {
   return !Object.keys(errors).length;
 }
@@ -108,7 +120,8 @@ export function encryptPassword({ password }: { password: string }) {
   return bcrypt.hashSync(password, bcrypt.genSaltSync());
 }
 
-export function truncateString(string: string, length?: number) {
+export function truncateString(string: string, length?: number): string {
+  if (!string) return string;
   const part1 = string.slice(0, length || 4).concat('...');
   const part2 = string.substring(string.length - (length || 4), string.length);
   return `${part1}${part2}`;
@@ -156,5 +169,23 @@ export function getBase64(file: File) {
 
 export function getAccountImage(address: string): string {
   const pair = keyring.getPair(address);
+  console.log('~ pair', pair);
+  console.log('~ pair?.meta?.img ', pair?.meta?.img);
   return pair?.meta?.img as string;
 }
+
+export const resizeFile = (file: File) =>
+  new Promise((resolve) => {
+    Resizer.imageFileResizer(
+      file,
+      300,
+      300,
+      'JPEG',
+      100,
+      0,
+      (uri) => {
+        resolve(uri);
+      },
+      'base64'
+    );
+  });

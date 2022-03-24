@@ -22,13 +22,13 @@ import { addressExists, isValidPolkadotAddress } from 'utils/polkadot';
 import { SnackbarMessages } from 'utils/types';
 
 type AddAddressFormikValues = {
-  addressName: string;
+  name: string;
   address: string;
   memo: string;
 };
 
 type Props = {
-  addressName?: string;
+  name?: string;
   address?: string;
   memo?: string;
   edit?: boolean;
@@ -38,7 +38,7 @@ type Props = {
 };
 
 export default function AddAddress({
-  addressName,
+  name,
   address,
   memo,
   edit,
@@ -52,13 +52,13 @@ export default function AddAddress({
 
   const formik = useFormik<AddAddressFormikValues>({
     initialValues: {
-      addressName: addressName || '',
+      name: name || '',
       address: address || '',
       memo: memo || ''
     },
 
     validationSchema: addAddressSchema,
-    onSubmit: ({ address: newAddress, addressName: newAddressName, memo: newMemo }) => {
+    onSubmit: ({ address: newAddress, name: newAddressName, memo: newMemo }) => {
       // if(address is correct address)
       // Snackbar
 
@@ -79,7 +79,7 @@ export default function AddAddress({
         keyring.forgetAddress(address);
       }
 
-      keyring.saveAddress(newAddress, { addressName: newAddressName, memo: newMemo });
+      keyring.saveAddress(newAddress, { name: newAddressName, memo: newMemo });
 
       if (redirectedFromSend) {
         backAction();
@@ -142,15 +142,14 @@ export default function AddAddress({
               <PlusIcon width={46} stroke="#999999" />
             )}
           </PlusIconContainer>
-          {/* addressName address memo */}
           <HumbleInput
-            id={'addressName'}
+            id={'name'}
             height="48px"
             marginTop="12px"
             placeholder="Name of Address"
             type="text"
-            value={formik.values.addressName}
-            error={formik.errors.addressName}
+            value={formik.values.name}
+            error={formik.errors.name}
             onChange={formik.handleChange}
             bgColor="#303030"
             color="#adadad"
