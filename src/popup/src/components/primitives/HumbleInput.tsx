@@ -68,7 +68,7 @@ function HumbleInput({
   const handleValue = (value: string) => {
     if (!value) return '';
     if (truncate) {
-      return truncateString(value, 9);
+      return truncateString(value, 5);
     }
     return value;
   };

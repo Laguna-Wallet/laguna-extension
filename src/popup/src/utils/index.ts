@@ -122,6 +122,7 @@ export function encryptPassword({ password }: { password: string }) {
 
 export function truncateString(string: string, length?: number): string {
   if (!string) return string;
+  if (string.length <= (length || 4 * 2)) return string;
   const part1 = string.slice(0, length || 4).concat('...');
   const part2 = string.substring(string.length - (length || 4), string.length);
   return `${part1}${part2}`;

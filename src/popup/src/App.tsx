@@ -24,7 +24,7 @@ function App() {
   const { idleTimeout, pendingDappAuthorization, pendingToSign } = useSelector(
     (state: any) => state.wallet
   );
-
+    
   const { isLoggedIn } = useSelector((state: any) => state.wallet);
   const [loading, setLoading] = useState<boolean>(false);
   const pendingDapps = pendingDappAuthorization?.pendingDappAuthorization;
@@ -34,7 +34,7 @@ function App() {
       MessageListener(msg, dispatch);
     });
   }, []);
-
+  
   useEffect(() => {
     chrome.runtime.sendMessage({ type: Messages.CheckPendingSign });
     chrome.runtime.sendMessage({ type: Messages.CheckPendingDappAuth });
