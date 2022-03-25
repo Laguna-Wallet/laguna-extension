@@ -31,6 +31,7 @@ export default function AccountsPopup({ handleClickAccount, onBack }: Props) {
   const prefix = Prefixes[selectedAsset.chain];
 
   const currAccountAddress = account?.getActiveAccount()?.address;
+  console.log('~ currAccountAddress', currAccountAddress);
 
   useEffect(() => {
     // todo proper typing
@@ -86,8 +87,7 @@ export default function AccountsPopup({ handleClickAccount, onBack }: Props) {
                     key={account.address}
                     onClick={() => handleClickAccount(account.address)}>
                     <Text>
-                      {truncateString(recodeAddress(account.name, prefix))}(
-                      {truncateString(recodeAddress(account.address, prefix))})
+                      {account.name}({truncateString(recodeAddress(account.address, prefix))})
                     </Text>
                     {/* <AlternateEmail stroke="#111" /> */}
                   </AddressComponent>

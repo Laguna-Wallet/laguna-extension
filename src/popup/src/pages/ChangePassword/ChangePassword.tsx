@@ -8,7 +8,7 @@ import HumbleInput from 'components/primitives/HumbleInput';
 import Snackbar from 'components/Snackbar/Snackbar';
 import { useAccount } from 'context/AccountContext';
 import Wallet from 'pages/Wallet/Wallet';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { goTo, Link } from 'react-chrome-extension-router';
 import { connect } from 'react-redux';
 import { Field, reduxForm } from 'redux-form';
@@ -71,7 +71,7 @@ function ChangePassword({ handleSubmit }: Props) {
       setIsSnackbarOpen(true);
       return;
     }
-
+    
     encryptKeyringPairs(values?.currentPassword, values?.newPassword);
     encryptMetaData(values?.currentPassword, values?.newPassword);
 
@@ -112,6 +112,7 @@ function ChangePassword({ handleSubmit }: Props) {
                 type: 'password',
                 bgColor: '#303030',
                 color: '#9c9c9c',
+                placeholderColor: '#9c9c9c',
                 height: '48px',
                 marginTop: '12px',
                 borderColor: '#303030'

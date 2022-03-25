@@ -312,15 +312,14 @@ const Tag = styled.div`
   font-family: 'IBM Plex Sans';
   font-size: 10px;
   color: #000;
-
-  background-image: linear-gradient(
-    to left,
-    #f5decc 85%,
-    #f2d2db 32%,
-    #d7cce2 -29%,
-    #c7dfe4 -90%,
-    #edf1e1 -145%,
-    #fff -192%
+  background: linear-gradient(
+    243.63deg,
+    #f5decc 25.2%,
+    #f2d2db 60.93%,
+    #d7cce2 101.49%,
+    #c7dfe4 142.05%,
+    #edf1e1 178.75%,
+    #ffffff 210.61%
   );
 `;
 

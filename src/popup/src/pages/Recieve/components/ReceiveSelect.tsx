@@ -1,3 +1,4 @@
+import NetworkIcons from 'components/primitives/NetworkIcons';
 import { FormikProps } from 'formik/dist/types';
 import styled from 'styled-components';
 import { getApiInstance } from 'utils/polkadot';
@@ -22,6 +23,7 @@ export default function Select({
 
   return (
     <Container>
+      <NetworkIcons chain={selectedNetwork?.chain as string} />
       <StyledSelect
         defaultValue={selectedToken}
         onChange={(e) => handleChange(e)}
@@ -42,6 +44,7 @@ export default function Select({
 const Container = styled.div`
   width: 100%;
   display: flex;
+  align-items: center;
   margin-top: 5px;
   padding: 0 10px;
   background-color: #f3f3f3;
@@ -49,7 +52,7 @@ const Container = styled.div`
 `;
 
 const StyledSelect = styled.select`
-  width: 100%;
+  flex: 1;
   height: 53px;
   border: 0;
   border-top-right-radius: 5px;
