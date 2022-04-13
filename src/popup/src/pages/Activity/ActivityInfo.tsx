@@ -23,9 +23,10 @@ import { format } from 'date-fns';
 
 type Props = {
   transaction: Transaction;
+  closeAction?: () => void;
 };
 
-export default function AccountInfo({ transaction }: Props) {
+export default function AccountInfo({ transaction, closeAction }: Props) {
   const { from, to, nonce, amount, fee, chain, hash } = transaction;
   const prices = useSelector((state: any) => state.wallet.prices);
   const price = prices[chain];
@@ -62,7 +63,7 @@ export default function AccountInfo({ transaction }: Props) {
       <ContentItem>
         <Title>
           <span>Recieve</span>
-          <CloseIconContainer onClick={() => goTo(Activity)}>
+          <CloseIconContainer onClick={() => (closeAction ? closeAction() : goTo(Activity))}>
             <CloseIcon stroke={'#111'} />
           </CloseIconContainer>
         </Title>

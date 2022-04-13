@@ -46,7 +46,7 @@ export default function AddressBook({ snackbar }: Props) {
       <MenuHeader
         isOpen={isOpen}
         setOpen={setOpen}
-        title="Address Book"
+        title="ADDRESS BOOK"
         onClose={() => goTo(Wallet)}
         backAction={() => goTo(Wallet, { isMenuOpen: true })}
       />
@@ -54,7 +54,7 @@ export default function AddressBook({ snackbar }: Props) {
         {addresses?.length === 0 ? (
           <>
             <AddressBookContainer>
-              <AddressBookIcon />
+              <AddressBookIcon stroke="#fff" />
             </AddressBookContainer>
             <Text marginTop="10px">No Addresses</Text>
           </>
@@ -83,6 +83,7 @@ export default function AddressBook({ snackbar }: Props) {
             bgColor="#fff"
             color="#111"
             justify="center"
+            direction="row-reverse"
             margin="auto 0 0 0"
           />
         </StyledLink>

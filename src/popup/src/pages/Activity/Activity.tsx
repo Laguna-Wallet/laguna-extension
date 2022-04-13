@@ -5,7 +5,7 @@ import Header from 'pages/Wallet/Header';
 import Footer from 'pages/Wallet/Footer';
 import { goTo, Link } from 'react-chrome-extension-router';
 import Wallet from 'pages/Wallet/Wallet';
-import { getApiInstance } from 'utils/polkadot';
+import { getApiInstance, recodeAddress } from 'utils/polkadot';
 import { useEffect, useState } from 'react';
 import ThreeDotsIcon from 'assets/svgComponents/ThreeDotsIcon';
 import ActivityInfo from './ActivityInfo';
@@ -21,6 +21,7 @@ import KusamaIcon from 'assets/svgComponents/KusamaIcon';
 import { TokenSymbols, Transaction } from 'utils/types';
 import { fetchAccountsTransactions } from 'utils/fetchTransactions';
 import Popup from 'components/Popup/Popup';
+import NetworkIcons from 'components/primitives/NetworkIcons';
 
 type Props = {
   isMenuOpen?: boolean;
@@ -33,7 +34,7 @@ export const ActivityItem = ({ transaction, onClick, bgColor }: Props) => {
   const account = useAccount();
 
   const handleIsSent = (accountAddress: string, from: string) => {
-    if (accountAddress === from) return true;
+    if (recodeAddress(accountAddress, 0) === recodeAddress(from, 0)) return true;
     return false;
   };
 
@@ -45,6 +46,7 @@ export const ActivityItem = ({ transaction, onClick, bgColor }: Props) => {
     <ActivityItemContainer bgColor={bgColor} onClick={onClick}>
       {/* <StyledLink component={ActivityInfo} props={{ transaction }}> */}
       <Icon>
+        {/* <NetworkIcons chain={transaction.chain} /> */}
         {handleIcons(transaction.chain)}
         {isSent ? (
           <IconContainer bgColor="#0324ff">
@@ -115,18 +117,20 @@ export default function Activity() {
 
       <Content>
         {!loading ? (
-          <ActivityItemsContainer>
-            {sortedTransactions &&
-              sortedTransactions.map((transaction: any) => {
-                return (
-                  <ActivityItem
-                    key={transaction.hex}
-                    onClick={() => handleClick(transaction)}
-                    transaction={transaction}
-                  />
-                );
-              })}
-          </ActivityItemsContainer>
+          <ListContentParent>
+            <ListContentChild>
+              {sortedTransactions &&
+                sortedTransactions.map((transaction: any) => {
+                  return (
+                    <ActivityItem
+                      key={transaction.hex}
+                      onClick={() => handleClick(transaction)}
+                      transaction={transaction}
+                    />
+                  );
+                })}
+            </ListContentChild>
+          </ListContentParent>
         ) : (
           <Loading>Loading...</Loading>
         )}
@@ -148,14 +152,22 @@ export default function Activity() {
 function handleIcons(chain: any) {
   switch (chain) {
     case 'westend':
-      return <PolkadotLogoIcon width={20} height={20} />;
-      break;
+      return (
+        <PolkadotLogoIcon
+        // width={20} height={20}
+        />
+      );
+    // break;
     case 'polkadot':
-      return <PolkadotLogoIcon width={20} height={20} />;
-      break;
+      return (
+        <PolkadotLogoIcon
+        //  width={20} height={20}
+        />
+      );
+    // break;
     case 'kusama':
       return <KusamaLogoIcon fill="#111" stroke="#111" />;
-      break;
+    // break;
     default:
   }
 }
@@ -184,23 +196,47 @@ const Content = styled.div`
   box-sizing: border-box;
 `;
 
-const ActivityItemsContainer = styled.div`
+const ListContentParent = styled.div`
   width: 100%;
-  height: 100%;
-  overflow: scroll;
-  height: auto;
+  height: 570px;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  margin-top: 75px;
-  padding-bottom: 20px;
+  margin-top: 45px;
+  overflow-y: hidden;
+  position: relative;
 `;
+
+const ListContentChild = styled.div`
+  width: 100%;
+  overflow-y: scroll;
+  position: absolute;
+  top: 0;
+  left: 0px;
+  bottom: -20px;
+  right: -20px;
+  overflow: scroll;
+  padding-bottom: 15px;
+  padding-right: 20px;
+`;
+
+// const ActivityItemsContainer = styled.div`
+//   width: 100%;
+//   height: 100%;
+//   overflow-y: scroll;
+//   height: auto;
+//   display: flex;
+//   flex-direction: column;
+//   margin-top: 75px;
+//   padding-bottom: 20px;
+// `;
 
 const Loading = styled.div`
   margin-top: 90px;
 `;
 
 const ActivityItemContainer = styled.div<{ bgColor?: string }>`
-  width: 323px;
+  width: 345px;
   height: 60px;
   margin-top: 10px;
   display: flex;

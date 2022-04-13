@@ -104,12 +104,16 @@ function BackupAccount() {
               value={password}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
               label="password"
-              placeholder="password"
-              bgColor="#303030"
-              color="#9c9c9c"
+              placeholder="Enter your password"
+              color="#b1b5c3"
+              placeholderColor="#b1b5c3"
+              bgColor="#414141"
+              borderColor="#414141"
+              // bgColor="#303030"
+              // color="#9c9c9c"
+              // borderColor="#303030"
               height="48px"
               marginTop="12px"
-              borderColor="#303030"
             />
           </FieldsContainer>
         )}
@@ -161,7 +165,7 @@ const Container = styled.div`
   z-index: 999;
   padding: 15px 15px 40px 15px;
   box-sizing: border-box;
-  background-color: #111111;
+  background-color: #18191a;
   z-index: 99999;
 `;
 
@@ -201,7 +205,15 @@ const Circle = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(265.71deg, #1cc3ce -32.28%, #b9e260 104.04%);
+  background: linear-gradient(
+    243.63deg,
+    #f5decc -78.21%,
+    #f2d2db -39.06%,
+    #d7cce2 5.39%,
+    #c7dfe4 49.83%,
+    #edf1e1 90.04%,
+    #ffffff 124.96%
+  );
   border-radius: 100%;
 `;
 

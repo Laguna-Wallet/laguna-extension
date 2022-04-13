@@ -23,9 +23,9 @@ export default function Footer({ activeItem }: Props) {
           <WalletIcon stroke="#b1b5c3" />
         )}
       </StyledLink>
-      <StyledLink component={Wallet}>
+      {/* <StyledLink component={Wallet}>
         <ArrowsIcon stroke="#b1b5c3" />
-      </StyledLink>
+      </StyledLink> */}
       <StyledLink component={Activity}>
         {activeItem === 'activity' ? <LightingIcon fill="#18191a" /> : <LightingIcon />}
       </StyledLink>

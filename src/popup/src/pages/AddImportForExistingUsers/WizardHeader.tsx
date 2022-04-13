@@ -50,7 +50,7 @@ export default function WizardHeader({ title, onClose, onBack }: Props) {
         <Line>
           <Progress activeStep={activeStep} calcProgressBarSize={calcProgressBarSize}></Progress>
         </Line>
-        <StepNumber>{activeStep + 1}/3</StepNumber>
+        {/* <StepNumber>{activeStep + 1}/3</StepNumber> */}
       </TopSection>
       {title && (
         <BottomSection>

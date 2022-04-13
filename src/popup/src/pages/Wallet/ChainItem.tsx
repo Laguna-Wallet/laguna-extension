@@ -17,7 +17,7 @@ export default function ChainItem({ asset, accountAddress, handleClick }: Props)
     // <StyledLink component={TokenDashboard} props={{ asset }}>
     <Container onClick={handleClick}>
       <ListItemIcon>
-        <NetworkIcons chain={asset.chain} />
+        <NetworkIcons width="36px" height="36px" chain={asset.chain} />
       </ListItemIcon>
       <ListItemText>
         <Title fs="17px">{asset.chain}</Title>

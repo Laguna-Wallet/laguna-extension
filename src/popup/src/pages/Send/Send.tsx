@@ -20,7 +20,7 @@ import {
   recodeAddressForTransaction
 } from 'utils/polkadot';
 import { useEffect, useReducer, useState } from 'react';
-import { Asset, Network, SelectType } from 'utils/types';
+import { AccountMeta, Asset, Network, SelectType } from 'utils/types';
 import { useWizard, Wizard } from 'react-use-wizard';
 import TransactionSent from './TransactionSent';
 import SendToken from './SendToken';
@@ -31,6 +31,7 @@ import BigNumber from 'bignumber.js';
 import { useDispatch, useSelector } from 'react-redux';
 import { PropsFromTokenDashboard } from 'pages/Recieve/Receive';
 import { selectAsset } from 'redux/actions';
+import { State } from 'redux/store';
 
 export enum SendAccountFlowEnum {
   SendToTrustedContact = 'SendToTrustedContact',
@@ -56,16 +57,18 @@ export default function Send({ initialIsContactsPopupOpen, propsFromTokenDashboa
 
   const [flow, setFlow] = useState<FlowValue | undefined>(undefined);
   const [assets, setAssets] = useState<Asset[] | undefined>(undefined);
-  const { prices, infos } = useSelector((state: any) => state.wallet);
+  const [accountMeta, setAccountMeta] = useState<AccountMeta>();
 
-  const { accountsBalances } = useSelector((state: any) => state.wallet);
+  const { prices, infos, accountsBalances, disabledTokens } = useSelector(
+    (state: State) => state.wallet
+  );
 
   const balances = accountsBalances?.balances;
 
   // TODO REFETCH NETWORKS FROM STORAGE
   useEffect(() => {
     async function go() {
-      const { assets }: any = await getAssets(prices, infos, balances);
+      const { assets }: any = await getAssets(prices, infos, balances, disabledTokens);
       setAssets(assets);
     }
 
@@ -147,6 +150,8 @@ export default function Send({ initialIsContactsPopupOpen, propsFromTokenDashboa
           loading={loading}
           abilityToTransfer={abilityToTransfer}
           propsFromTokenDashboard={propsFromTokenDashboard}
+          accountMeta={accountMeta}
+          setAccountMeta={setAccountMeta}
         />
 
         <Confirm

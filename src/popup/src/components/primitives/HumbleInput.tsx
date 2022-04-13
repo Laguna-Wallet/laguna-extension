@@ -1,4 +1,3 @@
-import ErrorIcon from 'assets/svgComponents/ErrorIcon';
 import { memo, useRef } from 'react';
 import styled from 'styled-components/macro';
 import { truncateString } from 'utils';
@@ -14,6 +13,9 @@ type InputProps = {
   // Todo formik doesn't provides types, check for better solution
   onChange: any;
   error?: string | undefined;
+  errorColor?: string;
+  errorBorderColor?: string;
+  showError?: boolean;
   touched?: boolean | undefined;
   borderColor?: string;
   placeholderColor?: string;
@@ -32,6 +34,7 @@ type InputProps = {
   rightLabel?: string;
   // todo asap
   Icon?: any;
+  IconAlignment?: 'left' | 'right';
   accountMeta?: AccountMeta;
   readOnly?: boolean;
 };
@@ -44,6 +47,8 @@ function HumbleInput({
   value,
   onChange,
   error,
+  errorColor,
+  errorBorderColor,
   touched,
   marginTop,
   marginBottom,
@@ -58,10 +63,12 @@ function HumbleInput({
   input,
   copy,
   handleClickCopy,
+  showError,
   truncate,
   rightLabel,
   placeholderColor,
   Icon,
+  IconAlignment,
   accountMeta,
   readOnly
 }: InputProps) {
@@ -76,12 +83,13 @@ function HumbleInput({
   return (
     <Container marginBottom={marginBottom} marginTop={marginTop}>
       <InputContainer
+        error={!touched && !!error}
+        errorBorderColor={errorBorderColor}
         borderColor={borderColor}
-        error={!!touched && !!error}
         bgColor={bgColor}
         color={color}
         height={height}>
-        {Icon && <IconContainer>{Icon}</IconContainer>}
+        {IconAlignment === 'left' && Icon && <IconContainer>{Icon}</IconContainer>}
         {type === 'textarea' ? (
           <StyledTextarea
             id={id}
@@ -96,7 +104,7 @@ function HumbleInput({
           />
         ) : (
           <>
-            {accountMeta && <AccountAvatar img={accountMeta.img} />}
+            {IconAlignment === 'left' && accountMeta && <AccountAvatar img={accountMeta.img} />}
             <StyledInput
               id={id}
               value={handleValue(value || input?.value)}
@@ -110,6 +118,7 @@ function HumbleInput({
               color={color}
               disabled={readOnly}
             />
+            {IconAlignment === 'right' && Icon && <IconContainer>{Icon}</IconContainer>}
             {copy && handleClickCopy && (
               <Copy onClick={() => handleClickCopy(value || input?.value)}>Copy</Copy>
             )}
@@ -131,9 +140,9 @@ function HumbleInput({
         )}
       </InputContainer>
 
-      {error && (
+      {error && showError && (
         <ErrorContainer>
-          <ErrorMessage>{error}</ErrorMessage>
+          <ErrorMessage errorColor={errorColor}>{error}</ErrorMessage>
         </ErrorContainer>
       )}
     </Container>
@@ -155,6 +164,7 @@ const InputContainer = styled.div<{
   error: boolean;
   height?: string;
   bgColor?: string;
+  errorBorderColor?: string;
 }>`
   width: 100%;
   height: ${({ height }) => (height ? height : 'auto')};
@@ -164,7 +174,8 @@ const InputContainer = styled.div<{
   padding: 8px 8px 5px 16px;
   box-sizing: border-box;
   border: 1px solid;
-  border-color: ${({ error, borderColor }) => (error ? '#F05353' : borderColor)};
+  border-color: ${({ error, borderColor, errorBorderColor }) =>
+    error && errorBorderColor ? errorBorderColor : borderColor};
   border-radius: 5px;
   background-color: ${({ bgColor }) => bgColor || '#fff'};
   position: relative;
@@ -234,7 +245,7 @@ const AccountAvatar = styled.div<{ img: string }>`
   border-radius: 100%;
   background-color: #ccc;
   background-image: ${({ img }) => `url(${img})`};
-  background-size: contain;
+  background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
   margin-right: 5px;
@@ -272,8 +283,8 @@ const ErrorContainer = styled.div`
   margin-top: 3px;
 `;
 
-const ErrorMessage = styled.div`
-  color: #353945;
+const ErrorMessage = styled.div<{ errorColor?: string }>`
+  color: ${({ errorColor }) => errorColor || '#353945'};
   font-size: 12px;
   margin-left: 16px;
 `;

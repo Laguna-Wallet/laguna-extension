@@ -78,7 +78,14 @@ function Snackbar({
   };
 
   return (
-    <Container width={width} type={type} top={top} bottom={bottom} left={left} right={right}>
+    <Container
+      width={width}
+      type={type}
+      top={top}
+      bottom={bottom}
+      left={left}
+      right={right}
+      isOpen={isOpen}>
       <CSSTransition in={isOpen} out={isOpen} timeout={200} classNames="my-node" unmountOnExit>
         <Content type={type}>{children ? children : renderContent(type)}</Content>
       </CSSTransition>
@@ -96,12 +103,11 @@ const Container = styled.div<{
   right?: string;
   padding?: string;
   type?: 'error' | 'success' | 'warning';
+  isOpen?: boolean;
 }>`
   width: ${({ width }) => width || '100%'};
   display: block;
-  /* width: ${({ type }) => (type === 'error' ? '100%' : type === 'success' ? '195px' : '100%')}; */
-  /* height: ${({ type }) => (type === 'error' ? '48px' : type === 'success' ? '48px' : '46px')}; */
-  height: 48px;
+  height: ${({ isOpen }) => (isOpen ? '48px' : '0px')};
   box-sizing: border-box;
   position: absolute;
   border-radius: 5px;

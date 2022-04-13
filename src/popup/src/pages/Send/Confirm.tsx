@@ -26,6 +26,7 @@ import { Messages, SnackbarMessages } from 'utils/types';
 import NetworkIcons from 'components/primitives/NetworkIcons';
 import { reset } from 'redux-form';
 import Popup from 'components/Popup/Popup';
+import { ClassicSpinner } from 'react-spinners-kit';
 
 type Props = {
   fee: string;
@@ -123,7 +124,7 @@ function Confirm({ fee, transfer, amountToSend, recoded, setBlockHash, flow }: P
             {amount} {token}
           </Text>{' '}
           <Text>
-            on the <Tag>{chain} Network</Tag>
+            <span>on the</span> <Tag>{chain} Network</Tag>
           </Text>
           <AddressesInfo>
             <AddressesInfoItem>
@@ -135,12 +136,11 @@ function Confirm({ fee, transfer, amountToSend, recoded, setBlockHash, flow }: P
             </AddressesInfoItem>
             <AddressesInfoItem>
               <span>To</span>
-              {toName && (
-                <span>
-                  {toName?.length > 10 ? truncateString(toName, 5) : toName}(
-                  {truncateString(recoded, 5)})
-                </span>
-              )}
+
+              <span>
+                {toName && toName?.length > 10 ? truncateString(toName, 5) : toName}(
+                {truncateString(recoded, 5)})
+              </span>
             </AddressesInfoItem>
             <AddressesInfoItem>
               <span>Total</span>
@@ -197,7 +197,9 @@ function Confirm({ fee, transfer, amountToSend, recoded, setBlockHash, flow }: P
 
       {loadingTransaction && (
         <Popup justify="center" align="center" onClose={() => undefined}>
-          <LoadingContainer bg={loadingTransactionBg}></LoadingContainer>
+          <LoadingContainer bg={loadingTransactionBg}>
+            <ClassicSpinner size={60} color="#fff" loading={true} />
+          </LoadingContainer>
         </Popup>
       )}
     </Container>
@@ -312,6 +314,7 @@ const Tag = styled.div`
   font-family: 'IBM Plex Sans';
   font-size: 10px;
   color: #000;
+  margin-left: 5px;
   background: linear-gradient(
     243.63deg,
     #f5decc 25.2%,

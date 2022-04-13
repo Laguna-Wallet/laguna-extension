@@ -149,12 +149,12 @@ export default function ChainActivity({ chain, asset }: Props) {
       {isPopupOpen && transaction && (
         <Popup justify="center" align="center" onClose={() => setIsPopupOpen(false)}>
           <ActivityContainer>
-            <ActivityInfo transaction={transaction} />
+            <ActivityInfo closeAction={() => setIsPopupOpen(false)} transaction={transaction} />
           </ActivityContainer>
         </Popup>
       )}
 
-      <Footer activeItem="activity" />
+      <Footer activeItem="wallet" />
     </Container>
   );
 }

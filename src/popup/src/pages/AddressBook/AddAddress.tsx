@@ -20,6 +20,7 @@ import AddressBook from './AddressBook';
 import AddressPencilIcon from 'assets/svgComponents/PencilIcon';
 import { addressExists, isValidPolkadotAddress } from 'utils/polkadot';
 import { SnackbarMessages } from 'utils/types';
+import EditAddressIcon from 'assets/svgComponents/EditAddressIcon';
 
 type AddAddressFormikValues = {
   name: string;
@@ -56,7 +57,6 @@ export default function AddAddress({
       address: address || '',
       memo: memo || ''
     },
-
     validationSchema: addAddressSchema,
     onSubmit: ({ address: newAddress, name: newAddressName, memo: newMemo }) => {
       // if(address is correct address)
@@ -129,7 +129,7 @@ export default function AddAddress({
       <MenuHeader
         isOpen={isOpen}
         setOpen={setOpen}
-        title={`${edit ? 'Edit' : 'Add'} Address`}
+        title={`${edit ? 'EDIT' : 'ADD'} ADDRESS`}
         onClose={closeAction}
         backAction={back}
       />
@@ -137,9 +137,9 @@ export default function AddAddress({
         <Form onSubmit={formik.handleSubmit}>
           <PlusIconContainer>
             {edit ? (
-              <AddressPencilIcon width={46} stroke="#999999" />
+              <EditAddressIcon width={40} height={40} fill="#fff" />
             ) : (
-              <PlusIcon width={46} stroke="#999999" />
+              <PlusIcon width={46} stroke="#fff" />
             )}
           </PlusIconContainer>
           <HumbleInput
@@ -152,9 +152,9 @@ export default function AddAddress({
             error={formik.errors.name}
             onChange={formik.handleChange}
             bgColor="#303030"
-            color="#adadad"
-            placeholderColor="#adadad"
             borderColor="#303030"
+            color="#B1B5C3"
+            placeholderColor="#B1B5C3"
           />
           <HumbleInput
             id={'address'}
@@ -166,40 +166,47 @@ export default function AddAddress({
             onChange={formik.handleChange}
             error={formik.errors.address}
             bgColor="#303030"
-            color="#adadad"
-            placeholderColor="#adadad"
             borderColor="#303030"
+            color="#B1B5C3"
+            placeholderColor="#B1B5C3"
           />
-          <HumbleInput
-            id={'memo'}
-            height="48px"
-            marginTop="12px"
-            type="text"
-            placeholder="Memo (optional)"
-            value={formik.values.memo}
-            onChange={formik.handleChange}
-            bgColor="#303030"
-            color="#adadad"
-            placeholderColor="#adadad"
-            borderColor="#303030"
-          />
+          {!edit && (
+            <HumbleInput
+              id={'memo'}
+              height="48px"
+              marginTop="12px"
+              type="text"
+              placeholder="Memo (optional)"
+              value={formik.values.memo}
+              onChange={formik.handleChange}
+              bgColor="#303030"
+              borderColor="#303030"
+              color="#B1B5C3"
+              placeholderColor="#B1B5C3"
+            />
+          )}
 
           <ButtonContainer>
-            <Button
-              onClick={handleCancel}
-              text="Cancel"
-              bgColor="#fff"
-              color="#111"
-              justify="center"
-              margin="auto 10px 0 0"
-            />
+            {!edit && (
+              <Button
+                onClick={handleCancel}
+                text="Cancel"
+                bgColor="#414141"
+                borderColor="#414141"
+                color="#fff"
+                justify="center"
+                margin="auto 10px 0 0"
+              />
+            )}
             <Button
               type="submit"
               text="Save"
               color="#111"
+              borderColor="#fff"
+              bgColor="#fff"
               justify="center"
               margin="auto 0 0 0"
-              bgImage="linear-gradient(to right,#1cc3ce,#b9e260);"
+              // bgImage="linear-gradient(to right,#1cc3ce,#b9e260);"
             />
           </ButtonContainer>
           {edit && address && (
@@ -229,7 +236,7 @@ const Container = styled.div<{ redirectedFromSend?: boolean; edit?: boolean }>`
   z-index: 999;
   padding: ${({ edit }) => (edit ? '15px' : '15px 15px 40px 15px')};
   box-sizing: border-box;
-  background-color: ${({ redirectedFromSend }) => (redirectedFromSend ? '#fff' : '#111111')};
+  background-color: ${({ redirectedFromSend }) => (redirectedFromSend ? '#fff' : '#18191A')};
   z-index: 99999;
 `;
 
@@ -250,7 +257,7 @@ const PlusIconContainer = styled.div`
   justify-content: center;
   align-items: center;
   border-radius: 100%;
-  background-color: #000;
+  background-color: #000000;
   margin-top: auto;
 `;
 

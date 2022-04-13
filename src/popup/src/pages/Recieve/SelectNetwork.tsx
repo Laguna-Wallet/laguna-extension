@@ -22,10 +22,10 @@ type Props = {
 };
 
 export default function SelectNetwork({ networks, setSelectedNetwork }: Props) {
+  const { nextStep } = useWizard();
   const account = useAccount();
   const dispatch = useDispatch();
 
-  const { nextStep } = useWizard();
   const [networksFilter, setNetworksFilter] = useState<string>('');
 
   const handleClick = (network: Network) => {
@@ -33,9 +33,9 @@ export default function SelectNetwork({ networks, setSelectedNetwork }: Props) {
     nextStep();
   };
 
-  const renderNetworks = (assets: Network[], networksFilter: string) => {
-    return assets.filter((asset) =>
-      asset.name.toLowerCase().includes(networksFilter.toLowerCase())
+  const renderNetworks = (networks: Network[], networksFilter: string) => {
+    return networks.filter((network) =>
+      network.name.toLowerCase().includes(networksFilter.toLowerCase())
     );
   };
 
@@ -98,6 +98,7 @@ const Container = styled.div`
 `;
 
 const Content = styled.div`
+  height: 100%;
   padding: 15px;
   background-color: #fff;
   border-top-left-radius: 15px;
@@ -106,8 +107,6 @@ const Content = styled.div`
 
 const List = styled.div`
   margin-top: 24px;
-  height: 400px;
-  overflow: scroll;
   padding-bottom: 20px;
   box-sizing: border-box;
 `;

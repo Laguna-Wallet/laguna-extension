@@ -3,7 +3,7 @@ import Button from 'components/primitives/Button';
 import { useWizard } from 'react-use-wizard';
 import { useFormik } from 'formik';
 import { passwordStrength } from 'check-password-strength';
-import { calculatePasswordCheckerColor } from 'utils';
+import { calculatePasswordCheckerColor, enhancePasswordStrength } from 'utils';
 import { createPasswordSchema } from 'utils/validations';
 import Snackbar from 'components/Snackbar/Snackbar';
 import { useAccount } from 'context/AccountContext';
@@ -33,22 +33,21 @@ function CreatePassword() {
     }
   });
 
-  const passwordLength = passwordStrength(formik.values.password).value;
+  const passwordLength = enhancePasswordStrength(passwordStrength(formik.values.password).value);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e?.preventDefault();
 
     if (!formik.isValid) {
-      setIsSnackbarOpen(true);
-      console.log('~ formik.errors', formik.errors);
-      if (
-        formik.errors['password'] === 'Passwords do not match' &&
-        formik.errors['confirmPassword'] === 'Passwords do not match'
-      ) {
-        setSnackbarMessage("Passwords Don't Match");
-      } else {
-        setSnackbarMessage('Please fix existing errors');
-      }
+      // setIsSnackbarOpen(true);
+      // if (
+      //   formik.errors['password'] === 'Passwords do not match' &&
+      //   formik.errors['confirmPassword'] === 'Passwords do not match'
+      // ) {
+      //   setSnackbarMessage("Passwords Don't Match");
+      // } else {
+      // setSnackbarMessage("Passwords Don't Match");
+      // }
       return;
     }
 
@@ -69,6 +68,9 @@ function CreatePassword() {
             placeholder="Password"
             label="New password"
             error={formik.errors['password']}
+            errorColor={'#FB5A5A'}
+            showError={true}
+            errorBorderColor={'#FB5A5A'}
             touched={formik.touched['password']}
             marginTop="24px"
             height="48.7px"
@@ -93,6 +95,9 @@ function CreatePassword() {
             placeholder="Password"
             label="Confirm password"
             error={formik.errors['confirmPassword']}
+            errorColor={'#FB5A5A'}
+            showError={true}
+            errorBorderColor={'#FB5A5A'}
             touched={formik.touched['confirmPassword']}
             height="48.7px"
             marginTop="16px"
@@ -118,6 +123,7 @@ function CreatePassword() {
           text={'Create Password'}
           margin="auto 0px 0px 0px"
           justify="center"
+          disabled={!(formik.values.confirmPassword && formik.values.password) || !formik.isValid}
         />
       </Form>
     </Container>

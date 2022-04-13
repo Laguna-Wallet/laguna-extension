@@ -45,6 +45,7 @@ import TokenDashboard from 'pages/TokenDashboard/TokenDashboard';
 import keyring from '@polkadot/ui-keyring';
 import { AccountMeta } from 'utils/types';
 import { FlowValue, SendAccountFlowEnum } from './Send';
+import HashtagIcon from 'assets/svgComponents/HashtagIcon';
 
 const validate = (values: any) => {
   const errors: any = {};
@@ -73,6 +74,8 @@ type Props = {
   abilityToTransfer: boolean;
   amount: string;
   propsFromTokenDashboard: PropsFromTokenDashboard;
+  accountMeta: AccountMeta | undefined;
+  setAccountMeta: (accountMeta: AccountMeta) => void;
 };
 
 const handleShowAccountInput = (flow: string | undefined, address: string | undefined): boolean => {
@@ -95,7 +98,9 @@ function SendToken({
   errors,
   abilityToTransfer,
   amount,
-  propsFromTokenDashboard
+  propsFromTokenDashboard,
+  accountMeta,
+  setAccountMeta
 }: Props) {
   const dispatch = useDispatch();
   const { nextStep, previousStep } = useWizard();
@@ -106,8 +111,6 @@ function SendToken({
 
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
   const [snackbarError, setSnackbarError] = useState<string>('');
-
-  const [accountMeta, setAccountMeta] = useState<AccountMeta>();
 
   // todo proper typing
   const { selectedAsset } = useSelector((state: any) => state.sendToken);
@@ -227,11 +230,15 @@ function SendToken({
         backAction={handleBack}
         bgColor="#f2f2f2"
       />
+
       <Form onSubmit={handleSubmit(submit)}>
         <Content>
           <ContentItem>
             <ContentItemTitle>Amount</ContentItemTitle>
-            <TokenAndAmountSelect tokens={[selectedAsset.symbol]} />
+            <TokenAndAmountSelect
+              Icon={<NetworkIcons chain={selectedAsset?.chain} />}
+              tokens={[selectedAsset.symbol]}
+            />
 
             <Price>
               <span>{amount && price && '$' + new BigNumber(amount).times(price).toFormat(2)}</span>
@@ -262,9 +269,12 @@ function SendToken({
                   accountMeta,
                   readOnly:
                     flow === SendAccountFlowEnum.SendToTrustedContact ||
-                    flow === SendAccountFlowEnum.SendToAccount
+                    flow === SendAccountFlowEnum.SendToAccount,
 
-                  // Icon: <NetworkIcons chain={selectedAsset?.chain} />
+                  Icon: flow === SendAccountFlowEnum.SendToTrustedContact && (
+                    <ContactsIcon stroke="#111" />
+                  ),
+                  IconAlignment: 'right'
                 }}
               />
             </ContentItem>
@@ -274,7 +284,7 @@ function SendToken({
               <SendTypes>
                 <SendTypeItem onClick={() => setFlow(SendAccountFlowEnum.SendToAddress)}>
                   <IconContainer>
-                    <SharpIcon />
+                    <HashtagIcon />
                   </IconContainer>
                   <Text>Address</Text>
                 </SendTypeItem>
@@ -283,7 +293,7 @@ function SendToken({
                   <IconContainer>
                     <WalletIcon stroke="#111" />
                   </IconContainer>
-                  <Text>Accounts</Text>
+                  <Text>Wallets</Text>
                 </SendTypeItem>
 
                 <SendTypeItem onClick={handleClickContacts}>
@@ -304,7 +314,7 @@ function SendToken({
           )}
 
           <ContentItem>
-            <ContentItemTitle>Add Note (Optional)</ContentItemTitle>
+            <ContentItemTitle>Enter note (Optional)</ContentItemTitle>
             <Field
               id="note"
               name="note"
@@ -381,6 +391,10 @@ function SendToken({
           onBack={() => {
             setIsContactsPopupOpen(false);
             setFlow(undefined);
+          }}
+          closeAction={() => {
+            dispatch(reset('sendToken'));
+            goTo(Wallet);
           }}
           handleCloseContacts={handleCloseContacts}
         />

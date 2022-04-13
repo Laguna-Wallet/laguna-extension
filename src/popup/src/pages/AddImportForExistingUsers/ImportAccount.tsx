@@ -28,6 +28,7 @@ import { useAccount } from 'context/AccountContext';
 import CreatePassword from '../CreateAccount/CreatePassword/CreatePassword';
 import SetupComplete from './SetupComplete';
 import SignUp from 'pages/SignUp/SignUp';
+import { State } from 'redux/store';
 
 const validate = (values: any) => {
   const errors: any = {};
@@ -65,8 +66,10 @@ function ImportAccount({ redirectedFromSignUp }: Props) {
   const encoded = account.encryptedPassword;
 
   const dispatch = useDispatch();
-
+  // todo proper typing
   const formValues = useSelector((state: any) => state?.form?.AddImportAccount?.values);
+  const hasBoarded = useSelector((state: State) => state.wallet.onboarding);
+
   const { seedPhase, file, password: jsonPassword }: any = { ...formValues };
 
   const handleEncode = async (password: string) => {
@@ -131,7 +134,7 @@ function ImportAccount({ redirectedFromSignUp }: Props) {
           onBack={onBack}
           onClose={onClose}
         />
-        <SetupComplete />
+        {!hasBoarded && <SetupComplete />}
       </Wizard>
     </Form>
   );

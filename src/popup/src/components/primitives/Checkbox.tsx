@@ -8,7 +8,7 @@ type Props = {
 export default function Checkbox({ value, onChange }: Props) {
   return (
     <Container>
-      <Input value={value} onChange={onChange} type="checkbox" />
+      <Input value={value} onChange={() => onChange(!value)} type="checkbox" />
     </Container>
   );
 }

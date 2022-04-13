@@ -7,10 +7,8 @@ import CloseIcon from 'assets/svgComponents/CloseIcon';
 import FileUploadIcon from 'assets/svgComponents/FileUploadIcon';
 import RightArrow from 'assets/svgComponents/RightArrow';
 import UploadFinishedIcon from 'assets/svgComponents/UploadFinishedIcon';
-import Dnd from 'components/Dnd/Dnd';
 import Button from 'components/primitives/Button';
 import HumbleInput from 'components/primitives/HumbleInput';
-import Input from 'components/primitives/Input';
 import Snackbar from 'components/Snackbar/Snackbar';
 import WizardHeader from 'pages/AddImportForExistingUsers/WizardHeader';
 import SignUp from 'pages/SignUp/SignUp';
@@ -35,6 +33,9 @@ import {
 import { isHex } from '@polkadot/util';
 import { mnemonicValidate } from '@polkadot/util-crypto';
 import { StorageKeys } from 'utils/types';
+import Popup from 'components/Popup/Popup';
+import { HelpImport } from 'components/popups/HelpImport';
+import { State } from 'redux/store';
 
 // import { StorageKeys } from 'utils/types';
 // import { validateSeedPhase } from 'utils/validations';
@@ -51,6 +52,7 @@ function ImportPhase({ errors, onClose, redirectedFromSignUp }: Props) {
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
   const [snackbarError, setSnackbarError] = useState<string>('');
   const [uploaded, setUploaded] = useState<boolean>(false);
+  const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false);
 
   const formValues = useSelector((state: any) => state?.form?.AddImportAccount?.values);
   const { seedPhase, file, password }: any = { ...formValues };
@@ -164,7 +166,7 @@ function ImportPhase({ errors, onClose, redirectedFromSignUp }: Props) {
                 component={HumbleInput}
                 props={{
                   type: 'textarea',
-                  height: '72px',
+                  height: '80px',
                   fontSize: '18px',
                   marginTop: '20px',
                   textAlign: 'center',
@@ -179,6 +181,7 @@ function ImportPhase({ errors, onClose, redirectedFromSignUp }: Props) {
             </InputContainer>
           )}
         </DndContainer>
+        <HelpButton onClick={() => setIsPopupOpen(true)}>Help</HelpButton>
         {uploaded && (
           <Field
             id="password"
@@ -200,6 +203,12 @@ function ImportPhase({ errors, onClose, redirectedFromSignUp }: Props) {
               autoFocus: true
             }}
           />
+        )}
+
+        {isPopupOpen && (
+          <Popup onClose={() => setIsPopupOpen(false)}>
+            <HelpImport onClose={() => setIsPopupOpen(false)} />
+          </Popup>
         )}
 
         <Button
@@ -225,7 +234,7 @@ function ImportPhase({ errors, onClose, redirectedFromSignUp }: Props) {
   );
 }
 
-export default connect((state: any) => ({
+export default connect((state: State) => ({
   errors: getFormSyncErrors('AddImportAccount')(state)
 }))(ImportPhase);
 
@@ -327,6 +336,12 @@ const InputContainer = styled.div`
 const HelpButton = styled.div`
   width: 70px;
   height: 24px;
+  cursor: pointer;
+  font-family: 'IBM Plex Sans';
+  font-size: 12px;
+  line-height: 1.35;
+  text-align: center;
+  color: #18191a;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -334,10 +349,6 @@ const HelpButton = styled.div`
   margin-top: 5px;
   border-radius: 20px;
   background-color: #eeeeee;
-  color: #111;
-  font-size: 12px;
-  font-weight: 500;
-  cursor: pointer;
 
   span {
     margin-left: 5px;

@@ -29,9 +29,11 @@ export default function SecureWallet({ level, setLevel, redirectedFromSignUp }: 
         nextStepFromParent={nextStep}
         setLevel={setLevel}
       />
+
       {level === SecurityLevelEnum.Secured && (
         <MnemonicsSeed redirectedFromSignUp={redirectedFromSignUp} />
       )}
+
       {level === SecurityLevelEnum.Secured && (
         <ConfirmSeed redirectedFromSignUp={redirectedFromSignUp} handleNextSection={nextStep} />
       )}

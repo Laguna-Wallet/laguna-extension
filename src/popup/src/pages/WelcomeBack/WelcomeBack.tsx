@@ -15,52 +15,103 @@ import Snackbar from 'components/Snackbar/Snackbar';
 import CloseIcon from 'assets/svgComponents/CloseIcon';
 import HumbleInput from 'components/primitives/HumbleInput';
 import { validatePassword } from 'utils/polkadot';
-import { useSelector } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import RequestToConnect from 'pages/RequestToConnect/RequestToConnect';
 import RequestToSign from 'pages/RequestToSign';
 import backgroundImage from 'assets/imgs/sign-up-bg.png';
 import mainLogoSvg from 'assets/imgs/main-logo-white.svg';
+import { Field, reduxForm } from 'redux-form';
+import { isObjectEmpty, objectToArray } from 'utils';
 
-export default function WelcomeBack() {
+type Props = {
+  handleSubmit: any;
+};
+
+const validate = (values: any) => {
+  const errors: Record<string, string> = {};
+
+  if (!values.password || values.password.length < 8) {
+    errors.password = 'Must be at least 8 characters';
+  }
+
+  return errors;
+};
+
+function WelcomeBack({ handleSubmit }: Props) {
   const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
   const [snackbarError, setSnackbarError] = useState<string | undefined>();
   const { pendingDappAuthorization, pendingToSign } = useSelector((state: any) => state.wallet);
 
   const pendingDapps = pendingDappAuthorization?.pendingDappAuthorization;
 
-  const formik = useFormik({
-    initialValues: {
-      password: ''
-    },
-    validationSchema: welcomeBackSchema,
-    onSubmit: ({ password }) => {
-      const isValid = validatePassword(password);
-      if (isValid) {
-        saveToStorage({ key: StorageKeys.SignedIn, value: 'true' });
-        clearFromStorage(StorageKeys.LoggedOut);
-        chrome.runtime.sendMessage({ type: Messages.AuthUser, payload: { password } });
+  const submit = (values: any) => {
+    const errors = validate(values);
 
-        if (pendingDapps?.length > 0) {
-          goTo(RequestToConnect);
-        } else if (pendingToSign.pending) {
-          goTo(RequestToSign);
-        } else {
-          goTo(Wallet);
-        }
-      } else {
-        setSnackbarError('Incorrect Password');
-        setIsSnackbarOpen(true);
-      }
+    if (!isObjectEmpty(errors)) {
+      console.log('here');
+      const errArray = objectToArray(errors);
+
+      setSnackbarError(errArray[0]);
+      setIsSnackbarOpen(true);
+      return;
     }
-  });
 
-  useEffect(() => {
-    if (formik.errors.password) {
-      setIsSnackbarOpen(false);
-      setSnackbarError(formik.errors.password);
+    const isValid = validatePassword(values.password);
+
+    if (isValid) {
+      saveToStorage({ key: StorageKeys.SignedIn, value: 'true' });
+      clearFromStorage(StorageKeys.LoggedOut);
+      chrome.runtime.sendMessage({
+        type: Messages.AuthUser,
+        payload: { password: values.password }
+      });
+
+      if (pendingDapps?.length > 0) {
+        goTo(RequestToConnect);
+      } else if (pendingToSign.pending) {
+        goTo(RequestToSign);
+      } else {
+        goTo(Wallet);
+      }
+    } else {
+      setSnackbarError('Invalid Password');
       setIsSnackbarOpen(true);
     }
-  }, [formik.submitCount]);
+  };
+
+  // const formik = useFormik({
+  //   initialValues: {
+  //     password: ''
+  //   },
+  //   // validationSchema: welcomeBackSchema,
+  //   onSubmit: ({ password }) => {
+  //     const isValid = validatePassword(password);
+  //     if (isValid) {
+  //       saveToStorage({ key: StorageKeys.SignedIn, value: 'true' });
+  //       clearFromStorage(StorageKeys.LoggedOut);
+  //       chrome.runtime.sendMessage({ type: Messages.AuthUser, payload: { password } });
+
+  //       if (pendingDapps?.length > 0) {
+  //         goTo(RequestToConnect);
+  //       } else if (pendingToSign.pending) {
+  //         goTo(RequestToSign);
+  //       } else {
+  //         goTo(Wallet);
+  //       }
+  //     } else {
+  //       setSnackbarError(formik.errors.password);
+  //       setIsSnackbarOpen(true);
+  //     }
+  //   }
+  // });
+
+  // useEffect(() => {
+  //   if (formik.errors.password) {
+  //     setIsSnackbarOpen(false);
+  //     setSnackbarError(formik.errors.password);
+  //     setIsSnackbarOpen(true);
+  //   }
+  // }, [formik.errors.password]);
 
   return (
     <PageContainer bgImage={backgroundImage}>
@@ -70,24 +121,25 @@ export default function WelcomeBack() {
       <MainSection>
         <Title>Welcome Back</Title>
         {/* <Description>HydroX — The Future of Banking</Description> */}
-        <Form onSubmit={formik.handleSubmit}>
-          <HumbleInput
+        <Form onSubmit={handleSubmit(submit)}>
+          <Field
             id="password"
-            label="password"
+            name="password"
             type="password"
+            label="password"
             placeholder="Enter your password"
-            value={formik.values.password}
-            onChange={formik.handleChange}
-            error={formik.errors.password}
-            touched={formik.touched.password}
-            color="#18191a"
-            placeholderColor="#777e90"
-            height="50px"
-            borderColor={'#e6e8ec'}
-            bgColor={'transparent'}
-            // borderColor={formik?.errors?.password?.length ? '#fff' : '#e6e8ec'}
-            // bgColor={formik?.errors?.password?.length ? '#fff' : 'transparent'}
-            autoFocus={true}
+            component={HumbleInput}
+            props={{
+              type: 'password',
+              color: '#18191a',
+              placeholderColor: '#777e90',
+              height: '50px',
+              marginTop: '12px',
+              borderColor: '#e6e8ec',
+              errorBorderColor: '#fb5a5a',
+              bgColor: 'transparent',
+              autoFocus: true
+            }}
           />
 
           <Button
@@ -102,19 +154,30 @@ export default function WelcomeBack() {
         </Form>
         <Text>Contact Support</Text>
         <Snackbar
-          // message={snackbarError}
-          message={'Incorrect Password'}
+          message={snackbarError}
+          // message={'Incorrect Password'}
           isOpen={isSnackbarOpen}
           close={() => setIsSnackbarOpen(false)}
           type="error"
           bottom="0px"
-          left="0px"
+          left="50%"
           align="left"
         />
       </MainSection>
     </PageContainer>
   );
 }
+
+export default connect((state: any) => ({}))(
+  reduxForm<Record<string, unknown>, any>({
+    form: 'welcomeBack'
+    // validate
+    // destroyOnUnmount: false,
+    // enableReinitialize: true,
+    // keepDirtyOnReinitialize: true,
+    // updateUnregisteredFields: true
+  })(WelcomeBack)
+);
 
 const IconSection = styled.div`
   width: 100%;
