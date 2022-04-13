@@ -7,7 +7,10 @@ import keyring from "@polkadot/ui-keyring"
 import { ethereumEncode } from "@polkadot/util-crypto"
 import { stringToU8a } from "@polkadot/util"
 
-// 0x706558b81A14F1402Eb1e9D2d76dD376119Ed1DB
+export async function Retrieve_balance_change_rates() {
+  // const balances = getFromStorage()
+}
+
 export async function sendTransaction(pairs, { sendTo, sendFrom, amount, chain }) {
   const pair = pairs.find((pair) => {
     return recodeToPolkadotAddress(pair.address) === recodeToPolkadotAddress(sendFrom)
@@ -149,7 +152,7 @@ export async function fetchAccountsBalances() {
       chrome.runtime.sendMessage({ type: Messages.AccountsBalanceUpdated, payload: JSON.stringify({ address, balances: result_obj }) })
 
       if (hasReceived) {
-        chrome.runtime.sendMessage({ type: Messages.TokenReceived, payload: JSON.stringify({ hasReceived }) })
+        chrome.runtime.sendMessage({ type: Messages.TokenReceived, payload: JSON.stringify({ tokenReceived: hasReceived }) })
       }
     }
     console.log("balances updated")

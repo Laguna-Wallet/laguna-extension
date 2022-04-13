@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import { memo, ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import Header from './Header';
 import Footer from './Footer';
@@ -22,6 +22,15 @@ import RightArrow from 'assets/svgComponents/RightArrow';
 import BarcodeIcon from 'assets/svgComponents/BarcodeIcon';
 import Snackbar from 'components/Snackbar/Snackbar';
 import TokenDashboard from 'pages/TokenDashboard/TokenDashboard';
+import ReceiveIcon from 'assets/svgComponents/ReceiveIcon';
+import SendIcon from 'assets/svgComponents/SendIIcon';
+import SwitchAssetsIcon from 'assets/svgComponents/SwitchAssetIcon';
+import AddRemoveToken from 'pages/AddRemoveToken/AddRemoveToken';
+import { State } from 'redux/store';
+import SecureNowIcon from 'assets/svgComponents/SecureNowIcon';
+import RightArrowMenuIcon from 'assets/svgComponents/MenuIcons/RightArrowMenuIcon';
+import SecureWallet from 'pages/CreateAccount/SecureWallet/SecureWallet';
+import CreateAccount from 'pages/CreateAccount/CreateAccount';
 
 export interface ShowSnackbar {
   message: string;
@@ -40,6 +49,7 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
   const [networks, setNetworks] = useState<any>([]);
   const [activeTab, setActiveTab] = useState<number>(1);
   const [overallBalance, setOverallBalance] = useState<number | undefined>(undefined);
+  const [overallPriceChange, setOverallPriceChange] = useState<number | undefined>(undefined);
   const hasViewedDashboard = account?.getActiveAccount()?.meta?.hasViewedDashboard;
   const currentAccountAddress = account?.getActiveAccount()?.address;
   const activeAccount = useCallback(account.getActiveAccount(), [account]);
@@ -51,8 +61,9 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
     infos,
     accountsBalances,
     loading: accountsChanging,
-    tokenReceived
-  } = useSelector((state: any) => state.wallet);
+    tokenReceived,
+    disabledTokens
+  } = useSelector((state: State) => state.wallet);
 
   const balances = accountsBalances?.balances;
 
@@ -62,8 +73,15 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
 
   useEffect(() => {
     async function go() {
-      const { overallBalance, assets }: any = await getAssets(prices, infos, balances);
+      const { overallBalance, overallPriceChange, assets }: any = await getAssets(
+        prices,
+        infos,
+        balances,
+        disabledTokens
+      );
       setAssets(assets);
+
+      setOverallPriceChange(overallPriceChange);
       setOverallBalance(overallBalance);
     }
 
@@ -73,7 +91,9 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
   }, [activeAccount, balances]);
 
   useEffect(() => {
-    const networks = getNetworks(prices, infos).filter((network) => network.symbol !== 'wnd');
+    const networks = getNetworks(prices, infos, disabledTokens).filter(
+      (network) => network.symbol !== 'wnd'
+    );
     setNetworks(networks);
   }, [prices, infos]);
 
@@ -88,18 +108,34 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
 
   // snackbarMessage
   // useEffect(() => {
-  //   if (!hasViewedDashboard) {
-  //     addAccountMeta(currentAccountAddress, { hasViewedDashboard: true });
-  //     account.saveActiveAccount(currentAccountAddress);
-  //   }
+  // if (!hasViewedDashboard) {
+  //   addAccountMeta(currentAccountAddress, { hasViewedDashboard: true });
+  //   account.saveActiveAccount(currentAccountAddress);
+  // }
   // }, []);
 
-  console.log('~ tokenReceived', tokenReceived);
+  const renderBallance = (balance: string): ReactNode => {
+    const splited = balance.split('.');
+
+    return (
+      <>
+        <span style={{ fontSize: 44 }}>{splited[0]}</span>.
+        <span style={{ fontSize: 32 }}>{splited[1]}</span>
+      </>
+    );
+  };
 
   return (
     <Container bg={dashboardBG}>
       <Header menuInitialOpenState={isMenuOpen} />
       <Content>
+        {activeAccount.meta.notSecured && (
+          <SecureNowMessage onClick={() => goTo(CreateAccount, { redirectedFromDashboard: true })}>
+            <SecureNowIcon />
+            <span>Your account is not backed up, please secure now</span>
+            <RightArrowMenuIcon fill="#e1e7f3" stroke="#111" />
+          </SecureNowMessage>
+        )}
         {/* {!true ? (
           <FirstTimeUserBalance>
             <h6>welcome, to get started</h6>
@@ -119,21 +155,25 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
             {/* <span>Balance</span> */}
             <Balance>
               <span>
-                {' '}
-                $
+                <TitleSmallText>$</TitleSmallText>
                 {(overallBalance || overallBalance === 0) && !accountsChanging
-                  ? new BigNumber(overallBalance).toFixed(2)
+                  ? renderBallance(new BigNumber(overallBalance).toFormat(2))
                   : '...'}{' '}
               </span>
-              {/* <DailyChange>+ 8.88%</DailyChange> */}
             </Balance>
+            <PriceChange>
+              {overallPriceChange && overallPriceChange > 0 ? '+' : ''}
+              {/* 
+              {overallPriceChange && overallPriceChange < 0 ? '-' : ''} */}
+              {overallPriceChange && new BigNumber(overallPriceChange).toFormat(2)}%
+            </PriceChange>
           </BalanceContainer>
 
           <Buttons>
             <StyledLink component={Send}>
               <Button>
                 <RightArrowContainer>
-                  <RightArrow width={20} height={20} stroke="#111" />
+                  <SendIcon stroke="#111" />
                 </RightArrowContainer>
                 <span>Send</span>
               </Button>
@@ -141,7 +181,7 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
             <StyledLink component={Receive}>
               <Button>
                 <BarcodeIconContainer>
-                  <BarcodeIcon />
+                  <ReceiveIcon width={20} height={20} />
                 </BarcodeIconContainer>
                 <span>Recieve</span>
               </Button>
@@ -157,6 +197,9 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
             <ListHeaderItem onClick={() => handleActiveTab(2)} index={2} active={activeTab}>
               NETWORKS
             </ListHeaderItem>
+            <SwitchAssetIconContainer onClick={() => goTo(AddRemoveToken)}>
+              <SwitchAssetsIcon />
+            </SwitchAssetIconContainer>
           </ListHeader>
           <ListContentParent>
             {accountsChanging ? (
@@ -225,6 +268,28 @@ const Content = styled.div`
   padding: 0 15px 15px 15px;
 `;
 
+const SecureNowMessage = styled.div`
+  width: 85%;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: absolute;
+  top: 70px;
+  padding: 0 15px;
+  box-sizing: border-box;
+  border-radius: 4px;
+  border: solid 1.5px #ffc44c;
+  cursor: pointer;
+  /* margin-top: 20px; */
+
+  span {
+    font-family: 'IBM Plex Sans';
+    font-size: 11px;
+    color: #000;
+  }
+`;
+
 const FirstTimeUserBalance = styled.div`
   width: 100%;
   margin-top: 59px;
@@ -248,6 +313,8 @@ const FirstTimeUserBalance = styled.div`
 `;
 
 const BalanceContainer = styled.div`
+  display: flex;
+  flex-direction: column;
   text-align: center;
   margin-top: 59px;
   font-size: 44px;
@@ -260,6 +327,7 @@ const BalanceContainer = styled.div`
 const Balance = styled.div`
   display: flex;
   justify-content: center;
+  word-break: break-word;
   span {
     font-family: 'IBM Plex Sans';
     font-size: 44px;
@@ -267,21 +335,35 @@ const Balance = styled.div`
   }
 `;
 
+const PriceChange = styled.div`
+  font-family: 'IBM Plex Sans';
+  font-size: 14px;
+  color: #606060;
+`;
+
+const TitleSmallText = styled.span`
+  font-size: 32px !important;
+`;
+
 const Buttons = styled.div`
   display: flex;
   justify-content: center;
+  align-items: center;
   color: #fff;
   margin-top: 30px;
 `;
 
 const RightArrowContainer = styled.div`
-  transform: rotate(-45deg);
   margin-top: 3px;
 `;
 
 const BarcodeIconContainer = styled.div`
-  margin-top: 3px;
   margin-right: 5px;
+`;
+
+const SwitchAssetIconContainer = styled.div`
+  cursor: pointer;
+  margin-left: auto;
 `;
 
 const Button = styled.div`
@@ -306,7 +388,7 @@ const List = styled.div`
   width: 323px;
   display: flex;
   flex-direction: column;
-  margin-top: 75px;
+  margin-top: 65px;
 `;
 
 const ListHeader = styled.div`
@@ -318,9 +400,7 @@ const ListHeaderItem = styled.div<{ index: number; active: number }>`
   cursor: pointer;
   font-family: Inter;
   font-size: 12px;
-  font-weight: normal;
-  font-stretch: normal;
-  font-style: normal;
+  font-weight: ${({ index, active }) => (index === active ? '500' : '400')};
   line-height: 1.44;
   letter-spacing: 0.96px;
   text-align: left;
@@ -350,7 +430,7 @@ const ListContentChild = styled.div`
   bottom: -20px;
   right: -20px;
   overflow: scroll;
-  padding-bottom: 80px;
+  padding-bottom: 100px;
   padding-right: 20px;
 `;
 

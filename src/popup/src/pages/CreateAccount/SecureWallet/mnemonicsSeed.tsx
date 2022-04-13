@@ -12,6 +12,7 @@ import WizardHeader from 'pages/AddImportForExistingUsers/WizardHeader';
 import { goTo } from 'react-chrome-extension-router';
 import Wallet from 'pages/Wallet/Wallet';
 import SignUp from 'pages/SignUp/SignUp';
+import Snackbar from 'components/Snackbar/Snackbar';
 
 type Props = {
   redirectedFromSignUp?: boolean;
@@ -20,6 +21,9 @@ type Props = {
 export default function MnemonicsSeed({ redirectedFromSignUp }: Props) {
   const { nextStep, previousStep } = useWizard();
   const [mnemonics, setMnemonics] = useState<string[]>([]);
+
+  const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
+  const [snackbarMessage, setSnackbarMessage] = useState<string>('');
 
   const handleClick = () => {
     nextStep();
@@ -30,6 +34,12 @@ export default function MnemonicsSeed({ redirectedFromSignUp }: Props) {
     const mnemonics = account.generateMnemonics();
     setMnemonics(mnemonics);
   }, []);
+
+  const handleCopy = () => {
+    copyToClipboard(mnemonics?.join(' '));
+    setIsSnackbarOpen(true);
+    setSnackbarMessage('Mnemonics Copied');
+  };
 
   return (
     <Container>
@@ -63,11 +73,21 @@ export default function MnemonicsSeed({ redirectedFromSignUp }: Props) {
         </MnemonicsContainer>
 
         {mnemonics && (
-          <CopyBtn onClick={() => copyToClipboard(mnemonics?.join(' '))}>
+          <CopyBtn onClick={handleCopy}>
             <ButtonsIcon fill="#18191a" />
             <span>Copy</span>
           </CopyBtn>
         )}
+
+        <Snackbar
+          width="194.9px"
+          isOpen={isSnackbarOpen}
+          close={() => setIsSnackbarOpen(false)}
+          message={snackbarMessage}
+          type="success"
+          // left="110px"
+          bottom="30px"
+        />
       </MainContent>
 
       <Button

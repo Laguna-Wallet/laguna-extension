@@ -1,49 +1,40 @@
+import styled from 'styled-components';
 import CheckMarkIcon from 'assets/svgComponents/CheckMarkIcon';
 import LockIcon from 'assets/svgComponents/LockIcon';
-import RightArrow from 'assets/svgComponents/RightArrow';
 import Button from 'components/primitives/Button';
-import HumbleInput from 'components/primitives/HumbleInput';
 import Snackbar from 'components/Snackbar/Snackbar';
 import Wallet from 'pages/Wallet/Wallet';
 import { useEffect, useState } from 'react';
 import { goTo } from 'react-chrome-extension-router';
-import { useDispatch, useSelector } from 'react-redux';
-import styled from 'styled-components';
-import { importJson, importViaSeed, validatePassword } from 'utils/polkadot';
-import WizardHeader from './WizardHeader';
 
-import { useWizard } from 'react-use-wizard';
 import { saveToStorage } from 'utils/chrome';
 import { SnackbarMessages, StorageKeys } from 'utils/types';
 import DiscordIcon from 'assets/svgComponents/DiscordIcon';
 import TwitterIcon from 'assets/svgComponents/twitterIcon';
+import Bg from '../../assets/imgs/SetupCompleted-bg.png';
 
 export default function EncodeAccount() {
-  const [password, setPassword] = useState<string>('');
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
   const [snackbarError, setSnackbarError] = useState<string>('');
-  const { nextStep, previousStep } = useWizard();
 
   useEffect(() => {
     saveToStorage({ key: StorageKeys.SignedIn, value: 'true' });
+    saveToStorage({ key: StorageKeys.OnBoarding, value: 'true' });
   }, []);
 
   return (
-    <Container>
+    <Container bg={Bg}>
       {/* <WizardHeader title={'SETUP COMPLETE!!'} onClose={() => goTo(Wallet)} onBack={previousStep} /> */}
-      <Heading>SETUP COMPLETE!!</Heading>
       <Content>
         <IconContainer>
-          <CheckMarkContainer>
-            <CheckMarkIcon />
-          </CheckMarkContainer>
           <Circle>
-            <CircleInner />
+            <CheckMarkContainer>
+              <CheckMarkIcon />
+            </CheckMarkContainer>
           </Circle>
-          <LockContainer>
-            <LockIcon />
-          </LockContainer>
         </IconContainer>
+        <Heading>SETUP COMPLETE!!</Heading>
+
         <Title>
           Connect with our community to stay up to date with feature updates and opportunities.
         </Title>
@@ -85,15 +76,15 @@ export default function EncodeAccount() {
   );
 }
 
-const Container = styled.div`
+const Container = styled.div<{ bg: string }>`
   width: 100%;
   height: 100%;
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #fff;
-  padding: 30px 16px 38px 16px;
+  background-image: ${({ bg }) => `url(${bg})`};
+  padding: 40px 16px 38px 16px;
   box-sizing: border-box;
 `;
 
@@ -111,10 +102,12 @@ const Heading = styled.div`
   line-height: 1.45;
   letter-spacing: 0.85px;
   text-align: center;
-  color: #000;
-  font-size: 17px;
-  font-family: 'Sequel100Wide55Wide';
+  font-family: 'IBM Plex Sans';
+  font-size: 22px;
+  font-weight: 500;
+  color: #18191a;
   margin-right: auto;
+  margin-top: 35px;
 `;
 
 const IconContainer = styled.div`
@@ -122,7 +115,6 @@ const IconContainer = styled.div`
   align-items: center;
   justify-content: center;
   position: relative;
-  margin-top: 25px;
 `;
 
 const Circle = styled.div`
@@ -131,34 +123,22 @@ const Circle = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(265.71deg, #1cc3ce -32.28%, #b9e260 104.04%);
+  background-color: #fff;
   border-radius: 100%;
 `;
 
-const CircleInner = styled.div`
-  width: 94%;
-  height: 94%;
-  background-color: #f8f8f8;
-  border-radius: 100%;
-`;
-
-const CheckMarkContainer = styled.div`
-  position: absolute;
-  top: -15px;
-  right: -20px;
-`;
-
-const LockContainer = styled.div`
-  position: absolute;
-  top: 70px;
-`;
+const CheckMarkContainer = styled.div``;
 
 const Title = styled.div`
+  width: 80%;
   text-align: center;
-  color: #000;
   font-size: 17px;
-  margin-top: 50px;
-  font-family: 'SFCompactDisplayRegular';
+  margin-top: 15px;
+  font-family: Inter;
+  font-size: 14px;
+  line-height: 1.35;
+  text-align: center;
+  color: #353945;
 `;
 
 const LinksContainer = styled.div`

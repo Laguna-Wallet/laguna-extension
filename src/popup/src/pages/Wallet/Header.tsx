@@ -61,7 +61,7 @@ export default function Header({
         <TitleContainer>
           {backAction && (
             <TopIconContainer onClick={backAction}>
-              <LeftArrowIcon width={8} height={12} />
+              <LeftArrowIcon fill="#f2f2f2" stroke="#18191a" width={8} height={12} />
             </TopIconContainer>
           )}
 
@@ -118,7 +118,7 @@ const Avatar = styled.div<{ img: string }>`
   border-radius: 100%;
   background-color: #ccc;
   background-image: ${({ img }) => `url(${img})`};
-  background-size: contain;
+  background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
 `;

@@ -34,7 +34,7 @@ export default function Accounts({ setActiveAccount }: Props) {
   const formatName = (name: string) => {
     return name.length > 12 ? truncateString(name) : name;
   };
-
+  
   const handleSetActiveAccount = (
     e: React.MouseEvent<HTMLDivElement>,
     account: unknown,

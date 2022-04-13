@@ -2,6 +2,8 @@ import { PlusIcon } from '@heroicons/react/outline';
 import keyring from '@polkadot/ui-keyring';
 import AddressBookIcon from 'assets/svgComponents/AdressBookIcon';
 import AlternateEmail from 'assets/svgComponents/AlternateEmailIcon';
+import ContactsIcon from 'assets/svgComponents/ContactsIcon';
+import LoopIcon from 'assets/svgComponents/loopIcon';
 import Button from 'components/primitives/Button';
 import HumbleInput from 'components/primitives/HumbleInput';
 import AddAddress from 'pages/AddressBook/AddAddress';
@@ -11,15 +13,14 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-chrome-extension-router';
 import styled from 'styled-components';
 import { truncateString } from 'utils';
-import Send from './Send';
-import SendToken from './SendToken';
 
 type Props = {
   handleCloseContacts: (address: string) => void;
   onBack: () => void;
+  closeAction: () => void;
 };
 
-export default function ContactsPopup({ handleCloseContacts, onBack }: Props) {
+export default function ContactsPopup({ handleCloseContacts, onBack, closeAction }: Props) {
   const [accounts, setAccounts] = useState<any[] | undefined>(undefined);
   const [filter, setFilter] = useState<string>('');
   const [isAddAddressOpen, setIsAddAddressOpen] = useState<boolean>(false);
@@ -46,20 +47,27 @@ export default function ContactsPopup({ handleCloseContacts, onBack }: Props) {
 
   return (
     <Container>
-      <Header title="Contact" bgColor="#f2f2f2" iconStyle="LeftArrow" backAction={onBack} />
+      <Header
+        title="SELECT CONTACT"
+        bgColor="#f2f2f2"
+        closeAction={closeAction}
+        iconStyle="LeftArrow"
+        backAction={onBack}
+      />
       <InnerContainer>
         <Content>
           {accounts && accounts?.length > 0 && (
             <HumbleInput
-              type="text"
-              placeholder="Search"
               id="search"
               height="45px"
+              placeholder="Search"
+              type="text"
               bgColor="#f2f2f2"
               placeholderColor="#777e90"
               color="#111"
               value={filter}
               onChange={(e: any) => setFilter(e.target.value)}
+              Icon={<LoopIcon />}
             />
           )}
           {accounts?.length === 0 ? (
@@ -79,17 +87,18 @@ export default function ContactsPopup({ handleCloseContacts, onBack }: Props) {
                     <Text>
                       {address.name}({truncateString(address.address)}){' '}
                     </Text>
-                    <AlternateEmail stroke="#111" />
+                    <ContactsIcon stroke="#111" />
                   </AddressComponent>
                 ))}
             </AddressesContainer>
           )}
 
           <Button
-            text="Add Address"
+            text="Add Contact"
             Icon={<PlusIcon width={17} />}
-            bgColor="#e8e8e8"
-            borderColor="#e8e8e8"
+            bgColor="#F2F2F2"
+            borderColor="#F2F2F2"
+            direction="row-reverse"
             color="#111"
             justify="center"
             margin="auto 0 0 0"

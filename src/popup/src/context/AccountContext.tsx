@@ -74,10 +74,10 @@ const AccountProvider: FunctionComponent = ({ children }: { children?: ReactNode
     return mnemonics;
   }, []);
 
-  const getActiveAccount = useCallback(() => {
+  const getActiveAccount = () => {
     // if no account in the storage than insert first one from keyring
     if (!activeAccount) {
-      const accounts = keyring.getAccounts();
+      const accounts = keyring.getPairs();
       if (!accounts.length) return undefined;
 
       saveToStorage({ key: StorageKeys.ActiveAccount, value: JSON.stringify(accounts[0]) });
@@ -85,7 +85,7 @@ const AccountProvider: FunctionComponent = ({ children }: { children?: ReactNode
     }
 
     return activeAccount;
-  }, [activeAccount]);
+  };
 
   const saveActiveAccount = (account: any) => {
     saveToStorage({ key: StorageKeys.ActiveAccount, value: JSON.stringify(account) });

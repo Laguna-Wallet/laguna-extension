@@ -92,5 +92,5 @@ function updateConnectedApps(message: any, dispatch: any) {
 }
 
 function updateTokenReceived(message: any, dispatch: any) {
-  dispatch(changeTokenReceived(message.payload));
+  dispatch(changeTokenReceived(JSON.parse(message.payload)));
 }

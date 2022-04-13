@@ -85,10 +85,10 @@ export function copyToClipboard(text: string): void {
 }
 
 export function calculatePasswordCheckerColor(passwordLength: string) {
-  if (passwordLength === 'Too weak') return 'red';
-  if (passwordLength === 'Weak') return 'orange';
-  if (passwordLength === 'Medium') return 'yellow';
-  if (passwordLength === 'Strong') return 'green';
+  if (passwordLength === 'Poor') return 'red';
+  if (passwordLength === 'Fair') return 'orange';
+  if (passwordLength === 'Good') return 'yellow';
+  if (passwordLength === 'Excellent') return 'green';
   return 'red';
 }
 
@@ -170,8 +170,6 @@ export function getBase64(file: File) {
 
 export function getAccountImage(address: string): string {
   const pair = keyring.getPair(address);
-  console.log('~ pair', pair);
-  console.log('~ pair?.meta?.img ', pair?.meta?.img);
   return pair?.meta?.img as string;
 }
 
@@ -190,3 +188,11 @@ export const resizeFile = (file: File) =>
       'base64'
     );
   });
+
+export const enhancePasswordStrength = (string: string): string => {
+  if (string === 'Too weak') return 'Poor';
+  if (string === 'Weak') return 'Fair';
+  if (string === 'Medium') return 'Good';
+  if (string === 'Strong') return 'Excellent';
+  return '';
+};

@@ -30,11 +30,6 @@ type Props = {
 export default function Menu({ onClose }: Props) {
   const [isOpen, setOpen] = useState<boolean>(true);
 
-  const handleLogout = () => {
-    clearFromStorage(StorageKeys.SignedIn);
-    saveToStorage({ key: StorageKeys.LoggedOut, value: 'true' });
-  };
-
   return (
     <Container>
       <MenuHeader isOpen={isOpen} setOpen={setOpen} onClose={() => onClose()} showUser={true} />
@@ -49,14 +44,18 @@ export default function Menu({ onClose }: Props) {
           <StyledLink component={AddressBook}>
             <AddressMenuIcon />
             <span>Address Book</span>
-            <RightArrowMenuIcon width={15} fill="#777e90" />
+            <RightIconContainer>
+              <RightArrowMenuIcon width={15} fill="#777e90" />
+            </RightIconContainer>
           </StyledLink>
         </ListItem>
         <ListItem>
           <StyledLink component={ConnectedSites}>
             <ConnectedSitesMenuIcon />
             <span>Connected Sites</span>
-            <RightArrowMenuIcon width={15} fill="#777e90" />
+            <RightIconContainer>
+              <RightArrowMenuIcon width={15} fill="#777e90" />
+            </RightIconContainer>
           </StyledLink>
         </ListItem>
 
@@ -64,14 +63,18 @@ export default function Menu({ onClose }: Props) {
           <StyledLink component={AutoLockTimer}>
             <AutoLockTimerMenuIcon />
             <span>Auto-Lock Timer</span>
-            <RightArrowMenuIcon width={15} fill="#777e90" />
+            <RightIconContainer>
+              <RightArrowMenuIcon width={15} fill="#777e90" />
+            </RightIconContainer>
           </StyledLink>
         </ListItem>
         <ListItem>
           <StyledLink component={ChangePassword}>
             <ChangePasswordMenuIcon />
             <span>Change Password</span>
-            <RightArrowMenuIcon width={15} fill="#777e90" />
+            <RightIconContainer>
+              <RightArrowMenuIcon width={15} fill="#777e90" />
+            </RightIconContainer>
           </StyledLink>
         </ListItem>
         {/* <ListItem>
@@ -84,7 +87,9 @@ export default function Menu({ onClose }: Props) {
           <StyledLink component={BackupAccount}>
             <BackupMenuIcon />
             <span>Backup Account</span>
-            <RightArrowMenuIcon width={15} fill="#777e90" />
+            <RightIconContainer>
+              <RightArrowMenuIcon width={15} fill="#777e90" />
+            </RightIconContainer>
           </StyledLink>
         </ListItem>
 
@@ -92,30 +97,32 @@ export default function Menu({ onClose }: Props) {
           <StyledLink component={RemoveAccount}>
             <RemoveWalletMenuIcon />
             <span>Remove Wallet</span>
-            <RightArrowMenuIcon width={15} fill="#777e90" />
+            <RightIconContainer>
+              <RightArrowMenuIcon width={15} fill="#777e90" />
+            </RightIconContainer>
           </StyledLink>
         </ListItem>
       </List>
-      <StyledLogoutLink onClick={handleLogout} component={WelcomeBack}>
+      {/* <StyledLogoutLink onClick={handleLogout} component={WelcomeBack}>
         <LogoutIcon width={15} />
         <span>Log Out</span>
-      </StyledLogoutLink>
+      </StyledLogoutLink> */}
     </Container>
   );
 }
 
 const Container = styled.div`
   width: 100%;
-  height: 600px;
+  height: 542px;
   display: flex;
   flex-direction: column;
   position: absolute;
   top: 0;
   left: 0;
   z-index: 999;
-  padding: 15px 15px 50px 15px;
+  padding: 10px 15px 50px 15px;
   box-sizing: border-box;
-  background-color: #111111;
+  background-color: #18191a;
   z-index: 99999;
 `;
 
@@ -125,7 +132,6 @@ const List = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  color: #fff;
   margin-top: 50px;
 `;
 
@@ -136,27 +142,66 @@ const ListItem = styled.div`
   cursor: pointer;
   margin-top: 15px;
   pointer-events: none;
+
   :nth-child(1) {
     margin-top: 0;
     pointer-events: inherit;
+    &:hover {
+      color: #ffffff;
+
+      path {
+        stroke: #fff;
+      }
+    }
   }
   :nth-child(2) {
     pointer-events: inherit;
+    &:hover {
+      path {
+        stroke: #fff;
+      }
+    }
   }
   :nth-child(3) {
     pointer-events: inherit;
+    &:hover {
+      path {
+        stroke: #fff;
+      }
+    }
   }
   :nth-child(4) {
     pointer-events: inherit;
+    &:hover {
+      path {
+        fill: #fff;
+      }
+    }
   }
   :nth-child(5) {
     pointer-events: inherit;
+    &:hover {
+      path {
+        fill: #fff;
+      }
+    }
   }
   :nth-child(6) {
     pointer-events: inherit;
+    &:hover {
+      path {
+        fill: #fff;
+      }
+    }
   }
-  :nth-child(7) {
-    pointer-events: inherit;
+`;
+
+const RightIconContainer = styled.div`
+  ${ListItem}:hover & {
+    path {
+      stroke: #fff !important;
+      fill: #18191a;
+    }
   }
 `;
 
@@ -165,27 +210,16 @@ const StyledLink = styled(Link)<{ color?: string }>`
   display: flex;
   /* justify-content: space-between; */
   text-decoration: none;
-  color: #fff;
   cursor: pointer;
   font-family: Inter;
   font-size: 18px;
-  color: ${({ color }) => color || '#fff'};
+  color: ${({ color }) => color || '#efeeeee2'};
+
+  ${ListItem}:hover & {
+    color: #fff;
+  }
   span {
     margin-left: 13px;
     margin-right: auto;
-  }
-`;
-
-const StyledLogoutLink = styled(Link)`
-  width: 100%;
-  display: flex;
-  text-decoration: none;
-  color: #fff;
-  font-family: Inter;
-  font-size: 18px;
-  cursor: pointer;
-
-  span {
-    margin-left: 13px;
   }
 `;

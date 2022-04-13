@@ -10,13 +10,13 @@ import AddAddress from 'pages/AddressBook/AddAddress';
 import Header from 'pages/Wallet/Header';
 import Wallet from 'pages/Wallet/Wallet';
 import { useEffect, useState } from 'react';
-import { Link } from 'react-chrome-extension-router';
+import { goTo, Link } from 'react-chrome-extension-router';
 import { useSelector } from 'react-redux';
 import { truncateString } from 'utils';
 import { recodeAddress } from 'utils/polkadot';
 import { Prefixes } from 'utils/types';
-import Send from './Send';
-import SendToken from './SendToken';
+import LoopIcon from 'assets/svgComponents/loopIcon';
+import { url } from 'inspector';
 
 type Props = {
   handleClickAccount: (address: string) => void;
@@ -31,7 +31,7 @@ export default function AccountsPopup({ handleClickAccount, onBack }: Props) {
   const prefix = Prefixes[selectedAsset.chain];
 
   const currAccountAddress = account?.getActiveAccount()?.address;
-  console.log('~ currAccountAddress', currAccountAddress);
+  const currAccountImage = account?.getActiveAccount()?.meta?.img;
 
   useEffect(() => {
     // todo proper typing
@@ -39,8 +39,8 @@ export default function AccountsPopup({ handleClickAccount, onBack }: Props) {
 
     keyring.getPairs().forEach((pair) => {
       if (recodeAddress(pair.address, 0) !== recodeAddress(currAccountAddress, 0)) {
-        const { name } = pair.meta;
-        accounts.push({ address: pair.address, name });
+        const { name, img } = pair.meta;
+        accounts.push({ address: pair.address, name, img });
       }
     });
 
@@ -58,7 +58,13 @@ export default function AccountsPopup({ handleClickAccount, onBack }: Props) {
 
   return (
     <Container>
-      <Header title="Choose Contact" bgColor="#f2f2f2" iconStyle="LeftArrow" backAction={onBack} />
+      <Header
+        title="SELECT WALLET"
+        bgColor="#f2f2f2"
+        closeAction={() => goTo(Wallet)}
+        iconStyle="LeftArrow"
+        backAction={onBack}
+      />
       <InnerContainer>
         <Content>
           <HumbleInput
@@ -70,6 +76,7 @@ export default function AccountsPopup({ handleClickAccount, onBack }: Props) {
             placeholderColor="#777e90"
             color="#111"
             value={filter}
+            Icon={<LoopIcon />}
             onChange={(e: any) => setFilter(e.target.value)}
           />
           {accounts?.length === 0 ? (
@@ -86,8 +93,10 @@ export default function AccountsPopup({ handleClickAccount, onBack }: Props) {
                   <AddressComponent
                     key={account.address}
                     onClick={() => handleClickAccount(account.address)}>
+                    <IconContainer img={account?.img} />
                     <Text>
-                      {account.name}({truncateString(recodeAddress(account.address, prefix))})
+                      {truncateString(account.name, 3)}(
+                      {truncateString(recodeAddress(account.address, prefix))})
                     </Text>
                     {/* <AlternateEmail stroke="#111" /> */}
                   </AddressComponent>
@@ -157,7 +166,7 @@ const AddressComponent = styled.div`
   height: 48px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  /* justify-content: space-between; */
   background-color: #f2f2f2;
   color: #fff;
   border-radius: 4px;
@@ -165,6 +174,19 @@ const AddressComponent = styled.div`
   box-sizing: border-box;
   margin-bottom: 10px;
   cursor: pointer;
+`;
+
+const IconContainer = styled.div<{ img: string }>`
+  width: 24px;
+  height: 24px;
+  background-image: ${({ img }) => `url(${img})`};
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-color: transparent;
+  background-position: center center;
+  margin-right: 5px;
+  border-radius: 100%;
+  background-color: #ccc;
 `;
 
 const AddAddressPopupContainer = styled.div`

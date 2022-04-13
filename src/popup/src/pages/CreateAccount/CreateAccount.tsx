@@ -4,6 +4,7 @@ import WizardStepHeader from 'components/WizardStepHeader/WizardStepHeader';
 import { useAccount } from 'context/AccountContext';
 import EncodeAccount from 'pages/AddImportForExistingUsers/EncodeAccount';
 import SetupComplete from 'pages/AddImportForExistingUsers/SetupComplete';
+import { mnemonicGenerate } from '@polkadot/util-crypto/mnemonic';
 import Wallet from 'pages/Wallet/Wallet';
 import { goTo } from 'react-chrome-extension-router';
 import { Wizard } from 'react-use-wizard';
@@ -15,11 +16,16 @@ import SignUp from 'pages/SignUp/SignUp';
 import { useState } from 'react';
 import { Messages } from 'utils/types';
 import { generateRandomBase64Avatar } from 'utils';
-
+import { addAccountMeta } from 'utils/polkadot';
+import { useSelector } from 'react-redux';
+import { State } from 'redux/store';
+import AES from 'crypto-js/aes';
+import { boolean } from 'yup';
 type Props = {
   existingAccount?: boolean;
   encodePhase?: boolean;
   redirectedFromSignUp?: boolean;
+  redirectedFromDashboard?: boolean;
 };
 
 export enum SecurityLevelEnum {
@@ -27,9 +33,17 @@ export enum SecurityLevelEnum {
   Skipped = 'Skipped'
 }
 
-export default function CreateAccount({ redirectedFromSignUp, encodePhase }: Props) {
+export default function CreateAccount({
+  redirectedFromSignUp,
+  redirectedFromDashboard,
+  encodePhase
+}: Props) {
   const account = useAccount();
   const encoded = account.encryptedPassword;
+
+  const hasBoarded = useSelector((state: State) => state?.wallet?.onboarding);
+
+  // const hasBoarded = onboardingObj[accountAddress];
 
   const [securityLevel, setSecurityLevel] = useState<
     SecurityLevelEnum.Secured | SecurityLevelEnum.Skipped
@@ -38,12 +52,20 @@ export default function CreateAccount({ redirectedFromSignUp, encodePhase }: Pro
   const handleEncode = async (password: string) => {
     // note for now seed creation flow saves mnemonic in Account Context
     // would be better to refactor and save data in redux, (just for flow)
+
     if (securityLevel === SecurityLevelEnum.Secured && account?.mnemonics) {
       const mnemonicsStr = account?.mnemonics.join(' ');
-      const { pair } = keyring.addUri(mnemonicsStr, password, {}, 'ed25519');
-      keyring.saveAccountMeta(pair, {
-        name: pair.address,
-        img: await generateRandomBase64Avatar()
+      const encodedSeed = AES.encrypt(account?.mnemonics.join(' '), password).toString();
+
+      const { pair } = keyring.addUri(
+        mnemonicsStr,
+        password,
+        { encodedSeed, img: await generateRandomBase64Avatar() },
+        'ed25519'
+      );
+
+      await addAccountMeta(pair.address, {
+        name: pair.address
       });
 
       chrome.runtime.sendMessage({
@@ -51,19 +73,28 @@ export default function CreateAccount({ redirectedFromSignUp, encodePhase }: Pro
         payload: { seed: mnemonicsStr, password }
       });
     } else {
-      const hex = randomAsHex(32);
+      const mnemonicsStr = account?.generateMnemonics().join(' ');
+      const encodedSeed = AES.encrypt(mnemonicsStr, password).toString();
+
       const { pair } = keyring.addUri(
-        hex,
+        mnemonicsStr,
         password,
-        { img: await generateRandomBase64Avatar() },
+        {
+          encodedSeed,
+          img: await generateRandomBase64Avatar(),
+          notSecured: true
+        },
         'ed25519'
       );
-      keyring.saveAccountMeta(pair, {
-        ...pair.meta,
+
+      addAccountMeta(pair.address, {
         name: pair.address
       });
 
-      chrome.runtime.sendMessage({ type: Messages.AddToKeyring, payload: { seed: hex, password } });
+      chrome.runtime.sendMessage({
+        type: Messages.AddToKeyring,
+        payload: { seed: mnemonicsStr, password, meta: keyring.getPair(pair.address).meta }
+      });
     }
   };
 
@@ -81,23 +112,25 @@ export default function CreateAccount({ redirectedFromSignUp, encodePhase }: Pro
 
   return (
     <Wizard>
-      {/* type in account password */}
       {!encoded && <CreatePassword />}
       <SecureWallet
         level={securityLevel}
         setLevel={setSecurityLevel}
         redirectedFromSignUp={redirectedFromSignUp}
       />
-      <EncodeAccount
-        title="Account Created"
-        handleEncode={handleEncode}
-        onClose={onClose}
-        onBack={onBack}
-      />
-      <SetupComplete />
+
+      {!redirectedFromDashboard && (
+        <EncodeAccount
+          title="Account Created"
+          handleEncode={handleEncode}
+          onClose={onClose}
+          onBack={onBack}
+        />
+      )}
+
+      {redirectedFromDashboard && 'congrats secured'}
+
+      {!hasBoarded && <SetupComplete />}
     </Wizard>
   );
-}
-function generateRandomBage64Avatar(): unknown {
-  throw new Error('Function not implemented.');
 }

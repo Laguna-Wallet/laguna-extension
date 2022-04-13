@@ -4,12 +4,20 @@ import {
   mnemonicValidate,
   randomAsHex,
   mnemonicToMiniSecret,
-  base64Decode,
   encodeAddress as toSS58,
   ethereumEncode
 } from '@polkadot/util-crypto';
 
-import { Asset, Network, Prices, SEED_LENGTHS, StorageKeys, Transaction } from './types';
+import {
+  Asset,
+  Network,
+  Prices,
+  SEED_LENGTHS,
+  StorageKeys,
+  Token,
+  TokenSymbols,
+  Transaction
+} from './types';
 import { KeyringPair$Json } from '@polkadot/keyring/types';
 import { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
 import keyring from '@polkadot/ui-keyring';
@@ -183,35 +191,41 @@ export function changeAccountPicture(address: string, obj: Record<string, any>):
   return newPair;
 }
 
-export function addAccountMeta(address: string, obj: Record<string, any>): any {
+export async function addAccountMeta(address: string, obj: Record<string, any>): Promise<any> {
   const pair = keyring.getPair(address);
   keyring.saveAccountMeta(pair, { ...pair.meta, ...obj });
   const newPair = keyring.getPair(address);
+  // keyring.addPair()
+  console.log('~ newPair', newPair);
   return newPair;
 }
 
 // todo proper typing
-export function getNetworks(prices: Prices, tokenInfos: Network[]): Network[] {
+export function getNetworks(
+  prices: Prices,
+  tokenInfos: Network[],
+  disabledTokens?: Token[]
+): Network[] {
   if (!prices || !tokenInfos) return [];
 
   const networks: Network[] = [
     {
       name: 'Polkadot',
-      symbol: 'wnd',
+      symbol: TokenSymbols.westend,
       chain: 'westend',
       node: 'wss://westend-rpc.polkadot.io',
       prefix: 42
     },
     {
       name: 'Polkadot',
-      symbol: 'dot',
+      symbol: TokenSymbols.polkadot,
       chain: 'polkadot',
       node: 'wss://rpc.polkadot.io',
       prefix: 0
     },
     {
       name: 'Kusama',
-      symbol: 'ksm',
+      symbol: TokenSymbols.kusama,
       chain: 'kusama',
       node: 'wss://kusama-rpc.polkadot.io',
       prefix: 2
@@ -239,7 +253,7 @@ export function getNetworks(prices: Prices, tokenInfos: Network[]): Network[] {
     // },
     {
       name: 'Astar',
-      symbol: 'astr',
+      symbol: TokenSymbols.astar,
       chain: 'astar',
       node: 'wss://astar.api.onfinality.io/public-ws',
       prefix: 5
@@ -281,7 +295,12 @@ export function getNetworks(prices: Prices, tokenInfos: Network[]): Network[] {
   }, {});
 
   // todo typing
-  const enhancedNetworks: Network[] = networks.map((network) => {
+
+  const filteredNetworks = disabledTokens
+    ? networks.filter((network) => !disabledTokens.includes(network.symbol))
+    : networks;
+
+  const enhancedNetworks: Network[] = filteredNetworks.map((network) => {
     if (!ht[network.symbol]) {
       return network;
     }
@@ -301,24 +320,27 @@ export function getNetworks(prices: Prices, tokenInfos: Network[]): Network[] {
 export async function getAssets(
   prices: Prices,
   tokenInfos: Network[],
-  balances: any
+  balances: any,
+  disabledTokens: Token[]
 ): Promise<
   | {
       overallBalance: number;
+      overallPriceChange: number;
       assets: Asset[];
     }
   | []
 > {
   if (!balances) return [];
+  const networks: Network[] = getNetworks(prices, tokenInfos, disabledTokens);
 
-  const networks = getNetworks(prices, tokenInfos);
-
-  let overallBalance = 0;
   const assets: Asset[] = [];
+
+  let overallPriceChange = 0;
+  let overallBalance = 0;
 
   for (let i = 0; i < networks.length; i++) {
     try {
-      const { name, symbol, chain, node, encodeType } = networks[i];
+      const { name, symbol, chain, node, encodeType, price_change_percentage_24h } = networks[i];
 
       const balance = balances[chain];
 
@@ -331,6 +353,7 @@ export async function getAssets(
 
       if (price) {
         overallBalance += calculatedPrice.toNumber();
+        overallPriceChange += Number(price_change_percentage_24h);
       }
 
       assets.push({
@@ -347,7 +370,7 @@ export async function getAssets(
     }
   }
 
-  return { overallBalance, assets };
+  return { overallBalance, assets, overallPriceChange };
 }
 
 // todo proper typing

@@ -70,10 +70,6 @@ export default function ConfirmSeed({ handleNextSection, redirectedFromSignUp }:
     }
   }, [chosenMnemonics]);
 
-  console.log(
-    validateMnemonicChoice(mnemonics, chosenMnemonics, mnemonicIndexes as MnemonicsTriple)
-  );
-
   const shuffledMnemonics: string[] = useMemo(() => arrayShuffle([...mnemonics]), []);
 
   return (

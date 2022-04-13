@@ -13,8 +13,8 @@ import { Asset } from 'utils/types';
 import { useWizard } from 'react-use-wizard';
 import { useDispatch } from 'react-redux';
 import { selectAsset } from 'redux/actions';
-import SearchIcon from 'assets/svgComponents/SearchIcon';
 import { reset } from 'redux-form';
+import LoopIcon from 'assets/svgComponents/loopIcon';
 
 type Props = {
   assets: undefined | Asset[];
@@ -50,6 +50,7 @@ export default function SelectAsset({ assets }: Props) {
         }}
         bgColor="#f2f2f2"
       />
+
       <Content>
         <HumbleInput
           id="id"
@@ -60,11 +61,12 @@ export default function SelectAsset({ assets }: Props) {
           }}
           bgColor={'#f2f2f2'}
           borderColor={'#f2f2f2'}
+          color="#777e90"
+          placeholderColor="#777e90"
           placeholder="Search"
           height="45px"
           marginTop="20px"
-          color="#777e90"
-          Icon={<SearchIcon />}
+          Icon={<LoopIcon />}
         />
         <List>
           {assets
@@ -102,6 +104,7 @@ const Container = styled.div`
 `;
 
 const Content = styled.div`
+  height: 100%;
   padding: 15px;
   border-top-right-radius: 15px;
   border-top-left-radius: 15px;
@@ -110,8 +113,6 @@ const Content = styled.div`
 
 const List = styled.div`
   margin-top: 24px;
-  height: 400px;
-  overflow: scroll;
   padding-bottom: 20px;
   box-sizing: border-box;
 `;

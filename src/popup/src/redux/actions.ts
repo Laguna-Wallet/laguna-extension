@@ -1,4 +1,4 @@
-import { Asset } from 'utils/types';
+import { Asset, Token } from 'utils/types';
 
 // send token
 export function changeAddress(address: string) {
@@ -114,9 +114,16 @@ export function changeConnectedApps(connectedApps: Record<string, string>) {
   };
 }
 
-export function changeTokenReceived(tokenReceived: { tokenReceived: boolean }) {
+export function changeTokenReceived({ tokenReceived }: { tokenReceived: boolean }) {
   return {
     type: 'TOKEN_RECEIVED',
     payload: { tokenReceived }
+  };
+}
+
+export function changeDisabledTokens(disabledTokens: Token[]) {
+  return {
+    type: 'CHANGE_DISABLED_TOKENS',
+    payload: { disabledTokens }
   };
 }

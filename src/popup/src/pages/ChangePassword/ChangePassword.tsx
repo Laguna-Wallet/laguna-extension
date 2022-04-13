@@ -71,7 +71,7 @@ function ChangePassword({ handleSubmit }: Props) {
       setIsSnackbarOpen(true);
       return;
     }
-    
+
     encryptKeyringPairs(values?.currentPassword, values?.newPassword);
     encryptMetaData(values?.currentPassword, values?.newPassword);
 
@@ -97,7 +97,7 @@ function ChangePassword({ handleSubmit }: Props) {
 
       <Content>
         <IconContainer>
-          <LockLogoIcon />
+          <LockLogoIcon fill="#fff" />
         </IconContainer>
         <Form onSubmit={handleSubmit(submit)}>
           <FieldsContainer>
@@ -111,8 +111,8 @@ function ChangePassword({ handleSubmit }: Props) {
               props={{
                 type: 'password',
                 bgColor: '#303030',
-                color: '#9c9c9c',
-                placeholderColor: '#9c9c9c',
+                color: '#b1b5c3',
+                placeholderColor: '#b1b5c3',
                 height: '48px',
                 marginTop: '12px',
                 borderColor: '#303030'
@@ -129,6 +129,7 @@ function ChangePassword({ handleSubmit }: Props) {
                 type: 'password',
                 bgColor: '#303030',
                 color: '#9c9c9c',
+                placeholderColor: '#b1b5c3',
                 height: '48px',
                 marginTop: '12px',
                 borderColor: '#303030'
@@ -145,6 +146,7 @@ function ChangePassword({ handleSubmit }: Props) {
                 type: 'password',
                 bgColor: '#303030',
                 color: '#9c9c9c',
+                placeholderColor: '#b1b5c3',
                 height: '48px',
                 marginTop: '12px',
                 borderColor: '#303030'
@@ -156,9 +158,9 @@ function ChangePassword({ handleSubmit }: Props) {
             <Button
               onClick={() => goTo(Wallet, { isMenuOpen: true })}
               text="Cancel"
-              color="#111"
-              bgColor="#fb5a5a"
-              borderColor="#fb5a5a"
+              color="#fff"
+              bgColor="#414141"
+              borderColor="#414141"
               justify="center"
               margin="auto 10px 0 0"
             />
@@ -169,8 +171,8 @@ function ChangePassword({ handleSubmit }: Props) {
               color="#111"
               justify="center"
               margin="auto 0 0 0"
-              bgColor="#1a1a1a"
-              bgImage="linear-gradient(to right, #1cc3ce, #b9e260)"
+              bgColor="#fff"
+              bgImage="#fff"
             />
           </ButtonsContainer>
         </Form>

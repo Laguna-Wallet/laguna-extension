@@ -15,6 +15,7 @@ export enum ImportTypeEnum {
   SEED = 'Seed',
   JSON = 'Json'
 }
+
 export type ImportType = ImportTypeEnum.SEED | ImportTypeEnum.JSON;
 
 export const DEFAULT_TYPE: KeypairType = 'ed25519';
@@ -31,7 +32,9 @@ export enum StorageKeys {
   Transactions = 'transactions',
   IdleTimeout = 'idle-timeout',
   UnlockedPairs = 'unlocked-pairs',
-  TokenDecimals = 'token-decimals'
+  TokenDecimals = 'token-decimals',
+  DisabledTokens = 'disabled-tokens',
+  OnBoarding = 'onboarding'
 }
 
 //==============================================================================
@@ -39,7 +42,7 @@ export enum StorageKeys {
 //==============================================================================
 export interface Network {
   name: string;
-  symbol: string;
+  symbol: Token;
   chain: string;
   node: string;
   price_change_percentage_24h?: number;
@@ -117,6 +120,12 @@ export enum TokenSymbols {
   shiden = 'sdn',
   astar = 'astr'
 }
+
+export type Token =
+  | TokenSymbols.westend
+  | TokenSymbols.polkadot
+  | TokenSymbols.kusama
+  | TokenSymbols.astar;
 
 // todo move chain names to enum
 export interface Transaction {
@@ -224,11 +233,12 @@ export const chains = [
 ];
 
 export interface TokenInfo {
-  current_price: number;
   id: string;
+  current_price: number;
   market_cap: number;
   market_cap_change_24h: number;
   market_cap_change_percentage_24h: number;
+  price_change_percentage_24h: number;
   name: string;
   symbol: string;
 }

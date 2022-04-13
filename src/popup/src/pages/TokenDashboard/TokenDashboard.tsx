@@ -18,6 +18,10 @@ import { getLatestTransactionsForSingleChain } from 'utils/polkadot';
 import { useAccount } from 'context/AccountContext';
 import Footer from 'pages/Wallet/Footer';
 import ChainActivity from 'pages/Activity/ChainActivity';
+import ReceiveIcon from 'assets/svgComponents/ReceiveIcon';
+import SendIcon from 'assets/svgComponents/SendIIcon';
+import Popup from 'components/Popup/Popup';
+import ActivityInfo from 'pages/Activity/ActivityInfo';
 
 type Props = {
   asset: Asset;
@@ -27,7 +31,10 @@ export default function TokenDashboard({ asset }: Props) {
   const dispatch = useDispatch();
   const account = useAccount();
   const currAccountAddress = account?.getActiveAccount()?.address;
+  const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [transaction, setTransaction] = useState<Transaction>();
+
   const {
     prices,
     infos,
@@ -40,6 +47,7 @@ export default function TokenDashboard({ asset }: Props) {
   const tokenInfo: TokenInfo = infos.find((item: TokenInfo) => item.id === chain);
 
   const price = tokenInfo?.current_price;
+  const price_change_percentage_24h = tokenInfo?.price_change_percentage_24h;
   const symbol = asset.symbol;
   const balance = accountsBalances?.balances[chain];
   const balanceInUsd = price ? new BigNumber(balance).multipliedBy(price).toFormat(4) : 0;
@@ -64,6 +72,16 @@ export default function TokenDashboard({ asset }: Props) {
     go();
   }, []);
 
+  const handleChain = (chain: string) => {
+    if (chain === 'polkadot') return 'Polkadot Main Network';
+    return `${chain} Network`;
+  };
+
+  const handleClick = (transaction: Transaction) => {
+    setIsPopupOpen(true);
+    setTransaction(transaction);
+  };
+
   return (
     <Container bg={dashboardBG}>
       <Header title={`${chain} Balance`} backAction={() => goTo(Wallet)}></Header>
@@ -77,25 +95,24 @@ export default function TokenDashboard({ asset }: Props) {
             </Balance>
             <BalanceInUsd>${balanceInUsd}</BalanceInUsd>
             <CardBottom>
-              <Tag>Polkadot Main Network</Tag>
-              <Rate>+ 8.34%</Rate>
+              <Tag>{handleChain(chain)}</Tag>
+              <Rate>{price_change_percentage_24h || 0}%</Rate>
             </CardBottom>
           </Card>
         </CardContainer>
         <ButtonsContainer>
           <Button onClick={handleSendRoute}>
             <RightArrowContainer>
-              <RightArrow width={20} height={20} stroke="#111" />
+              <SendIcon stroke="#111" />
             </RightArrowContainer>
             <span>Send</span>
           </Button>
-
           <StyledLink
             component={Receive}
             props={{ propsFromTokenDashboard: { chain, fromTokenDashboard: true, asset } }}>
             <Button>
               <BarcodeIconContainer>
-                <BarcodeIcon />
+                <ReceiveIcon width={20} height={20} />
               </BarcodeIconContainer>
               <span>Recieve</span>
             </Button>
@@ -103,7 +120,7 @@ export default function TokenDashboard({ asset }: Props) {
         </ButtonsContainer>
         <Transactions>
           <TransactionsHeader>
-            <TransactionsTitle>TRANSACTIONS</TransactionsTitle>
+            <TransactionsTitle>ACTIVITY</TransactionsTitle>
             <TransactionsTitle
               onClick={() => {
                 goTo(ChainActivity, { chain, asset });
@@ -120,10 +137,18 @@ export default function TokenDashboard({ asset }: Props) {
                   key={`chain-actvity-${transaction.chain}-${index}`}
                   transaction={transaction}
                   bgColor={'#f9fafb'}
+                  onClick={() => handleClick(transaction)}
                 />
               ))}
         </Transactions>
-        <Footer />
+        {isPopupOpen && transaction && (
+          <Popup justify="center" align="center" onClose={() => setIsPopupOpen(false)}>
+            <ActivityContainer>
+              <ActivityInfo closeAction={() => setIsPopupOpen(false)} transaction={transaction} />
+            </ActivityContainer>
+          </Popup>
+        )}
+        <Footer activeItem="wallet" />
       </Content>
     </Container>
   );
@@ -206,6 +231,7 @@ const Tag = styled.div`
   padding: 3px 10px;
   box-sizing: border-box;
   border-radius: 50px;
+  text-transform: capitalize;
   background-image: linear-gradient(
     to right top,
     #d7cce2,
@@ -264,12 +290,12 @@ const Button = styled.div`
 `;
 
 const RightArrowContainer = styled.div`
-  transform: rotate(-45deg);
-  margin-top: 3px;
+  /* transform: rotate(-45deg); */
+  /* margin-top: 3px; */
+  margin-right: 5px;
 `;
 
 const BarcodeIconContainer = styled.div`
-  margin-top: 3px;
   margin-right: 5px;
 `;
 
@@ -300,4 +326,9 @@ const TransactionsTitle = styled.div`
   :nth-child(2) {
     cursor: pointer;
   }
+`;
+
+const ActivityContainer = styled.div`
+  width: 323px;
+  height: 429px;
 `;

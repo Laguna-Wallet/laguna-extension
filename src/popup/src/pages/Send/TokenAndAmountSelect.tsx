@@ -1,14 +1,17 @@
+import NetworkIcons from 'components/primitives/NetworkIcons';
 import { Field } from 'redux-form';
 import styled from 'styled-components';
 import { parseNumeric } from 'utils/validations';
 
 type Props = {
   tokens: string[];
+  Icon: any;
 };
 
-export default function TokenAndAmountSelect({ tokens }: Props) {
+export default function TokenAndAmountSelect({ tokens, Icon }: Props) {
   return (
     <Container>
+      {Icon}
       <Field name="amount" type="text" label="amount" component={Input} />
       <Field name="token" label="token" options={tokens} component={renderSelect} />
     </Container>
@@ -53,6 +56,7 @@ const Input = ({ input: { value, onChange } }: any) => (
 const Container = styled.div`
   width: 100%;
   display: flex;
+  align-items: center;
   margin-top: 8px;
   padding: 0 10px;
   border-radius: 5px;
@@ -61,8 +65,9 @@ const Container = styled.div`
 `;
 
 const StyledInput = styled.input`
-  width: 100%;
+  flex: 1;
   height: 48px;
+  margin-left: 4px;
   border: 0;
   border-top-left-radius: 5px;
   border-bottom-left-radius: 5px;

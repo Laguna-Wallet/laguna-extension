@@ -3,9 +3,8 @@ import { chrome } from "@polkadot/extension-inject/chrome"
 const port = chrome.runtime.connect({ name: process.env.MESSAGING_PORT })
 // handles from background to page
 port.onMessage.addListener(function (data) {
-  console.log("~ aba aq ra xdeba ? data", data)
   // if (data.message === "GET_ACCOUNTS") {
-  window.postMessage({ ...data, origin: process.env.MESSAGE_ORIGIN_CONTENT }, "*")
+  window.postMessage({ ...data, origin: process.env.MESSAGE_ORIGIN_CONTENT, from: "window-postMessage" }, "*")
   // }
 })
 
@@ -15,7 +14,6 @@ window.addEventListener("message", ({ data, source }) => {
     return
   }
 
-  console.log("~ aba aq ?", data)
   port.postMessage({ ...data, origin: process.env.MESSAGE_ORIGIN_CONTENT })
   // if (data.message === "GET_ACCOUNTS") {
   // }

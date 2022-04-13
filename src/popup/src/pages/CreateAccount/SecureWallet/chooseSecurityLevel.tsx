@@ -54,10 +54,11 @@ export default function ChooseSecurityLevel({
           }
         }}
       />
-
+  
       {isMnemonicDescriptionOpen && (
         <MnemonicsDescription onClose={() => setIsMnemonicDescriptionOpen(false)} />
       )}
+
       {isConfirmSkipOpen && (
         <ConfirmSecuritySkip
           setLevel={setLevel}

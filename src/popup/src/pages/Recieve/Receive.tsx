@@ -7,6 +7,7 @@ import ReceiveToken from './ReceiveToken';
 import { accountsTie, getApiInstance, getAssets, getNetworks, recodeAddress } from 'utils/polkadot';
 import { useSelector } from 'react-redux';
 import SelectNetwork from './SelectNetwork';
+import { State } from 'redux/store';
 
 export interface PropsFromTokenDashboard {
   fromTokenDashboard?: boolean;
@@ -21,9 +22,9 @@ type Props = {
 export default function Receive({ propsFromTokenDashboard }: Props) {
   const account = useAccount();
   const activeAccount = account.getActiveAccount();
-  const { prices, infos } = useSelector((state: any) => state.wallet);
+  const { prices, infos, disabledTokens } = useSelector((state: State) => state.wallet);
 
-  const [networks, setNetworks] = useState<Network[]>(getNetworks(prices, infos));
+  const [networks, setNetworks] = useState<Network[]>(getNetworks(prices, infos, disabledTokens));
   const [selectedNetwork, setSelectedNetwork] = useState<Network>();
 
   const [recoded, setRecoded] = useState<string>('');

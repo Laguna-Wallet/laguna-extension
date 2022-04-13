@@ -54,12 +54,11 @@ const StyledButton = styled.button<{
   height: 46px;
   margin-top: 20px;
   padding: 0 14px;
+  box-sizing: border-box;
   border-radius: 4px;
   background-image: ${({ bgImage }) => bgImage};
   background-color: ${({ disabled, bgColor }) => (disabled ? '#adadad' : bgColor)};
   box-shadow: ${({ boxShadow }) => boxShadow || 'none'};
-  /* 0 4px 33px 0 rgba(30, 35, 53, 0.15); */
-  /* pointer-events: ${({ disabled }) => (disabled ? 'none' : 'initial')}; */
   color: ${({ color }) => (color ? color : '#fff')};
   border: 1px solid;
   border-color: ${({ disabled, borderColor }) => (disabled ? '#adadad' : borderColor)};

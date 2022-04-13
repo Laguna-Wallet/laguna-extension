@@ -24,6 +24,8 @@ export const walletReducer = (state: any = {}, action: any) => {
       return { ...state, connectedApps: action.payload.connectedApps };
     case 'TOKEN_RECEIVED':
       return { ...state, tokenReceived: action.payload.tokenReceived };
+    case 'CHANGE_DISABLED_TOKENS':
+      return { ...state, disabledTokens: action.payload.disabledTokens };
 
     default:
       return state;

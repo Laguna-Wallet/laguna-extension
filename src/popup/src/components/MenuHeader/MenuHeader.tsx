@@ -8,6 +8,12 @@ import useOutsideClick from 'hooks/useOutsideClick';
 import { addAccountMeta, changeAccountPicture } from 'utils/polkadot';
 import EditIcon from 'assets/svgComponents/EditIcon';
 import PencilIcon from 'assets/svgComponents/PencilIcon';
+import MenuLockIcon from 'assets/svgComponents/MenuIcons/MenuLockIcon';
+import { StorageKeys } from 'utils/types';
+import { clearFromStorage, saveToStorage } from 'utils/chrome';
+import { goTo } from 'react-chrome-extension-router';
+import WelcomeBack from 'pages/WelcomeBack/WelcomeBack';
+import MenuMainLogo from 'assets/svgComponents/MenuIcons/MenuMainLogo';
 
 type Props = {
   isOpen: boolean;
@@ -71,23 +77,36 @@ export default function MenuHeader({
     }
 
     const base64 = await resizeFile(event.target.files[0]);
-
     const newAccount = changeAccountPicture(address, { img: base64 });
     account.saveActiveAccount(newAccount);
+  };
+
+  const handleLogout = () => {
+    clearFromStorage(StorageKeys.SignedIn);
+    saveToStorage({ key: StorageKeys.LoggedOut, value: 'true' });
+    goTo(WelcomeBack);
   };
 
   return (
     <Container>
       <Header>
-        <span>Laguna</span>
-        <BurgerMenu>
-          <Hamburger toggled={isOpen} toggle={onClose} size={20} color="#fff" />
-        </BurgerMenu>
+        <LogoContainer>
+          <MenuMainLogo />
+          <span>Laguna</span>
+        </LogoContainer>
+        <HeaderLeft>
+          <LockContainer onClick={handleLogout}>
+            <MenuLockIcon />
+          </LockContainer>
+          <BurgerMenu>
+            <Hamburger toggled={isOpen} toggle={onClose} size={17} color="#fff" />
+          </BurgerMenu>
+        </HeaderLeft>
       </Header>
       {title && (
         <Title>
           <LeftArrowContainer onClick={backAction}>
-            <LeftArrowIcon width={30} stroke="#fff" />
+            <LeftArrowIcon fill="#111" stroke="#fff" />
           </LeftArrowContainer>
           <TitleText>{title}</TitleText>
         </Title>
@@ -150,6 +169,27 @@ const Header = styled.div`
   font-weight: 500;
 `;
 
+const LogoContainer = styled.div`
+  display: flex;
+  align-items: center;
+  span {
+    margin-left: 7px;
+  }
+`;
+
+const HeaderLeft = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const LockContainer = styled.div`
+  cursor: pointer;
+  margin-top: 4px;
+  margin-right: -7px;
+  position: relative;
+  z-index: 9999;
+`;
+
 const BurgerMenu = styled.div`
   .hamburger-react {
     width: 33px !important;
@@ -196,11 +236,6 @@ const PencilIconContainer = styled.div`
   cursor: pointer;
 `;
 
-const Address = styled.div`
-  color: #8f8f8f;
-  font-size: 12px;
-`;
-
 const ImageContainerOverlay = styled.div`
   display: none;
   width: 100%;
@@ -223,7 +258,7 @@ const IconContainer = styled.div<{ img: string }>`
   background-position: center center;
   background-repeat: no-repeat;
   position: relative;
-
+  margin-top: 10px;
   &:hover ${ImageContainerOverlay} {
     display: flex;
   }
@@ -231,17 +266,18 @@ const IconContainer = styled.div<{ img: string }>`
 
 const Title = styled.span`
   width: 100%;
-  font-family: 'Sequel100Wide55Wide';
+  font-family: '';
   font-size: 17px;
   letter-spacing: 0.85px;
   color: #fff;
   display: flex;
   justify-content: center;
+  margin-top: 10px;
 `;
 
 const TitleText = styled.div`
-  /* margin-left: auto; */
   margin-right: auto;
+  font-family: 'IBM Plex Sans';
 `;
 
 const LeftArrowContainer = styled.div`

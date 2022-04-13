@@ -137,7 +137,7 @@ export function handleUnlockPair(payload) {
 
   if (payload.seed) {
     const { pair } = keyring.addUri(payload.seed, payload.password)
-    keyring.saveAccountMeta(pair, { name: pair.address })
+    keyring.saveAccountMeta(pair, { ...payload.meta, name: pair.address })
     return pair
   }
 }

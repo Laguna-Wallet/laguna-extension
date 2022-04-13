@@ -13,6 +13,7 @@ import { importJson, importViaSeed, validatePassword } from 'utils/polkadot';
 import WizardHeader from './WizardHeader';
 import encodeBg from 'assets/imgs/encode-bg.png';
 import { useWizard } from 'react-use-wizard';
+import { State } from 'redux/store';
 
 type Props = {
   handleEncode: (password: string) => void;
@@ -26,6 +27,7 @@ export default function EncodeAccount({ handleEncode, title, onClose, onBack }: 
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
   const [snackbarError, setSnackbarError] = useState<string>('');
   const { nextStep, previousStep } = useWizard();
+  const hasBoarded = useSelector((state: State) => state?.wallet?.onboarding);
 
   const onClick = async (password: string) => {
     const isValid = validatePassword(password);
@@ -38,8 +40,12 @@ export default function EncodeAccount({ handleEncode, title, onClose, onBack }: 
 
     try {
       await handleEncode(password);
-      nextStep();
-      // goTo(Wallet);
+
+      if (hasBoarded) {
+        goTo(Wallet);
+      } else {
+        nextStep();
+      }
     } catch (err: any) {
       // todo proper typing
       setIsSnackbarOpen(true);
@@ -79,8 +85,9 @@ export default function EncodeAccount({ handleEncode, title, onClose, onBack }: 
           isOpen={isSnackbarOpen}
           message={snackbarError}
           close={() => setIsSnackbarOpen(false)}
+          width="80%"
           type="error"
-          left="0px"
+          left="50%"
           bottom={'145px'}
         />
       </Content>

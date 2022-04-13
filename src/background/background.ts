@@ -12,9 +12,6 @@ import {
 } from "./utils"
 import keyring from "@polkadot/ui-keyring"
 import { TypeRegistry } from "@polkadot/types"
-import { wrapBytes } from "@polkadot/extension-dapp/wrapBytes"
-import { u8aToHex } from "@polkadot/util"
-import { assert } from "@polkadot/util"
 
 let isLoggedIn = false
 let keyPairs = []
@@ -31,14 +28,20 @@ keyring.loadAll({ type: "ed25519" })
 chrome.runtime.onConnect.addListener(function (port) {
   chrome.runtime.onMessage.addListener(async (msg) => {
     if (msg.type === Messages.DappAuthRequest) {
+      const dappName = msg.payload.pendingDapp[0].request.requestOrigin
+
+      if (authorizedDapps.includes(dappName) || declinedDapps.includes(dappName)) return
+
       if (msg.payload.approved) {
         pendingRequests = []
-        authorizedDapps.push(msg.payload.pendingDapp[0].request.requestOrigin)
+        authorizedDapps.push(dappName)
         port.postMessage({ ...msg.payload.pendingDapp[0], payload: { id: msg.payload.pendingDapp[0].id, approved: true } })
+        return true
       } else {
         pendingRequests = []
-        declinedDapps.push(msg.payload.pendingDapp[0].request.requestOrigin)
+        declinedDapps.push(dappName)
         port.postMessage({ ...msg.payload.pendingDapp[0], payload: { id: msg.payload.pendingDapp[0].id, approved: false } })
+        return true
       }
     }
 
@@ -122,6 +125,7 @@ chrome.runtime.onConnect.addListener(function (port) {
     if (data.message === "AUTHORIZE_TAB") {
       if (authorizedDapps.includes(data.request.requestOrigin)) {
         port.postMessage({ ...data, payload: { id: data.id, approved: true } })
+        console.log("in die hulle")
         return true
       }
 
@@ -179,7 +183,9 @@ chrome.runtime.onMessage.addListener(async (msg) => {
       chrome.runtime.sendMessage({ type: Messages.AuthCheck, payload: { isLoggedIn } })
       break
     case Messages.RevokeDapp:
+      console.log("~ before revoke authorizedDapps", authorizedDapps)
       authorizedDapps = authorizedDapps.filter((item) => item !== msg.payload.dappName)
+      console.log("~ after revoke authorizedDapps", authorizedDapps)
       chrome.runtime.sendMessage({ type: Messages.ConnectedApps, payload: { connectedApps: authorizedDapps } })
       break
     case Messages.ChangeInterval:
@@ -218,6 +224,8 @@ chrome.runtime.onInstalled.addListener(async () => {
 
   chrome.alarms.create("refetch-account-balances", { periodInMinutes: 3 })
 
+  chrome.alarms.create("24-hr-ballance-change", { periodInMinutes: 3600 })
+
   const timeout = await handleInitialIdleTimeout()
   chrome.idle.setDetectionInterval(Number(timeout))
   chrome.idle.onStateChanged.addListener((status: string) => {
@@ -248,6 +256,8 @@ chrome.runtime.onStartup.addListener(async () => {
 
   chrome.alarms.create("refetch-account-balances", { periodInMinutes: 3 })
 
+  chrome.alarms.create("24-hr-ballance-change", { periodInMinutes: 3600 })
+
   const timeout = handleInitialIdleTimeout()
   chrome.idle.setDetectionInterval(Number(timeout))
   chrome.idle.onStateChanged.addListener((status: string) => {
@@ -272,4 +282,8 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
   const Infos = await Retrieve_Coin_Infos()
   chrome.runtime.sendMessage({ type: Messages.CoinInfoUpdated, payload: JSON.stringify(Infos) })
   saveToStorage({ key: StorageKeys.TokenInfos, value: JSON.stringify(Infos) })
+
+  if (alarm.name === "24-hr-ballance-change") {
+    // const balance24hrChangeRate = Retrieve_balance_change_rates()
+  }
 })
