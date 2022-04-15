@@ -54,7 +54,7 @@ export default function ChooseSecurityLevel({
           }
         }}
       />
-  
+
       {isMnemonicDescriptionOpen && (
         <MnemonicsDescription onClose={() => setIsMnemonicDescriptionOpen(false)} />
       )}
@@ -75,7 +75,7 @@ export default function ChooseSecurityLevel({
         </Icon>
       </IconContainer>
       <TextContainer>
-        To secure your wallet you&apos;ll be given a
+        To secure your wallet you&apos;ll be given a{' '}
         <span onClick={() => setIsMnemonicDescriptionOpen(true)}>seed phrase.</span> Store this in a
         safe place. It&apos;s the only way to recover your wallet if you get locked out of the app
         or get a new device.
@@ -168,7 +168,7 @@ const Buttons = styled.div`
 
 const SkipButton = styled.div`
   width: 89px;
-  height: 24px;
+  height: 16px;
   font-family: Inter;
   font-size: 14px;
   font-weight: 500;

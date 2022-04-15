@@ -61,7 +61,7 @@ export default function TokenItem({ network, balance }: Props) {
                 color: '#fff',
                 paddingLeft: 2
               }}>
-              On
+              ON
             </div>
           }
           uncheckedIcon={
@@ -76,7 +76,7 @@ export default function TokenItem({ network, balance }: Props) {
                 color: '#fff',
                 paddingRight: 2
               }}>
-              Off
+              OFF
             </div>
           }
         />

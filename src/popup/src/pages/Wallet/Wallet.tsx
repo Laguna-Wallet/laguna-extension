@@ -129,7 +129,7 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
     <Container bg={dashboardBG}>
       <Header menuInitialOpenState={isMenuOpen} />
       <Content>
-        {activeAccount.meta.notSecured && (
+        {activeAccount?.meta?.notSecured && (
           <SecureNowMessage onClick={() => goTo(CreateAccount, { redirectedFromDashboard: true })}>
             <SecureNowIcon />
             <span>Your account is not backed up, please secure now</span>
@@ -162,10 +162,14 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
               </span>
             </Balance>
             <PriceChange>
-              {overallPriceChange && overallPriceChange > 0 ? '+' : ''}
-              {/* 
-              {overallPriceChange && overallPriceChange < 0 ? '-' : ''} */}
-              {overallPriceChange && new BigNumber(overallPriceChange).toFormat(2)}%
+              {accountsChanging ? (
+                '...'
+              ) : (
+                <>
+                  {overallPriceChange && overallPriceChange > 0 ? '+' : ''}
+                  {overallPriceChange && new BigNumber(overallPriceChange).toFormat(2)}%
+                </>
+              )}
             </PriceChange>
           </BalanceContainer>
 
@@ -388,7 +392,7 @@ const List = styled.div`
   width: 323px;
   display: flex;
   flex-direction: column;
-  margin-top: 65px;
+  margin-top: 50px;
 `;
 
 const ListHeader = styled.div`

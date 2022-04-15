@@ -11,7 +11,7 @@ import { saveToStorage } from 'utils/chrome';
 import { SnackbarMessages, StorageKeys } from 'utils/types';
 import DiscordIcon from 'assets/svgComponents/DiscordIcon';
 import TwitterIcon from 'assets/svgComponents/twitterIcon';
-import Bg from '../../assets/imgs/SetupCompleted-bg.png';
+import Bg from '../../assets/imgs/SetupCompleted-bg.jpg';
 
 export default function EncodeAccount() {
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
@@ -33,7 +33,7 @@ export default function EncodeAccount() {
             </CheckMarkContainer>
           </Circle>
         </IconContainer>
-        <Heading>SETUP COMPLETE!!</Heading>
+        <Heading>Setup Complete !</Heading>
 
         <Title>
           Connect with our community to stay up to date with feature updates and opportunities.
@@ -84,6 +84,7 @@ const Container = styled.div<{ bg: string }>`
   flex-direction: column;
   align-items: center;
   background-image: ${({ bg }) => `url(${bg})`};
+  background-size: cover;
   padding: 40px 16px 38px 16px;
   box-sizing: border-box;
 `;

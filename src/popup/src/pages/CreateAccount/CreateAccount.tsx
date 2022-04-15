@@ -20,7 +20,8 @@ import { addAccountMeta } from 'utils/polkadot';
 import { useSelector } from 'react-redux';
 import { State } from 'redux/store';
 import AES from 'crypto-js/aes';
-import { boolean } from 'yup';
+import CongratsBackingUp from './SecureWallet/CongratsBackingUp';
+
 type Props = {
   existingAccount?: boolean;
   encodePhase?: boolean;
@@ -113,10 +114,12 @@ export default function CreateAccount({
   return (
     <Wizard>
       {!encoded && <CreatePassword />}
+
       <SecureWallet
         level={securityLevel}
         setLevel={setSecurityLevel}
         redirectedFromSignUp={redirectedFromSignUp}
+        redirectedFromDashboard={redirectedFromDashboard}
       />
 
       {!redirectedFromDashboard && (
@@ -128,7 +131,7 @@ export default function CreateAccount({
         />
       )}
 
-      {redirectedFromDashboard && 'congrats secured'}
+      {redirectedFromDashboard && <CongratsBackingUp />}
 
       {!hasBoarded && <SetupComplete />}
     </Wizard>

@@ -36,6 +36,7 @@ import { StorageKeys } from 'utils/types';
 import Popup from 'components/Popup/Popup';
 import { HelpImport } from 'components/popups/HelpImport';
 import { State } from 'redux/store';
+import ButtonsIcon from 'assets/svgComponents/ButtonsIcon';
 
 // import { StorageKeys } from 'utils/types';
 // import { validateSeedPhase } from 'utils/validations';
@@ -181,7 +182,10 @@ function ImportPhase({ errors, onClose, redirectedFromSignUp }: Props) {
             </InputContainer>
           )}
         </DndContainer>
-        <HelpButton onClick={() => setIsPopupOpen(true)}>Help</HelpButton>
+        <HelpButton onClick={() => setIsPopupOpen(true)}>
+          <ButtonsIcon fill="#18191a" />
+          <span>Help</span>
+        </HelpButton>
         {uploaded && (
           <Field
             id="password"

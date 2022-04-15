@@ -234,7 +234,7 @@ const Container = styled.div<{ redirectedFromSend?: boolean; edit?: boolean }>`
   top: 0;
   left: 0;
   z-index: 999;
-  padding: ${({ edit }) => (edit ? '15px' : '15px 15px 40px 15px')};
+  padding: ${({ edit }) => (edit ? '15px 26px 15px 26px' : '15px 26px 40px 26px')};
   box-sizing: border-box;
   background-color: ${({ redirectedFromSend }) => (redirectedFromSend ? '#fff' : '#18191A')};
   z-index: 99999;
@@ -258,7 +258,8 @@ const PlusIconContainer = styled.div`
   align-items: center;
   border-radius: 100%;
   background-color: #000000;
-  margin-top: auto;
+  margin-top: 22.3px;
+  margin-bottom: 20.7px;
 `;
 
 const Form = styled.form`

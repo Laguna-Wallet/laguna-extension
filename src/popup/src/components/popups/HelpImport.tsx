@@ -18,8 +18,7 @@ export function HelpImport({ onClose }: Props) {
           </span>
           <span>
             Entering a Polkadot address will import a &apos;Watch Only &apos; account. For more help
-            visit our
-            <b>&apos;import a wallet&apos;</b> wiki page.
+            visit our <b>&apos;import a wallet&apos;</b> wiki page.
           </span>
         </Description>
 
