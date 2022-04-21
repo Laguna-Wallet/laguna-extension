@@ -77,7 +77,8 @@
   "scripts": {
     "start": "react-scripts start",
     "test": "react-scripts test",
-    "watch:build": "cra-build-watch -v --build-path ../../dist/popup",
+    "watch:build-cra": "cra-build-watch -v --build-path ../../dist/popup",
+    "watch:build": "craco build",
     "build": "craco build",
     "eject": "react-scripts eject"
   },

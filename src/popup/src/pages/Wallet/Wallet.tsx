@@ -136,6 +136,7 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
             <RightArrowMenuIcon fill="#e1e7f3" stroke="#111" />
           </SecureNowMessage>
         )}
+        Vazagebi
         {/* {!true ? (
           <FirstTimeUserBalance>
             <h6>welcome, to get started</h6>
