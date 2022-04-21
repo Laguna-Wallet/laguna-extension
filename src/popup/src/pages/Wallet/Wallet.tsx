@@ -136,7 +136,6 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
             <RightArrowMenuIcon fill="#e1e7f3" stroke="#111" />
           </SecureNowMessage>
         )}
-        Vazagebi
         {/* {!true ? (
           <FirstTimeUserBalance>
             <h6>welcome, to get started</h6>
@@ -180,7 +179,7 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
                 <RightArrowContainer>
                   <SendIcon stroke="#111" />
                 </RightArrowContainer>
-                <span>Send</span>
+                <span>Recieve</span>
               </Button>
             </StyledLink>
             <StyledLink component={Receive}>
