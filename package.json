@@ -19,6 +19,9 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.16.7",
+    "@babel/plugin-proposal-object-rest-spread": "^7.17.3",
+    "@babel/plugin-proposal-private-property-in-object": "^7.16.7",
     "@types/chrome": "0.0.176",
     "@types/node": "^17.0.8",
     "awesome-typescript-loader": "^5.2.1",
@@ -50,7 +53,7 @@
     "@zxing/browser": "^0.1.1",
     "archiver": "^5.3.0",
     "axios": "^0.25.0",
-    "babel-loader": "^8.2.3",
+    "babel-loader": "^8.2.5",
     "bcryptjs": "^2.4.3",
     "cpy": "^9.0.1",
     "crypto-js": "^4.1.1",

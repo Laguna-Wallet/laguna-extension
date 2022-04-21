@@ -16,7 +16,7 @@ export async function fetchAccountsTransactions(address: string) {
 
       if (!res?.data?.transfers) continue;
 
-      results = [...res?.data?.transfers];
+      results = [...res.data.transfers];
       retrieved_count = res?.data?.count;
       page++;
 
@@ -24,7 +24,7 @@ export async function fetchAccountsTransactions(address: string) {
         try {
           await timer(1000);
           const data = await fetchTransactions(address, chains[i], 30, page);
-          results = [...results, ...data?.data?.transfers];
+          results = [...results, ...data.data.transfers];
           page++;
         } catch (err) {
           console.log('err', err);

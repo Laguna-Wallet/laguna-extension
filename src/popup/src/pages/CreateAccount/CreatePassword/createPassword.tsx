@@ -58,7 +58,7 @@ function CreatePassword() {
     <Container>
       <Form>
         <MainContent>
-          <Title>Create a Password</Title>
+          <Title>Create le Password</Title>
           <Description>Please create a secure password to unlock your HydroX wallet:</Description>
           <HumbleInput
             id="password"
