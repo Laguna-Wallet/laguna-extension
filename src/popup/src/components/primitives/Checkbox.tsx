@@ -20,9 +20,12 @@ const Container = styled.div`
 `;
 
 const Input = styled.input`
-  background-color: #111;
+  accent-color: #111;
   border-radius: 3px;
   outline: none;
+  height: 15px; /* not needed */
+  width: 15px; /* not needed */
+
   &:focus {
     color: #111;
     background-color: #111;

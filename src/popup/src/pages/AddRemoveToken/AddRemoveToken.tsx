@@ -16,6 +16,7 @@ import { Network } from 'utils/types';
 
 import SearchIcon from 'assets/svgComponents/SearchIcon';
 import TokenItem from './TokenItem';
+import LoopIcon from 'assets/svgComponents/loopIcon';
 
 export default function AddRemoveToken() {
   const dispatch = useDispatch();
@@ -66,7 +67,8 @@ export default function AddRemoveToken() {
           placeholder="Search"
           height="45px"
           marginTop="20px"
-          Icon={<SearchIcon />}
+          IconAlignment="left"
+          Icon={<LoopIcon />}
         />
         <List>
           {networks

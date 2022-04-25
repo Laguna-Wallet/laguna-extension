@@ -1,7 +1,8 @@
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 
-import Switch from 'react-switch';
+import WrongSwitch from 'react-switch';
+const Switch = WrongSwitch as any;
 
 import { Network, StorageKeys, Token } from 'utils/types';
 import { getFromStorage, saveToStorage } from 'utils/chrome';
@@ -61,7 +62,7 @@ export default function TokenItem({ network, balance }: Props) {
                 color: '#fff',
                 paddingLeft: 2
               }}>
-              On
+              ON
             </div>
           }
           uncheckedIcon={
@@ -76,7 +77,7 @@ export default function TokenItem({ network, balance }: Props) {
                 color: '#fff',
                 paddingRight: 2
               }}>
-              Off
+              OFF
             </div>
           }
         />

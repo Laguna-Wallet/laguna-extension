@@ -217,7 +217,7 @@ const ListContentChild = styled.div`
   right: -20px;
   overflow: scroll;
   padding-bottom: 15px;
-  padding-right: 20px;
+  /* padding-right: 20px; */
 `;
 
 // const ActivityItemsContainer = styled.div`
@@ -236,7 +236,8 @@ const Loading = styled.div`
 `;
 
 const ActivityItemContainer = styled.div<{ bgColor?: string }>`
-  width: 345px;
+  /* width: 345px; */
+  width: 325px;
   height: 60px;
   margin-top: 10px;
   display: flex;

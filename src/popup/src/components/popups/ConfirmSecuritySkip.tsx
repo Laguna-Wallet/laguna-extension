@@ -42,7 +42,8 @@ export function ConfirmSecuritySkip({ nextStep, nextStepFromParent, setLevel }: 
             bgColor="#f2f2f2"
             borderColor="#f2f2f2"
             color="#18191a"
-            Icon={<ArrowSmRightIcon width={23} />}
+            // Icon={<ArrowSmRightIcon width={23} />}
+            justify="center"
             text={'Skip'}
           />
           <Gap />
@@ -50,8 +51,9 @@ export function ConfirmSecuritySkip({ nextStep, nextStepFromParent, setLevel }: 
             bgColor="#18191a"
             color="#ffffff"
             onClick={handleSecure}
-            Icon={<ArrowSmRightIcon width={23} />}
+            // Icon={<ArrowSmRightIcon width={23} />}
             text={'Secure Now'}
+            justify="center"
           />
         </ButtonContainer>
       </MainContent>

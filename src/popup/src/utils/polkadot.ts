@@ -28,8 +28,6 @@ import { decodeAddress, encodeAddress } from '@polkadot/keyring';
 import BigNumber from 'bignumber.js';
 import AES from 'crypto-js/aes';
 import Utf8 from 'crypto-js/enc-utf8';
-import { decodePair } from '@polkadot/keyring/pair/decode';
-import { createPair } from '@polkadot/keyring/pair';
 import { fetchTransactions, transformTransfers } from './fetchTransactions';
 import { generateRandomBase64Avatar } from 'utils';
 
@@ -195,8 +193,6 @@ export async function addAccountMeta(address: string, obj: Record<string, any>):
   const pair = keyring.getPair(address);
   keyring.saveAccountMeta(pair, { ...pair.meta, ...obj });
   const newPair = keyring.getPair(address);
-  // keyring.addPair()
-  console.log('~ newPair', newPair);
   return newPair;
 }
 
@@ -392,9 +388,6 @@ export function recodeAddressForTransaction(address: string, prefix: any) {
 
 // todo typing node is an enum
 export async function getApiInstance(node: string) {
-  // API_KEY = 0dcf3660-e510-4df3-b9d2-bba6b16e3ae9
-  //CHAIN.api.onfinality.io/ws?apikey=API_KEY
-
   // todo put this into env
   const wsProvider = new WsProvider(
     `wss://${node}.api.onfinality.io/ws?apikey=${process.env.REACT_APP_ONFINALITY_KEY}`

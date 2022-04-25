@@ -13,17 +13,20 @@ import { goTo } from 'react-chrome-extension-router';
 import Wallet from 'pages/Wallet/Wallet';
 import SignUp from 'pages/SignUp/SignUp';
 import Snackbar from 'components/Snackbar/Snackbar';
+import { MnemonicsDescription } from 'components/popups/MnemonicsDescription';
 
 type Props = {
   redirectedFromSignUp?: boolean;
+  redirectedFromDashboard?: boolean;
 };
 
-export default function MnemonicsSeed({ redirectedFromSignUp }: Props) {
+export default function MnemonicsSeed({ redirectedFromSignUp, redirectedFromDashboard }: Props) {
   const { nextStep, previousStep } = useWizard();
   const [mnemonics, setMnemonics] = useState<string[]>([]);
 
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
   const [snackbarMessage, setSnackbarMessage] = useState<string>('');
+  const [isMnemonicDescriptionOpen, setIsMnemonicDescriptionOpen] = useState<boolean>();
 
   const handleClick = () => {
     nextStep();
@@ -31,8 +34,14 @@ export default function MnemonicsSeed({ redirectedFromSignUp }: Props) {
 
   const account = useAccount();
   useEffect(() => {
-    const mnemonics = account.generateMnemonics();
-    setMnemonics(mnemonics);
+    if (redirectedFromDashboard) {
+      // set from decodeToViewSeed page
+      console.log('~ account.mnemonics', account.mnemonics);
+      setMnemonics(account.mnemonics);
+    } else {
+      const mnemonics = account.generateMnemonics();
+      setMnemonics(mnemonics);
+    }
   }, []);
 
   const handleCopy = () => {
@@ -59,9 +68,10 @@ export default function MnemonicsSeed({ redirectedFromSignUp }: Props) {
       <MainContent>
         <Title>Backup Seed Phrase</Title>
         <Description>
-          To secure your wallets please write down this 12 word mnemonic seed phrase. Store this in
-          a safe place. It&apos;s the only way to recover your wallet if you get locked out or get a
-          new device.
+          To secure your wallets please write down this 12 word{' '}
+          <span onClick={() => setIsMnemonicDescriptionOpen(true)}> mnemonic seed phrase.</span>{' '}
+          Store this in a safe place. It&apos;s the only way to recover your wallet if you get
+          locked out or get a new device.
         </Description>
         <MnemonicsContainer>
           {mnemonics?.map((name, index) => (
@@ -79,6 +89,10 @@ export default function MnemonicsSeed({ redirectedFromSignUp }: Props) {
           </CopyBtn>
         )}
 
+        {isMnemonicDescriptionOpen && (
+          <MnemonicsDescription onClose={() => setIsMnemonicDescriptionOpen(false)} />
+        )}
+
         <Snackbar
           width="194.9px"
           isOpen={isSnackbarOpen}
@@ -92,8 +106,9 @@ export default function MnemonicsSeed({ redirectedFromSignUp }: Props) {
 
       <Button
         onClick={handleClick}
-        text={'I’ve Written it Down'}
-        Icon={<RightArrow width={23} />}
+        text={'Continue'}
+        justify="center"
+        // Icon={<RightArrow width={23} />}
         margin="auto 0px 0px 0px"
       />
     </Container>
@@ -129,6 +144,11 @@ const Description = styled.div`
   line-height: 1.45;
   color: #353945;
   text-align: left;
+
+  span {
+    font-weight: 600;
+    cursor: pointer;
+  }
 `;
 
 const MnemonicsContainer = styled.div`
@@ -185,6 +205,6 @@ const CopyBtn = styled.div`
   font-family: 'IBM Plex Sans';
 
   span {
-    margin-right: 5px;
+    margin-left: 5px;
   }
 `;
