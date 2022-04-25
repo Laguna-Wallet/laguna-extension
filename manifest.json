@@ -3,18 +3,23 @@
   "name": "HydrogenX Wallet",
   "version": "1.0.0",
   "description": "HydrogenX Polkadot Wallet",
-  "host_permissions": ["<all_urls>"],
-  "permissions": ["background", "storage", "notifications", "alarms", "clipboardRead", "clipboardWrite", "idle", "tabs"],
-  "action": {
+  "permissions": ["background", "storage", "notifications", "alarms", "clipboardRead", "clipboardWrite", "idle", "tabs", "activeTab", "<all_urls>"],
+  "browser_action": {
     "default_popup": "popup/index.html",
-    "default_title": "HydrogenX Polkadot Wallet"
+    "default_title": "Laguna Wallet"
   },
   "icons": {},
   "background": {
-    "service_worker": "background.js"
+    "scripts": ["background.js"],
+    "persistent": true
   },
-
-  "content_security_policy": {
-    "content_security_policy": "base-uri 'self'; connect-src 'self'; default-src 'self'; font-src 'self'; frame-src 'self'; img-src 'self'; manifest-src 'self'; media-src 'self'; object-src 'none'; script-src 'report-sample' 'self'; style-src 'report-sample' 'self'; worker-src 'none';"
-  }
+  "content_scripts": [
+    {
+      "js": ["content.js"],
+      "matches": ["http://*/*", "https://*/*"],
+      "run_at": "document_start"
+    }
+  ],
+  "web_accessible_resources": ["page.js"],
+  "content_security_policy": "script-src 'self' 'unsafe-eval' object-src 'self'"
 }

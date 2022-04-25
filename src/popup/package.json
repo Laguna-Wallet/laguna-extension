@@ -40,6 +40,7 @@
     "check-password-strength": "^2.0.3",
     "cra-build-watch": "^3.4.0",
     "crx": "^5.0.1",
+    "crypto-browserify": "^3.12.0",
     "crypto-js": "^4.1.1",
     "date-fns": "^2.28.0",
     "file-saver": "^2.0.5",
@@ -73,12 +74,11 @@
     "web-vitals": "^1.0.1",
     "yup": "^0.32.11"
   },
-  "homepage": "./",
   "scripts": {
     "start": "react-scripts start",
     "test": "react-scripts test",
     "watch:build-cra": "cra-build-watch -v --build-path ../../dist/popup",
-    "watch:build": "craco start",
+    "watch:build": "craco start PUBLIC_URL=./",
     "build": "craco build",
     "eject": "react-scripts eject"
   },
@@ -118,9 +118,14 @@
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-react": "^7.27.1",
+    "node-polyfill-webpack-plugin": "^1.1.4",
     "postcss": "^7.0.39",
     "prettier": "^2.5.0",
     "react-error-overlay": "6.0.9",
+    "stream-browserify": "^3.0.0",
     "webpack-cli": "^4.9.1"
+  },
+  "browser": {
+    "crypto": false
   }
 }
