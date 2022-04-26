@@ -54,17 +54,21 @@ const useAccount = () => {
   return context;
 };
 
-const AccountProvider: FunctionComponent = ({ children }: { children?: ReactNode }) => {
+const AccountProvider = ({ children }: { children?: ReactNode }) => {
   const [json, setJson] = useState<any>('');
 
-  const accountFromStorage = getFromStorage(StorageKeys.ActiveAccount);
-  const [activeAccount, setActiveAccount] = useState<any>(
-    accountFromStorage && JSON.parse(accountFromStorage)
-  );
+  // todo typing
+  const [activeAccount, setActiveAccount] = useState<any>();
 
-  const [encryptedPassword, setEncryptedPassword] = useState<string | null>(
-    getFromStorage(StorageKeys.Encoded)
-  );
+  getFromStorage(StorageKeys.ActiveAccount).then((data) => {
+    setActiveAccount(data);
+  });
+
+  const [encryptedPassword, setEncryptedPassword] = useState<string | null>(null);
+
+  getFromStorage(StorageKeys.Encoded).then((data) => {
+    setEncryptedPassword(data);
+  });
 
   const [mnemonics, setMnemonics] = useState<string[]>([]);
 

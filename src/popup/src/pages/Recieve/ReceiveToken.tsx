@@ -1,8 +1,7 @@
 import styled from 'styled-components';
 import Header from 'pages/Wallet/Header';
-
 import WrongQRCode from 'react-qr-code';
-const QRCode = WrongQRCode as any;
+const QRCode: any = WrongQRCode;
 
 import { useAccount } from 'context/AccountContext';
 import HumbleInput from 'components/primitives/HumbleInput';

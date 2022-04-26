@@ -1,7 +1,7 @@
 import Button from 'components/primitives/Button';
 import Header from 'pages/Wallet/Header';
 import styled from 'styled-components';
-import QrReader from 'react-qr-reader';
+// import QrReader from 'react-qr-reader';
 import { BrowserQRCodeReader } from '@zxing/browser';
 import { useEffect } from 'react';
 
@@ -33,14 +33,14 @@ export default function QRPopup({ handleCloseQR }: Props) {
       <Header title="SCAN QR CODE" iconStyle="Close" backAction={handleCloseQR} />
       <Content>
         <ScannerContainer>
-          <QrReader
+          {/* <QrReader
             onLoad={() => console.log('load')}
             delay={300}
             onError={handleError}
             facingMode="environment"
             onScan={handleScan}
             style={{ width: '100%', height: '100%' }}
-          />
+          /> */}
         </ScannerContainer>
         <Text>Please scan the QR code for the wallet you wish to send the assets to</Text>
 

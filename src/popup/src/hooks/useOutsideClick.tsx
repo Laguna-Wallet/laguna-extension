@@ -4,7 +4,7 @@ export const useOutsideClick = (onClick: () => void) => {
   const ref = useRef<any>(null);
 
   const handleClick = useCallback(
-    (e) => {
+    (e: any) => {
       if (!ref.current) return;
       const inside = ref.current.contains(e.target);
       if (inside) return;

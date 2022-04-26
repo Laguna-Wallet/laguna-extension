@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 
 import WrongSwitch from 'react-switch';
-const Switch = WrongSwitch as any;
+const Switch: any = WrongSwitch;
 
 import { Network, StorageKeys, Token } from 'utils/types';
 import { getFromStorage, saveToStorage } from 'utils/chrome';

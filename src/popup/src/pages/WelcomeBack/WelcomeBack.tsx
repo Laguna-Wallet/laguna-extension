@@ -44,7 +44,7 @@ function WelcomeBack({ handleSubmit }: Props) {
 
   const pendingDapps = pendingDappAuthorization?.pendingDappAuthorization;
 
-  const submit = (values: any) => {
+  const submit = async (values: any) => {
     const errors = validate(values);
 
     if (!isObjectEmpty(errors)) {
@@ -56,7 +56,7 @@ function WelcomeBack({ handleSubmit }: Props) {
       return;
     }
 
-    const isValid = validatePassword(values.password);
+    const isValid = await validatePassword(values.password);
 
     if (isValid) {
       saveToStorage({ key: StorageKeys.SignedIn, value: 'true' });

@@ -27,8 +27,6 @@ function App() {
     (state: State) => state.wallet
   );
 
-  console.log('~ tokenReceived', tokenReceived);
-
   const { isLoggedIn } = useSelector((state: any) => state.wallet);
   const [loading, setLoading] = useState<boolean>(false);
   const pendingDapps = pendingDappAuthorization?.pendingDappAuthorization;

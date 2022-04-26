@@ -1,5 +1,7 @@
 import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
+// import '@polkadot/wasm-crypto/initOnlyAsm';
+
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
@@ -9,12 +11,14 @@ import { Router } from 'react-chrome-extension-router';
 import GlobalStyles from './global.styles';
 import { AccountProvider } from 'context/AccountContext';
 import { Provider } from 'react-redux';
-import store from 'redux/store';
+import { AccountsStore } from 'utils/stores';
+import generateStore from 'redux/store';
 
-cryptoWaitReady().then(() => {
+cryptoWaitReady().then(async () => {
+  const store = await generateStore();
   // load all available addresses and accounts
-  keyring.loadAll({ ss58Format: 0, type: 'ed25519' });
-
+  keyring.loadAll({ ss58Format: 0, type: 'ed25519', store: new AccountsStore() });
+  // generateStore.then((store: any) => {
   ReactDOM.render(
     <React.StrictMode>
       <React.StrictMode>
@@ -33,3 +37,4 @@ cryptoWaitReady().then(() => {
 
   reportWebVitals();
 });
+// });

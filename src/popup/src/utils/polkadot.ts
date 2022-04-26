@@ -48,8 +48,8 @@ export function generateKeyPair(
   return keyring.addUri(randomAsHex(32), password, { name: 'mnemonic acc' });
 }
 
-export function validatePassword(password: string) {
-  const hashed = getFromStorage(StorageKeys.Encoded);
+export async function validatePassword(password: string) {
+  const hashed = await getFromStorage(StorageKeys.Encoded);
 
   if (!hashed) return false;
   return bcrypt.compareSync(password, hashed as string);

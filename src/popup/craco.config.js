@@ -1,6 +1,8 @@
 const path = require(`path`);
 const { loaderByName, addBeforeLoader } = require('@craco/craco');
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
+const interpolateHtml = require('craco-interpolate-html-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   devServer: {
@@ -8,6 +10,16 @@ module.exports = {
       writeToDisk: true
     }
   },
+  plugins: [
+    {
+      plugin: interpolateHtml,
+      options: {
+        template: './dist/index.html',
+        filename: './popup.html',
+        publicPath: '/dist'
+      }
+    }
+  ],
 
   webpack: {
     alias: {
@@ -33,11 +45,27 @@ module.exports = {
         https: false
       };
 
-      paths.appBuild = webpackConfig.output.path = path.resolve('../../dist/popup');
-      // filename: 'bundle.js',
-      // publicPath: '/public/'
+      // paths.appBuild = webpackConfig.output.path = path.resolve('../../dist/popup');
+      return {
+        ...webpackConfig,
+        entry: {
+          main: [
+            env === 'development' && require.resolve('react-dev-utils/webpackHotDevClient'),
+            paths.appIndexJs
+          ].filter(Boolean)
+        },
+        output: {
+          ...webpackConfig.output,
+          filename: 'static/js/[name].js',
+          publicPath: './'
+        },
+        optimization: {
+          ...webpackConfig.optimization,
+          runtimeChunk: false
+        }
+      };
 
-      return webpackConfig;
+      // return webpackConfig;
     }
   }
 };

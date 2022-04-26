@@ -63,13 +63,13 @@ function updateCoinInfo(message: any, dispatch: any) {
   saveToStorage({ key: StorageKeys.TokenInfos, value: message.payload });
 }
 
-function updateAccountsBalances(message: any, dispatch: any) {
+async function updateAccountsBalances(message: any, dispatch: any) {
   dispatch(changeAccountsBalances(JSON.parse(message.payload)));
   saveToStorage({ key: StorageKeys.AccountBalances, value: message.payload });
-
+  
   // if account address has changed, background has fetched
   // new balances and loading is finished
-  if (accountHasChanged(JSON.parse(message.payload))) {
+  if (await accountHasChanged(JSON.parse(message.payload))) {
     dispatch(toggleLoading(false));
   }
 }

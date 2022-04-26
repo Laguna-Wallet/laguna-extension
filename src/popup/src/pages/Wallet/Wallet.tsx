@@ -179,7 +179,7 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
                 <RightArrowContainer>
                   <SendIcon stroke="#111" />
                 </RightArrowContainer>
-                <span>Recieve</span>
+                <span>Send</span>
               </Button>
             </StyledLink>
             <StyledLink component={Receive}>

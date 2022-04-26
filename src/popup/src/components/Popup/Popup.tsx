@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 type Props = {
   onClose: () => void;
-  children: React.ReactChild | React.ReactChildren;
+  children: React.ReactChild;
   justify?: string;
   align?: string;
 };
