@@ -5,6 +5,7 @@ import {
   ReactNode,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState
 } from 'react';
@@ -59,18 +60,27 @@ const AccountProvider = ({ children }: { children?: ReactNode }) => {
 
   // todo typing
   const [activeAccount, setActiveAccount] = useState<any>();
-
-  getFromStorage(StorageKeys.ActiveAccount).then((data) => {
-    setActiveAccount(data);
-  });
-
   const [encryptedPassword, setEncryptedPassword] = useState<string | null>(null);
-
-  getFromStorage(StorageKeys.Encoded).then((data) => {
-    setEncryptedPassword(data);
-  });
-
   const [mnemonics, setMnemonics] = useState<string[]>([]);
+
+  useEffect(() => {
+    getFromStorage(StorageKeys.ActiveAccount).then((data) => {
+      if (!data) {
+        const accounts = keyring.getPairs();
+        if (!accounts.length) return undefined;
+
+        saveToStorage({ key: StorageKeys.ActiveAccount, value: JSON.stringify(accounts[0]) });
+        setActiveAccount(accounts[0]);
+        return accounts[0];
+      }
+
+      setActiveAccount(JSON.parse(data));
+    });
+
+    getFromStorage(StorageKeys.Encoded).then((data) => {
+      setEncryptedPassword(data);
+    });
+  }, []);
 
   const generateMnemonics = useCallback(() => {
     const mnemonics = mnemonicGenerate().split(' ');
@@ -80,19 +90,16 @@ const AccountProvider = ({ children }: { children?: ReactNode }) => {
 
   const getActiveAccount = () => {
     // if no account in the storage than insert first one from keyring
-    if (!activeAccount) {
-      const accounts = keyring.getPairs();
-      if (!accounts.length) return undefined;
 
-      saveToStorage({ key: StorageKeys.ActiveAccount, value: JSON.stringify(accounts[0]) });
-      return accounts[0];
+    if (!activeAccount) {
+      return;
     }
 
     return activeAccount;
   };
 
-  const saveActiveAccount = (account: any) => {
-    saveToStorage({ key: StorageKeys.ActiveAccount, value: JSON.stringify(account) });
+  const saveActiveAccount = async (account: any) => {
+    await saveToStorage({ key: StorageKeys.ActiveAccount, value: JSON.stringify(account) });
     setActiveAccount(account);
   };
 

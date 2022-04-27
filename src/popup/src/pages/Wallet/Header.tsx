@@ -77,7 +77,7 @@ export default function Header({
 
       {isPopupOpen && (
         <Popup onClose={() => setIsPopupOpen(false)}>
-          <Accounts setActiveAccount={account.saveActiveAccount} />
+          <Accounts />
         </Popup>
       )}
     </Container>

@@ -33,7 +33,7 @@ export default function DecodeToViewSeed({ handleEncode, title, onClose, onBack 
   const [snackbarError, setSnackbarError] = useState<string>('');
 
   const onClick = async (password: string) => {
-    const isValid = validatePassword(password);
+    const isValid = await validatePassword(password);
 
     if (!isValid) {
       setIsSnackbarOpen(true);

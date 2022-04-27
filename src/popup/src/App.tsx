@@ -19,6 +19,7 @@ import RequestToSign from 'pages/RequestToSign';
 import Snackbar from 'components/Snackbar/Snackbar';
 import { State } from 'redux/store';
 // import '@polkadot/extension-inject/crossenv';
+import '@polkadot/wasm-crypto/initOnlyAsm';
 
 function App() {
   const account = useAccount();
@@ -83,8 +84,18 @@ function App() {
 export default App;
 
 const handlePage = (pendingDapps: any[], pendingToSign: any) => {
-  const createdAccount = Boolean(getFromStorage(StorageKeys.SignedIn));
-  const loggedOut = Boolean(getFromStorage(StorageKeys.LoggedOut));
+  const [createdAccount, setCreatedAccount] = useState(false);
+  const [loggedOut, setLoggedOut] = useState(false);
+
+  useEffect(() => {
+    async function go() {
+      setCreatedAccount(Boolean(await getFromStorage(StorageKeys.SignedIn)));
+      setLoggedOut(Boolean(await getFromStorage(StorageKeys.LoggedOut)));
+    }
+
+    go();
+  }, []);
+
   //todo check for timeout and require password
   // return <WelcomeBack />;
 

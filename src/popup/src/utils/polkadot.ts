@@ -189,7 +189,7 @@ export function changeAccountPicture(address: string, obj: Record<string, any>):
   return newPair;
 }
 
-export async function addAccountMeta(address: string, obj: Record<string, any>): Promise<any> {
+export function addAccountMeta(address: string, obj: Record<string, any>): any {
   const pair = keyring.getPair(address);
   keyring.saveAccountMeta(pair, { ...pair.meta, ...obj });
   const newPair = keyring.getPair(address);

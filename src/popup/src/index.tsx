@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
-// import '@polkadot/wasm-crypto/initOnlyAsm';
 
 import './index.css';
 import App from './App';
@@ -13,6 +12,7 @@ import { AccountProvider } from 'context/AccountContext';
 import { Provider } from 'react-redux';
 import { AccountsStore } from 'utils/stores';
 import generateStore from 'redux/store';
+import '@polkadot/wasm-crypto/initOnlyAsm';
 
 cryptoWaitReady().then(async () => {
   const store = await generateStore();

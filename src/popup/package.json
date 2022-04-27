@@ -12,6 +12,8 @@
     "@polkadot/extension-chains": "^0.42.4",
     "@polkadot/extension-inject": "0.34.0-beta.12",
     "@polkadot/ui-keyring": "^2.0.1",
+    "@polkadot/util": "^9.0.1",
+    "@polkadot/wasm-crypto": "^6.0.1",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
