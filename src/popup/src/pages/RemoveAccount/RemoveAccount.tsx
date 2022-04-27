@@ -27,10 +27,10 @@ export default function RemoveAccount() {
 
   const name = activeAccount?.meta?.name;
   const address = activeAccount?.address;
-  const handleRemove = () => {
+  const handleRemove = async () => {
     if (!address) return;
 
-    const isValid = validatePassword(password);
+    const isValid = await validatePassword(password);
 
     if (!isValid) {
       setIsSnackbarOpen(true);

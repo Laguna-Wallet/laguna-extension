@@ -48,8 +48,8 @@ export function generateKeyPair(
   return keyring.addUri(randomAsHex(32), password, { name: 'mnemonic acc' });
 }
 
-export function validatePassword(password: string) {
-  const hashed = getFromStorage(StorageKeys.Encoded);
+export async function validatePassword(password: string) {
+  const hashed = await getFromStorage(StorageKeys.Encoded);
 
   if (!hashed) return false;
   return bcrypt.compareSync(password, hashed as string);
@@ -189,7 +189,7 @@ export function changeAccountPicture(address: string, obj: Record<string, any>):
   return newPair;
 }
 
-export async function addAccountMeta(address: string, obj: Record<string, any>): Promise<any> {
+export function addAccountMeta(address: string, obj: Record<string, any>): any {
   const pair = keyring.getPair(address);
   keyring.saveAccountMeta(pair, { ...pair.meta, ...obj });
   const newPair = keyring.getPair(address);

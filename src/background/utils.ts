@@ -8,47 +8,70 @@ import Utf8 from "crypto-js/enc-utf8"
 import { ethereumEncode } from "@polkadot/util-crypto"
 import { checkIfDenied } from "@polkadot/phishing"
 
-// const importFresh = require("import-fresh")
+export const getFromStorage = async function (key: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    try {
+      chrome.storage.local.get(key, function (value) {
+        resolve(value[key])
+      })
+    } catch (ex) {
+      reject(ex)
+    }
+  })
+}
 
-// Note: this utility functions will be needed for manifest V3
-// export const getFromStorage = async function (key) {
-//   return new Promise((resolve, reject) => {
-//     try {
-//       chrome.storage.local.get(key, function (value) {
-//         resolve(value[key])
-//       })
-//     } catch (ex) {
-//       reject(ex)
-//     }
-//   })
+export const saveToStorage = async function ({ key, value }: { key: string; value: string }) {
+  return new Promise((resolve, reject) => {
+    try {
+      chrome.storage.local.set({ [key]: value }, function () {
+        resolve("")
+      })
+    } catch (ex) {
+      reject(ex)
+    }
+  })
+}
+
+export const clearFromStorage = async function (keys: string) {
+  return new Promise((resolve, reject) => {
+    try {
+      chrome.storage.local.remove(keys, function () {
+        resolve("")
+      })
+    } catch (ex) {
+      reject(ex)
+    }
+  })
+}
+
+export function getFromChromeStorage(key: string) {
+  return new Promise(function (resolve) {
+    chrome.storage.local.get([key], function (result) {
+      resolve(result)
+    })
+  })
+}
+
+export async function saveToChromeStorage({ key, value }: { key: string; value: string }) {
+  await chrome.storage.local.set({ [key]: value }, function () {
+    console.log("Value is set to " + value)
+  })
+}
+
+// export function saveToStorage({ key, value }: { key: string; value: string }) {
+//   localStorage.setItem(key, value)
 // }
 
-// export const saveToStorage = async function ({ key, value }) {
-//   return new Promise((resolve, reject) => {
-//     try {
-//       chrome.storage.local.set({ [key]: value }, function () {
-//         resolve("")
-//       })
-//     } catch (ex) {
-//       reject(ex)
-//     }
-//   })
+// export function getFromStorage(key: string) {
+//   return localStorage.getItem(key)
 // }
 
-export function saveToStorage({ key, value }: { key: string; value: string }) {
-  localStorage.setItem(key, value)
-}
+// export function clearFromStorage(key: string) {
+//   return localStorage.removeItem(key)
+// }
 
-export function getFromStorage(key: string) {
-  return localStorage.getItem(key)
-}
-
-export function clearFromStorage(key: string) {
-  return localStorage.removeItem(key)
-}
-
-export function validatePassword(password: string) {
-  const hashed = getFromStorage(StorageKeys.Encoded)
+export async function validatePassword(password: string) {
+  const hashed = await getFromStorage(StorageKeys.Encoded)
 
   if (!hashed) return false
   return bcrypt.compareSync(password, hashed)
@@ -232,8 +255,8 @@ export async function isInPhishingList(url: string): Promise<boolean> {
   return false
 }
 
-export function checkBalanceChange(newBalance: Record<string, string>, newAddress: string): boolean {
-  const oldBalance = getFromStorage(StorageKeys.AccountBalances)
+export async function checkBalanceChange(newBalance: Record<string, string>, newAddress: string): Promise<boolean> {
+  const oldBalance = await getFromStorage(StorageKeys.AccountBalances)
   if (!oldBalance) return false
 
   const oldAddress = JSON.parse(oldBalance)?.address

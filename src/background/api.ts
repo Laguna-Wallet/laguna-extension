@@ -119,9 +119,9 @@ export async function fetchAccountsBalances() {
   try {
     // await timer(3000)
 
-    const account = getFromStorage(StorageKeys.ActiveAccount)
+    const account = await getFromStorage(StorageKeys.ActiveAccount)
 
-    const balances = getFromStorage(StorageKeys.AccountBalances)
+    const balances = await getFromStorage(StorageKeys.AccountBalances)
     const parsedBalances = balances ? JSON.parse(balances) : {}
 
     if (account) {
@@ -146,7 +146,7 @@ export async function fetchAccountsBalances() {
         }
       }
 
-      const hasReceived: boolean = checkBalanceChange(result_obj, address)
+      const hasReceived: boolean = await checkBalanceChange(result_obj, address)
 
       saveToStorage({ key: StorageKeys.AccountBalances, value: JSON.stringify({ address, balances: result_obj }) })
       chrome.runtime.sendMessage({ type: Messages.AccountsBalanceUpdated, payload: JSON.stringify({ address, balances: result_obj }) })

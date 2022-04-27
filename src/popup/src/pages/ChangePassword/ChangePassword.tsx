@@ -23,14 +23,14 @@ type Props = {
   handleSubmit: any;
 };
 
-const validate = (values: any) => {
+const validate = async (values: any) => {
   const errors: Record<string, string> = {};
 
   if (!values.currentPassword) {
     errors.currentPassword = 'Please enter current password';
   }
 
-  if (values.currentPassword && !validatePassword(values.currentPassword)) {
+  if (values.currentPassword && !(await validatePassword(values.currentPassword))) {
     errors.currentPassword = 'Please enter correct current password';
   }
 
@@ -61,8 +61,8 @@ function ChangePassword({ handleSubmit }: Props) {
   const activeAccount = account.getActiveAccount();
 
   // todo proper typing
-  const submit = (values: any) => {
-    const errors = validate(values);
+  const submit = async (values: any) => {
+    const errors = await validate(values);
 
     if (!isObjectEmpty(errors)) {
       if (isSnackbarOpen) return;

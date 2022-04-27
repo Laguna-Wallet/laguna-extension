@@ -30,7 +30,7 @@ export default function EncodeAccount({ handleEncode, title, onClose, onBack }: 
   const hasBoarded = useSelector((state: State) => state?.wallet?.onboarding);
 
   const onClick = async (password: string) => {
-    const isValid = validatePassword(password);
+    const isValid = await validatePassword(password);
 
     if (!isValid) {
       setIsSnackbarOpen(true);

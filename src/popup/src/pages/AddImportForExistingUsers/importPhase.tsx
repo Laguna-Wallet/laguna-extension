@@ -59,7 +59,7 @@ function ImportPhase({ errors, onClose, redirectedFromSignUp }: Props) {
   const { seedPhase, file, password }: any = { ...formValues };
   const dispatch = useDispatch();
 
-  const onDrop = useCallback(async (acceptedFile) => {
+  const onDrop = useCallback(async (acceptedFile: any) => {
     if (!acceptedFile.length) return;
 
     const json = await convertUploadedFileToJson(acceptedFile);

@@ -19,12 +19,7 @@ import { useDispatch } from 'react-redux';
 import { changeAccountsBalances, toggleLoading } from 'redux/actions';
 import keyring from '@polkadot/ui-keyring';
 
-type Props = {
-  // todo find out proper account typing
-  setActiveAccount: (account: any) => void;
-};
-
-export default function Accounts({ setActiveAccount }: Props) {
+export default function Accounts() {
   const accountCtx = useAccount();
   // todo save in storage
   const [accounts, setAccounts] = useState<KeyringPair[]>(keyring.getPairs());
@@ -34,7 +29,7 @@ export default function Accounts({ setActiveAccount }: Props) {
   const formatName = (name: string) => {
     return name.length > 12 ? truncateString(name) : name;
   };
-  
+
   const handleSetActiveAccount = (
     e: React.MouseEvent<HTMLDivElement>,
     account: unknown,
@@ -42,7 +37,7 @@ export default function Accounts({ setActiveAccount }: Props) {
   ) => {
     e.stopPropagation();
     setActiveAccountIndex(index);
-    setActiveAccount(account);
+    accountCtx.saveActiveAccount(account);
     dispatch(toggleLoading(true));
   };
 
@@ -85,7 +80,7 @@ export default function Accounts({ setActiveAccount }: Props) {
                     <ExportIcon width={13} />
                   </Link> */}
                   <CheckedIconContainer>
-                    {account.address === accountCtx.getActiveAccount().address && (
+                    {account.address === accountCtx?.getActiveAccount()?.address && (
                       <CheckedIcon width={18} />
                     )}
                   </CheckedIconContainer>

@@ -144,8 +144,8 @@ export function transformAmount(obj: Record<string, unknown>): any[] {
   return Object.keys(obj).map((key) => [obj[key]]);
 }
 
-export function accountHasChanged(balances: Record<string, string>) {
-  const account = getFromStorage(StorageKeys.ActiveAccount);
+export async function accountHasChanged(balances: Record<string, string>) {
+  const account = await getFromStorage(StorageKeys.ActiveAccount);
   const address = JSON.parse(account as string).address;
   if (balances.address === address) return true;
   return false;

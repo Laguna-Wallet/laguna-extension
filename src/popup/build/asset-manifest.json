@@ -1,6 +1,6 @@
 {
   "files": {
-    "main.js": "/static/js/bundle.js",
+    "main.js": "/../../static/js/main.js",
     "static/js/src_assets_imgs_avatars_avatar-0_png.chunk.js": "/static/js/src_assets_imgs_avatars_avatar-0_png.chunk.js",
     "static/js/src_assets_imgs_avatars_avatar-1_png.chunk.js": "/static/js/src_assets_imgs_avatars_avatar-1_png.chunk.js",
     "static/js/src_assets_imgs_avatars_avatar-2_png.chunk.js": "/static/js/src_assets_imgs_avatars_avatar-2_png.chunk.js",
@@ -31,12 +31,10 @@
     "static/media/Sequel100Wide-55Wide.woff2": "/static/media/Sequel100Wide-55Wide.5ee042cc05e6bdf600bb.woff2",
     "index.html": "/index.html",
     "static/media/main-logo-white.svg": "/static/media/main-logo-white.4446f71ead6fec77f2cc1083e603ecc0.svg",
-    "bundle.js.map": "/static/js/bundle.js.map",
-    "main.hot-update.js.map": "/main.e2598858d0cba69c6f56.hot-update.js.map",
+    "main.js.map": "/../../static/js/main.js.map",
     "node_modules_web-vitals_dist_web-vitals_js.chunk.js.map": "/static/js/node_modules_web-vitals_dist_web-vitals_js.chunk.js.map"
   },
   "entrypoints": [
-    "static/js/bundle.js",
-    "main.e2598858d0cba69c6f56.hot-update.js"
+    "../../static/js/main.js"
   ]
 }

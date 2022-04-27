@@ -28,8 +28,8 @@ function BackupAccount() {
   const account = useAccount();
   const address = account?.getActiveAccount()?.address;
 
-  const onClick = (password: string) => {
-    const isValid = validatePassword(password);
+  const onClick = async (password: string) => {
+    const isValid = await validatePassword(password);
 
     if (!isValid) {
       setIsSnackbarOpen(true);
