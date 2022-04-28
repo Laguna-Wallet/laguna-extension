@@ -43,9 +43,9 @@ function App() {
     chrome.runtime.sendMessage({ type: Messages.CheckPendingDappAuth });
     chrome.runtime.sendMessage({ type: 'AUTH_CHECK' });
 
-    chrome.runtime.onMessage.addListener((msg) => {
+    chrome.runtime.onMessage.addListener(async (msg) => {
       if (msg.type === Messages.AuthCheck && !msg.payload.isLoggedIn) {
-        const signedIn = getFromStorage(StorageKeys.SignedIn);
+        const signedIn = await getFromStorage(StorageKeys.SignedIn);
         const createdAccount = Boolean(signedIn);
 
         // if () {
@@ -98,6 +98,7 @@ const handlePage = (pendingDapps: any[], pendingToSign: any) => {
 
   //todo check for timeout and require password
   // return <WelcomeBack />;
+  console.log('~ loggedOut', loggedOut);
 
   if (loggedOut) {
     return <WelcomeBack />;

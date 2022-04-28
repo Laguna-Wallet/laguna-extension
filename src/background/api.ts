@@ -120,6 +120,7 @@ export async function fetchAccountsBalances() {
     // await timer(3000)
 
     const account = await getFromStorage(StorageKeys.ActiveAccount)
+    console.log("~ account", account)
 
     const balances = await getFromStorage(StorageKeys.AccountBalances)
     const parsedBalances = balances ? JSON.parse(balances) : {}
@@ -164,58 +165,58 @@ export async function fetchAccountsBalances() {
 }
 
 // Transactions
-export async function fetchAccountsTransactions() {
-  try {
-    const addresses = getAccountAddresses()
-    let result_obj = {}
+// export async function fetchAccountsTransactions() {
+//   try {
+//     const addresses = getAccountAddresses()
+//     let result_obj = {}
 
-    let results = []
-    let retrieved_count = 0
-    let page = 0
-    let accountTransfers = []
-    for (let i = 0; i < addresses.length; i++) {
-      for (let j = 0; j < chains.length; j++) {
-        await timer(500)
+//     let results = []
+//     let retrieved_count = 0
+//     let page = 0
+//     let accountTransfers = []
+//     for (let i = 0; i < addresses.length; i++) {
+//       for (let j = 0; j < chains.length; j++) {
+//         await timer(500)
 
-        const res = await fetchTransactions(addresses[i], chains[j], page)
+//         const res = await fetchTransactions(addresses[i], chains[j], page)
 
-        if (!res?.data?.transfers) continue
+//         if (!res?.data?.transfers) continue
 
-        results = [...res?.data?.transfers]
-        retrieved_count = res?.data?.count
-        page++
+//         results = [...res?.data?.transfers]
+//         retrieved_count = res?.data?.count
+//         page++
 
-        while (results.length < retrieved_count) {
-          await timer(500)
-          const data = await fetchTransactions(addresses[i], chains[j], page)
-          results = [...results, ...data?.data?.transfers]
-          page++
-        }
+//         while (results.length < retrieved_count) {
+//           await timer(500)
+//           const data = await fetchTransactions(addresses[i], chains[j], page)
+//           results = [...results, ...data?.data?.transfers]
+//           page++
+//         }
 
-        retrieved_count = 0
-        page = 0
+//         retrieved_count = 0
+//         page = 0
 
-        result_obj[addresses[i]] = result_obj[addresses[i]] ? [...result_obj[addresses[i]], ...transformTransfers(results, chains[j])] : transformTransfers(results, chains[j])
+//         result_obj[addresses[i]] = result_obj[addresses[i]] ? [...result_obj[addresses[i]], ...transformTransfers(results, chains[j])] : transformTransfers(results, chains[j])
 
-        results = []
-      }
-    }
+//         results = []
+//       }
+//     }
 
-    console.log("transactions fetched")
+//     console.log("transactions fetched")
 
-    chrome.runtime.sendMessage({ type: Messages.TransactionsUpdated, payload: JSON.stringify(result_obj) })
-    saveToStorage({ key: StorageKeys.Transactions, value: JSON.stringify(result_obj) })
+//     chrome.runtime.sendMessage({ type: Messages.TransactionsUpdated, payload: JSON.stringify(result_obj) })
+//     saveToStorage({ key: StorageKeys.Transactions, value: JSON.stringify(result_obj) })
 
-    setTimeout(() => {
-      fetchAccountsTransactions()
-    }, 1000)
-  } catch (err) {
-    console.log(err)
-    setTimeout(() => {
-      fetchAccountsTransactions()
-    }, 1000)
-  }
-}
+//     setTimeout(() => {
+//       fetchAccountsTransactions()
+//     }, 1000)
+//   } catch (err) {
+//     console.log(err)
+//     setTimeout(() => {
+//       fetchAccountsTransactions()
+//     }, 1000)
+//   }
+// }
 
 export async function fetchTransactions(address: string, chain: string, page: number) {
   const res = await fetch(`https://${chain}.api.subscan.io/api/scan/transfers`, {
