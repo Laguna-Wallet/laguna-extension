@@ -241,7 +241,6 @@ chrome.runtime.onInstalled.addListener(async () => {
 
   await Retrieve_Coin_Decimals()
 
-  console.log("fetching ???")
   fetchAccountsBalances()
 
   // fetchAccountsTransactions()
