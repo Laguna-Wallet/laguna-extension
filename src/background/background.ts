@@ -1,5 +1,12 @@
 import { Messages, StorageKeys } from "./types"
-import { fetchAccountsBalances, fetchAccountsTransactions, Retrieve_Coin_Decimals, Retrieve_Coin_Infos, Retrieve_Coin_Prices, sendTransaction } from "./api"
+import {
+  fetchAccountsBalances,
+  // fetchAccountsTransactions,
+  Retrieve_Coin_Decimals,
+  Retrieve_Coin_Infos,
+  Retrieve_Coin_Prices,
+  sendTransaction,
+} from "./api"
 import {
   saveToStorage,
   validatePassword,
@@ -212,38 +219,51 @@ chrome.runtime.onInstalled.addListener(async () => {
   const prices = await Retrieve_Coin_Prices()
   chrome.runtime.sendMessage({ type: Messages.PriceUpdated, payload: JSON.stringify(prices) })
   saveToStorage({ key: StorageKeys.TokenPrices, value: JSON.stringify(prices) })
+
   console.log("Prices injected...")
   const Infos = await Retrieve_Coin_Infos()
   chrome.runtime.sendMessage({ type: Messages.CoinInfoUpdated, payload: JSON.stringify(Infos) })
   saveToStorage({ key: StorageKeys.TokenInfos, value: JSON.stringify(Infos) })
+
   console.log("info injected...")
+
   chrome.alarms.create("refresh", { periodInMinutes: 1 })
   chrome.alarms.create("refetch-account-balances", { periodInMinutes: 3 })
   chrome.alarms.create("24-hr-ballance-change", { periodInMinutes: 3600 })
   const timeout = await handleInitialIdleTimeout()
+
   // chrome.idle.setDetectionInterval(Number(timeout))
   chrome.idle.onStateChanged.addListener((status: string) => {
     if (status === "idle") {
       isLoggedIn = false
     }
   })
+
   await Retrieve_Coin_Decimals()
+
+  console.log("fetching ???")
   fetchAccountsBalances()
-  fetchAccountsTransactions()
+
+  // fetchAccountsTransactions()
 })
 
 chrome.runtime.onStartup.addListener(async () => {
   const prices = await Retrieve_Coin_Prices()
   chrome.runtime.sendMessage({ type: Messages.PriceUpdated, payload: JSON.stringify(prices) })
   saveToStorage({ key: StorageKeys.TokenPrices, value: JSON.stringify(prices) })
+
   console.log("Prices injected...")
+
   const Infos = await Retrieve_Coin_Infos()
   chrome.runtime.sendMessage({ type: Messages.CoinInfoUpdated, payload: JSON.stringify(Infos) })
   saveToStorage({ key: StorageKeys.TokenInfos, value: JSON.stringify(Infos) })
+
   console.log("info injected...")
+
   chrome.alarms.create("refresh", { periodInMinutes: 1 })
   chrome.alarms.create("refetch-account-balances", { periodInMinutes: 3 })
   chrome.alarms.create("24-hr-ballance-change", { periodInMinutes: 3600 })
+
   const timeout = handleInitialIdleTimeout()
   // chrome.idle.setDetectionInterval(Number(timeout))
   chrome.idle.onStateChanged.addListener((status: string) => {
@@ -251,9 +271,12 @@ chrome.runtime.onStartup.addListener(async () => {
       isLoggedIn = false
     }
   })
+
   await Retrieve_Coin_Decimals()
+
   fetchAccountsBalances()
-  fetchAccountsTransactions()
+
+  // fetchAccountsTransactions()
 })
 
 chrome.alarms.onAlarm.addListener(async (alarm) => {

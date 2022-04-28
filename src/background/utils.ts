@@ -90,6 +90,10 @@ export function handleInitialIdleTimeout() {
 
 export function getAccountAddresses() {
   try {
+    chrome.storage.local.get(null, function (items) {
+      console.log("items", items)
+    })
+
     const local = localStorage
     const accountAddresses: string[] = []
 
