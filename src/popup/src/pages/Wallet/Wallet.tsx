@@ -119,8 +119,8 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
 
     return (
       <>
-        <span style={{ fontSize: 44 }}>{splited[0]}</span>.
-        <span style={{ fontSize: 32 }}>{splited[1]}</span>
+        <span style={{ fontSize: 42 }}>{splited[0]}</span>.
+        <span style={{ fontSize: 30 }}>{splited[1]}</span>
       </>
     );
   };
@@ -192,7 +192,6 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
             </StyledLink>
           </Buttons>
         </>
-        {/* )} */}
         <List>
           <ListHeader>
             <ListHeaderItem onClick={() => handleActiveTab(1)} index={1} active={activeTab}>
@@ -259,7 +258,7 @@ const Container = styled.div<{ bg: string }>`
   position: relative;
   background-image: ${({ bg }) => `url(${bg})`};
   background-size: cover;
-  padding-top: 50px;
+  padding-top: 42px;
   overflow: hidden;
 `;
 
@@ -334,7 +333,7 @@ const Balance = styled.div`
   word-break: break-word;
   span {
     font-family: 'IBM Plex Sans';
-    font-size: 44px;
+    font-size: 30px;
     font-weight: 500;
   }
 `;
@@ -343,6 +342,11 @@ const PriceChange = styled.div`
   font-family: 'IBM Plex Sans';
   font-size: 14px;
   color: #606060;
+  line-height: 19px;
+  height: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 const TitleSmallText = styled.span`
@@ -354,7 +358,7 @@ const Buttons = styled.div`
   justify-content: center;
   align-items: center;
   color: #fff;
-  margin-top: 30px;
+  margin-top: 12px;
 `;
 
 const RightArrowContainer = styled.div`
@@ -392,12 +396,14 @@ const List = styled.div`
   width: 323px;
   display: flex;
   flex-direction: column;
-  margin-top: 50px;
+  margin-top: 71px;
 `;
 
 const ListHeader = styled.div`
   display: flex;
+  align-items: center;
   font-size: 10px;
+  padding: 0 5px;
 `;
 
 const ListHeaderItem = styled.div<{ index: number; active: number }>`
@@ -416,25 +422,18 @@ const ListHeaderItem = styled.div<{ index: number; active: number }>`
 
 const ListContentParent = styled.div`
   width: 100%;
-  height: 270px;
+  height: 213px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  margin-top: 12px;
+  margin-top: 6px;
   overflow-y: hidden;
   position: relative;
 `;
 
 const ListContentChild = styled.div`
   width: 100%;
-  overflow-y: scroll;
-  position: absolute;
-  top: 0;
-  left: 0px;
-  bottom: -20px;
-  right: -20px;
   overflow: scroll;
-  padding-bottom: 100px;
   padding-right: 20px;
 `;
 
