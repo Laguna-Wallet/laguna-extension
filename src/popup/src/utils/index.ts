@@ -85,11 +85,11 @@ export function copyToClipboard(text: string): void {
 }
 
 export function calculatePasswordCheckerColor(passwordLength: string) {
-  if (passwordLength === 'Poor') return 'red';
-  if (passwordLength === 'Fair') return 'orange';
-  if (passwordLength === 'Good') return 'yellow';
-  if (passwordLength === 'Excellent') return 'green';
-  return 'red';
+  if (passwordLength === 'Poor') return '#FB5A5A';
+  if (passwordLength === 'Fair') return '#FFC44C';
+  if (passwordLength === 'Good') return '#458FFF';
+  if (passwordLength === 'Excellent') return '#00A47C';
+  return '#FB5A5A';
 }
 
 export function exportJson(json: any) {
