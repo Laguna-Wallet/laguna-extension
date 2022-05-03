@@ -1,14 +1,13 @@
 import DownArrowIcon from 'assets/svgComponents/DownArrowIcon';
 import styled from 'styled-components/macro';
-import ButtonsIcon from 'assets/svgComponents/ButtonsIcon';
-import { Turn as Hamburger, Turn } from 'hamburger-react';
-import { ReactNode, useState } from 'react';
+import { Turn as Hamburger } from 'hamburger-react';
+import { useState } from 'react';
 import Popup from 'components/Popup/Popup';
 import Accounts from 'components/popups/Accounts';
 import { useAccount } from 'context/AccountContext';
 import Menu from 'components/Menu/Menu';
-import LeftArrowIcon from 'assets/svgComponents/LeftArrowIcon';
-import CloseIcon from 'assets/svgComponents/CloseIcon';
+import BackIcon from 'assets/svgComponents/BackIcon';
+import CloseArrowIcon from 'assets/svgComponents/CloseArrowIcon';
 import { truncateString } from 'utils';
 
 type Props = {
@@ -61,16 +60,16 @@ export default function Header({
         <TitleContainer>
           {backAction && (
             <TopIconContainer onClick={backAction}>
-              <LeftArrowIcon fill="#f2f2f2" stroke="#18191a" width={8} height={12} />
+              <BackIcon />
             </TopIconContainer>
           )}
 
           <Title>{title}</Title>
 
           {closeAction && (
-            <TopIconContainer onClick={closeAction}>
-              <CloseIcon stroke="#111" />
-            </TopIconContainer>
+            <CloseIconContainer onClick={closeAction}>
+              <CloseArrowIcon />
+            </CloseIconContainer>
           )}
         </TitleContainer>
       )}
@@ -161,6 +160,11 @@ const TopIconContainer = styled.div`
   cursor: pointer;
 `;
 
+const CloseIconContainer = styled.div`
+  cursor:pointer;
+  margin-right: 6px;
+`
+
 const Title = styled.span`
   margin-left: auto;
   margin-right: auto;
@@ -168,6 +172,6 @@ const Title = styled.span`
   color: #18191a;
   font-weight: 500;
   font-size: 17px;
-  line-height: 2.35;
-  letter-spacing: 1.7px;
+  line-height: 38px;
+  letter-spacing: 0.1em;
 `;

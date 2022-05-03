@@ -1,17 +1,17 @@
-import NetworkIcons from 'components/primitives/NetworkIcons';
-import { Field } from 'redux-form';
 import styled from 'styled-components';
+import { Field } from 'redux-form';
 import { parseNumeric } from 'utils/validations';
 
 type Props = {
-  tokens: string[];
   Icon: any;
+  tokens: string[];
+  value?: string;
 };
 
-export default function TokenAndAmountSelect({ tokens, Icon }: Props) {
+export default function TokenAndAmountSelect({ tokens, Icon, value }: Props) {
   return (
     <Container>
-      {Icon}
+      {value && Icon}
       <Field name="amount" type="text" label="amount" component={Input} />
       <Field name="token" label="token" options={tokens} component={renderSelect} />
     </Container>
