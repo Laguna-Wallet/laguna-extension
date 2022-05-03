@@ -1,10 +1,10 @@
-import { memo, ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
+import { memo, ReactNode, useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Header from './Header';
 import Footer from './Footer';
 import { useAccount } from 'context/AccountContext';
 import ChainItem from './ChainItem';
-import { addAccountMeta, getAssets, getNetworks, isValidPolkadotAddress } from 'utils/polkadot';
+import { getAssets, getNetworks } from 'utils/polkadot';
 import NetworkItem from './NetworkItem';
 import dashboardBG from 'assets/imgs/dashboard-bg.png';
 import { goTo, Link } from 'react-chrome-extension-router';
@@ -12,14 +12,6 @@ import Send from 'pages/Send/Send';
 import Receive from 'pages/Recieve/Receive';
 import BigNumber from 'bignumber.js';
 import { useDispatch, useSelector } from 'react-redux';
-import keyring from '@polkadot/ui-keyring';
-import { u8aToHex } from '@polkadot/util';
-import { mnemonicGenerate, mnemonicToMiniSecret } from '@polkadot/util-crypto';
-import { decodePair } from '@polkadot/keyring/pair/decode';
-import { base64Decode, encodeAddress as toSS58 } from '@polkadot/util-crypto';
-import { createPair } from '@polkadot/keyring/pair';
-import RightArrow from 'assets/svgComponents/RightArrow';
-import BarcodeIcon from 'assets/svgComponents/BarcodeIcon';
 import Snackbar from 'components/Snackbar/Snackbar';
 import TokenDashboard from 'pages/TokenDashboard/TokenDashboard';
 import ReceiveIcon from 'assets/svgComponents/ReceiveIcon';
@@ -29,7 +21,6 @@ import AddRemoveToken from 'pages/AddRemoveToken/AddRemoveToken';
 import { State } from 'redux/store';
 import SecureNowIcon from 'assets/svgComponents/SecureNowIcon';
 import RightArrowMenuIcon from 'assets/svgComponents/MenuIcons/RightArrowMenuIcon';
-import SecureWallet from 'pages/CreateAccount/SecureWallet/SecureWallet';
 import CreateAccount from 'pages/CreateAccount/CreateAccount';
 
 export interface ShowSnackbar {
@@ -44,7 +35,6 @@ type Props = {
 
 function Wallet({ isMenuOpen, snackbar }: Props) {
   const account = useAccount();
-  const dispatch = useDispatch();
   const [assets, setAssets] = useState<any>([]);
   const [networks, setNetworks] = useState<any>([]);
   const [activeTab, setActiveTab] = useState<number>(1);
@@ -433,8 +423,10 @@ const ListContentParent = styled.div`
 
 const ListContentChild = styled.div`
   width: 100%;
-  overflow: scroll;
-  padding-right: 20px;
+  overflow-y: scroll;
+  ::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const StyledLink = styled(Link)`
