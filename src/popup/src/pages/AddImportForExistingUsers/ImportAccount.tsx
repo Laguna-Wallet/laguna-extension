@@ -124,7 +124,10 @@ function ImportAccount({ redirectedFromSignUp }: Props) {
   };
 
   return (
-    <Form>
+    <Form
+      onSubmit={(e) => {
+        e.preventDefault();
+      }}>
       <Wizard>
         {!encoded && <CreatePassword />}
         <ImportPhase redirectedFromSignUp={redirectedFromSignUp} onClose={onClose} />
@@ -141,7 +144,7 @@ function ImportAccount({ redirectedFromSignUp }: Props) {
 }
 
 export default connect((state: any) => ({
-  errors: getFormSyncErrors('sendToken')(state)
+  errors: getFormSyncErrors('AddImportAccount')(state)
 }))(
   reduxForm<Record<string, unknown>, Props>({
     form: 'AddImportAccount',

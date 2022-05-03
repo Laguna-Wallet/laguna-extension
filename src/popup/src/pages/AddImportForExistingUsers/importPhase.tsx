@@ -113,6 +113,7 @@ function ImportPhase({ errors, onClose, redirectedFromSignUp }: Props) {
     }
   };
 
+  // listen to enter click
   useEffect(() => {
     if (errors?.seedPhase && !isSnackbarOpen) {
       const errorsArr = objectToArray(errors);
@@ -120,6 +121,21 @@ function ImportPhase({ errors, onClose, redirectedFromSignUp }: Props) {
       setSnackbarError(errorsArr[0]);
     }
   }, [errors]);
+
+  const handleUserKeyPress = useCallback((event, isDisabled) => {
+    const { keyCode } = event;
+
+    if (keyCode === 13 && isDisabled) {
+      handleClick({ seedPhase, file, password });
+    }
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener('keydown', (e) => handleUserKeyPress(e, isDisabled));
+    return () => {
+      window.removeEventListener('keydown', (e) => handleUserKeyPress(e, isDisabled));
+    };
+  }, [handleUserKeyPress]);
 
   return (
     <Container>
@@ -136,6 +152,7 @@ function ImportPhase({ errors, onClose, redirectedFromSignUp }: Props) {
           // previousStep();
         }}
       />
+
       <Content>
         <DndContainer {...getRootProps()} role={'Box'}>
           {!seedPhase && (
@@ -224,6 +241,7 @@ function ImportPhase({ errors, onClose, redirectedFromSignUp }: Props) {
           justify="center"
           Icon={<RightArrow width={23} fill="#fff" />}
         />
+
         <Snackbar
           width={'90%'}
           isOpen={isSnackbarOpen}
