@@ -120,7 +120,7 @@ const Container = styled.div`
   top: 0;
   left: 0;
   z-index: 999;
-  padding: 10px 15px 50px 15px;
+  padding: 10px 17.5px 50px;
   box-sizing: border-box;
   background-color: #18191a;
   z-index: 99999;
@@ -132,7 +132,7 @@ const List = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  margin-top: 50px;
+  margin-top: 20px;
 `;
 
 const ListItem = styled.div`
@@ -140,7 +140,7 @@ const ListItem = styled.div`
   display: flex;
   justify-content: space-between;
   cursor: pointer;
-  margin-top: 15px;
+  padding: 10px 0 10px 4px;
   pointer-events: none;
 
   :nth-child(1) {
