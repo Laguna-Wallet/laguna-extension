@@ -1,41 +1,32 @@
 import styled from 'styled-components';
 import { goTo, Link } from 'react-chrome-extension-router';
-import { getAccounts, getApiInstance, isValidPolkadotAddress } from 'utils/polkadot';
-import { Dispatch, useEffect, useState } from 'react';
+import { isValidPolkadotAddress } from 'utils/polkadot';
+import { useEffect, useState } from 'react';
 import TokenAndAmountSelect from 'pages/Send/TokenAndAmountSelect';
 import ContactsIcon from 'assets/svgComponents/ContactsIcon';
 import WalletIcon from 'assets/svgComponents/WalletIcon';
-import SharpIcon from 'assets/svgComponents/SharpIcon';
 import HumbleInput from 'components/primitives/HumbleInput';
 import Button from 'components/primitives/Button';
 import RightArrow from 'assets/svgComponents/RightArrow';
-import Confirm from './Confirm';
 
 import ExchangeIcon from 'assets/svgComponents/ExchangeIcon';
-import { FormikProps } from 'formik';
 import { useWizard } from 'react-use-wizard';
-import { useAccount } from 'context/AccountContext';
-import CloseIcon from 'assets/svgComponents/CloseIcon';
 import QRPopup from './QRPopup';
 import Header from 'pages/Wallet/Header';
 import BigNumber from 'bignumber.js';
 import ContactsPopup from './ContactsPopup';
-import { isNumeric, sendTokenSchema } from 'utils/validations';
-import { validator } from 'utils/validator';
-import { changeAddress, changeAmount, selectAssetToken } from 'redux/actions';
+import { isNumeric } from 'utils/validations';
 import { useDispatch, useSelector, connect } from 'react-redux';
 import {
   Field,
   change,
   reset,
-  getFormError,
-  getFormValues,
   reduxForm,
   getFormSyncErrors,
   formValueSelector
 } from 'redux-form';
 import Snackbar from 'components/Snackbar/Snackbar';
-import { getAccountImage, isObjectEmpty, objectToArray, truncateString } from 'utils';
+import { isObjectEmpty, objectToArray, truncateString } from 'utils';
 import Wallet from 'pages/Wallet/Wallet';
 import NetworkIcons from 'components/primitives/NetworkIcons';
 import AccountsPopup from './AccountsPopup';
@@ -236,12 +227,13 @@ function SendToken({
           <ContentItem>
             <ContentItemTitle>Amount</ContentItemTitle>
             <TokenAndAmountSelect
-              Icon={<NetworkIcons chain={selectedAsset?.chain} />}
+              Icon={<NetworkIcons width='28px' height='28px' chain={selectedAsset?.chain} />}
               tokens={[selectedAsset.symbol]}
+              value={amount}
             />
 
             <Price>
-              <span>{amount && price && '$' + new BigNumber(amount).times(price).toFormat(2)}</span>
+              <span>${amount && price ? new BigNumber(amount).times(price).toFormat(2) : '0.00'} USD</span>
               <ExchangeIconContainer>
                 <ExchangeIcon />
               </ExchangeIconContainer>
@@ -291,14 +283,14 @@ function SendToken({
 
                 <SendTypeItem onClick={handleClickAccounts}>
                   <IconContainer>
-                    <WalletIcon stroke="#111" />
+                    <WalletIcon stroke="#18191A"  />
                   </IconContainer>
                   <Text>Wallets</Text>
                 </SendTypeItem>
 
                 <SendTypeItem onClick={handleClickContacts}>
                   <IconContainer>
-                    <ContactsIcon stroke="#111" />
+                    <ContactsIcon />
                   </IconContainer>
                   <Text>Contacts</Text>
                 </SendTypeItem>
@@ -319,15 +311,14 @@ function SendToken({
               id="note"
               name="note"
               type="text"
-              placeholder="Enter note here"
+              placeholder="Enter note"
               component={HumbleInput}
               props={{
                 type: 'text',
                 bgColor: '#f2f2f2',
                 color: '#18191a',
                 placeholderColor: '#b1b5c3',
-                height: '53px',
-                marginTop: '5px',
+                height: '45px',
                 fontSize: '14px'
               }}
             />
@@ -370,6 +361,7 @@ function SendToken({
             type="submit"
             text={loading ? 'Calculating ability to transfer...' : 'Preview Send'}
             justify="center"
+            margin='13px 0 0'
             Icon={<RightArrow width={23} fill="#fff" />}
             disabled={isDisabled(errors, loading, abilityToTransfer)}
           />
@@ -430,16 +422,20 @@ const Container = styled.div`
   box-sizing: border-box;
   position: relative;
   background-size: cover;
-  padding-top: 110px;
+  padding-top: 92px;
 `;
 
 const Content = styled.div`
-  padding: 0 15px;
+  padding: 0 26px;
   border-top-right-radius: 15px;
 `;
 
 const ContentItem = styled.div`
-  margin-top: 15px;
+  margin-top: 17px;
+
+  :nth-child(2) {
+    margin-top: 7px;
+  }
 
   :nth-child(3) {
     margin-top: 28px;
@@ -449,11 +445,11 @@ const ContentItem = styled.div`
 const Form = styled.form`
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   height: 100%;
   background-color: #fff;
   border-top-left-radius: 15px;
   border-top-right-radius: 15px;
-  padding-bottom: 38px;
 `;
 
 const Price = styled.div`
@@ -461,27 +457,29 @@ const Price = styled.div`
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  margin-top: 5px;
+  margin-top: 6px;
   color: #111;
   font-family: 'IBM Plex Sans';
   font-size: 12px;
-  line-height: 1.35;
+  line-height: 14px;
   text-align: right;
   color: #18191a;
+  overflow: hidden;
 `;
 
 const ExchangeIconContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-left: 2px;
+  margin-left: 6px;
   cursor: pointer;
 `;
 
-const ContentItemTitle = styled.span`
+const ContentItemTitle = styled.p`
   font-size: 12px;
   color: #18191a;
   font-family: 'IBM Plex Sans';
+  margin-bottom: 8px;
 `;
 
 const SendTypes = styled.div`
@@ -498,7 +496,7 @@ const SendTypeItem = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: flex-end;
-  padding: 10px 0;
+  padding: 0 0 4px;
   box-sizing: border-box;
   background-color: #f2f2f2;
   border-radius: 5.8px;
@@ -508,24 +506,24 @@ const SendTypeItem = styled.div`
 const AddressContainer = styled.div``;
 
 const IconContainer = styled.div`
-  /* width: 35px;
-  height: 35px; */
+  width: 30px;
+  height: 30px;
 `;
 
 const Text = styled.span`
   font-family: 'IBM Plex Sans';
-  font-size: 12px;
   color: #353945;
-  margin-top: 3px;
+  font-weight: 400;
+  font-size: 10px;
+  line-height: 20px;
 `;
 
 const BottomSection = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
-  padding: 0 15px;
+  padding: 0 26px 29px;
   box-sizing: border-box;
-  margin-top: auto;
 `;
 
 const Info = styled.div`
