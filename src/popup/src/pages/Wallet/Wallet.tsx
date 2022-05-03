@@ -1,10 +1,10 @@
-import { memo, ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
+import { memo, ReactNode, useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Header from './Header';
 import Footer from './Footer';
 import { useAccount } from 'context/AccountContext';
 import ChainItem from './ChainItem';
-import { addAccountMeta, getAssets, getNetworks, isValidPolkadotAddress } from 'utils/polkadot';
+import { getAssets, getNetworks } from 'utils/polkadot';
 import NetworkItem from './NetworkItem';
 import dashboardBG from 'assets/imgs/dashboard-bg.png';
 import { goTo, Link } from 'react-chrome-extension-router';
@@ -12,14 +12,6 @@ import Send from 'pages/Send/Send';
 import Receive from 'pages/Recieve/Receive';
 import BigNumber from 'bignumber.js';
 import { useDispatch, useSelector } from 'react-redux';
-import keyring from '@polkadot/ui-keyring';
-import { u8aToHex } from '@polkadot/util';
-import { mnemonicGenerate, mnemonicToMiniSecret } from '@polkadot/util-crypto';
-import { decodePair } from '@polkadot/keyring/pair/decode';
-import { base64Decode, encodeAddress as toSS58 } from '@polkadot/util-crypto';
-import { createPair } from '@polkadot/keyring/pair';
-import RightArrow from 'assets/svgComponents/RightArrow';
-import BarcodeIcon from 'assets/svgComponents/BarcodeIcon';
 import Snackbar from 'components/Snackbar/Snackbar';
 import TokenDashboard from 'pages/TokenDashboard/TokenDashboard';
 import ReceiveIcon from 'assets/svgComponents/ReceiveIcon';
@@ -29,7 +21,6 @@ import AddRemoveToken from 'pages/AddRemoveToken/AddRemoveToken';
 import { State } from 'redux/store';
 import SecureNowIcon from 'assets/svgComponents/SecureNowIcon';
 import RightArrowMenuIcon from 'assets/svgComponents/MenuIcons/RightArrowMenuIcon';
-import SecureWallet from 'pages/CreateAccount/SecureWallet/SecureWallet';
 import CreateAccount from 'pages/CreateAccount/CreateAccount';
 
 export interface ShowSnackbar {
@@ -44,7 +35,6 @@ type Props = {
 
 function Wallet({ isMenuOpen, snackbar }: Props) {
   const account = useAccount();
-  const dispatch = useDispatch();
   const [assets, setAssets] = useState<any>([]);
   const [networks, setNetworks] = useState<any>([]);
   const [activeTab, setActiveTab] = useState<number>(1);
@@ -119,8 +109,8 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
 
     return (
       <>
-        <span style={{ fontSize: 44 }}>{splited[0]}</span>.
-        <span style={{ fontSize: 32 }}>{splited[1]}</span>
+        <span style={{ fontSize: 42 }}>{splited[0]}</span>.
+        <span style={{ fontSize: 30 }}>{splited[1]}</span>
       </>
     );
   };
@@ -192,7 +182,6 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
             </StyledLink>
           </Buttons>
         </>
-        {/* )} */}
         <List>
           <ListHeader>
             <ListHeaderItem onClick={() => handleActiveTab(1)} index={1} active={activeTab}>
@@ -259,7 +248,7 @@ const Container = styled.div<{ bg: string }>`
   position: relative;
   background-image: ${({ bg }) => `url(${bg})`};
   background-size: cover;
-  padding-top: 50px;
+  padding-top: 42px;
   overflow: hidden;
 `;
 
@@ -334,7 +323,7 @@ const Balance = styled.div`
   word-break: break-word;
   span {
     font-family: 'IBM Plex Sans';
-    font-size: 44px;
+    font-size: 30px;
     font-weight: 500;
   }
 `;
@@ -343,6 +332,11 @@ const PriceChange = styled.div`
   font-family: 'IBM Plex Sans';
   font-size: 14px;
   color: #606060;
+  line-height: 19px;
+  height: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 const TitleSmallText = styled.span`
@@ -354,7 +348,7 @@ const Buttons = styled.div`
   justify-content: center;
   align-items: center;
   color: #fff;
-  margin-top: 30px;
+  margin-top: 12px;
 `;
 
 const RightArrowContainer = styled.div`
@@ -392,12 +386,14 @@ const List = styled.div`
   width: 323px;
   display: flex;
   flex-direction: column;
-  margin-top: 50px;
+  margin-top: 71px;
 `;
 
 const ListHeader = styled.div`
   display: flex;
+  align-items: center;
   font-size: 10px;
+  padding: 0 5px;
 `;
 
 const ListHeaderItem = styled.div<{ index: number; active: number }>`
@@ -416,11 +412,11 @@ const ListHeaderItem = styled.div<{ index: number; active: number }>`
 
 const ListContentParent = styled.div`
   width: 100%;
-  height: 270px;
+  height: 213px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  margin-top: 12px;
+  margin-top: 6px;
   overflow-y: hidden;
   position: relative;
 `;
@@ -428,14 +424,9 @@ const ListContentParent = styled.div`
 const ListContentChild = styled.div`
   width: 100%;
   overflow-y: scroll;
-  position: absolute;
-  top: 0;
-  left: 0px;
-  bottom: -20px;
-  right: -20px;
-  overflow: scroll;
-  padding-bottom: 100px;
-  padding-right: 20px;
+  ::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const StyledLink = styled(Link)`

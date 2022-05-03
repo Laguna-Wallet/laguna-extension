@@ -93,10 +93,10 @@ export default function TokenDashboard({ asset }: Props) {
               <span>{new BigNumber(balance).toFormat(4)}</span>
               <span>{symbol}</span>
             </Balance>
-            <BalanceInUsd>${balanceInUsd}</BalanceInUsd>
+            <BalanceInUsd>${new BigNumber(balanceInUsd).toFormat(2)}</BalanceInUsd>
             <CardBottom>
-              <Tag>{handleChain(chain)}</Tag>
-              <Rate>{price_change_percentage_24h || 0}%</Rate>
+              <Tag>{handleChain(chain)}</Tag> 
+              <Rate>{price_change_percentage_24h ? new BigNumber(price_change_percentage_24h).toFormat(2) : 0}%</Rate>
             </CardBottom>
           </Card>
         </CardContainer>

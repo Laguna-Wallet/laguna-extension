@@ -90,7 +90,8 @@ const Container = styled.div<{ bgColor?: string }>`
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
-  padding: 15px 15px 7px 15px;
+  height: 42px;
+  padding: 0 15px;
   box-sizing: border-box;
   position: absolute;
   top: 0;
@@ -99,7 +100,9 @@ const Container = styled.div<{ bgColor?: string }>`
 `;
 
 const Content = styled.div`
+  height: 100%;
   width: 100%;
+  padding-top: 5px;
   box-sizing: border-box;
   display: flex;
   align-items: center;
@@ -107,7 +110,6 @@ const Content = styled.div`
 `;
 
 const UserContainer = styled.div`
-  height: 100%;
   display: flex;
   align-items: center;
 `;

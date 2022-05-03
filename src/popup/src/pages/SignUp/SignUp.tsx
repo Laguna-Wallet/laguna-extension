@@ -17,7 +17,7 @@ export default function SignUp() {
       </IconSection>
       <MainSection>
         <Title>Laguna</Title>
-        <Description>Polkadot Wallet for Web 3.0</Description>
+        <Description>Unlock the Power of Polkadot</Description>
         <StyledLink component={CreateAccount} props={{ redirectedFromSignUp: true }}>
           <Button
             width="226px"

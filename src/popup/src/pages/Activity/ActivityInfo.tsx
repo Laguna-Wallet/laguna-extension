@@ -125,7 +125,7 @@ export default function AccountInfo({ transaction, closeAction }: Props) {
               <span>
                 {total.toFormat(4, 1)} {symbol}
               </span>{' '}
-              <span>${totalInUsd.toFormat(4, 1)} USD</span>
+              <span>${totalInUsd.toFormat(2)} USD</span>
             </TotalValue>
           </RowRight>
         </Row>

@@ -305,6 +305,7 @@ const BottomSection = styled.div`
 `;
 
 const Tag = styled.div`
+  text-transform: capitalize; 
   width: 97px;
   height: 23px;
   display: flex;

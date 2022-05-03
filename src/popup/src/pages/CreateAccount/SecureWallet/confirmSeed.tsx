@@ -122,7 +122,7 @@ export default function ConfirmSeed({ handleNextSection, redirectedFromSignUp }:
         isOpen={isSnackbarOpen}
         message="Please choose words in provided order"
         close={() => setIsSnackbarOpen(false)}
-        type="warning"
+        type="error"
         bottom="36px"
       />
 

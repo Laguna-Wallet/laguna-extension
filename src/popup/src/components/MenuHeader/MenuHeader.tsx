@@ -1,9 +1,9 @@
+import React, { useRef, useState } from 'react';
 import styled from 'styled-components';
-import { Turn as Hamburger } from 'hamburger-react';
 import LeftArrowIcon from 'assets/svgComponents/LeftArrowIcon';
+import MenuCloseIcon from 'assets/svgComponents/MenuIcons/MenuCloseIcon'
 import { useAccount } from 'context/AccountContext';
-import { getBase64, resizeFile, truncateString } from 'utils';
-import { useRef, useState } from 'react';
+import { resizeFile, truncateString } from 'utils';
 import useOutsideClick from 'hooks/useOutsideClick';
 import { addAccountMeta, changeAccountPicture } from 'utils/polkadot';
 import EditIcon from 'assets/svgComponents/EditIcon';
@@ -25,8 +25,6 @@ type Props = {
 };
 
 export default function MenuHeader({
-  isOpen,
-  setOpen,
   showUser,
   onClose,
   title,
@@ -54,7 +52,7 @@ export default function MenuHeader({
     }
   });
 
-  const handleKeyPress = (e: any) => {
+  const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' || e.keyCode === 14) {
       editAccount();
     }
@@ -98,8 +96,8 @@ export default function MenuHeader({
           <LockContainer onClick={handleLogout}>
             <MenuLockIcon />
           </LockContainer>
-          <BurgerMenu>
-            <Hamburger toggled={isOpen} toggle={onClose} size={17} color="#fff" />
+          <BurgerMenu onClick={onClose}>
+            <MenuCloseIcon />
           </BurgerMenu>
         </HeaderLeft>
       </Header>
@@ -115,7 +113,7 @@ export default function MenuHeader({
         <User>
           <IconContainer img={accountImg} onClick={onButtonClick}>
             <ImageContainerOverlay>
-              <EditIcon width={25} height={25} fill="#fff" />
+            <PencilIcon width={25} height={25} fill="#fff" />
             </ImageContainerOverlay>
           </IconContainer>
           <input
@@ -142,7 +140,7 @@ export default function MenuHeader({
                   setEditMode(true);
                   inputRef && inputRef?.current?.focus();
                 }}>
-                <PencilIcon />
+                <PencilIcon width={14} height={14} fill="#777E91" />
               </PencilIconContainer>
             </Name>
             {/* <Address>{address && truncateString(address)}</Address> */}
@@ -167,33 +165,36 @@ const Header = styled.div`
   font-size: 17px;
   font-family: 'Work Sans';
   font-weight: 500;
+  height: 48px;
 `;
 
 const LogoContainer = styled.div`
   display: flex;
   align-items: center;
   span {
-    margin-left: 7px;
+    margin-left: 9px;
   }
 `;
 
 const HeaderLeft = styled.div`
   display: flex;
   align-items: center;
+  height: 24px;
+  width: 54px;
 `;
 
 const LockContainer = styled.div`
   cursor: pointer;
-  margin-top: 4px;
-  margin-right: -7px;
-  position: relative;
   z-index: 9999;
+  height: 24px;
+  width: 24px;
 `;
 
 const BurgerMenu = styled.div`
-  .hamburger-react {
-    width: 33px !important;
-  }
+  margin-left: 6px;
+  cursor: pointer;
+  height: 24px;
+  width: 24px;
 `;
 
 const User = styled.div`
@@ -201,6 +202,7 @@ const User = styled.div`
   border-bottom: 1px solid #bbbbbb;
   padding-bottom: 20px;
   align-items: center;
+  margin-top: 4px;
 `;
 
 const Text = styled.div`
@@ -248,8 +250,8 @@ const ImageContainerOverlay = styled.div`
 `;
 
 const IconContainer = styled.div<{ img: string }>`
-  width: 67px;
-  height: 67px;
+  width: 64px;
+  height: 64px;
   border-radius: 100%;
   background-color: #ccc;
   cursor: pointer;
@@ -258,7 +260,6 @@ const IconContainer = styled.div<{ img: string }>`
   background-position: center center;
   background-repeat: no-repeat;
   position: relative;
-  margin-top: 10px;
   &:hover ${ImageContainerOverlay} {
     display: flex;
   }
