@@ -13,7 +13,7 @@ import { Link } from 'react-chrome-extension-router';
 import styled from 'styled-components';
 import { getAccounts } from 'utils/polkadot';
 import SignUp from 'pages/SignUp/SignUp';
-import AddImportForExistingUsers from 'pages/AddImportAccount/AddImportAccount';
+import AddImportForBoardedUser from 'pages/AddImportAccount/AddImportForBoardedUser';
 import { getAccountImage, truncateString } from 'utils';
 import { useDispatch } from 'react-redux';
 import { changeAccountsBalances, toggleLoading } from 'redux/actions';
@@ -89,7 +89,7 @@ export default function Accounts() {
             );
           })}
       </AccountsContainer>
-      <StyledLink component={AddImportForExistingUsers}>
+      <StyledLink component={AddImportForBoardedUser}>
         <Button
           width="260px"
           type="button"
