@@ -20,6 +20,7 @@ import { goTo } from 'react-chrome-extension-router';
 import Wallet from 'pages/Wallet/Wallet';
 import SignUp from 'pages/SignUp/SignUp';
 import { useWizard } from 'react-use-wizard';
+import { useEnterClickListener } from 'hooks/useEnterClickListener';
 
 const calculateWordColor = (index: number, mnemonicIndexToChoose: number) => {
   if (index === mnemonicIndexToChoose) return '#F9F7CD';
@@ -71,6 +72,12 @@ export default function ConfirmSeed({ handleNextSection, redirectedFromSignUp }:
   }, [chosenMnemonics]);
 
   const shuffledMnemonics: string[] = useMemo(() => arrayShuffle([...mnemonics]), []);
+
+  useEnterClickListener(() => {
+    if (validateMnemonicChoice(mnemonics, chosenMnemonics, mnemonicIndexes as MnemonicsTriple)) {
+      handleNextSection();
+    }
+  }, [mnemonics, chosenMnemonics, mnemonicIndexes]);
 
   return (
     <Container>

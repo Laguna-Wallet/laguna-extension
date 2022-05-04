@@ -11,20 +11,13 @@ import DiscordIcon from 'assets/svgComponents/DiscordIcon';
 import TwitterIcon from 'assets/svgComponents/twitterIcon';
 import Bg from '../../assets/imgs/SetupCompleted-bg.jpg';
 import { reduxForm } from 'redux-form';
+import { useEnterClickListener } from 'hooks/useEnterClickListener';
 
 function SetupComplete() {
-  useEffect(() => {
-    const listener = (event: KeyboardEvent) => {
-      if (event.key === 'Enter') {
-        event.preventDefault();
-        goTo(Wallet, { snackbar: { show: true, message: SnackbarMessages.WalletCreated } });
-      }
-    };
-    document.addEventListener('keydown', listener);
-    return () => {
-      document.removeEventListener('keydown', listener);
-    };
-  }, []);
+  useEnterClickListener(
+    () => goTo(Wallet, { snackbar: { show: true, message: SnackbarMessages.WalletCreated } }),
+    []
+  );
 
   return (
     <Container bg={Bg}>
@@ -57,7 +50,15 @@ function SetupComplete() {
           </LinkContainer>
         </LinksContainer>
         <BottomSection>
-          <Button type="button" justify="center" margin="10px 0 0 0" text={'Finish'} />
+          <Button
+            onClick={() =>
+              goTo(Wallet, { snackbar: { show: true, message: SnackbarMessages.WalletCreated } })
+            }
+            type="button"
+            justify="center"
+            margin="10px 0 0 0"
+            text={'Finish'}
+          />
         </BottomSection>
       </Content>
     </Container>

@@ -30,7 +30,7 @@ import CreatePassword from '../CreateAccount/CreatePassword/CreatePassword';
 import SignUp from 'pages/SignUp/SignUp';
 import EncodeAccount from 'pages/AddImportAccount/EncodeAccount';
 import SetupComplete from 'pages/AddImportAccount/SetupComplete';
-import ImportPhase from 'pages/ImportAccount/importPhase';
+import ImportPhase from 'pages/AddImportAccount/ImportAccount/importPhase';
 import Wallet from 'pages/Wallet/Wallet';
 import { saveToStorage } from 'utils/chrome';
 
@@ -114,7 +114,7 @@ function ImportAccount({ redirectedFromSignUp }: Props) {
       });
     }
 
-    saveToStorage({ key: StorageKeys.HasBoarded, value: 'true' });
+    saveToStorage({ key: StorageKeys.SignedIn, value: 'true' });
 
     dispatch(reset('ImportPhase'));
     dispatch(reset('EncodeAccount'));

@@ -6,7 +6,7 @@ import ExportIcon from 'assets/svgComponents/ExportIcon';
 import TriangleIcon from 'assets/svgComponents/TriangleIcon';
 import Button from 'components/primitives/Button';
 import { useAccount } from 'context/AccountContext';
-import CreateAccount from 'pages/CreateAccount/CreateAccount';
+import CreateAccount from 'pages/AddImportAccount/CreateAccount/CreateAccount';
 import ExportAccount from 'pages/ExportAccount/ExportAccount';
 import type { KeyringPair } from '@polkadot/keyring/types';
 import { Link } from 'react-chrome-extension-router';

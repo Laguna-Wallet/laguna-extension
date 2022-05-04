@@ -45,7 +45,8 @@ function App() {
 
     chrome.runtime.onMessage.addListener(async (msg) => {
       if (msg.type === Messages.AuthCheck && !msg.payload.isLoggedIn) {
-        const hasBoarded = Boolean(await getFromStorage(StorageKeys.HasBoarded));
+        const signedIn = await getFromStorage(StorageKeys.SignedIn);
+        const createdAccount = Boolean(signedIn);
 
         // if () {
         //   goTo(RequestToSign);
@@ -55,7 +56,7 @@ function App() {
           goTo(RequestToConnect);
         }
 
-        if (hasBoarded) {
+        if (createdAccount) {
           goTo(WelcomeBack);
         } else {
           goTo(SignUp);
@@ -95,12 +96,12 @@ function App() {
 export default App;
 
 const handlePage = (pendingDapps: any[], pendingToSign: any) => {
-  const [accountHasBoarded, setAccountHasBoarded] = useState(false);
+  const [createdAccount, setCreatedAccount] = useState(false);
   const [loggedOut, setLoggedOut] = useState(false);
 
   useEffect(() => {
     async function go() {
-      setAccountHasBoarded(Boolean(await getFromStorage(StorageKeys.HasBoarded)));
+      setCreatedAccount(Boolean(await getFromStorage(StorageKeys.SignedIn)));
       setLoggedOut(Boolean(await getFromStorage(StorageKeys.LoggedOut)));
     }
 
@@ -122,7 +123,7 @@ const handlePage = (pendingDapps: any[], pendingToSign: any) => {
     return <RequestToConnect />;
   }
 
-  if (accountHasBoarded) {
+  if (createdAccount) {
     return <Wallet />;
   }
 

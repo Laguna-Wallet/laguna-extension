@@ -14,6 +14,7 @@ import Wallet from 'pages/Wallet/Wallet';
 import SignUp from 'pages/SignUp/SignUp';
 import Snackbar from 'components/Snackbar/Snackbar';
 import { MnemonicsDescription } from 'components/popups/MnemonicsDescription';
+import { useEnterClickListener } from 'hooks/useEnterClickListener';
 
 type Props = {
   redirectedFromSignUp?: boolean;
@@ -49,6 +50,8 @@ export default function MnemonicsSeed({ redirectedFromSignUp, redirectedFromDash
     setIsSnackbarOpen(true);
     setSnackbarMessage('Mnemonics Copied');
   };
+
+  useEnterClickListener(() => handleClick(), []);
 
   return (
     <Container>

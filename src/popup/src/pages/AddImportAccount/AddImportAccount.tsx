@@ -1,7 +1,7 @@
 import { Wizard } from 'react-use-wizard';
 // import AddImport from './ChooseAddImport';
 import { useState } from 'react';
-import CreateAccount from 'pages/CreateAccount/CreateAccount';
+// import CreateAccount from './CreateAccount';
 // import ImportAccount from './ImportAccount';
 
 export enum PhaseEnum {

@@ -1,7 +1,7 @@
 import ArrowSmRightIcon from '@heroicons/react/outline/ArrowSmRightIcon';
 import Button from 'components/primitives/Button';
 import Checkbox from 'components/primitives/Checkbox';
-import { SecurityLevelEnum } from 'pages/CreateAccount/CreateAccount';
+import { SecurityLevelEnum } from 'pages/AddImportAccount/CreateAccount/CreateAccount';
 import { useState } from 'react';
 import styled from 'styled-components';
 
