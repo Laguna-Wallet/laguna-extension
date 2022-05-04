@@ -14,6 +14,15 @@ import WizardHeader from './WizardHeader';
 import encodeBg from 'assets/imgs/encode-bg.png';
 import { useWizard } from 'react-use-wizard';
 import { State } from 'redux/store';
+import {
+  reduxForm,
+  change,
+  reset,
+  Field,
+  FormErrors,
+  getFormSyncErrors,
+  InjectedFormProps
+} from 'redux-form';
 
 type Props = {
   handleEncode: (password: string) => void;
@@ -22,14 +31,20 @@ type Props = {
   title: string;
 };
 
-export default function EncodeAccount({ handleEncode, title, onClose, onBack }: Props) {
-  const [password, setPassword] = useState<string>('');
+function EncodeAccount({ handleEncode, title, onClose, onBack }: Props) {
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
   const [snackbarError, setSnackbarError] = useState<string>('');
   const { nextStep, previousStep } = useWizard();
   const hasBoarded = useSelector((state: State) => state?.wallet?.onboarding);
 
-  const onClick = async (password: string) => {
+  const formValues = useSelector((state: any) => state?.form?.EncodeAccount?.values);
+  const { password }: any = { ...formValues };
+
+  const submit = async (password: string) => {
+    if (!password) {
+      throw new Error('Password is required');
+    }
+
     const isValid = await validatePassword(password);
 
     if (!isValid) {
@@ -61,26 +76,40 @@ export default function EncodeAccount({ handleEncode, title, onClose, onBack }: 
         </IconContainer>
         <Title>{title}</Title>
         <Description>To encrypt your new wallet please enter your password below:</Description>
-        <BottomContainer>
+        <Form
+          onSubmit={(e: React.SyntheticEvent) => {
+            e.preventDefault();
+            submit(password);
+          }}>
           {/* todo proper event typing */}
-          <HumbleInput
+          <Field
             id="password"
+            name="password"
             type="password"
-            placeholder="Your password"
-            value={password}
-            bgColor=" #ececec"
-            color="#434343"
-            height="45px"
-            onChange={(e: any) => setPassword(e.target.value)}
+            label="password"
+            placeholder="Enter Password for this file"
+            component={HumbleInput}
+            props={{
+              type: 'password',
+              height: '45px',
+              fontSize: '14px',
+              marginTop: '20px',
+              textAlign: 'center',
+              bgColor: '#f2f2f2',
+              color: '#b1b5c3',
+              placeholderColor: '#b1b5c3',
+              hideErrorMsg: false,
+              autoFocus: true
+            }}
           />
           <Button
-            type="button"
+            type="submit"
             margin="10px 0 0 0"
             text={'Finish'}
-            onClick={() => onClick(password)}
+            // onClick={() => onClick(password)}
             justify="center"
           />
-        </BottomContainer>
+        </Form>
         <Snackbar
           isOpen={isSnackbarOpen}
           message={snackbarError}
@@ -94,6 +123,11 @@ export default function EncodeAccount({ handleEncode, title, onClose, onBack }: 
     </Container>
   );
 }
+
+export default reduxForm<Record<string, unknown>, Props>({
+  form: 'EncodeAccount',
+  destroyOnUnmount: false
+})(EncodeAccount);
 
 const Container = styled.div<{ bg?: string }>`
   width: 100%;
@@ -178,7 +212,7 @@ const Description = styled.div`
   margin-bottom: 40px;
 `;
 
-const BottomContainer = styled.div`
+const Form = styled.form`
   width: 100%;
   display: flex;
   flex-direction: column;

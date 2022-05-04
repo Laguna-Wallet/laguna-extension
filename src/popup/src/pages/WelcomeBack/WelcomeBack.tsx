@@ -59,7 +59,7 @@ function WelcomeBack({ handleSubmit }: Props) {
     const isValid = await validatePassword(values.password);
 
     if (isValid) {
-      saveToStorage({ key: StorageKeys.SignedIn, value: 'true' });
+      // saveToStorage({ key: StorageKeys.SignedIn, value: 'true' });
       clearFromStorage(StorageKeys.LoggedOut);
       chrome.runtime.sendMessage({
         type: Messages.AuthUser,

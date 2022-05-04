@@ -20,7 +20,7 @@ import {
 } from 'utils/polkadot';
 import { KeyringPair$Json } from '@polkadot/keyring/types';
 import { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
-import { Messages, SEED_LENGTHS } from 'utils/types';
+import { Messages, SEED_LENGTHS, StorageKeys } from 'utils/types';
 
 import { State } from 'redux/store';
 
@@ -32,6 +32,7 @@ import EncodeAccount from 'pages/AddImportAccount/EncodeAccount';
 import SetupComplete from 'pages/AddImportAccount/SetupComplete';
 import ImportPhase from 'pages/ImportAccount/importPhase';
 import Wallet from 'pages/Wallet/Wallet';
+import { saveToStorage } from 'utils/chrome';
 
 const validate = (values: any) => {
   const errors: any = {};
@@ -70,10 +71,14 @@ function ImportAccount({ redirectedFromSignUp }: Props) {
 
   const dispatch = useDispatch();
   // todo proper typing
-  const formValues = useSelector((state: any) => state?.form?.AddImportAccount?.values);
+
+  // dispatch(reset('ImportPhase'));
+  // dispatch(reset('EncodeAccount'));
+
+  const importPhaseFormValues = useSelector((state: any) => state?.form?.ImportPhase?.values);
   const hasBoarded = useSelector((state: State) => state.wallet.onboarding);
 
-  const { seedPhase, file, password: jsonPassword }: any = { ...formValues };
+  const { seedPhase, file, password: jsonPassword }: any = { ...importPhaseFormValues };
 
   const handleEncode = async (password: string) => {
     if (seedPhase) {
@@ -109,11 +114,15 @@ function ImportAccount({ redirectedFromSignUp }: Props) {
       });
     }
 
-    dispatch(reset('AddImportAccount'));
+    saveToStorage({ key: StorageKeys.HasBoarded, value: 'true' });
+
+    dispatch(reset('ImportPhase'));
+    dispatch(reset('EncodeAccount'));
   };
 
   const onClose = () => {
-    dispatch(reset('AddImportAccount'));
+    dispatch(reset('ImportPhase'));
+    dispatch(reset('EncodeAccount'));
     if (redirectedFromSignUp) {
       goTo(SignUp);
     } else {
@@ -122,7 +131,8 @@ function ImportAccount({ redirectedFromSignUp }: Props) {
   };
 
   const onBack = (backAction: () => void) => {
-    dispatch(reset('AddImportAccount'));
+    dispatch(reset('ImportPhase'));
+    dispatch(reset('EncodeAccount'));
     backAction();
   };
 

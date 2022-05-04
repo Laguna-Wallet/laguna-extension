@@ -439,7 +439,10 @@ export async function isValidKeyringPassword(
     } else {
       const newPair = keyring.createFromJson(json);
       newPair.unlock(password);
-      if (!newPair.isLocked) return true;
+      if (!newPair.isLocked) {
+        keyring.forgetAccount(newPair.address);
+        return true;
+      }
     }
 
     return false;

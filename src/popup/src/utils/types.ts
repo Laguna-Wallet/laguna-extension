@@ -22,7 +22,7 @@ export const DEFAULT_TYPE: KeypairType = 'ed25519';
 export const SEED_LENGTHS = [12, 24];
 
 export enum StorageKeys {
-  SignedIn = 'signed-in',
+  HasBoarded = 'has-boarded',
   Encoded = 'encoded',
   LoggedOut = 'logged-out',
   ActiveAccount = 'active-account',
@@ -33,8 +33,7 @@ export enum StorageKeys {
   IdleTimeout = 'idle-timeout',
   UnlockedPairs = 'unlocked-pairs',
   TokenDecimals = 'token-decimals',
-  DisabledTokens = 'disabled-tokens',
-  OnBoarding = 'onboarding'
+  DisabledTokens = 'disabled-tokens'
 }
 
 //==============================================================================

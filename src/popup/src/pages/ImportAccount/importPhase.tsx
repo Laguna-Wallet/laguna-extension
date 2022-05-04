@@ -68,7 +68,6 @@ function ImportPhase({
   const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false);
 
   const formValues = useSelector((state: any) => state?.form?.ImportPhase?.values);
-  console.log('~ formValues', formValues);
   const { seedPhase, file, password }: any = { ...formValues };
   const dispatch = useDispatch();
 
@@ -108,9 +107,7 @@ function ImportPhase({
   const submit = async ({ seedPhase, file, password }: any) => {
     try {
       if (file) {
-        console.log(1);
         const isValid = await isValidKeyringPassword(file, password);
-        console.log(1);
         if (isValid) {
           nextStep();
         } else {
@@ -120,7 +117,6 @@ function ImportPhase({
       } else {
         nextStep();
       }
-      saveToStorage({ key: StorageKeys.SignedIn, value: 'true' });
     } catch (err: any) {
       // todo proper error typing
       setIsSnackbarOpen(true);
@@ -134,7 +130,7 @@ function ImportPhase({
         title={'IMPORT WALLET'}
         onClose={onClose}
         onBack={() => {
-          dispatch(reset('AddImportAccount'));
+          dispatch(reset('ImportPhase'));
           if (redirectedFromSignUp) {
             goTo(SignUp);
           } else {
