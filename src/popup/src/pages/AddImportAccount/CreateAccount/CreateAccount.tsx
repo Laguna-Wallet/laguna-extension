@@ -2,8 +2,8 @@ import keyring from '@polkadot/ui-keyring';
 import { PageContainer } from 'components/ui';
 import WizardStepHeader from 'components/WizardStepHeader/WizardStepHeader';
 import { useAccount } from 'context/AccountContext';
-import EncodeAccount from 'pages/AddImportForExistingUsers/EncodeAccount';
-import SetupComplete from 'pages/AddImportForExistingUsers/SetupComplete';
+import EncodeAccount from 'pages/AddImportAccount/EncodeAccount';
+import SetupComplete from 'pages/AddImportAccount/SetupComplete';
 import { mnemonicGenerate } from '@polkadot/util-crypto/mnemonic';
 import Wallet from 'pages/Wallet/Wallet';
 import { goTo } from 'react-chrome-extension-router';
@@ -14,13 +14,14 @@ import SecureWallet from './SecureWallet/SecureWallet';
 import { randomAsHex } from '@polkadot/util-crypto';
 import SignUp from 'pages/SignUp/SignUp';
 import { useState } from 'react';
-import { Messages } from 'utils/types';
+import { Messages, StorageKeys } from 'utils/types';
 import { generateRandomBase64Avatar } from 'utils';
 import { addAccountMeta } from 'utils/polkadot';
 import { useSelector } from 'react-redux';
 import { State } from 'redux/store';
 import AES from 'crypto-js/aes';
 import CongratsBackingUp from './SecureWallet/CongratsBackingUp';
+import { saveToStorage } from 'utils/chrome';
 
 type Props = {
   existingAccount?: boolean;
@@ -65,9 +66,13 @@ export default function CreateAccount({
         'ed25519'
       );
 
-      await addAccountMeta(pair.address, {
+      const newPair = addAccountMeta(pair.address, {
         name: pair.address
       });
+
+      if (!account.getActiveAccount()) {
+        account.saveActiveAccount(newPair);
+      }
 
       chrome.runtime.sendMessage({
         type: Messages.AddToKeyring,
@@ -88,9 +93,15 @@ export default function CreateAccount({
         'ed25519'
       );
 
-      addAccountMeta(pair.address, {
+      const newPair = addAccountMeta(pair.address, {
         name: pair.address
       });
+
+      if (!account.getActiveAccount()) {
+        account.saveActiveAccount(newPair);
+      }
+
+      saveToStorage({ key: StorageKeys.SignedIn, value: 'true' });
 
       chrome.runtime.sendMessage({
         type: Messages.AddToKeyring,

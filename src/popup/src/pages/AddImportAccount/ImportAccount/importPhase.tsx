@@ -1,3 +1,5 @@
+import { ReactNode, useRef, useCallback, useEffect, useState } from 'react';
+
 import { PlusIcon } from '@heroicons/react/outline';
 import { KeyringPair$Json } from '@polkadot/keyring/types';
 import keyring from '@polkadot/ui-keyring';
@@ -10,15 +12,22 @@ import UploadFinishedIcon from 'assets/svgComponents/UploadFinishedIcon';
 import Button from 'components/primitives/Button';
 import HumbleInput from 'components/primitives/HumbleInput';
 import Snackbar from 'components/Snackbar/Snackbar';
-import WizardHeader from 'pages/AddImportForExistingUsers/WizardHeader';
+import WizardHeader from 'pages/AddImportAccount/WizardHeader';
 import SignUp from 'pages/SignUp/SignUp';
 import Wallet from 'pages/Wallet/Wallet';
-import { ReactNode, useCallback, useEffect, useState } from 'react';
 import { goTo } from 'react-chrome-extension-router';
 import { useDropzone } from 'react-dropzone';
 import { connect, useDispatch, useSelector } from 'react-redux';
 import { useWizard } from 'react-use-wizard';
-import { change, reset, Field, FormErrors, getFormSyncErrors } from 'redux-form';
+import {
+  reduxForm,
+  change,
+  reset,
+  Field,
+  FormErrors,
+  getFormSyncErrors,
+  InjectedFormProps
+} from 'redux-form';
 import styled from 'styled-components';
 import { convertUploadedFileToJson, objectToArray } from 'utils';
 import { saveToStorage } from 'utils/chrome';
@@ -42,12 +51,15 @@ import ButtonsIcon from 'assets/svgComponents/ButtonsIcon';
 // import { validateSeedPhase } from 'utils/validations';
 
 type Props = {
-  errors: FormErrors<Record<string, unknown>, string>;
   onClose: () => void;
   redirectedFromSignUp?: boolean;
 };
 
-function ImportPhase({ errors, onClose, redirectedFromSignUp }: Props) {
+function ImportPhase({
+  onClose,
+  redirectedFromSignUp,
+  handleSubmit
+}: Props & InjectedFormProps<Record<string, unknown>, Props>) {
   const { nextStep } = useWizard();
 
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
@@ -55,7 +67,7 @@ function ImportPhase({ errors, onClose, redirectedFromSignUp }: Props) {
   const [uploaded, setUploaded] = useState<boolean>(false);
   const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false);
 
-  const formValues = useSelector((state: any) => state?.form?.AddImportAccount?.values);
+  const formValues = useSelector((state: any) => state?.form?.ImportPhase?.values);
   const { seedPhase, file, password }: any = { ...formValues };
   const dispatch = useDispatch();
 
@@ -66,7 +78,7 @@ function ImportPhase({ errors, onClose, redirectedFromSignUp }: Props) {
     // isKeyringPairs$Json(json) ||
     if (isKeyringJson(json)) {
       setUploaded(true);
-      dispatch(change('AddImportAccount', 'file', json));
+      dispatch(change('ImportPhase', 'file', json));
     } else {
       setIsSnackbarOpen(true);
       setSnackbarError('Invalid json file');
@@ -92,7 +104,7 @@ function ImportPhase({ errors, onClose, redirectedFromSignUp }: Props) {
   };
 
   // todo proper typing
-  const handleClick = async ({ seedPhase, file, password }: any) => {
+  const submit = async ({ seedPhase, file, password }: any) => {
     try {
       if (file) {
         const isValid = await isValidKeyringPassword(file, password);
@@ -105,7 +117,6 @@ function ImportPhase({ errors, onClose, redirectedFromSignUp }: Props) {
       } else {
         nextStep();
       }
-      saveToStorage({ key: StorageKeys.SignedIn, value: 'true' });
     } catch (err: any) {
       // todo proper error typing
       setIsSnackbarOpen(true);
@@ -113,21 +124,13 @@ function ImportPhase({ errors, onClose, redirectedFromSignUp }: Props) {
     }
   };
 
-  useEffect(() => {
-    if (errors?.seedPhase && !isSnackbarOpen) {
-      const errorsArr = objectToArray(errors);
-      setIsSnackbarOpen(true);
-      setSnackbarError(errorsArr[0]);
-    }
-  }, [errors]);
-
   return (
     <Container>
       <WizardHeader
         title={'IMPORT WALLET'}
         onClose={onClose}
         onBack={() => {
-          dispatch(reset('AddImportAccount'));
+          dispatch(reset('ImportPhase'));
           if (redirectedFromSignUp) {
             goTo(SignUp);
           } else {
@@ -136,7 +139,12 @@ function ImportPhase({ errors, onClose, redirectedFromSignUp }: Props) {
           // previousStep();
         }}
       />
-      <Content>
+
+      <Form
+        onSubmit={(e: React.SyntheticEvent) => {
+          e.preventDefault();
+          submit({ seedPhase, file, password });
+        }}>
         <DndContainer {...getRootProps()} role={'Box'}>
           {!seedPhase && (
             <FileUploadContainer>
@@ -216,14 +224,15 @@ function ImportPhase({ errors, onClose, redirectedFromSignUp }: Props) {
         )}
 
         <Button
-          onClick={() => handleClick({ seedPhase, file, password })}
-          type="button"
+          // onClick={() => handleClick({ seedPhase, file, password })}
+          type="submit"
           disabled={isDisabled()}
           text="import"
           margin="10px 0 0 0"
           justify="center"
           Icon={<RightArrow width={23} fill="#fff" />}
         />
+
         <Snackbar
           width={'90%'}
           isOpen={isSnackbarOpen}
@@ -233,14 +242,19 @@ function ImportPhase({ errors, onClose, redirectedFromSignUp }: Props) {
           align="left"
           bottom={seedPhase ? '100px' : file ? '150px' : '100px'}
         />
-      </Content>
+      </Form>
     </Container>
   );
 }
 
-export default connect((state: State) => ({
-  errors: getFormSyncErrors('AddImportAccount')(state)
-}))(ImportPhase);
+// export default connect((state: State) => ({
+//   errors: getFormSyncErrors('ImportPhaze')(state)
+// }))();
+
+export default reduxForm<Record<string, unknown>, Props>({
+  form: 'ImportPhase',
+  destroyOnUnmount: false
+})(ImportPhase);
 
 const Container = styled.div`
   width: 100%;
@@ -280,7 +294,7 @@ const IconContainerBorder = styled.div`
   border-radius: 100%;
 `;
 
-const Content = styled.div`
+const Form = styled.form`
   width: 100%;
   height: 100%;
   display: flex;

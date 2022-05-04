@@ -1,13 +1,14 @@
 import Button from 'components/primitives/Button';
-import CreateAccount from 'pages/CreateAccount/CreateAccount';
+import CreateAccount from 'pages/AddImportAccount/CreateAccount/CreateAccount';
 import { Link } from 'react-chrome-extension-router';
 import styled from 'styled-components';
 import { PageContainer } from 'components/ui';
 
 import signUpBg from 'assets/imgs/sign-up-bg.png';
 import mainLogoSvg from 'assets/imgs/main-logo-white.svg';
+import ImportAccount from 'pages/AddImportAccount/ImportAccount/ImportAccount';
 
-import ImportAccount from 'pages/AddImportForExistingUsers/ImportAccount';
+// import ImportAccount from 'pages/AddImportAccount/ImportAccount';
 
 export default function SignUp() {
   return (

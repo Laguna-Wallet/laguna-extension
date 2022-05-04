@@ -5,7 +5,7 @@ import { ConfirmSecuritySkip } from 'components/popups/ConfirmSecuritySkip';
 import { MnemonicsDescription } from 'components/popups/MnemonicsDescription';
 import Button from 'components/primitives/Button';
 import { PageContainer } from 'components/ui';
-import WizardHeader from 'pages/AddImportForExistingUsers/WizardHeader';
+import WizardHeader from 'pages/AddImportAccount/WizardHeader';
 import SignUp from 'pages/SignUp/SignUp';
 import Wallet from 'pages/Wallet/Wallet';
 import { useState } from 'react';

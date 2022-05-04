@@ -21,7 +21,7 @@ import AddRemoveToken from 'pages/AddRemoveToken/AddRemoveToken';
 import { State } from 'redux/store';
 import SecureNowIcon from 'assets/svgComponents/SecureNowIcon';
 import RightArrowMenuIcon from 'assets/svgComponents/MenuIcons/RightArrowMenuIcon';
-import CreateAccount from 'pages/CreateAccount/CreateAccount';
+import CreateAccount from 'pages/AddImportAccount/CreateAccount/CreateAccount';
 
 export interface ShowSnackbar {
   message: string;

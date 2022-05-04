@@ -120,7 +120,6 @@ export async function fetchAccountsBalances() {
     // await timer(3000)
 
     const account = await getFromStorage(StorageKeys.ActiveAccount)
-    console.log("~ account", account)
 
     const balances = await getFromStorage(StorageKeys.AccountBalances)
     const parsedBalances = balances ? JSON.parse(balances) : {}
@@ -157,10 +156,11 @@ export async function fetchAccountsBalances() {
       }
     }
     console.log("balances updated")
-    setTimeout(() => fetchAccountsBalances(), 2000)
+    console.log(new Date())
+    setTimeout(() => fetchAccountsBalances(), 3000)
   } catch (err) {
     console.log("err", err)
-    setTimeout(() => fetchAccountsBalances(), 2000)
+    setTimeout(() => fetchAccountsBalances(), 5000)
   }
 }
 

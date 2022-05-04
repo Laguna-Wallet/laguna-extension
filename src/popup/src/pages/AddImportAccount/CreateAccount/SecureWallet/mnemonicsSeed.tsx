@@ -8,12 +8,13 @@ import { ArrowSmRightIcon } from '@heroicons/react/outline';
 import { useWizard } from 'react-use-wizard';
 import { useAccount } from 'context/AccountContext';
 import RightArrow from 'assets/svgComponents/RightArrow';
-import WizardHeader from 'pages/AddImportForExistingUsers/WizardHeader';
+import WizardHeader from 'pages/AddImportAccount/WizardHeader';
 import { goTo } from 'react-chrome-extension-router';
 import Wallet from 'pages/Wallet/Wallet';
 import SignUp from 'pages/SignUp/SignUp';
 import Snackbar from 'components/Snackbar/Snackbar';
 import { MnemonicsDescription } from 'components/popups/MnemonicsDescription';
+import { useEnterClickListener } from 'hooks/useEnterClickListener';
 
 type Props = {
   redirectedFromSignUp?: boolean;
@@ -49,6 +50,8 @@ export default function MnemonicsSeed({ redirectedFromSignUp, redirectedFromDash
     setIsSnackbarOpen(true);
     setSnackbarMessage('Mnemonics Copied');
   };
+
+  useEnterClickListener(() => handleClick(), []);
 
   return (
     <Container>

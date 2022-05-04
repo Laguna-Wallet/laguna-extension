@@ -1,26 +1,23 @@
 import styled from 'styled-components';
 import CheckMarkIcon from 'assets/svgComponents/CheckMarkIcon';
-import LockIcon from 'assets/svgComponents/LockIcon';
+
 import Button from 'components/primitives/Button';
-import Snackbar from 'components/Snackbar/Snackbar';
 import Wallet from 'pages/Wallet/Wallet';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { goTo } from 'react-chrome-extension-router';
 
-import { saveToStorage } from 'utils/chrome';
-import { SnackbarMessages, StorageKeys } from 'utils/types';
+import { SnackbarMessages } from 'utils/types';
 import DiscordIcon from 'assets/svgComponents/DiscordIcon';
 import TwitterIcon from 'assets/svgComponents/twitterIcon';
 import Bg from '../../assets/imgs/SetupCompleted-bg.jpg';
+import { reduxForm } from 'redux-form';
+import { useEnterClickListener } from 'hooks/useEnterClickListener';
 
-export default function EncodeAccount() {
-  const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
-  const [snackbarError, setSnackbarError] = useState<string>('');
-
-  useEffect(() => {
-    saveToStorage({ key: StorageKeys.SignedIn, value: 'true' });
-    saveToStorage({ key: StorageKeys.OnBoarding, value: 'true' });
-  }, []);
+function SetupComplete() {
+  useEnterClickListener(
+    () => goTo(Wallet, { snackbar: { show: true, message: SnackbarMessages.WalletCreated } }),
+    []
+  );
 
   return (
     <Container bg={Bg}>
@@ -52,29 +49,26 @@ export default function EncodeAccount() {
             <span>Follow us on Twitter</span>
           </LinkContainer>
         </LinksContainer>
-        <BottomContainer>
+        <BottomSection>
           <Button
+            onClick={() =>
+              goTo(Wallet, { snackbar: { show: true, message: SnackbarMessages.WalletCreated } })
+            }
             type="button"
             justify="center"
             margin="10px 0 0 0"
             text={'Finish'}
-            onClick={() =>
-              goTo(Wallet, { snackbar: { show: true, message: SnackbarMessages.WalletCreated } })
-            }
           />
-        </BottomContainer>
-        <Snackbar
-          isOpen={isSnackbarOpen}
-          message={snackbarError}
-          close={() => setIsSnackbarOpen(false)}
-          type="error"
-          left="0px"
-          bottom={'145px'}
-        />
+        </BottomSection>
       </Content>
     </Container>
   );
 }
+
+export default reduxForm<Record<string, unknown>, Record<string, unknown>>({
+  form: 'SetupComplete',
+  destroyOnUnmount: false
+})(SetupComplete);
 
 const Container = styled.div<{ bg: string }>`
   width: 100%;
@@ -176,7 +170,7 @@ const LinkIconContainer = styled.div`
   margin-right: auto;
 `;
 
-const BottomContainer = styled.div`
+const BottomSection = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;

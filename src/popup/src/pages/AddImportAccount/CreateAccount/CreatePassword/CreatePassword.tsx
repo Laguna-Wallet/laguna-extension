@@ -117,7 +117,7 @@ function CreatePassword() {
         />
 
         <Button
-          type="button"
+          type="submit"
           onClick={handleSubmit}
           Icon={<RightArrow width={23} />}
           text={'Create Password'}

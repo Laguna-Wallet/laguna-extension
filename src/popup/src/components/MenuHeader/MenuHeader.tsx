@@ -80,7 +80,7 @@ export default function MenuHeader({
   };
 
   const handleLogout = () => {
-    clearFromStorage(StorageKeys.SignedIn);
+    // clearFromStorage(StorageKeys.SignedIn);
     saveToStorage({ key: StorageKeys.LoggedOut, value: 'true' });
     goTo(WelcomeBack);
   };

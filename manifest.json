@@ -4,16 +4,21 @@
   "version": "1.0.0",
   "description": "HydrogenX Polkadot Wallet",
   "host_permissions": ["<all_urls>"],
-  "permissions": ["background", "storage", "notifications", "alarms", "clipboardRead", "clipboardWrite", "idle", "tabs"],
+  "permissions": ["scripting", "storage", "activeTab", "notifications", "alarms", "clipboardRead", "clipboardWrite", "idle", "tabs"],
   "action": {
     "default_popup": "popup/index.html",
-    "default_title": "HydrogenX Polkadot Wallet"
+    "default_title": "Laguna Wallet"
   },
   "icons": {},
   "background": {
     "service_worker": "background.js"
   },
-
+  "web_accessible_resources": [
+    {
+      "resources": ["page.js"],
+      "matches": ["<all_urls>"]
+    }
+  ],
   "content_security_policy": {
     "content_security_policy": "script-src 'self' 'sha256-...='; object-src 'self'"
   }

@@ -1,5 +1,5 @@
 import Button from 'components/primitives/Button';
-import CreateAccount from 'pages/CreateAccount/CreateAccount';
+import CreateAccount from 'pages/AddImportAccount/CreateAccount/CreateAccount';
 import { goTo, Link } from 'react-chrome-extension-router';
 import styled from 'styled-components';
 import { PageContainer } from 'components/ui';
@@ -59,7 +59,7 @@ function WelcomeBack({ handleSubmit }: Props) {
     const isValid = await validatePassword(values.password);
 
     if (isValid) {
-      saveToStorage({ key: StorageKeys.SignedIn, value: 'true' });
+      // saveToStorage({ key: StorageKeys.SignedIn, value: 'true' });
       clearFromStorage(StorageKeys.LoggedOut);
       chrome.runtime.sendMessage({
         type: Messages.AuthUser,

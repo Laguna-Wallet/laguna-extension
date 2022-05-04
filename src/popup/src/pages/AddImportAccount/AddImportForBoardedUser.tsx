@@ -1,46 +1,41 @@
+import { Wizard } from 'react-use-wizard';
+// import AddImport from './ChooseAddImport';
+import { useState } from 'react';
+import ImportAccount from './ImportAccount/ImportAccount';
+import CreateAccount from './CreateAccount/CreateAccount';
+
 import PlusIcon from '@heroicons/react/outline/PlusIcon';
 import RightArrow from 'assets/svgComponents/RightArrow';
 import Button from 'components/primitives/Button';
 import Wallet from 'pages/Wallet/Wallet';
 import { goTo } from 'react-chrome-extension-router';
-import { useWizard } from 'react-use-wizard';
 import styled from 'styled-components';
-import { PhaseEnum } from './AddImportForExistingUsers';
-import WizardHeader from './WizardHeader';
+import AddImportForBoardedHeader from './AddImportForBoardedHeader';
 
-type Props = {
-  setPhase: (phase: string) => void;
-};
-
-export default function AddImport({ setPhase }: Props) {
-  const { nextStep } = useWizard();
-
-  const handleClick = (phase: string) => {
-    setPhase(phase);
-    nextStep();
-  };
-
+export default function AddImportForBoardedUser() {
   return (
     <Container>
-      <WizardHeader title={'ADD / IMPORT WALLET'} onClose={() => goTo(Wallet)} />
+      <AddImportForBoardedHeader
+        title={'ADD / IMPORT WALLET'}
+        onBack={() => goTo(Wallet)}
+        onClose={() => goTo(Wallet)}
+      />
       <PlusIconContainer>
-        <PlusIcon width={66} stroke="#111" />
+        <PlusIcon width={46} stroke="#999999" />
       </PlusIconContainer>
       <ButtonContainer>
         <Button
           type="button"
           Icon={<RightArrow width={23} />}
           text={'Create a New Wallet'}
-          onClick={() => handleClick(PhaseEnum.Create)}
-          justify="center"
+          onClick={() => goTo(CreateAccount)}
         />
         <Button
           type="button"
           Icon={<RightArrow width={23} />}
           text={'Import a Wallet'}
           margin="10px 0 0 0"
-          onClick={() => handleClick(PhaseEnum.Import)}
-          justify="center"
+          onClick={() => goTo(ImportAccount)}
         />
       </ButtonContainer>
     </Container>
@@ -60,15 +55,14 @@ const Container = styled.div`
 `;
 
 const PlusIconContainer = styled.div`
-  width: 167.3px;
-  height: 167.3px;
+  width: 149px;
+  height: 149px;
   display: flex;
   justify-content: center;
   align-items: center;
   border-radius: 100%;
   margin-top: 110px;
-  background-color: #fff;
-  box-shadow: 5px 5px 50px 0 rgba(0, 0, 0, 0.05);
+  background-color: #f4f4f6;
 `;
 
 const StepHeading = styled.div`
