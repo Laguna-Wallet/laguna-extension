@@ -1,11 +1,6 @@
-import { PageContainer } from 'components/ui';
-import { useAccount } from 'context/AccountContext';
-import EncodeAccount from 'pages/AddImportForExistingUsers/EncodeAccount';
 import Wallet from 'pages/Wallet/Wallet';
-import { useState } from 'react';
 import { goTo } from 'react-chrome-extension-router';
 import { useWizard, Wizard } from 'react-use-wizard';
-import CongratsSecuringWallet from '../Congrats/CongratsSecuringWallet';
 import { SecurityLevelEnum } from '../CreateAccount';
 import ChooseSecurityLevel from './chooseSecurityLevel';
 import ConfirmSeed from './confirmSeed';

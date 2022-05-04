@@ -13,7 +13,7 @@ import DiscordIcon from 'assets/svgComponents/DiscordIcon';
 import TwitterIcon from 'assets/svgComponents/twitterIcon';
 import Bg from '../../assets/imgs/SetupCompleted-bg.jpg';
 
-export default function EncodeAccount() {
+export default function SetupComplete() {
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
   const [snackbarError, setSnackbarError] = useState<string>('');
 

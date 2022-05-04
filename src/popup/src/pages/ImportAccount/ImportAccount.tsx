@@ -1,13 +1,11 @@
-import ImportPhase from 'pages/AddImportForExistingUsers/importPhase';
-import { connect, useDispatch, useSelector } from 'react-redux';
-import { Wizard } from 'react-use-wizard';
-import { getFormSyncErrors, reduxForm, reset } from 'redux-form';
 import styled from 'styled-components';
+import { connect, useDispatch, useSelector } from 'react-redux';
+import { getFormSyncErrors, reduxForm, reset } from 'redux-form';
+import { Wizard } from 'react-use-wizard';
+import { goTo } from 'react-chrome-extension-router';
+
 import { keyExtractSuri, mnemonicValidate, randomAsHex } from '@polkadot/util-crypto';
 import { isHex } from '@polkadot/util';
-
-import { Messages, SEED_LENGTHS } from 'utils/types';
-import EncodeAccount from './EncodeAccount';
 import {
   accountsChangePassword,
   encryptKeyringPair,
@@ -20,15 +18,20 @@ import {
   // unlockAndSavePair,
   validatePassword
 } from 'utils/polkadot';
-import { goTo } from 'react-chrome-extension-router';
-import Wallet from 'pages/Wallet/Wallet';
 import { KeyringPair$Json } from '@polkadot/keyring/types';
 import { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
-import { useAccount } from 'context/AccountContext';
-import CreatePassword from '../CreateAccount/CreatePassword/CreatePassword';
-import SetupComplete from './SetupComplete';
-import SignUp from 'pages/SignUp/SignUp';
+import { Messages, SEED_LENGTHS } from 'utils/types';
+
 import { State } from 'redux/store';
+
+import { useAccount } from 'context/AccountContext';
+
+import CreatePassword from '../CreateAccount/CreatePassword/CreatePassword';
+import SignUp from 'pages/SignUp/SignUp';
+import EncodeAccount from 'pages/AddImportAccount/EncodeAccount';
+import SetupComplete from 'pages/AddImportAccount/SetupComplete';
+import ImportPhase from 'pages/ImportAccount/importPhase';
+import Wallet from 'pages/Wallet/Wallet';
 
 const validate = (values: any) => {
   const errors: any = {};
@@ -124,10 +127,7 @@ function ImportAccount({ redirectedFromSignUp }: Props) {
   };
 
   return (
-    <Form
-      onSubmit={(e) => {
-        e.preventDefault();
-      }}>
+    <Container>
       <Wizard>
         {!encoded && <CreatePassword />}
         <ImportPhase redirectedFromSignUp={redirectedFromSignUp} onClose={onClose} />
@@ -139,24 +139,13 @@ function ImportAccount({ redirectedFromSignUp }: Props) {
         />
         {!hasBoarded && <SetupComplete />}
       </Wizard>
-    </Form>
+    </Container>
   );
 }
 
-export default connect((state: any) => ({
-  errors: getFormSyncErrors('AddImportAccount')(state)
-}))(
-  reduxForm<Record<string, unknown>, Props>({
-    form: 'AddImportAccount',
-    validate,
-    destroyOnUnmount: false,
-    enableReinitialize: true,
-    keepDirtyOnReinitialize: true,
-    updateUnregisteredFields: true
-  })(ImportAccount)
-);
+export default ImportAccount;
 
-const Form = styled.form`
+const Container = styled.div`
   width: 100%;
   height: 100%;
   display: flex;

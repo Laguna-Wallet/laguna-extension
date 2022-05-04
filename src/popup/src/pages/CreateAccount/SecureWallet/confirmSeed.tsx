@@ -15,7 +15,7 @@ import RightArrow from 'assets/svgComponents/RightArrow';
 import arrayShuffle from 'array-shuffle';
 import Snackbar from 'components/Snackbar/Snackbar';
 import CloseIcon from 'assets/svgComponents/CloseIcon';
-import WizardHeader from 'pages/AddImportForExistingUsers/WizardHeader';
+import WizardHeader from 'pages/AddImportAccount/WizardHeader';
 import { goTo } from 'react-chrome-extension-router';
 import Wallet from 'pages/Wallet/Wallet';
 import SignUp from 'pages/SignUp/SignUp';

@@ -8,7 +8,7 @@ import { ArrowSmRightIcon } from '@heroicons/react/outline';
 import { useWizard } from 'react-use-wizard';
 import { useAccount } from 'context/AccountContext';
 import RightArrow from 'assets/svgComponents/RightArrow';
-import WizardHeader from 'pages/AddImportForExistingUsers/WizardHeader';
+import WizardHeader from 'pages/AddImportAccount/WizardHeader';
 import { goTo } from 'react-chrome-extension-router';
 import Wallet from 'pages/Wallet/Wallet';
 import SignUp from 'pages/SignUp/SignUp';

@@ -110,7 +110,6 @@ const handlePage = (pendingDapps: any[], pendingToSign: any) => {
 
   //todo check for timeout and require password
   // return <WelcomeBack />;
-  console.log('~ loggedOut', loggedOut);
 
   if (loggedOut) {
     return <WelcomeBack />;

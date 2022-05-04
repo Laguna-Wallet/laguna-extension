@@ -1,8 +1,8 @@
 import { Wizard } from 'react-use-wizard';
-import AddImport from './AddImport';
+// import AddImport from './ChooseAddImport';
 import { useState } from 'react';
 import CreateAccount from 'pages/CreateAccount/CreateAccount';
-import ImportAccount from './ImportAccount';
+// import ImportAccount from './ImportAccount';
 
 export enum PhaseEnum {
   Import = 'Import',
@@ -14,8 +14,8 @@ function AddImportForExistingUsers() {
 
   return (
     <Wizard>
-      <AddImport setPhase={setPhase} />
-      {phase === PhaseEnum.Import ? <ImportAccount /> : <CreateAccount existingAccount={false} />}
+      {/* <AddImport setPhase={setPhase} />
+      {phase === PhaseEnum.Import ? <ImportAccount /> : <CreateAccount existingAccount={false} />} */}
     </Wizard>
   );
 }
