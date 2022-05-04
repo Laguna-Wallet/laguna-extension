@@ -111,7 +111,14 @@ export async function importFromMnemonic(seed: string, password: string) {
   const { pair } = keyring.addUri(seed, password);
 
   const img = await generateRandomBase64Avatar();
-  addAccountMeta(pair.address, { encodedKey, encodedSeed, name: pair.address, img });
+  const newPair = addAccountMeta(pair.address, {
+    encodedKey,
+    encodedSeed,
+    name: pair.address,
+    img
+  });
+
+  return newPair;
 }
 
 export function importFromPrivateKey(secretKey: string, password: string) {
@@ -467,7 +474,8 @@ export async function encryptKeyringPair(pair: any, oldPassword: string, newPass
   pair.unlock(oldPassword);
   const { pair: newPair } = keyring.addPair(pair, newPassword);
   const img = await generateRandomBase64Avatar();
-  addAccountMeta(newPair.address, { img, ...pair.meta });
+  const enhancedPair = addAccountMeta(newPair.address, { img, ...pair.meta });
+  return enhancedPair;
 }
 
 export function encryptMetaData(oldPassword: string, newPassword: string) {

@@ -83,21 +83,26 @@ function ImportAccount({ redirectedFromSignUp }: Props) {
   const handleEncode = async (password: string) => {
     if (seedPhase) {
       if (mnemonicValidate(seedPhase)) {
-        importFromMnemonic(seedPhase, password);
+        const pair = await importFromMnemonic(seedPhase, password);
+
+        if (!account.getActiveAccount()) {
+          account.saveActiveAccount(pair);
+        }
+
+        chrome.runtime.sendMessage({
+          type: Messages.AddToKeyring,
+          payload: { seed: seedPhase }
+        });
       }
       // save from private key
       // if (isHex(seedPhase) && isValidPolkadotAddress(seedPhase)) {
       //   importFromPrivateKey(seedPhase, password);
       // }
       // save from public key
-      if (!isHex(seedPhase) && isValidPolkadotAddress(seedPhase)) {
-        importFromPublicKey(seedPhase);
-      }
 
-      chrome.runtime.sendMessage({
-        type: Messages.AddToKeyring,
-        payload: { seed: seedPhase }
-      });
+      // if (!isHex(seedPhase) && isValidPolkadotAddress(seedPhase)) {
+      //   importFromPublicKey(seedPhase);
+      // }
     }
 
     if (file) {
@@ -106,7 +111,11 @@ function ImportAccount({ redirectedFromSignUp }: Props) {
         jsonPassword
       );
 
-      encryptKeyringPair(pair, jsonPassword, password);
+      const newPair = await encryptKeyringPair(pair, jsonPassword, password);
+
+      if (!account.getActiveAccount()) {
+        account.saveActiveAccount(newPair);
+      }
 
       chrome.runtime.sendMessage({
         type: Messages.AddToKeyring,
