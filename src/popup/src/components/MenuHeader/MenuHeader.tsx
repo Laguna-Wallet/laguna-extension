@@ -1,12 +1,11 @@
 import React, { useRef, useState } from 'react';
 import styled from 'styled-components';
-import LeftArrowIcon from 'assets/svgComponents/LeftArrowIcon';
+import BackIcon from 'assets/svgComponents/BackIcon';
 import MenuCloseIcon from 'assets/svgComponents/MenuIcons/MenuCloseIcon'
 import { useAccount } from 'context/AccountContext';
 import { resizeFile, truncateString } from 'utils';
 import useOutsideClick from 'hooks/useOutsideClick';
 import { addAccountMeta, changeAccountPicture } from 'utils/polkadot';
-import EditIcon from 'assets/svgComponents/EditIcon';
 import PencilIcon from 'assets/svgComponents/PencilIcon';
 import MenuLockIcon from 'assets/svgComponents/MenuIcons/MenuLockIcon';
 import { StorageKeys } from 'utils/types';
@@ -104,7 +103,7 @@ export default function MenuHeader({
       {title && (
         <Title>
           <LeftArrowContainer onClick={backAction}>
-            <LeftArrowIcon fill="#111" stroke="#fff" />
+            <BackIcon stroke='white'/>
           </LeftArrowContainer>
           <TitleText>{title}</TitleText>
         </Title>
@@ -265,23 +264,28 @@ const IconContainer = styled.div<{ img: string }>`
   }
 `;
 
-const Title = styled.span`
-  width: 100%;
-  font-family: '';
-  font-size: 17px;
-  letter-spacing: 0.85px;
-  color: #fff;
+const Title = styled.div`
+  position: relative;
   display: flex;
   justify-content: center;
-  margin-top: 10px;
+  align-items: center;
 `;
 
-const TitleText = styled.div`
-  margin-right: auto;
-  font-family: 'IBM Plex Sans';
+const TitleText = styled.p`
+font-family: 'IBM Plex Sans';
+font-weight: 500;
+font-size: 17px;
+line-height: 40px;
+text-align: center;
+letter-spacing: 0.1em;
+color: #FFFFFF;
 `;
 
 const LeftArrowContainer = styled.div`
+  position: absolute;
+  left: 0;
+  top: 8px;
+  height: 24px;
   margin-right: auto;
   cursor: pointer;
 `;

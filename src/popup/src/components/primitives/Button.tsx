@@ -16,6 +16,7 @@ type Props = {
   color?: string;
   borderColor?: string;
   margin?: string;
+  marginText?: string;
   fontFamily?: string;
   fontSize?: string;
   boxShadow?: string;
@@ -24,7 +25,7 @@ type Props = {
 export default function Button({ Icon, text, bgColor = '#111', ...rest }: Props) {
   return (
     <StyledButton {...rest} bgColor={bgColor}>
-      <Text>{text}</Text>
+      <Text {...rest}>{text}</Text>
       {Icon && Icon}
     </StyledButton>
   );
@@ -66,6 +67,8 @@ const StyledButton = styled.button<{
   cursor: pointer;
 `;
 
-const Text = styled.div`
-  margin: 0 5px;
+const Text = styled.div<{
+  marginText?: string;
+}>`
+  margin: ${({ marginText })=> marginText || '0 5px'};
 `;
