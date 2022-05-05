@@ -33,7 +33,7 @@ function App() {
   const pendingDapps = pendingDappAuthorization?.pendingDappAuthorization;
 
   useEffect(() => {
-    chrome.runtime.onMessage.addListener((msg) => {
+    chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
       MessageListener(msg, dispatch);
     });
   }, []);

@@ -19,6 +19,7 @@ import {
 } from "./utils"
 import keyring from "@polkadot/ui-keyring"
 import { TypeRegistry } from "@polkadot/types"
+import { AccountsStore } from "./stores"
 
 let isLoggedIn = false
 let keyPairs = []
@@ -29,8 +30,9 @@ const registry = new TypeRegistry()
 let authorizedDapps = []
 let pendingRequests = []
 let declinedDapps = []
+import "@polkadot/wasm-crypto/initOnlyAsm"
 
-keyring.loadAll({ type: "ed25519" })
+keyring.loadAll({ type: "ed25519", store: new AccountsStore() })
 
 function onMessage(msg, port) {
   console.log("received", msg, "from", port.sender)
@@ -48,195 +50,198 @@ function deleteTimer(port) {
   }
 }
 
-// chrome.runtime.onConnect.addListener((port: any) => {
-//   if (port.name !== "keep_alive") return
+chrome.runtime.onConnect.addListener((port: any) => {
+  if (port.name !== "keep_alive") return
 
-//   port.onMessage.addListener(onMessage)
+  port.onMessage.addListener(onMessage)
 
-//   port.onDisconnect.addListener(deleteTimer)
-//   port.timer = setTimeout(forceReconnect, 2000, port)
-// })
+  port.onDisconnect.addListener(deleteTimer)
+  port.timer = setTimeout(forceReconnect, 2000, port)
+})
 
-// chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-//   if (changeInfo.status === "complete") {
-//     chrome.scripting
-//       .executeScript({
-//         target: { tabId },
-//         files: ["content.js"],
-//       })
-//       .then(() => {
-//         console.log("INJECTED THE FOREGROUND SCRIPT.")
-//       })
-//       .catch((err) => console.log("ierorie", err))
-//   }
-// })
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  if (changeInfo.status === "complete") {
+    chrome.scripting
+      .executeScript({
+        target: { tabId },
+        files: ["content.js"],
+      })
+      .then(() => {
+        console.log("INJECTED THE FOREGROUND SCRIPT.")
+      })
+      .catch((err) => console.log("ierorie", err))
+  }
+})
 
-// chrome.runtime.onConnectExternal.addListener(function (port) {
-// chrome.runtime.onMessageExternal.addListener(async (msg) => {
-//   if (msg.type === Messages.DappAuthRequest) {
-//     const dappName = msg.payload.pendingDapp[0].request.requestOrigin
-//     if (authorizedDapps.includes(dappName) || declinedDapps.includes(dappName)) return
-//     if (msg.payload.approved) {
-//       pendingRequests = []
-//       authorizedDapps.push(dappName)
-//       port.postMessage({ ...msg.payload.pendingDapp[0], payload: { id: msg.payload.pendingDapp[0].id, approved: true } })
-//       return true
-//     } else {
-//       pendingRequests = []
-//       declinedDapps.push(dappName)
-//       port.postMessage({ ...msg.payload.pendingDapp[0], payload: { id: msg.payload.pendingDapp[0].id, approved: false } })
-//       return true
-//     }
-//   }
-//   if (msg.type === Messages.SignRequest) {
-//     const data = msg?.payload?.data?.data
-//     if (msg.payload.approved) {
-//       const pair = keyPairs.find((pair) => {
-//         return recodeToPolkadotAddress(pair.address) === recodeToPolkadotAddress(data.request.address)
-//       })
-//       if (data.message === "SIGN_PAYLOAD") {
-//         registry.setSignedExtensions(data.request.signedExtensions)
-//         const result = registry.createType("ExtrinsicPayload", data.request, { version: data.request.version }).sign(pair)
-//         port.postMessage({ ...data, payload: { id: data.id, approved: true, ...result } })
-//       }
-//     } else {
-//       port.postMessage({ ...data, payload: { id: data.id, approved: false } })
-//     }
-//     signRequestPending = false
-//     signRequest = {}
-//   }
-// })
-// port.onMessage.addListener((data) => {
-//   if (data.message === "GET_ACCOUNTS") {
-//     port.postMessage({ ...data, payload: keyring.getPairs() })
-//   }
-//   if (data.message === "SIGN_PAYLOAD") {
-//     const POPUP_URL = chrome.runtime.getURL("popup/index.html")
-//     chrome.windows.create({
-//       focused: true,
-//       height: 621,
-//       left: 150,
-//       top: 150,
-//       type: "popup",
-//       url: POPUP_URL,
-//       width: 370,
-//     })
-//     signRequestPending = true
-//     signRequest = data
-//     // const pair = keyring.getPair(data.request.address)
-//     // registry.setSignedExtensions(data.request.signedExtensions)
-//     // check for signing
-//     // pair.unlock("123123123")
-//     // const result = registry.createType("ExtrinsicPayload", data.request, { version: data.request.version }).sign(pair)
-//     // port.postMessage({ ...data, payload: { id: data.id, ...result } })
-//   }
-//   if (data.message === "SIGN_RAW") {
-//     const POPUP_URL = chrome.runtime.getURL("popup/index.html")
-//     chrome.windows.create({
-//       focused: true,
-//       height: 621,
-//       left: 150,
-//       top: 150,
-//       type: "popup",
-//       url: POPUP_URL,
-//       width: 370,
-//     })
-//     signRequestPending = true
-//     signRequest = data
-//     // const pair = keyring.getPair(data.request.address)
-//     // registry.setSignedExtensions(data.request.signedExtensions)
-//     // pair.unlock("123123123")
-//     // const result = u8aToHex(pair.sign(wrapBytes(data.request)))
-//     // registry.createType("ExtrinsicPayload", data.request, { version: data.request.version }).sign(pair)
-//     // port.postMessage({ ...data, payload: { id: data.id, result } })
-//   }
-//   if (data.message === "AUTHORIZE_TAB") {
-//     if (authorizedDapps.includes(data.request.requestOrigin)) {
-//       port.postMessage({ ...data, payload: { id: data.id, approved: true } })
-//       return true
-//     }
-//     if (declinedDapps.includes(data.request.requestOrigin)) {
-//       port.postMessage({ ...data, payload: { id: data.id, approved: false } })
-//       return false
-//     }
-//     const POPUP_URL = chrome.runtime.getURL("popup/index.html")
-//     if (pendingRequests.length === 0) {
-//       pendingRequests.push(data)
-//     }
-//     chrome.windows.create({
-//       focused: true,
-//       height: 621,
-//       left: 150,
-//       top: 150,
-//       type: "popup",
-//       url: POPUP_URL,
-//       width: 370,
-//     })
-//   }
-// })
-// })
+chrome.runtime.onConnectExternal.addListener(function (port) {
+  chrome.runtime.onMessageExternal.addListener(async (msg) => {
+    if (msg.type === Messages.DappAuthRequest) {
+      const dappName = msg.payload.pendingDapp[0].request.requestOrigin
+      if (authorizedDapps.includes(dappName) || declinedDapps.includes(dappName)) return
+      if (msg.payload.approved) {
+        pendingRequests = []
+        authorizedDapps.push(dappName)
+        port.postMessage({ ...msg.payload.pendingDapp[0], payload: { id: msg.payload.pendingDapp[0].id, approved: true } })
+        return true
+      } else {
+        pendingRequests = []
+        declinedDapps.push(dappName)
+        port.postMessage({ ...msg.payload.pendingDapp[0], payload: { id: msg.payload.pendingDapp[0].id, approved: false } })
+        return true
+      }
+    }
+    if (msg.type === Messages.SignRequest) {
+      const data = msg?.payload?.data?.data
+      if (msg.payload.approved) {
+        const pair = keyPairs.find((pair) => {
+          return recodeToPolkadotAddress(pair.address) === recodeToPolkadotAddress(data.request.address)
+        })
+        if (data.message === "SIGN_PAYLOAD") {
+          registry.setSignedExtensions(data.request.signedExtensions)
+          const result = registry.createType("ExtrinsicPayload", data.request, { version: data.request.version }).sign(pair)
+          port.postMessage({ ...data, payload: { id: data.id, approved: true, ...result } })
+        }
+      } else {
+        port.postMessage({ ...data, payload: { id: data.id, approved: false } })
+      }
+      signRequestPending = false
+      signRequest = {}
+    }
+  })
+  port.onMessage.addListener((data) => {
+    if (data.message === "GET_ACCOUNTS") {
+      port.postMessage({ ...data, payload: keyring.getPairs() })
+    }
+    if (data.message === "SIGN_PAYLOAD") {
+      const POPUP_URL = chrome.runtime.getURL("popup/index.html")
+      chrome.windows.create({
+        focused: true,
+        height: 621,
+        left: 150,
+        top: 150,
+        type: "popup",
+        url: POPUP_URL,
+        width: 370,
+      })
+      signRequestPending = true
+      signRequest = data
+      // const pair = keyring.getPair(data.request.address)
+      // registry.setSignedExtensions(data.request.signedExtensions)
+      // check for signing
+      // pair.unlock("123123123")
+      // const result = registry.createType("ExtrinsicPayload", data.request, { version: data.request.version }).sign(pair)
+      // port.postMessage({ ...data, payload: { id: data.id, ...result } })
+    }
+    if (data.message === "SIGN_RAW") {
+      const POPUP_URL = chrome.runtime.getURL("popup/index.html")
+      chrome.windows.create({
+        focused: true,
+        height: 621,
+        left: 150,
+        top: 150,
+        type: "popup",
+        url: POPUP_URL,
+        width: 370,
+      })
+      signRequestPending = true
+      signRequest = data
+      // const pair = keyring.getPair(data.request.address)
+      // registry.setSignedExtensions(data.request.signedExtensions)
+      // pair.unlock("123123123")
+      // const result = u8aToHex(pair.sign(wrapBytes(data.request)))
+      // registry.createType("ExtrinsicPayload", data.request, { version: data.request.version }).sign(pair)
+      // port.postMessage({ ...data, payload: { id: data.id, result } })
+    }
+    if (data.message === "AUTHORIZE_TAB") {
+      if (authorizedDapps.includes(data.request.requestOrigin)) {
+        port.postMessage({ ...data, payload: { id: data.id, approved: true } })
+        return true
+      }
+      if (declinedDapps.includes(data.request.requestOrigin)) {
+        port.postMessage({ ...data, payload: { id: data.id, approved: false } })
+        return false
+      }
+      const POPUP_URL = chrome.runtime.getURL("popup/index.html")
+      if (pendingRequests.length === 0) {
+        pendingRequests.push(data)
+      }
+      chrome.windows.create({
+        focused: true,
+        height: 621,
+        left: 150,
+        top: 150,
+        type: "popup",
+        url: POPUP_URL,
+        width: 370,
+      })
+    }
+  })
+})
 
-// chrome.runtime.onMessage.addListener(async (msg) => {
-//   switch (msg.type) {
-//     case Messages.AuthUser:
-//       if (validatePassword(msg.payload.password)) {
-//         isLoggedIn = true
-//         keyPairs = unlockKeyPairs(msg.payload.password)
-//       }
-//       break
-//     case Messages.CheckPendingDappAuth:
-//       chrome.runtime.sendMessage({ type: Messages.DappAuthorization, payload: { pendingDappAuthorization: pendingRequests } })
-//       break
-//     case Messages.LogOutUser:
-//       isLoggedIn = false
-//       keyPairs = []
-//       break
+chrome.runtime.onMessage.addListener(async (msg) => {
+  switch (msg.type) {
+    case Messages.AuthUser:
+      if (validatePassword(msg.payload.password)) {
+        isLoggedIn = true
+        keyPairs = unlockKeyPairs(msg.payload.password)
+        console.log("~ keyPairs", keyPairs)
+      }
+      break
+    case Messages.CheckPendingDappAuth:
+      chrome.runtime.sendMessage({ type: Messages.DappAuthorization, payload: { pendingDappAuthorization: pendingRequests } })
+      break
+    case Messages.LogOutUser:
+      isLoggedIn = false
+      keyPairs = []
+      break
 
-//     case Messages.CheckPendingSign:
-//       chrome.runtime.sendMessage({ type: Messages.CheckPendingSign, payload: { pending: signRequestPending, data: signRequest } })
-//       break
-//     case Messages.RemoveFromKeyring:
-//       isLoggedIn = false
-//       keyPairs = removeFromKeypair(keyPairs, msg.payload.address)
-//       break
-//     case Messages.ConnectedApps:
-//       chrome.runtime.sendMessage({ type: Messages.ConnectedApps, payload: { connectedApps: authorizedDapps } })
-//       break
-//     case Messages.AuthCheck:
-//       chrome.runtime.sendMessage({ type: Messages.AuthCheck, payload: { isLoggedIn } })
-//       break
-//     case Messages.RevokeDapp:
-//       authorizedDapps = authorizedDapps.filter((item) => item !== msg.payload.dappName)
-//       chrome.runtime.sendMessage({ type: Messages.ConnectedApps, payload: { connectedApps: authorizedDapps } })
-//       break
-//     case Messages.ChangeInterval:
-//       if (msg?.payload?.timeout) {
-//         // chrome.idle.setDetectionInterval(Number(msg.payload.timeout) * 60)
-//       }
-//       break
-//     case Messages.SendTransaction:
-//       if (msg?.payload) {
-//         await sendTransaction(keyPairs, msg.payload)
-//       }
-//       break
-//     case Messages.AddToKeyring:
-//       const pair = handleUnlockPair(msg.payload)
-//       keyPairs = [...keyPairs, pair]
-//       break
-//     case Messages.ReEncryptPairs:
-//       reEncryptKeyringPairs(msg.payload.oldPassword, msg.payload.newPassword)
-//       break
-//   }
-// })
+    case Messages.CheckPendingSign:
+      chrome.runtime.sendMessage({ type: Messages.CheckPendingSign, payload: { pending: signRequestPending, data: signRequest } })
+      break
+    case Messages.RemoveFromKeyring:
+      isLoggedIn = false
+      keyPairs = removeFromKeypair(keyPairs, msg.payload.address)
+      break
+    case Messages.ConnectedApps:
+      chrome.runtime.sendMessage({ type: Messages.ConnectedApps, payload: { connectedApps: authorizedDapps } })
+      break
+    case Messages.AuthCheck:
+      chrome.runtime.sendMessage({ type: Messages.AuthCheck, payload: { isLoggedIn } })
+      break
+    case Messages.RevokeDapp:
+      authorizedDapps = authorizedDapps.filter((item) => item !== msg.payload.dappName)
+      chrome.runtime.sendMessage({ type: Messages.ConnectedApps, payload: { connectedApps: authorizedDapps } })
+      break
+    case Messages.ChangeInterval:
+      if (msg?.payload?.timeout) {
+        // chrome.idle.setDetectionInterval(Number(msg.payload.timeout) * 60)
+      }
+      break
+    case Messages.SendTransaction:
+      if (msg?.payload) {
+        await sendTransaction(keyPairs, msg.payload)
+      }
+      break
+    case Messages.AddToKeyring:
+      const pair = handleUnlockPair(msg.payload)
+      keyPairs = [...keyPairs, pair]
+      break
+    case Messages.ReEncryptPairs:
+      reEncryptKeyringPairs(msg.payload.oldPassword, msg.payload.newPassword)
+      break
+  }
+})
 
 chrome.runtime.onInstalled.addListener(async (port) => {
   const prices = await Retrieve_Coin_Prices()
   chrome.runtime.sendMessage({ type: Messages.PriceUpdated, payload: JSON.stringify(prices) })
+
   saveToStorage({ key: StorageKeys.TokenPrices, value: JSON.stringify(prices) })
 
   console.log("Prices injected...")
   const Infos = await Retrieve_Coin_Infos()
   chrome.runtime.sendMessage({ type: Messages.CoinInfoUpdated, payload: JSON.stringify(Infos) })
+
   saveToStorage({ key: StorageKeys.TokenInfos, value: JSON.stringify(Infos) })
 
   console.log("info injected...")
@@ -260,33 +265,33 @@ chrome.runtime.onInstalled.addListener(async (port) => {
   // fetchAccountsTransactions()
 })
 
-// chrome.runtime.onStartup.addListener(async () => {
-//   const prices = await Retrieve_Coin_Prices()
-//   chrome.runtime.sendMessage({ type: Messages.PriceUpdated, payload: JSON.stringify(prices) })
-//   saveToStorage({ key: StorageKeys.TokenPrices, value: JSON.stringify(prices) })
+chrome.runtime.onStartup.addListener(async () => {
+  const prices = await Retrieve_Coin_Prices()
+  chrome.runtime.sendMessage({ type: Messages.PriceUpdated, payload: JSON.stringify(prices) })
+  saveToStorage({ key: StorageKeys.TokenPrices, value: JSON.stringify(prices) })
 
-//   const Infos = await Retrieve_Coin_Infos()
-//   chrome.runtime.sendMessage({ type: Messages.CoinInfoUpdated, payload: JSON.stringify(Infos) })
-//   saveToStorage({ key: StorageKeys.TokenInfos, value: JSON.stringify(Infos) })
+  const Infos = await Retrieve_Coin_Infos()
+  chrome.runtime.sendMessage({ type: Messages.CoinInfoUpdated, payload: JSON.stringify(Infos) })
+  saveToStorage({ key: StorageKeys.TokenInfos, value: JSON.stringify(Infos) })
 
-//   chrome.alarms.create("refresh", { periodInMinutes: 1 })
-//   chrome.alarms.create("refetch-account-balances", { periodInMinutes: 3 })
-//   chrome.alarms.create("24-hr-ballance-change", { periodInMinutes: 3600 })
+  chrome.alarms.create("refresh", { periodInMinutes: 1 })
+  chrome.alarms.create("refetch-account-balances", { periodInMinutes: 3 })
+  chrome.alarms.create("24-hr-ballance-change", { periodInMinutes: 3600 })
 
-//   const timeout = handleInitialIdleTimeout()
-//   // chrome.idle.setDetectionInterval(Number(timeout))
-//   chrome.idle.onStateChanged.addListener((status: string) => {
-//     if (status === "idle") {
-//       isLoggedIn = false
-//     }
-//   })
+  const timeout = handleInitialIdleTimeout()
+  // chrome.idle.setDetectionInterval(Number(timeout))
+  chrome.idle.onStateChanged.addListener((status: string) => {
+    if (status === "idle") {
+      isLoggedIn = false
+    }
+  })
 
-//   await Retrieve_Coin_Decimals()
+  await Retrieve_Coin_Decimals()
 
-//   fetchAccountsBalances()
+  fetchAccountsBalances()
 
-//   // fetchAccountsTransactions()
-// })
+  // fetchAccountsTransactions()
+})
 
 // chrome.alarms.onAlarm.addListener(async (alarm) => {
 //   // coin prices

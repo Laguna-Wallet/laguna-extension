@@ -1,26 +1,20 @@
 import { useEffect, useState } from 'react';
 
 import styled from 'styled-components';
-import { FormikProps, useFormik } from 'formik';
+import { useFormik } from 'formik';
 import { goTo } from 'react-chrome-extension-router';
-
 import MenuHeader from 'components/MenuHeader/MenuHeader';
-import Wallet from 'pages/Wallet/Wallet';
-
 import HumbleInput from 'components/primitives/HumbleInput';
 import Button from 'components/primitives/Button';
-
-import { PlusIcon } from '@heroicons/react/outline';
 import { addAddressSchema } from 'utils/validations';
 import Snackbar from 'components/Snackbar/Snackbar';
-import CloseIcon from 'assets/svgComponents/CloseIcon';
+import AddBigIcon from 'assets/svgComponents/AddBigIcon';
 import { objectValuesToArray } from 'utils';
 import keyring from '@polkadot/ui-keyring';
 import AddressBook from './AddressBook';
-import AddressPencilIcon from 'assets/svgComponents/PencilIcon';
+import EditBigIcon from 'assets/svgComponents/EditBigIcon';
 import { addressExists, isValidPolkadotAddress } from 'utils/polkadot';
 import { SnackbarMessages } from 'utils/types';
-import EditAddressIcon from 'assets/svgComponents/EditAddressIcon';
 
 type AddAddressFormikValues = {
   name: string;
@@ -135,11 +129,9 @@ export default function AddAddress({
       />
       <Content>
         <Form onSubmit={formik.handleSubmit}>
-          <PlusIconContainer>
-            {edit ? (
-              <EditAddressIcon width={40} height={40} fill="#fff" />
-            ) : (
-              <PlusIcon width={46} stroke="#fff" />
+          <PlusIconContainer edit={edit}>
+            {edit ? (<EditBigIcon/>) : (
+              <AddBigIcon/>
             )}
           </PlusIconContainer>
           <HumbleInput
@@ -153,7 +145,7 @@ export default function AddAddress({
             onChange={formik.handleChange}
             bgColor="#303030"
             borderColor="#303030"
-            color="#B1B5C3"
+            color="#fff"
             placeholderColor="#B1B5C3"
           />
           <HumbleInput
@@ -167,7 +159,7 @@ export default function AddAddress({
             error={formik.errors.address}
             bgColor="#303030"
             borderColor="#303030"
-            color="#B1B5C3"
+            color="#fff"
             placeholderColor="#B1B5C3"
           />
           {!edit && (
@@ -185,7 +177,7 @@ export default function AddAddress({
               placeholderColor="#B1B5C3"
             />
           )}
-
+          
           <ButtonContainer>
             {!edit && (
               <Button
@@ -219,6 +211,7 @@ export default function AddAddress({
           message={snackbarError}
           type="error"
           left="0px"
+          transform='translateX(0)'
           bottom="52px"></Snackbar>
       </Content>
     </Container>
@@ -234,7 +227,7 @@ const Container = styled.div<{ redirectedFromSend?: boolean; edit?: boolean }>`
   top: 0;
   left: 0;
   z-index: 999;
-  padding: ${({ edit }) => (edit ? '15px 26px 15px 26px' : '15px 26px 40px 26px')};
+  padding: ${({ edit }) => (edit ? '15px 26px 33px' : '15px 26px 44px')};
   box-sizing: border-box;
   background-color: ${({ redirectedFromSend }) => (redirectedFromSend ? '#fff' : '#18191A')};
   z-index: 99999;
@@ -250,16 +243,15 @@ const Content = styled.div`
   position: relative;
 `;
 
-const PlusIconContainer = styled.div`
-  width: 129px;
-  height: 129px;
+const PlusIconContainer = styled.div<{ redirectedFromSend?: boolean; edit?: boolean }>`
+  width: 115px;
+  height: 115px;
   display: flex;
   justify-content: center;
   align-items: center;
   border-radius: 100%;
   background-color: #000000;
-  margin-top: 22.3px;
-  margin-bottom: 20.7px;
+  margin: ${({ edit }) => (edit ? '22.3px 0 20.7px' : '26px 0 17px')};
 `;
 
 const Form = styled.form`

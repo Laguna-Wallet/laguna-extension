@@ -17,14 +17,7 @@ import BigNumber from 'bignumber.js';
 import ContactsPopup from './ContactsPopup';
 import { isNumeric } from 'utils/validations';
 import { useDispatch, useSelector, connect } from 'react-redux';
-import {
-  Field,
-  change,
-  reset,
-  reduxForm,
-  getFormSyncErrors,
-  formValueSelector
-} from 'redux-form';
+import { Field, change, reset, reduxForm, getFormSyncErrors, formValueSelector } from 'redux-form';
 import Snackbar from 'components/Snackbar/Snackbar';
 import { isObjectEmpty, objectToArray, truncateString } from 'utils';
 import Wallet from 'pages/Wallet/Wallet';
@@ -227,13 +220,15 @@ function SendToken({
           <ContentItem>
             <ContentItemTitle>Amount</ContentItemTitle>
             <TokenAndAmountSelect
-              Icon={<NetworkIcons width='28px' height='28px' chain={selectedAsset?.chain} />}
+              Icon={<NetworkIcons width="28px" height="28px" chain={selectedAsset?.chain} />}
               tokens={[selectedAsset.symbol]}
               value={amount}
             />
 
             <Price>
-              <span>${amount && price ? new BigNumber(amount).times(price).toFormat(2) : '0.00'} USD</span>
+              <span>
+                ${amount && price ? new BigNumber(amount).times(price).toFormat(2) : '0.00'} USD
+              </span>
               <ExchangeIconContainer>
                 <ExchangeIcon />
               </ExchangeIconContainer>
@@ -283,7 +278,7 @@ function SendToken({
 
                 <SendTypeItem onClick={handleClickAccounts}>
                   <IconContainer>
-                    <WalletIcon stroke="#18191A"  />
+                    <WalletIcon stroke="#18191A" />
                   </IconContainer>
                   <Text>Wallets</Text>
                 </SendTypeItem>
@@ -361,7 +356,7 @@ function SendToken({
             type="submit"
             text={loading ? 'Calculating ability to transfer...' : 'Preview Send'}
             justify="center"
-            margin='13px 0 0'
+            margin="13px 0 0"
             Icon={<RightArrow width={23} fill="#fff" />}
             disabled={isDisabled(errors, loading, abilityToTransfer)}
           />

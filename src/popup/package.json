@@ -78,13 +78,12 @@
     "web-vitals": "^1.0.1",
     "yup": "^0.32.11"
   },
-  "homepage": "./dist",
   "scripts": {
     "start": "react-scripts start",
     "test": "react-scripts test",
     "watch:build-cra": "cra-build-watch -v --build-path ../../dist/popup",
     "watch:build": "INLINE_RUNTIME_CHUNK=false craco start",
-    "build": "craco build",
+    "build": "react-scripts build",
     "eject": "react-scripts eject"
   },
   "resolutions": {
