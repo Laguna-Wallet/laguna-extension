@@ -16,7 +16,7 @@ module.exports = {
       options: {
         template: './dist/index.html',
         filename: './popup.html',
-        publicPath: './'
+        publicPath: '/dist'
       }
     }
   ],
