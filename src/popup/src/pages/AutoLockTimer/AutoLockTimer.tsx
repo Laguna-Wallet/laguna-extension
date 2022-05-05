@@ -3,7 +3,6 @@ import MenuHeader from 'components/MenuHeader/MenuHeader';
 import Button from 'components/primitives/Button';
 import HumbleInput from 'components/primitives/HumbleInput';
 import Snackbar from 'components/Snackbar/Snackbar';
-import { millisecondsToSeconds } from 'date-fns';
 import Wallet from 'pages/Wallet/Wallet';
 import { memo, useState } from 'react';
 import { goTo, Link } from 'react-chrome-extension-router';
@@ -111,16 +110,16 @@ const Container = styled.div`
   top: 0;
   left: 0;
   z-index: 999;
-  padding: 15px 15px 40px 15px;
+  padding: 0 17.5px 44px;
   box-sizing: border-box;
   background-color: #111111;
   z-index: 99999;
 `;
 
 const Content = styled.div`
-  width: 100%;
   height: 100%;
   display: flex;
+  padding: 0 8.5px;
   flex-direction: column;
   align-items: center;
   justify-content: center;

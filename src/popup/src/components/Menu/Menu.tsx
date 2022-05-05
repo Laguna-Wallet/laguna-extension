@@ -1,13 +1,6 @@
 import { useState } from 'react';
 import styled from 'styled-components';
-import RightArrow from 'assets/svgComponents/RightArrow';
 import { Link } from 'react-chrome-extension-router';
-import ExportAllAccounts from 'pages/ExportAllAccounts/ExportAllAccounts';
-import SignUp from 'pages/SignUp/SignUp';
-import { LogoutIcon } from '@heroicons/react/outline';
-import WelcomeBack from 'pages/WelcomeBack/WelcomeBack';
-import { clearFromStorage, saveToStorage } from 'utils/chrome';
-import { StorageKeys } from 'utils/types';
 import AddressBook from 'pages/AddressBook/AddressBook';
 import MenuHeader from 'components/MenuHeader/MenuHeader';
 import AutoLockTimer from 'pages/AutoLockTimer/AutoLockTimer';
@@ -120,7 +113,7 @@ const Container = styled.div`
   top: 0;
   left: 0;
   z-index: 999;
-  padding: 10px 17.5px 50px;
+  padding: 0 17.5px;
   box-sizing: border-box;
   background-color: #18191a;
   z-index: 99999;
