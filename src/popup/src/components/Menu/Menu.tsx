@@ -1,13 +1,6 @@
 import { useState } from 'react';
 import styled from 'styled-components';
-import RightArrow from 'assets/svgComponents/RightArrow';
 import { Link } from 'react-chrome-extension-router';
-import ExportAllAccounts from 'pages/ExportAllAccounts/ExportAllAccounts';
-import SignUp from 'pages/SignUp/SignUp';
-import { LogoutIcon } from '@heroicons/react/outline';
-import WelcomeBack from 'pages/WelcomeBack/WelcomeBack';
-import { clearFromStorage, saveToStorage } from 'utils/chrome';
-import { StorageKeys } from 'utils/types';
 import AddressBook from 'pages/AddressBook/AddressBook';
 import MenuHeader from 'components/MenuHeader/MenuHeader';
 import AutoLockTimer from 'pages/AutoLockTimer/AutoLockTimer';
@@ -96,7 +89,7 @@ export default function Menu({ onClose }: Props) {
         <ListItem>
           <StyledLink component={RemoveAccount}>
             <RemoveWalletMenuIcon />
-            <span>Remove Wallet</span>
+            <span>Remove Account</span>
             <RightIconContainer>
               <RightArrowMenuIcon width={15} fill="#777e90" />
             </RightIconContainer>
