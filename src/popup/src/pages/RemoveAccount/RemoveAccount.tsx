@@ -97,19 +97,19 @@ export default function RemoveAccount() {
           <Button
             onClick={() => goTo(Wallet, { isMenuOpen: true })}
             text="Cancel"
-            color="#111"
-            bgColor="#ececec"
-            borderColor="#ececec"
+            color="#fff"
+            bgColor="#414141"
+            borderColor="transparent"
             justify="center"
             margin="0"
           />
 
           <Button
             onClick={handleRemove}
-            text="Remove"
-            color="#fff"
-            bgColor="#fb5a5a"
-            borderColor="#fb5a5a"
+            text="Save"
+            color="#23262F"
+            bgColor="#fff"
+            borderColor="transparent"
             justify="center"
             margin="0 0 0 15px"
           />
