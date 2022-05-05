@@ -6,21 +6,29 @@ import { goTo } from 'react-chrome-extension-router';
 import SignUp from 'pages/SignUp/SignUp';
 import Wallet from 'pages/Wallet/Wallet';
 import LeftArrowThinIcon from 'assets/svgComponents/LeftArrowThinIcon';
+import { useEffect, useState } from 'react';
 
 type Props = {
   title?: string;
   onClose?: () => void;
   onBack?: () => void;
+  uploaded?: boolean;
 };
 
-const calcProgressBarSize = (activeStep: number): string | undefined => {
-  if (activeStep === 0) return '33%';
-  if (activeStep === 1) return '66%';
+const calcProgressBarSize = (activeStep: number, uploaded: boolean): string | undefined => {
+  if (activeStep === 0 && !uploaded) return '33%';
+  if (activeStep === 1 || uploaded) return '66%';
   if (activeStep === 2) return '100%';
 };
 
-export default function WizardHeader({ title, onClose, onBack }: Props) {
+export default function WizardHeader({ title, onClose, uploaded=false, onBack }: Props) {
   const { activeStep, previousStep, isFirstStep } = useWizard();
+  const [activeCount, setActiveCount] = useState(1);
+
+  useEffect(()=>{
+   const step = uploaded? 2: activeStep + 1
+    setActiveCount(step);
+  }, [uploaded, activeStep])
 
   const handleBack = () => {
     if (isFirstStep) {
@@ -48,9 +56,9 @@ export default function WizardHeader({ title, onClose, onBack }: Props) {
           {onClose ? <CloseIcon stroke="#777e90" /> : <LeftArrowThinIcon stroke="#777e90" />}
         </IconContainer>
         <Line>
-          <Progress activeStep={activeStep} calcProgressBarSize={calcProgressBarSize}></Progress>
+          <Progress activeStep={activeStep} uploaded={uploaded} calcProgressBarSize={()=>calcProgressBarSize(activeStep, uploaded)}></Progress>
         </Line>
-        {/* <StepNumber>{activeStep + 1}/3</StepNumber> */}
+        <StepNumber>{activeCount}/3</StepNumber>
       </TopSection>
       {title && (
         <BottomSection>
@@ -86,9 +94,10 @@ const Line = styled.div`
 
 const Progress = styled.div<{
   activeStep: number;
-  calcProgressBarSize: (activeStep: number) => string | undefined;
+  uploaded: boolean;
+  calcProgressBarSize: (activeStep: number, uploaded: boolean, isConfirm: boolean) => string | undefined;
 }>`
-  width: ${({ activeStep }) => calcProgressBarSize(activeStep)};
+  width: ${({ activeStep, uploaded }) => calcProgressBarSize(activeStep, uploaded)};
   background-image: linear-gradient(
     to right top,
     #d7cce2,
