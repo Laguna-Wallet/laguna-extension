@@ -7,16 +7,25 @@ import { calculatePasswordCheckerColor, enhancePasswordStrength } from 'utils';
 import { createPasswordSchema } from 'utils/validations';
 import Snackbar from 'components/Snackbar/Snackbar';
 import { useAccount } from 'context/AccountContext';
-import { memo, useEffect, useState } from 'react';
+import { memo, useState } from 'react';
 import RightArrow from 'assets/svgComponents/RightArrow';
 import HumbleInput from 'components/primitives/HumbleInput';
+import WizardHeader from 'pages/AddImportAccount/WizardHeader';
+import { goTo } from 'react-chrome-extension-router';
+import Wallet from 'pages/Wallet/Wallet';
+import SignUp from 'pages/SignUp/SignUp';
+import SetupComplete from '../../SetupComplete';
 
-function CreatePassword() {
-  const { nextStep } = useWizard();
+type Props = {
+  redirectedFromSignUp?: boolean;
+};
+
+function CreatePassword({ redirectedFromSignUp }: Props) {
+  const account = useAccount();
+  const { nextStep, previousStep } = useWizard();
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
   const [snackbarMessage, setSnackbarMessage] = useState<string>('Please fix the existing errors');
 
-  const account = useAccount();
   // todo refactor, change formik to redux-form
   const formik = useFormik({
     initialValues: {
@@ -50,12 +59,26 @@ function CreatePassword() {
       // }
       return;
     }
-
+    
+    nextStep();
     formik.handleSubmit();
+    goTo(SetupComplete)
   };
 
   return (
     <Container>
+         <WizardHeader
+            onClose={() => {
+              if (redirectedFromSignUp) {
+                goTo(SignUp);
+              } else {
+                goTo(Wallet);
+              }
+            }}
+            onBack={() => {
+              previousStep();
+            }}
+          />
       <Form>
         <MainContent>
           <Title>Create a Password</Title>

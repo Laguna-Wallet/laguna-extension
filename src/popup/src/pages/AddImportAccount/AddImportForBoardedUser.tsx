@@ -1,6 +1,4 @@
 import { Wizard } from 'react-use-wizard';
-// import AddImport from './ChooseAddImport';
-import { useState } from 'react';
 import ImportAccount from './ImportAccount/ImportAccount';
 import CreateAccount from './CreateAccount/CreateAccount';
 
@@ -10,16 +8,19 @@ import Button from 'components/primitives/Button';
 import Wallet from 'pages/Wallet/Wallet';
 import { goTo } from 'react-chrome-extension-router';
 import styled from 'styled-components';
-import AddImportForBoardedHeader from './AddImportForBoardedHeader';
+import SignUp from 'pages/SignUp/SignUp';
+
+import WizardHeader from 'pages/AddImportAccount/WizardHeader';
 
 export default function AddImportForBoardedUser() {
   return (
+    <Wizard>
     <Container>
-      <AddImportForBoardedHeader
+       <WizardHeader
         title={'ADD / IMPORT WALLET'}
         onBack={() => goTo(Wallet)}
-        onClose={() => goTo(Wallet)}
-      />
+        onClose={() => goTo(SignUp)}
+          />
       <PlusIconContainer>
         <PlusIcon width={46} stroke="#999999" />
       </PlusIconContainer>
@@ -39,6 +40,7 @@ export default function AddImportForBoardedUser() {
         />
       </ButtonContainer>
     </Container>
+    </Wizard>
   );
 }
 

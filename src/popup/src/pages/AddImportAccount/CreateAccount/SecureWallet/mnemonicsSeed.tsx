@@ -1,13 +1,10 @@
 import styled from 'styled-components';
-import { mnemonicGenerate } from '@polkadot/util-crypto';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { copyToClipboard } from 'utils';
 import ButtonsIcon from 'assets/svgComponents/ButtonsIcon';
 import Button from 'components/primitives/Button';
-import { ArrowSmRightIcon } from '@heroicons/react/outline';
 import { useWizard } from 'react-use-wizard';
 import { useAccount } from 'context/AccountContext';
-import RightArrow from 'assets/svgComponents/RightArrow';
 import WizardHeader from 'pages/AddImportAccount/WizardHeader';
 import { goTo } from 'react-chrome-extension-router';
 import Wallet from 'pages/Wallet/Wallet';
@@ -15,6 +12,7 @@ import SignUp from 'pages/SignUp/SignUp';
 import Snackbar from 'components/Snackbar/Snackbar';
 import { MnemonicsDescription } from 'components/popups/MnemonicsDescription';
 import { useEnterClickListener } from 'hooks/useEnterClickListener';
+import ConfirmSeed from './confirmSeed';
 
 type Props = {
   redirectedFromSignUp?: boolean;
@@ -24,14 +22,13 @@ type Props = {
 export default function MnemonicsSeed({ redirectedFromSignUp, redirectedFromDashboard }: Props) {
   const { nextStep, previousStep } = useWizard();
   const [mnemonics, setMnemonics] = useState<string[]>([]);
+  const [isConfirm, setIsConfirm] = useState<boolean>(false)
 
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
   const [snackbarMessage, setSnackbarMessage] = useState<string>('');
   const [isMnemonicDescriptionOpen, setIsMnemonicDescriptionOpen] = useState<boolean>();
 
-  const handleClick = () => {
-    nextStep();
-  };
+  const handleClick = () => nextStep();
 
   const account = useAccount();
   useEffect(() => {
@@ -54,9 +51,8 @@ export default function MnemonicsSeed({ redirectedFromSignUp, redirectedFromDash
   useEnterClickListener(() => handleClick(), []);
 
   return (
-    <Container>
+    <Container isConfirm={isConfirm}>
       <WizardHeader
-        // title={'SECURE YOUR WALLET'}
         onClose={() => {
           if (redirectedFromSignUp) {
             goTo(SignUp);
@@ -68,6 +64,7 @@ export default function MnemonicsSeed({ redirectedFromSignUp, redirectedFromDash
           previousStep();
         }}
       />
+      {!isConfirm ? <>
       <MainContent>
         <Title>Backup Seed Phrase</Title>
         <Description>
@@ -108,23 +105,24 @@ export default function MnemonicsSeed({ redirectedFromSignUp, redirectedFromDash
       </MainContent>
 
       <Button
-        onClick={handleClick}
+        onClick={()=>setIsConfirm(true)}
         text={'Continue'}
         justify="center"
         // Icon={<RightArrow width={23} />}
         margin="auto 0px 0px 0px"
       />
+      </> : <ConfirmSeed handleNextSection={handleClick}/>}
     </Container>
   );
 }
 
-const Container = styled.div`
+const Container = styled.div<{isConfirm: boolean}>`
   width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
   background-color: #f9fafb;
-  padding: 30px 16px 38px 16px;
+  padding: ${({isConfirm}) => !isConfirm ? '30px 26px 43px' : '30px 26px 29px'}} 
   box-sizing: border-box;
 `;
 

@@ -3,7 +3,7 @@ import { goTo } from 'react-chrome-extension-router';
 import { useWizard, Wizard } from 'react-use-wizard';
 import { SecurityLevelEnum } from '../CreateAccount';
 import ChooseSecurityLevel from './chooseSecurityLevel';
-import ConfirmSeed from './confirmSeed';
+import CreatePassword from '../CreatePassword/CreatePassword';
 import DecodeToViewSeed from './decodeToVeiwSeed';
 import MnemonicsSeed from './mnemonicsSeed';
 
@@ -44,7 +44,7 @@ export default function SecureWallet({
       )}
 
       {level === SecurityLevelEnum.Secured && (
-        <ConfirmSeed redirectedFromSignUp={redirectedFromSignUp} handleNextSection={nextStep} />
+        <CreatePassword redirectedFromSignUp={redirectedFromSignUp}/>
       )}
     </Wizard>
   );
