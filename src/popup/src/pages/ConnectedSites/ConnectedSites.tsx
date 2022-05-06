@@ -1,24 +1,14 @@
+import { useEffect, useState } from 'react';
 import { CheckIcon } from '@heroicons/react/outline';
-import keyring from '@polkadot/ui-keyring';
-import LockIcon from 'assets/svgComponents/LockIcon';
-import LockLogoIcon from 'assets/svgComponents/LockLogoIcon';
-import RemoveAccountIcon from 'assets/svgComponents/RemoveAccountIcon';
 import ShareIcon from 'assets/svgComponents/ShareIcon';
 import MenuHeader from 'components/MenuHeader/MenuHeader';
-import Button from 'components/primitives/Button';
-import HumbleInput from 'components/primitives/HumbleInput';
 import Snackbar from 'components/Snackbar/Snackbar';
 import { useAccount } from 'context/AccountContext';
 import Wallet from 'pages/Wallet/Wallet';
-import React, { useEffect, useState } from 'react';
-import { goTo, Link } from 'react-chrome-extension-router';
-import { connect, useSelector } from 'react-redux';
-import { Field, reduxForm } from 'redux-form';
+import { goTo } from 'react-chrome-extension-router';
+import { useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { encryptPassword, isObjectEmpty, objectToArray, truncateString } from 'utils';
-import { saveToStorage } from 'utils/chrome';
-import { encryptKeyringPairs, encryptMetaData, validatePassword } from 'utils/polkadot';
-import { Messages, SnackbarMessages, StorageKeys } from 'utils/types';
+import { Messages, SnackbarMessages } from 'utils/types';
 
 // todo proper typing
 type Props = {
@@ -100,7 +90,7 @@ const Container = styled.div`
   top: 0;
   left: 0;
   z-index: 999;
-  padding: 15px 15px 40px 15px;
+  padding: 0px 17.5px 40px;
   box-sizing: border-box;
   background-color: #111111;
   z-index: 99999;

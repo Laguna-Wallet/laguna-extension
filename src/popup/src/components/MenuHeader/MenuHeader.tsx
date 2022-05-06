@@ -9,7 +9,7 @@ import { addAccountMeta, changeAccountPicture } from 'utils/polkadot';
 import PencilIcon from 'assets/svgComponents/PencilIcon';
 import MenuLockIcon from 'assets/svgComponents/MenuIcons/MenuLockIcon';
 import { StorageKeys } from 'utils/types';
-import { clearFromStorage, saveToStorage } from 'utils/chrome';
+import { saveToStorage } from 'utils/chrome';
 import { goTo } from 'react-chrome-extension-router';
 import WelcomeBack from 'pages/WelcomeBack/WelcomeBack';
 import MenuMainLogo from 'assets/svgComponents/MenuIcons/MenuMainLogo';
@@ -164,7 +164,7 @@ const Header = styled.div`
   font-size: 17px;
   font-family: 'Work Sans';
   font-weight: 500;
-  height: 48px;
+  height: 58px;
 `;
 
 const LogoContainer = styled.div`

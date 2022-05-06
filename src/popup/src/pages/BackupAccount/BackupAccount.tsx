@@ -2,8 +2,6 @@ import keyring from '@polkadot/ui-keyring';
 import { useAccount } from 'context/AccountContext';
 import Wallet from 'pages/Wallet/Wallet';
 import { useEffect, useState } from 'react';
-import { connect } from 'react-redux';
-import { reduxForm } from 'redux-form';
 import styled from 'styled-components';
 import AES from 'crypto-js/aes';
 import Utf8 from 'crypto-js/enc-utf8';
@@ -66,7 +64,7 @@ function BackupAccount() {
   });
 
   return (
-    <Container>
+    <Container opened={opened}>
       <MenuHeader
         isOpen={isOpen}
         setOpen={setOpen}
@@ -154,7 +152,7 @@ function BackupAccount() {
 
 export default BackupAccount;
 
-const Container = styled.div`
+const Container = styled.div<{opened: boolean}>`
   width: 100%;
   height: 600px;
   display: flex;
@@ -163,16 +161,17 @@ const Container = styled.div`
   top: 0;
   left: 0;
   z-index: 999;
-  padding: 15px 15px 40px 15px;
+  padding: ${({ opened }) => (opened ? '0 17.5px 24px' : '0 17.5px 32px')};
+  padding: 0 17.5px 32px;
   box-sizing: border-box;
   background-color: #18191a;
   z-index: 99999;
 `;
 
 const Content = styled.div`
-  width: 100%;
   height: 100%;
   display: flex;
+  padding: 0 8.5px;
   flex-direction: column;
   align-items: center;
   justify-content: center;
