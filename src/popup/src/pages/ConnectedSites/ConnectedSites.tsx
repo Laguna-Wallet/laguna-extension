@@ -138,19 +138,20 @@ const RevokeBtn = styled.div`
 `;
 
 const IconContainer = styled.div`
-  width: 129px;
-  height: 129px;
+  width: 167px;
+  height: 167px;
   display: flex;
   justify-content: center;
   align-items: center;
   border-radius: 100%;
   background-color: #000;
-  margin-top: 30px;
+  margin-top: 64px;
 `;
 
 const Text = styled.div`
   font-size: 18px;
   line-height: 1.35;
-  color: #656565;
-  margin-top: 10px;
+  margin-top: 11.7px;
+  font-family: Inter;
+  color: #fff;
 `;

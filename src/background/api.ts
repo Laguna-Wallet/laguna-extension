@@ -1,40 +1,49 @@
+import "@polkadot/wasm-crypto/initOnlyAsm"
+// import "@polkadot/wasm-crypto/initWasmAsm"
+
 import { chains, Messages, networks, StorageKeys } from "./types"
 import { ApiPromise, WsProvider } from "@polkadot/api"
 import { checkBalanceChange, getAccountAddresses, getFromStorage, recodeAddress, recodeToPolkadotAddress, saveToStorage, transformTransfers } from "./utils"
-import { decodePair } from "@polkadot/keyring/pair/decode"
-import { base64Decode } from "@polkadot/util-crypto"
-import keyring from "@polkadot/ui-keyring"
-import { ethereumEncode } from "@polkadot/util-crypto"
-import { stringToU8a } from "@polkadot/util"
+// import { decodePair } from "@polkadot/keyring/pair/decode"
+// import { stringToU8a } from "@polkadot/util"
+// import { base64Decode } from "@polkadot/util-crypto"
+// import keyring from "@polkadot/ui-keyring"
+// import { ethereumEncode } from "@polkadot/util-crypto"
+import { cryptoWaitReady } from "@polkadot/util-crypto"
+// import { initWasm } from "@polkadot/wasm-crypto/initOnlyAsm"
 
 export async function Retrieve_balance_change_rates() {
   // const balances = getFromStorage()
 }
 
 export async function sendTransaction(pairs, { sendTo, sendFrom, amount, chain }) {
-  const pair = pairs.find((pair) => {
-    return recodeToPolkadotAddress(pair.address) === recodeToPolkadotAddress(sendFrom)
-  })
+  try {
+    const pair = pairs.find((pair) => {
+      return recodeToPolkadotAddress(pair.address) === recodeToPolkadotAddress(sendFrom)
+    })
 
-  const wsProvider = new WsProvider(`wss://${chain}.api.onfinality.io/public-ws?apikey=${process.env.ONFINALITY_KEY}`)
-  const api = await ApiPromise.create({ provider: wsProvider })
+    await cryptoWaitReady()
+    const wsProvider = new WsProvider(`wss://${chain}.api.onfinality.io/public-ws?apikey=${process.env.ONFINALITY_KEY}`)
+    const api = await ApiPromise.create({ provider: wsProvider })
+    const unsub = await api.tx.balances.transfer(sendTo, amount).signAndSend(pair, ({ status }: any) => {
+      if (status.isInBlock) {
+        console.log(`Completed at block hash #${status.asInBlock.toString()}`)
 
-  const unsub = await api.tx.balances.transfer(sendTo, amount).signAndSend(pair, ({ status }: any) => {
-    if (status.isInBlock) {
-      console.log(`Completed at block hash #${status.asInBlock.toString()}`)
+        console.log("~ status?.asInBlock?.toString()", status?.asInBlock?.toString())
+        chrome.runtime.sendMessage({ type: Messages.TransactionSuccess, payload: { block: status?.asInBlock?.toString() } })
+        unsub()
+        api.disconnect()
+      } else {
+        console.log(`Current status: ${status.type}`)
+      }
+    })
 
-      console.log("~ status?.asInBlock?.toString()", status?.asInBlock?.toString())
-      chrome.runtime.sendMessage({ type: Messages.TransactionSuccess, payload: { block: status?.asInBlock?.toString() } })
-      unsub()
-      api.disconnect()
-    } else {
-      console.log(`Current status: ${status.type}`)
-    }
-  })
-
-  setTimeout(() => {
-    unsub()
-  }, 30000)
+    // setTimeout(() => {
+    //   unsub()
+    // }, 30000)
+  } catch (err) {
+    console.log("err", err)
+  }
 }
 
 // todo make chains dynamic
