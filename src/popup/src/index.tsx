@@ -1,3 +1,4 @@
+import '@polkadot/wasm-crypto/initOnlyAsm';
 import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 
@@ -12,11 +13,11 @@ import { AccountProvider } from 'context/AccountContext';
 import { Provider } from 'react-redux';
 import { AccountsStore } from 'utils/stores';
 import generateStore from 'redux/store';
-import '@polkadot/wasm-crypto/initOnlyAsm';
 
-cryptoWaitReady().then(async () => {
-  const store = await generateStore();
-  // load all available addresses and accounts
+// cryptoWaitReady().then(async () => {
+// const store = await generateStore();
+// load all available addresses and accounts
+generateStore().then((store) => {
   keyring.loadAll({ ss58Format: 0, type: 'ed25519', store: new AccountsStore() });
   // generateStore.then((store: any) => {
   ReactDOM.render(
@@ -37,4 +38,5 @@ cryptoWaitReady().then(async () => {
 
   reportWebVitals();
 });
+// });
 // });
