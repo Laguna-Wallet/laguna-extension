@@ -1,3 +1,4 @@
+import { SearchIcon } from '@heroicons/react/outline';
 import { memo, useRef } from 'react';
 import styled from 'styled-components/macro';
 import { truncateString } from 'utils';
@@ -23,6 +24,7 @@ type InputProps = {
   marginTop?: string;
   marginBottom?: string;
   fontSize?: string;
+  fontWeight?: string;
   textAlign?: string;
   bgColor?: string;
   hideErrorMsg?: boolean;
@@ -55,6 +57,7 @@ function HumbleInput({
   borderColor = '#f4f4f6',
   height,
   fontSize,
+  fontWeight,
   textAlign,
   bgColor,
   hideErrorMsg,
@@ -104,7 +107,7 @@ function HumbleInput({
           />
         ) : (
           <>
-            {IconAlignment === 'left' && accountMeta && <AccountAvatar img={accountMeta.img} />}
+            {IconAlignment === 'left' && accountMeta && <AccountAvatar img={accountMeta.img}/> }
             <StyledInput
               id={id}
               value={handleValue(value || input?.value)}
@@ -112,6 +115,7 @@ function HumbleInput({
               type={type}
               placeholder={placeholder}
               fontSize={fontSize}
+              fontWeight={fontWeight}
               bgColor={bgColor}
               placeholderColor={placeholderColor}
               autoFocus={!!autoFocus}
@@ -183,6 +187,8 @@ const InputContainer = styled.div<{
 
 const IconContainer = styled.div`
   margin-right: 5px;
+  display: flex;
+  align-items: center;
 `;
 
 const StyledInput = styled.input<{

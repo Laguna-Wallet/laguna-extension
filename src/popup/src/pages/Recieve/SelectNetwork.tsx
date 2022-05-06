@@ -42,12 +42,13 @@ export default function SelectNetwork({ networks, setSelectedNetwork }: Props) {
   return (
     <Container>
       <Header
-        title="SELECT NETWORK"
+        title="SELECT ASSET"
         bgColor="#f2f2f2"
         closeAction={() => {
           goTo(Wallet);
         }}
         backAction={() => goTo(Wallet)}
+        stroke= '#777E91'
       />
       <Content>
         <HumbleInput
@@ -63,7 +64,10 @@ export default function SelectNetwork({ networks, setSelectedNetwork }: Props) {
           placeholderColor="#777e90"
           placeholder="Search"
           height="45px"
-          marginTop="20px"
+          marginTop="0"
+          fontSize='14px'
+          fontWeight='500'
+          IconAlignment='left'
           Icon={<LoopIcon />}
         />
         <List>
@@ -94,19 +98,19 @@ const Container = styled.div`
   position: relative;
   position: relative;
   background-size: cover;
-  padding-top: 110px;
+  padding-top: 92px;
 `;
 
 const Content = styled.div`
   height: 100%;
-  padding: 15px;
+  padding: 20px 26px;
   background-color: #fff;
   border-top-left-radius: 15px;
   border-top-right-radius: 15px;
 `;
 
 const List = styled.div`
-  margin-top: 24px;
+  margin-top: 12px;
   padding-bottom: 20px;
   box-sizing: border-box;
 `;

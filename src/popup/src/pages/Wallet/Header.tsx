@@ -17,6 +17,7 @@ type Props = {
   iconStyle?: 'Close' | 'LeftArrow';
   menuInitialOpenState?: boolean;
   bgColor?: string;
+  stroke?: string;
 };
 
 export default function Header({
@@ -25,7 +26,8 @@ export default function Header({
   iconStyle,
   closeAction,
   menuInitialOpenState,
-  bgColor
+  bgColor,
+  stroke
 }: Props) {
   const account = useAccount();
 
@@ -60,7 +62,7 @@ export default function Header({
         <TitleContainer>
           {backAction && (
             <TopIconContainer onClick={backAction}>
-              <BackIcon />
+              <BackIcon stroke={stroke}/>
             </TopIconContainer>
           )}
 
@@ -154,6 +156,7 @@ const TitleContainer = styled.div`
   justify-content: center;
   align-items: center;
   text-transform: uppercase;
+  margin-top: 7px;
 `;
 
 const TopIconContainer = styled.div`
@@ -162,7 +165,6 @@ const TopIconContainer = styled.div`
 
 const CloseIconContainer = styled.div`
   cursor:pointer;
-  margin-right: 6px;
 `
 
 const Title = styled.span`
@@ -172,6 +174,6 @@ const Title = styled.span`
   color: #18191a;
   font-weight: 500;
   font-size: 17px;
-  line-height: 38px;
+  line-height: 40px;
   letter-spacing: 0.1em;
 `;

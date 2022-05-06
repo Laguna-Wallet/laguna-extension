@@ -57,7 +57,8 @@ export default function ReceiveToken({ selectedNetwork, recoded, propsFromTokenD
         bgColor="#f2f2f2"
       />
       <Content>
-        {recoded && <QRCode value={recoded} size={180} />}
+        {recoded &&
+        <QRCodeWrapper><QRCode value={recoded} size={180} /></QRCodeWrapper> }
 
         <ContentItem>
           <Text>ADDRESS:</Text>
@@ -127,6 +128,11 @@ const Content = styled.div`
   padding: 0 35px;
   box-sizing: border-box;
 `;
+
+const QRCodeWrapper = styled.div`
+  border: 1px solid #F2F2F2;
+  padding: 21px 22px;
+`
 
 const ContentItem = styled.div`
   width: 100%;
