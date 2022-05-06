@@ -1,7 +1,4 @@
-import keyring from '@polkadot/ui-keyring';
-import LockIcon from 'assets/svgComponents/LockIcon';
 import LockLogoIcon from 'assets/svgComponents/LockLogoIcon';
-import RemoveAccountIcon from 'assets/svgComponents/RemoveAccountIcon';
 import MenuHeader from 'components/MenuHeader/MenuHeader';
 import Button from 'components/primitives/Button';
 import HumbleInput from 'components/primitives/HumbleInput';
@@ -9,11 +6,11 @@ import Snackbar from 'components/Snackbar/Snackbar';
 import { useAccount } from 'context/AccountContext';
 import Wallet from 'pages/Wallet/Wallet';
 import { useState } from 'react';
-import { goTo, Link } from 'react-chrome-extension-router';
+import { goTo } from 'react-chrome-extension-router';
 import { connect } from 'react-redux';
 import { Field, reduxForm } from 'redux-form';
 import styled from 'styled-components';
-import { encryptPassword, isObjectEmpty, objectToArray, truncateString } from 'utils';
+import { encryptPassword, isObjectEmpty, objectToArray } from 'utils';
 import { saveToStorage } from 'utils/chrome';
 import { encryptKeyringPairs, encryptMetaData, validatePassword } from 'utils/polkadot';
 import { Messages, StorageKeys } from 'utils/types';
@@ -215,16 +212,16 @@ const Container = styled.div`
   top: 0;
   left: 0;
   z-index: 999;
-  padding: 15px 15px 40px 15px;
+  padding: 0 17.5px 44px;
   box-sizing: border-box;
   background-color: #111111;
   z-index: 99999;
 `;
 
 const Content = styled.div`
-  width: 100%;
   height: 100%;
   display: flex;
+  padding: 0 8.5px;
   flex-direction: column;
   align-items: center;
   justify-content: center;

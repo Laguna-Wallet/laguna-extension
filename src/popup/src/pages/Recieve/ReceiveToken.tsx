@@ -3,12 +3,11 @@ import Header from 'pages/Wallet/Header';
 import WrongQRCode from 'react-qr-code';
 const QRCode: any = WrongQRCode;
 
-import { useAccount } from 'context/AccountContext';
 import HumbleInput from 'components/primitives/HumbleInput';
 import ReceiveSelect from './components/ReceiveSelect';
 import { useState } from 'react';
 
-import { Asset, Network } from 'utils/types';
+import { Network } from 'utils/types';
 import { useWizard } from 'react-use-wizard';
 import { goTo } from 'react-chrome-extension-router';
 import Wallet from 'pages/Wallet/Wallet';
@@ -24,9 +23,6 @@ type Props = {
 
 export default function ReceiveToken({ selectedNetwork, recoded, propsFromTokenDashboard }: Props) {
   const { previousStep } = useWizard();
-
-  const account = useAccount();
-  const activeAccount = account.getActiveAccount();
 
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
   const [snackbarMessage, setSnackbarMessage] = useState<string>('');
@@ -68,9 +64,11 @@ export default function ReceiveToken({ selectedNetwork, recoded, propsFromTokenD
             onChange={handleChange}
             value={recoded}
             height="48px"
-            marginTop="10px"
             bgColor="#F2F2F2"
             borderColor="#F2F2F2"
+            fontSize='16px'
+            padding='12px 16px'
+            color='#000'
             truncate={true}
             copy={true}
             handleClickCopy={handleClickCopy}
@@ -111,12 +109,11 @@ const Container = styled.div<{ bg?: string }>`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding-top: 150px;
-  padding-bottom: 25px;
-  background-color: #fff;
+  padding-top: 92px;
   box-sizing: border-box;
   position: relative;
   background-size: cover;
+  background-color: #F2F2F2;
 `;
 
 const Content = styled.div`
@@ -125,35 +122,46 @@ const Content = styled.div`
   display: flex;
   align-items: center;
   flex-direction: column;
-  padding: 0 35px;
+  padding: 24px 26px 30.5px;
   box-sizing: border-box;
+  border-radius: 10px 10px 0px 0px;
+  background-color: #fff;
 `;
 
 const QRCodeWrapper = styled.div`
   border: 1px solid #F2F2F2;
   padding: 21px 22px;
+  margin-bottom: 5px;
 `
 
 const ContentItem = styled.div`
   width: 100%;
-  margin-top: 15px;
+  margin-top: 13px;
 `;
 
 const Text = styled.div`
   font-family: Inter;
   font-size: 11px;
   font-weight: 500;
-  color: #777e90;
+  margin-bottom: 2px;
+  line-height: 144%;
+  display: flex;
+  align-items: center;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #777E91;
 `;
 
 const BottomText = styled.div`
-  width: 230px;
-  font-family: 'SFCompactDisplayRegular';
+  max-width: 200px;
+  width: 100%;
   font-weight: 400;
-  font-size: 14px;
-  color: #000000;
-  margin-top: auto;
+  margin-top: 30px;
   text-align: center;
+  font-family: 'IBM Plex Sans';
+  font-size: 12px;
+  text-align: center;
+  color: #18191A;
   span {
     text-transform: capitalize;
   }

@@ -112,17 +112,17 @@ const Container = styled.div`
   top: 0;
   left: 0;
   z-index: 999;
-  padding: 15px 17.5px 44px;
+  padding: 0 17.5px 44px;
   box-sizing: border-box;
   background-color: #111111;
   z-index: 99999;
 `;
 
 const Content = styled.div`
-  width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
+  padding: 0 8.5px;
   align-items: center;
   justify-content: center;
 `;

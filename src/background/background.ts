@@ -1,3 +1,4 @@
+// import "@polkadot/wasm-crypto/initOnlyAsm"
 import { Messages, StorageKeys } from "./types"
 import {
   fetchAccountsBalances,
@@ -21,6 +22,11 @@ import keyring from "@polkadot/ui-keyring"
 import { TypeRegistry } from "@polkadot/types"
 import { AccountsStore } from "./stores"
 
+// import { initWasm } from "@polkadot/wasm-crypto/initOnlyAsm"
+// import "@polkadot/wasm-crypto/initOnlyAsm"
+// import "@polkadot/wasm-crypto/initOnlyAsm"
+// import "@polkadot/wasm-crypto/initWasmAsm"
+
 let isLoggedIn = false
 let keyPairs = []
 let signRequestPending = false
@@ -30,9 +36,8 @@ const registry = new TypeRegistry()
 let authorizedDapps = []
 let pendingRequests = []
 let declinedDapps = []
-import "@polkadot/wasm-crypto/initOnlyAsm"
 
-keyring.loadAll({ type: "ed25519", store: new AccountsStore() })
+keyring.loadAll({ ss58Format: 0, type: "ed25519", store: new AccountsStore() })
 
 function onMessage(msg, port) {
   console.log("received", msg, "from", port.sender)

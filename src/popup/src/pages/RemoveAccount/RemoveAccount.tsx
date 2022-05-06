@@ -6,8 +6,8 @@ import HumbleInput from 'components/primitives/HumbleInput';
 import Snackbar from 'components/Snackbar/Snackbar';
 import { useAccount } from 'context/AccountContext';
 import Wallet from 'pages/Wallet/Wallet';
-import React, { useState } from 'react';
-import { goTo, Link } from 'react-chrome-extension-router';
+import { useState } from 'react';
+import { goTo } from 'react-chrome-extension-router';
 import { useDispatch } from 'react-redux';
 import { toggleLoading } from 'redux/actions';
 import styled from 'styled-components';
@@ -61,7 +61,7 @@ export default function RemoveAccount() {
       <MenuHeader
         isOpen={isOpen}
         setOpen={setOpen}
-        title="REMOVE WALLET"
+        title="REMOVE ACCOUNT"
         onClose={() => goTo(Wallet)}
         backAction={() => goTo(Wallet, { isMenuOpen: true })}
       />
@@ -90,28 +90,28 @@ export default function RemoveAccount() {
           borderColor="#color"
           color="#9c9c9c"
           placeholderColor="#9c9c9c"
-          marginTop="auto"
+          marginTop="0"
         />
 
         <ButtonContainer>
           <Button
             onClick={() => goTo(Wallet, { isMenuOpen: true })}
             text="Cancel"
-            color="#111"
-            bgColor="#ececec"
-            borderColor="#ececec"
+            color="#fff"
+            bgColor="#414141"
+            borderColor="transparent"
             justify="center"
-            margin="10px 0 0 0"
+            margin="0"
           />
 
           <Button
             onClick={handleRemove}
-            text="Remove"
-            color="#fff"
-            bgColor="#fb5a5a"
-            borderColor="#fb5a5a"
+            text="Save"
+            color="#23262F"
+            bgColor="#fff"
+            borderColor="transparent"
             justify="center"
-            margin="10px 0 0 10px"
+            margin="0 0 0 15px"
           />
         </ButtonContainer>
       </Content>
@@ -136,30 +136,30 @@ const Container = styled.div`
   top: 0;
   left: 0;
   z-index: 999;
-  padding: 15px 15px 40px 15px;
+  padding: 0 17.5px 44px;
   box-sizing: border-box;
   background-color: #111111;
   z-index: 99999;
 `;
 
 const Content = styled.div`
-  width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
+  padding: 0 8.5px;
   align-items: center;
   justify-content: center;
 `;
 
 const IconContainer = styled.div`
-  width: 129px;
-  height: 129px;
+  width: 122px;
+  height: 122px;
   display: flex;
   justify-content: center;
   align-items: center;
   border-radius: 100%;
   background-color: #000;
-  margin-top: auto;
+  margin-top: 57px;
 `;
 
 const StyledLink = styled.div`
@@ -172,7 +172,7 @@ const Text = styled.div`
   font-family: SFCompactDisplayRegular;
   font-size: 18px;
   color: #dfdfdf;
-  margin-top: 30px;
+  margin: 39px 0;
   text-align: center;
   border: 1px solid #fffa7d;
   padding: 10px;
@@ -185,4 +185,5 @@ const Text = styled.div`
 const ButtonContainer = styled.div`
   width: 100%;
   display: flex;
+  margin-top: 19px;
 `;

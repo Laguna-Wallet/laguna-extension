@@ -227,17 +227,17 @@ const Container = styled.div<{ redirectedFromSend?: boolean; edit?: boolean }>`
   top: 0;
   left: 0;
   z-index: 999;
-  padding: ${({ edit }) => (edit ? '15px 26px 33px' : '15px 26px 44px')};
+  padding: ${({ edit }) => (edit ? '0 17.5px 33px' : '0 17.5px 44px')};
   box-sizing: border-box;
   background-color: ${({ redirectedFromSend }) => (redirectedFromSend ? '#fff' : '#18191A')};
   z-index: 99999;
 `;
 
 const Content = styled.div`
-  width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
+  padding: 0 8.5px;
   align-items: center;
   justify-content: center;
   position: relative;

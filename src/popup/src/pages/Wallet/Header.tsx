@@ -91,7 +91,6 @@ const Container = styled.div<{ bgColor?: string }>`
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
-  height: 42px;
   padding: 0 15px;
   box-sizing: border-box;
   position: absolute;
@@ -104,6 +103,7 @@ const Content = styled.div`
   height: 100%;
   width: 100%;
   padding-top: 5px;
+  height: 40px;
   box-sizing: border-box;
   display: flex;
   align-items: center;
