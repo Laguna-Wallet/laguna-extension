@@ -13,6 +13,7 @@ import { saveToStorage } from 'utils/chrome';
 import { goTo } from 'react-chrome-extension-router';
 import WelcomeBack from 'pages/WelcomeBack/WelcomeBack';
 import MenuMainLogo from 'assets/svgComponents/MenuIcons/MenuMainLogo';
+import AvatarEditIcon from 'assets/svgComponents/AvatarEditIcon';
 
 type Props = {
   isOpen: boolean;
@@ -112,7 +113,7 @@ export default function MenuHeader({
         <User>
           <IconContainer img={accountImg} onClick={onButtonClick}>
             <ImageContainerOverlay>
-            <PencilIcon width={25} height={25} fill="#fff" />
+            <AvatarEditIcon/>
             </ImageContainerOverlay>
           </IconContainer>
           <input
@@ -218,12 +219,12 @@ const Text = styled.div`
 
 const Name = styled.div`
   display: flex;
-  justify-content: space-between;
   align-items: center;
-`;
-
-const NameInput = styled.input`
-  width: 200px;
+  `;
+  
+  const NameInput = styled.input`
+  max-width: 146px;
+  width: 100%;
   background-color: transparent;
   color: #fff;
   font-size: 23px;
@@ -242,7 +243,6 @@ const ImageContainerOverlay = styled.div`
   width: 100%;
   height: 100%;
   background-color: #1111118c;
-  position: absolute;
   cursor: pointer;
   align-items: center;
   justify-content: center;
@@ -258,7 +258,6 @@ const IconContainer = styled.div<{ img: string }>`
   background-size: contain;
   background-position: center center;
   background-repeat: no-repeat;
-  position: relative;
   &:hover ${ImageContainerOverlay} {
     display: flex;
   }

@@ -89,7 +89,7 @@ export default function Menu({ onClose }: Props) {
         <ListItem>
           <StyledLink component={RemoveAccount}>
             <RemoveWalletMenuIcon />
-            <span>Remove Wallet</span>
+            <span>Remove Account</span>
             <RightIconContainer>
               <RightArrowMenuIcon width={15} fill="#777e90" />
             </RightIconContainer>
