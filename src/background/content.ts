@@ -9,7 +9,8 @@ function connect() {
     console.log("received", msg, "from bg")
   })
 }
-// connect()
+
+connect()
 
 const port = chrome.runtime.connect({ name: process.env.MESSAGING_PORT })
 // handles from background to page
@@ -25,6 +26,7 @@ window.addEventListener("message", ({ data, source }) => {
     return
   }
 
+  console.log("~ data", data)
   port.postMessage({ ...data, origin: process.env.MESSAGE_ORIGIN_CONTENT })
   // if (data.message === "GET_ACCOUNTS") {
   // }

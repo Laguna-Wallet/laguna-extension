@@ -97,6 +97,7 @@ export default function Send({ initialIsContactsPopupOpen, propsFromTokenDashboa
 
       setLoading(true);
       const api = await getApiInstance(reduxSendTokenState.selectedAsset.chain);
+      console.log('~ api', api);
       const factor = new BigNumber(10).pow(new BigNumber(api.registry.chainDecimals[0]));
       const amount = new BigNumber(form.amount).multipliedBy(factor);
       const balance = await api.derive.balances.all(account.getActiveAccount().address);
