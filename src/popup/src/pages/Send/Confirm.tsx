@@ -1,20 +1,9 @@
 import styled from 'styled-components';
-import walletBG from 'assets/imgs/walletBG.jpg';
 import loadingTransactionBg from 'assets/imgs/loading-transaction.png';
 import Header from 'pages/Wallet/Header';
-import SelectAsset from './SelectAsset';
-import Select from 'pages/Send/TokenAndAmountSelect';
-import BarcodeIcon from 'assets/svgComponents/BarcodeIcon';
-import SharpIcon from 'assets/svgComponents/SharpIcon';
-import WalletIcon from 'assets/svgComponents/WalletIcon';
-import ContactsIcon from 'assets/svgComponents/ContactsIcon';
-import HumbleInput from 'components/primitives/HumbleInput';
 import Button from 'components/primitives/Button';
-import RightArrow from 'assets/svgComponents/RightArrow';
-import Send, { FlowValue, SendAccountFlowEnum } from './Send';
-import SwipeAndConfirm from 'components/primitives/SwipeAndConfirm';
-import TransactionSent from './TransactionSent';
-import { goTo, Link } from 'react-chrome-extension-router';
+import { FlowValue, SendAccountFlowEnum } from './Send';
+import { goTo} from 'react-chrome-extension-router';
 import { useAccount } from 'context/AccountContext';
 import { useWizard } from 'react-use-wizard';
 import { memo, useEffect, useState } from 'react';
@@ -198,7 +187,7 @@ function Confirm({ fee, transfer, amountToSend, recoded, setBlockHash, flow }: P
       {loadingTransaction && (
         <Popup justify="center" align="center" onClose={() => undefined}>
           <LoadingContainer bg={loadingTransactionBg}>
-            <ClassicSpinner size={60} color="#fff" loading={true} />
+            <ClassicSpinner size={130} color="#fff" loading={true} />
           </LoadingContainer>
         </Popup>
       )}
@@ -222,6 +211,7 @@ const Container = styled.div<{ bg?: string }>`
   background-size: cover;
   padding-bottom: 38px;
   padding-top: 110px;
+  overflow: hidden;
 `;
 
 const Content = styled.div`
@@ -356,4 +346,37 @@ const LoadingContainer = styled.div<{ bg: string }>`
   display: flex;
   align-items: center;
   justify-content: center;
+  div{
+    div{
+      width: 2px;
+      height: 10px;
+    }
+    :nth-child(4), :nth-child(8), :nth-child(12), :nth-child(16){
+      display: none;
+    }
+    :nth-child(2){
+      transform: rotate(30deg) translate(0,-65px);
+    }
+    :nth-child(3){
+      transform: rotate(60deg) translate(0,-65px);
+    }
+    :nth-child(6){
+      transform: rotate(120deg) translate(0,-65px);
+    }
+    :nth-child(7){
+      transform: rotate(150deg) translate(0,-65px);
+    }
+    :nth-child(10){
+      transform: rotate(210deg) translate(0,-65px);
+    }
+    :nth-child(11){
+      transform: rotate(240deg) translate(0,-65px);
+    }
+    :nth-child(14){
+      transform: rotate(300deg) translate(0,-65px);
+    }
+    :nth-child(15){
+      transform: rotate(330deg) translate(0,-65px);
+    }
+  }
 `;
