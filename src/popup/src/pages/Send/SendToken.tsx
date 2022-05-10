@@ -186,7 +186,7 @@ function SendToken({
     abilityToTransfer: boolean
   ) => {
     if (!isObjectEmpty(errors)) return true;
-    if (loading) return true;
+    if (!loading) return true;
     if (!abilityToTransfer) return true;
     return false;
   };
