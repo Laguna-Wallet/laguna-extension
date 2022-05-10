@@ -1,7 +1,9 @@
+import { SearchIcon } from '@heroicons/react/outline';
 import { memo, useRef } from 'react';
 import styled from 'styled-components/macro';
 import { truncateString } from 'utils';
 import { AccountMeta } from 'utils/types';
+import CopyIcon from 'assets/svgComponents/CopyIcon';
 
 type InputProps = {
   id: string;
@@ -23,11 +25,13 @@ type InputProps = {
   marginTop?: string;
   marginBottom?: string;
   fontSize?: string;
+  fontWeight?: string;
   textAlign?: string;
   bgColor?: string;
   hideErrorMsg?: boolean;
   autoFocus?: boolean;
   input?: any;
+  padding?: string;
   truncate?: boolean;
   copy?: boolean;
   handleClickCopy?: (value: string) => void;
@@ -55,6 +59,7 @@ function HumbleInput({
   borderColor = '#f4f4f6',
   height,
   fontSize,
+  fontWeight,
   textAlign,
   bgColor,
   hideErrorMsg,
@@ -68,6 +73,7 @@ function HumbleInput({
   rightLabel,
   placeholderColor,
   Icon,
+  padding,
   IconAlignment,
   accountMeta,
   readOnly
@@ -88,6 +94,7 @@ function HumbleInput({
         borderColor={borderColor}
         bgColor={bgColor}
         color={color}
+        padding={padding}
         height={height}>
         {IconAlignment === 'left' && Icon && <IconContainer>{Icon}</IconContainer>}
         {type === 'textarea' ? (
@@ -104,7 +111,7 @@ function HumbleInput({
           />
         ) : (
           <>
-            {IconAlignment === 'left' && accountMeta && <AccountAvatar img={accountMeta.img} />}
+            {IconAlignment === 'left' && accountMeta && <AccountAvatar img={accountMeta.img}/> }
             <StyledInput
               id={id}
               value={handleValue(value || input?.value)}
@@ -112,6 +119,7 @@ function HumbleInput({
               type={type}
               placeholder={placeholder}
               fontSize={fontSize}
+              fontWeight={fontWeight}
               bgColor={bgColor}
               placeholderColor={placeholderColor}
               autoFocus={!!autoFocus}
@@ -120,7 +128,10 @@ function HumbleInput({
             />
             {IconAlignment === 'right' && Icon && <IconContainer>{Icon}</IconContainer>}
             {copy && handleClickCopy && (
-              <Copy onClick={() => handleClickCopy(value || input?.value)}>Copy</Copy>
+              <Copy onClick={() => handleClickCopy(value || input?.value)}>
+                <CopyIcon/>
+                <Text>Copy</Text>
+                </Copy>
             )}
             {rightLabel && <RightLabel>{rightLabel}</RightLabel>}
 
@@ -164,6 +175,7 @@ const InputContainer = styled.div<{
   error: boolean;
   height?: string;
   bgColor?: string;
+  padding?: string;
   errorBorderColor?: string;
 }>`
   width: 100%;
@@ -171,7 +183,7 @@ const InputContainer = styled.div<{
   display: flex;
   align-items: center;
   /* flex-direction: column; */
-  padding: 8px 8px 5px 16px;
+  padding: ${({padding}) => padding || '8px 8px 5px 16px'} ;
   box-sizing: border-box;
   border: 1px solid;
   border-color: ${({ error, borderColor, errorBorderColor }) =>
@@ -183,6 +195,8 @@ const InputContainer = styled.div<{
 
 const IconContainer = styled.div`
   margin-right: 5px;
+  display: flex;
+  align-items: center;
 `;
 
 const StyledInput = styled.input<{
@@ -254,20 +268,29 @@ const AccountAvatar = styled.div<{ img: string }>`
 const Paste = styled.div``;
 
 const Copy = styled.div`
-  width: 95px;
-  height: 30px;
-  background-image: linear-gradient(to right, #1cc3ce, #b9e260);
   position: absolute;
-  right: 10px;
+  right: 16px;
   border-radius: 5px;
   color: #fff;
-  font-size: 16px;
-  font-family: Inter;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  padding: 4.5px 12px;
+  background-color: #18191A;
+  border-radius: 20px;
 `;
+
+const Text = styled.p`
+font-family: 'IBM Plex Sans';
+font-weight: 400;
+font-size: 12px;
+display: flex;
+align-items: center;
+text-align: center;
+color: #FFFFFF;
+margin-left: 4px;
+`
 
 const RightLabel = styled.span`
   position: absolute;
