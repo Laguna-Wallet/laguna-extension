@@ -17,10 +17,13 @@ import {
   removeFromKeypair,
   reEncryptKeyringPairs,
   recodeToPolkadotAddress,
+  isInPhishingList,
 } from "./utils"
 import keyring from "@polkadot/ui-keyring"
 import { TypeRegistry } from "@polkadot/types"
 import { AccountsStore } from "./stores"
+import { ApiPromise } from "@polkadot/api"
+import { getCurrentTab } from "./utils"
 
 // import { initWasm } from "@polkadot/wasm-crypto/initOnlyAsm"
 // import "@polkadot/wasm-crypto/initOnlyAsm"
@@ -61,7 +64,7 @@ chrome.runtime.onConnect.addListener((port: any) => {
   port.onMessage.addListener(onMessage)
 
   port.onDisconnect.addListener(deleteTimer)
-  port.timer = setTimeout(forceReconnect, 2000, port)
+  port.timer = setTimeout(forceReconnect, 4500, port)
 })
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
@@ -74,19 +77,21 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
       .then(() => {
         console.log("INJECTED THE FOREGROUND SCRIPT.")
       })
-      .catch((err) => console.log("ierorie", err))
+      .catch((err) => console.log("err", err))
   }
 })
 
-chrome.runtime.onConnectExternal.addListener(function (port) {
-  chrome.runtime.onMessageExternal.addListener(async (msg) => {
+chrome.runtime.onConnect.addListener(function (port) {
+  chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
     if (msg.type === Messages.DappAuthRequest) {
       const dappName = msg.payload.pendingDapp[0].request.requestOrigin
       if (authorizedDapps.includes(dappName) || declinedDapps.includes(dappName)) return
       if (msg.payload.approved) {
         pendingRequests = []
         authorizedDapps.push(dappName)
+
         port.postMessage({ ...msg.payload.pendingDapp[0], payload: { id: msg.payload.pendingDapp[0].id, approved: true } })
+        sendResponse({})
         return true
       } else {
         pendingRequests = []
@@ -102,7 +107,6 @@ chrome.runtime.onConnectExternal.addListener(function (port) {
           return recodeToPolkadotAddress(pair.address) === recodeToPolkadotAddress(data.request.address)
         })
         if (data.message === "SIGN_PAYLOAD") {
-          registry.setSignedExtensions(data.request.signedExtensions)
           const result = registry.createType("ExtrinsicPayload", data.request, { version: data.request.version }).sign(pair)
           port.postMessage({ ...data, payload: { id: data.id, approved: true, ...result } })
         }
@@ -113,7 +117,8 @@ chrome.runtime.onConnectExternal.addListener(function (port) {
       signRequest = {}
     }
   })
-  port.onMessage.addListener((data) => {
+
+  port.onMessage.addListener(async (data) => {
     if (data.message === "GET_ACCOUNTS") {
       port.postMessage({ ...data, payload: keyring.getPairs() })
     }
@@ -158,14 +163,27 @@ chrome.runtime.onConnectExternal.addListener(function (port) {
       // port.postMessage({ ...data, payload: { id: data.id, result } })
     }
     if (data.message === "AUTHORIZE_TAB") {
-      if (authorizedDapps.includes(data.request.requestOrigin)) {
+      console.log("~ await getCurrentTab()", await getCurrentTab())
+      const host = new URL((await getCurrentTab()).url).host
+
+      isInPhishingList(host).then((isDenied) => {
+        console.log("~ isDenied", isDenied)
+        if (isDenied) {
+          port.postMessage({ ...data, payload: { id: data.id, approved: false } })
+          return
+        }
+      })
+
+      if (authorizedDapps.includes(host)) {
         port.postMessage({ ...data, payload: { id: data.id, approved: true } })
         return true
       }
-      if (declinedDapps.includes(data.request.requestOrigin)) {
+
+      if (declinedDapps.includes(host)) {
         port.postMessage({ ...data, payload: { id: data.id, approved: false } })
         return false
       }
+
       const POPUP_URL = chrome.runtime.getURL("popup/index.html")
       if (pendingRequests.length === 0) {
         pendingRequests.push(data)
@@ -183,13 +201,12 @@ chrome.runtime.onConnectExternal.addListener(function (port) {
   })
 })
 
-chrome.runtime.onMessage.addListener(async (msg) => {
+chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
   switch (msg.type) {
     case Messages.AuthUser:
       if (validatePassword(msg.payload.password)) {
         isLoggedIn = true
         keyPairs = unlockKeyPairs(msg.payload.password)
-        console.log("~ keyPairs", keyPairs)
       }
       break
     case Messages.CheckPendingDappAuth:
@@ -254,14 +271,16 @@ chrome.runtime.onInstalled.addListener(async (port) => {
   chrome.alarms.create("refresh", { periodInMinutes: 1 })
   chrome.alarms.create("refetch-account-balances", { periodInMinutes: 3 })
   chrome.alarms.create("24-hr-ballance-change", { periodInMinutes: 3600 })
-  const timeout = await handleInitialIdleTimeout()
 
+  chrome.alarms.create("keep alive", { periodInMinutes: 1 })
+
+  // const timeout = await handleInitialIdleTimeout()
   // chrome.idle.setDetectionInterval(Number(timeout))
-  chrome.idle.onStateChanged.addListener((status: string) => {
-    if (status === "idle") {
-      isLoggedIn = false
-    }
-  })
+  // chrome.idle.onStateChanged.addListener((status: string) => {
+  //   if (status === "idle") {
+  //     isLoggedIn = false
+  //   }
+  // })
 
   await Retrieve_Coin_Decimals()
 
@@ -283,13 +302,13 @@ chrome.runtime.onStartup.addListener(async () => {
   chrome.alarms.create("refetch-account-balances", { periodInMinutes: 3 })
   chrome.alarms.create("24-hr-ballance-change", { periodInMinutes: 3600 })
 
-  const timeout = handleInitialIdleTimeout()
-  // chrome.idle.setDetectionInterval(Number(timeout))
-  chrome.idle.onStateChanged.addListener((status: string) => {
-    if (status === "idle") {
-      isLoggedIn = false
-    }
-  })
+  // const timeout = handleInitialIdleTimeout()
+  // // chrome.idle.setDetectionInterval(Number(timeout))
+  // chrome.idle.onStateChanged.addListener((status: string) => {
+  //   if (status === "idle") {
+  //     isLoggedIn = false
+  //   }
+  // })
 
   await Retrieve_Coin_Decimals()
 
@@ -298,18 +317,21 @@ chrome.runtime.onStartup.addListener(async () => {
   // fetchAccountsTransactions()
 })
 
-// chrome.alarms.onAlarm.addListener(async (alarm) => {
-//   // coin prices
-//   const prices = await Retrieve_Coin_Prices()
-//   chrome.runtime.sendMessage({ type: Messages.PriceUpdated, payload: JSON.stringify(prices) })
-//   saveToStorage({ key: StorageKeys.TokenPrices, value: JSON.stringify(prices) })
+chrome.alarms.onAlarm.addListener(async (alarm) => {
+  // coin prices
+  const prices = await Retrieve_Coin_Prices()
+  chrome.runtime.sendMessage({ type: Messages.PriceUpdated, payload: JSON.stringify(prices) })
+  saveToStorage({ key: StorageKeys.TokenPrices, value: JSON.stringify(prices) })
 
-//   // coin info
-//   const Infos = await Retrieve_Coin_Infos()
-//   chrome.runtime.sendMessage({ type: Messages.CoinInfoUpdated, payload: JSON.stringify(Infos) })
-//   saveToStorage({ key: StorageKeys.TokenInfos, value: JSON.stringify(Infos) })
+  // coin info
+  const Infos = await Retrieve_Coin_Infos()
+  console.log("~ Infos", Infos)
+  chrome.runtime.sendMessage({ type: Messages.CoinInfoUpdated, payload: JSON.stringify(Infos) })
+  saveToStorage({ key: StorageKeys.TokenInfos, value: JSON.stringify(Infos) })
 
-//   if (alarm.name === "24-hr-ballance-change") {
-//     // const balance24hrChangeRate = Retrieve_balance_change_rates()
-//   }
-// })
+  if (alarm.name === "24-hr-ballance-change") {
+    // const balance24hrChangeRate = Retrieve_balance_change_rates()
+  }
+
+  console.log(alarm, isLoggedIn)
+})
