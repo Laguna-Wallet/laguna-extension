@@ -74,7 +74,7 @@ export default function AddAddress() {
             error={formik.errors.name}
             onChange={formik.handleChange}
             bgColor="#303030"
-            color="#adadad"
+            color="#fff"
             borderColor="#303030"
           />
           <HumbleInput
@@ -87,7 +87,7 @@ export default function AddAddress() {
             onChange={formik.handleChange}
             error={formik.errors.address}
             bgColor="#303030"
-            color="#adadad"
+            color="#fff"
             borderColor="#303030"
           />
           <HumbleInput
@@ -99,7 +99,7 @@ export default function AddAddress() {
             value={formik.values.memo}
             onChange={formik.handleChange}
             bgColor="#303030"
-            color="#adadad"
+            color="#fff"
             borderColor="#303030"
           />
 

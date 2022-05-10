@@ -34,13 +34,13 @@ export default function NetworkItem({ network }: Props) {
 }
 
 const Container = styled.div`
-  width: 99%;
+  width: 100%;
   height: 59px;
   display: flex;
   align-items: center;
   background-color: #ffffff;
-  margin-bottom: 10px;
-  padding: 14px 12px;
+  margin-bottom: 12px;
+  padding: 14px 14px 14px 12px;
   box-sizing: border-box;
   border-radius: 4px;
   font-family: 'Sequel100Wide55Wide';
