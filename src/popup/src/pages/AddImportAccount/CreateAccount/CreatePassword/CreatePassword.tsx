@@ -7,9 +7,10 @@ import { calculatePasswordCheckerColor, enhancePasswordStrength, isObjectEmpty }
 import { createPasswordSchema } from 'utils/validations';
 import Snackbar from 'components/Snackbar/Snackbar';
 import { useAccount } from 'context/AccountContext';
-import { memo, useEffect, useState } from 'react';
+import { memo, useState } from 'react';
 import RightArrow from 'assets/svgComponents/RightArrow';
 import HumbleInput from 'components/primitives/HumbleInput';
+<<<<<<< HEAD
 import { reduxForm, Field, getFormSyncErrors } from 'redux-form';
 import { useSelector, connect } from 'react-redux';
 
@@ -53,11 +54,82 @@ function CreatePassword({ handleSubmit, errors }: Props) {
 
   const submit = (values: Record<string, string>) => {
     account.setPassword(values.password);
+=======
+import WizardHeader from 'pages/AddImportAccount/WizardHeader';
+import { goTo } from 'react-chrome-extension-router';
+import Wallet from 'pages/Wallet/Wallet';
+import SignUp from 'pages/SignUp/SignUp';
+import SetupComplete from '../../SetupComplete';
+
+type Props = {
+  redirectedFromSignUp?: boolean;
+};
+
+function CreatePassword({ redirectedFromSignUp }: Props) {
+  const account = useAccount();
+  const { nextStep, previousStep } = useWizard();
+  const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
+  const [snackbarMessage, setSnackbarMessage] = useState<string>('Please fix the existing errors');
+
+  // todo refactor, change formik to redux-form
+  const formik = useFormik({
+    initialValues: {
+      password: '',
+      confirmPassword: ''
+    },
+    validationSchema: createPasswordSchema,
+    onSubmit: (values) => {
+      // after password is set and wizard component is rerendered
+      // it removes CreatePassword from dom and sets next element
+      // so no need calling nextStep()
+      // {!encoded && <CreatePassword />}
+      account.setPassword(values.password);
+    }
+  });
+
+  const passwordLength = enhancePasswordStrength(passwordStrength(formik.values.password).value);
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e?.preventDefault();
+
+    if (!formik.isValid) {
+      // setIsSnackbarOpen(true);
+      // if (
+      //   formik.errors['password'] === 'Passwords do not match' &&
+      //   formik.errors['confirmPassword'] === 'Passwords do not match'
+      // ) {
+      //   setSnackbarMessage("Passwords Don't Match");
+      // } else {
+      // setSnackbarMessage("Passwords Don't Match");
+      // }
+      return;
+    }
+    
+    nextStep();
+    formik.handleSubmit();
+    goTo(SetupComplete)
+>>>>>>> develop
   };
 
   return (
     <Container>
+<<<<<<< HEAD
       <Form onSubmit={handleSubmit(submit)}>
+=======
+         <WizardHeader
+            onClose={() => {
+              if (redirectedFromSignUp) {
+                goTo(SignUp);
+              } else {
+                goTo(Wallet);
+              }
+            }}
+            onBack={() => {
+              previousStep();
+            }}
+          />
+      <Form>
+>>>>>>> develop
         <MainContent>
           <Title>Create a Password</Title>
           <Description>Please create a secure password to unlock your HydroX wallet:</Description>

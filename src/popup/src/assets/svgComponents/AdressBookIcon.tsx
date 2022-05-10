@@ -2,15 +2,11 @@ import * as React from 'react';
 import { SVGProps } from 'react';
 
 const AddressBookIcon = (props: SVGProps<SVGSVGElement>) => (
-  <svg width={55} height={55} fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
-    <path
-      d="M20.625 45.833V9.166m25.208 34.375V11.458a2.292 2.292 0 0 0-2.291-2.292H11.458a2.292 2.292 0 0 0-2.291 2.292V43.54a2.292 2.292 0 0 0 2.291 2.292h32.084a2.292 2.292 0 0 0 2.291-2.292z"
-      stroke={props.stroke || '#999'}
-      strokeWidth={4}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </svg>
+<svg width="53" height="53" viewBox="0 0 53 53" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+<path fillRule="evenodd" clipRule="evenodd" d="M17.9821 0.972657L6.39715 0.972656C3.40115 0.972656 0.972414 3.40139 0.972414 6.39739L0.972412 46.9512C0.972412 49.9472 3.40115 52.376 6.39715 52.376H46.951C49.947 52.376 52.3757 49.9473 52.3757 46.9512V6.39739C52.3757 3.4014 49.947 0.972658 46.951 0.972658L17.9821 0.972657ZM6.39715 6.02872C6.19354 6.02872 6.02848 6.19378 6.02848 6.39739L6.02848 46.9512C6.02848 47.1549 6.19354 47.3199 6.39715 47.3199H15.4558V6.02872L6.39715 6.02872ZM20.5118 6.02872V47.3199H46.951C47.1546 47.3199 47.3197 47.1549 47.3197 46.9512V6.39739C47.3197 6.19378 47.1546 6.02872 46.951 6.02872L20.5118 6.02872Z" 
+  fill={props.fill || '#999'}
+  stroke='none'/>
+</svg>
 );
 
 export default AddressBookIcon;

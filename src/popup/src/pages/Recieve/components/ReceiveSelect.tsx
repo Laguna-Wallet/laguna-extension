@@ -3,6 +3,7 @@ import { FormikProps } from 'formik/dist/types';
 import styled from 'styled-components';
 import { getApiInstance } from 'utils/polkadot';
 import { Asset, Network } from 'utils/types';
+import SelectArrowIcon from 'assets/svgComponents/SelectArrowIcon';
 
 type Props = {
   options: string[] | undefined;
@@ -23,7 +24,7 @@ export default function Select({
 
   return (
     <Container>
-      <NetworkIcons chain={selectedNetwork?.chain as string} />
+      <NetworkIcons   width='27' height='27' chain={selectedNetwork?.chain as string} />
       <StyledSelect
         defaultValue={selectedToken}
         onChange={(e) => handleChange(e)}
@@ -37,6 +38,9 @@ export default function Select({
             </StyledOption>
           ))}
       </StyledSelect>
+      <IconContainer>
+        <SelectArrowIcon/>
+      </IconContainer>
     </Container>
   );
 }
@@ -45,24 +49,33 @@ const Container = styled.div`
   width: 100%;
   display: flex;
   align-items: center;
-  margin-top: 5px;
   padding: 0 10px;
   background-color: #f3f3f3;
   box-sizing: border-box;
+  border-radius: 4px;
+  position: relative;
 `;
+
+const IconContainer = styled.div`
+position: absolute;
+right: 18px;
+top: 20px;
+`
 
 const StyledSelect = styled.select`
   flex: 1;
   height: 53px;
   border: 0;
-  border-top-right-radius: 5px;
-  border-bottom-right-radius: 5px;
   background-color: #f3f3f3;
   font-size: 16px;
-  font-weight: 600;
-  color: #141414;
-  font-family: 'SFCompactDisplayRegular';
-
+  appearance: none;
+  font-family: 'Inter';
+  font-weight: 400;
+  display: flex;
+  align-items: center;
+  color: #18191A;
+  margin-left: 8px;
+  text-transform: capitalize;
   &:focus {
     outline: none;
   }

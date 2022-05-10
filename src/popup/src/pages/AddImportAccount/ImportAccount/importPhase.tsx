@@ -1,11 +1,5 @@
-import { ReactNode, useRef, useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 
-import { PlusIcon } from '@heroicons/react/outline';
-import { KeyringPair$Json } from '@polkadot/keyring/types';
-import keyring from '@polkadot/ui-keyring';
-import { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
-import ActiveImportIcon from 'assets/svgComponents/ActiveImportIcon';
-import CloseIcon from 'assets/svgComponents/CloseIcon';
 import FileUploadIcon from 'assets/svgComponents/FileUploadIcon';
 import RightArrow from 'assets/svgComponents/RightArrow';
 import UploadFinishedIcon from 'assets/svgComponents/UploadFinishedIcon';
@@ -17,34 +11,26 @@ import SignUp from 'pages/SignUp/SignUp';
 import Wallet from 'pages/Wallet/Wallet';
 import { goTo } from 'react-chrome-extension-router';
 import { useDropzone } from 'react-dropzone';
-import { connect, useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useWizard } from 'react-use-wizard';
 import {
   reduxForm,
   change,
   reset,
   Field,
-  FormErrors,
-  getFormSyncErrors,
   InjectedFormProps
 } from 'redux-form';
 import styled from 'styled-components';
-import { convertUploadedFileToJson, objectToArray } from 'utils';
-import { saveToStorage } from 'utils/chrome';
+import { convertUploadedFileToJson } from 'utils';
 import {
-  importJson,
   isKeyringJson,
-  isKeyringPairs$Json,
   isValidKeyringPassword,
   isValidPolkadotAddress,
-  validateSeed
 } from 'utils/polkadot';
 import { isHex } from '@polkadot/util';
 import { mnemonicValidate } from '@polkadot/util-crypto';
-import { StorageKeys } from 'utils/types';
 import Popup from 'components/Popup/Popup';
 import { HelpImport } from 'components/popups/HelpImport';
-import { State } from 'redux/store';
 import ButtonsIcon from 'assets/svgComponents/ButtonsIcon';
 
 // import { StorageKeys } from 'utils/types';
@@ -85,7 +71,7 @@ function ImportPhase({
     }
   }, []);
 
-  const { getRootProps, getInputProps, isDragActive, isDragAccept, acceptedFiles, open } =
+  const { getRootProps, getInputProps, open } =
     useDropzone({
       onDrop,
       noClick: true,
@@ -104,11 +90,11 @@ function ImportPhase({
   };
 
   // todo proper typing
-  const submit = async ({ seedPhase, file, password }: any) => {
+  const submit = async ({file, password }: any) => {
     try {
       if (file) {
         const isValid = await isValidKeyringPassword(file, password);
-        if (isValid) {
+        if (isValid) {          
           nextStep();
         } else {
           setIsSnackbarOpen(true);
@@ -128,6 +114,7 @@ function ImportPhase({
     <Container>
       <WizardHeader
         title={'IMPORT WALLET'}
+        uploaded={uploaded}
         onClose={onClose}
         onBack={() => {
           dispatch(reset('ImportPhase'));

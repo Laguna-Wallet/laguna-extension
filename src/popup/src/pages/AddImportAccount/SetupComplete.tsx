@@ -3,7 +3,6 @@ import CheckMarkIcon from 'assets/svgComponents/CheckMarkIcon';
 
 import Button from 'components/primitives/Button';
 import Wallet from 'pages/Wallet/Wallet';
-import { useEffect } from 'react';
 import { goTo } from 'react-chrome-extension-router';
 
 import { SnackbarMessages } from 'utils/types';
@@ -21,7 +20,6 @@ function SetupComplete() {
 
   return (
     <Container bg={Bg}>
-      {/* <WizardHeader title={'SETUP COMPLETE!!'} onClose={() => goTo(Wallet)} onBack={previousStep} /> */}
       <Content>
         <IconContainer>
           <Circle>

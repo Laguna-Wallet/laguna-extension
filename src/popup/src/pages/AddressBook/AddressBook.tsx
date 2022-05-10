@@ -1,7 +1,7 @@
-import { PlusIcon } from '@heroicons/react/outline';
 import keyring from '@polkadot/ui-keyring';
 import AddressBookIcon from 'assets/svgComponents/AdressBookIcon';
 import AlternateEmail from 'assets/svgComponents/AlternateEmailIcon';
+import AddIcon from 'assets/svgComponents/AddIcon'
 import MenuHeader from 'components/MenuHeader/MenuHeader';
 import Button from 'components/primitives/Button';
 import Snackbar from 'components/Snackbar/Snackbar';
@@ -54,9 +54,9 @@ export default function AddressBook({ snackbar }: Props) {
         {addresses?.length === 0 ? (
           <>
             <AddressBookContainer>
-              <AddressBookIcon stroke="#fff" />
+              <AddressBookIcon fill="#fff" />
             </AddressBookContainer>
-            <Text marginTop="10px">No Addresses</Text>
+            <Text marginTop="12px">No Addresses</Text>
           </>
         ) : (
           <AddressesContainer>
@@ -79,12 +79,13 @@ export default function AddressBook({ snackbar }: Props) {
         <StyledLink component={AddAddress} props={{ closeAction: () => goTo(Wallet) }}>
           <Button
             text="Add Address"
-            Icon={<PlusIcon width={17} />}
+            Icon={<AddIcon/>}
             bgColor="#fff"
             color="#111"
             justify="center"
             direction="row-reverse"
             margin="auto 0 0 0"
+            marginText='0 12px'
           />
         </StyledLink>
       </Content>
@@ -111,30 +112,30 @@ const Container = styled.div`
   top: 0;
   left: 0;
   z-index: 999;
-  padding: 15px 15px 40px 15px;
+  padding: 0 17.5px 44px;
   box-sizing: border-box;
   background-color: #111111;
   z-index: 99999;
 `;
 
 const Content = styled.div`
-  width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
+  padding: 0 8.5px;
   align-items: center;
   justify-content: center;
 `;
 
 const AddressBookContainer = styled.div`
-  width: 129px;
-  height: 129px;
+  width: 167px;
+  height: 167px;
   display: flex;
   justify-content: center;
   align-items: center;
   border-radius: 100%;
   background-color: #000;
-  margin-top: auto;
+  margin-top: 68px;
 `;
 
 const StyledLink = styled(Link)`
@@ -144,9 +145,10 @@ const StyledLink = styled(Link)`
 `;
 
 const Text = styled.div<{ marginTop?: string }>`
+  font-family: 'Inter';
   margin-top: ${({ marginTop }) => marginTop};
-  font-family: SFCompactDisplayRegular;
   font-size: 18px;
+  line-height: 35px;
   color: #fff;
 `;
 

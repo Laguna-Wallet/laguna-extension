@@ -16,6 +16,7 @@ type Props = {
   close: () => void;
   type: 'error' | 'success' | 'warning';
   message?: string;
+  transform?: string;
   align?: string;
   width?: string;
 };
@@ -36,6 +37,7 @@ function Snackbar({
   isOpen,
   close,
   message,
+  transform,
   align,
   width
 }: Props) {
@@ -85,7 +87,8 @@ function Snackbar({
       bottom={bottom}
       left={left}
       right={right}
-      isOpen={isOpen}>
+      isOpen={isOpen}
+      transform={transform}>
       <CSSTransition in={isOpen} out={isOpen} timeout={200} classNames="my-node" unmountOnExit>
         <Content type={type}>{children ? children : renderContent(type)}</Content>
       </CSSTransition>
@@ -103,6 +106,7 @@ const Container = styled.div<{
   right?: string;
   padding?: string;
   type?: 'error' | 'success' | 'warning';
+  transform?: string;
   isOpen?: boolean;
 }>`
   width: ${({ width }) => width || '100%'};
@@ -116,7 +120,7 @@ const Container = styled.div<{
   top: ${({ top }) => top && top};
   bottom: ${({ bottom }) => bottom && bottom};
   left: ${({ left }) => left || '50%'};
-  transform: translateX(-50%);
+  transform: ${({ transform }) => transform || 'translateX(-50%)'};
   right: ${({ right }) => right && right};
 `;
 /* display: ${({ isOpen }) => (isOpen ? 'block' : 'none')}; */

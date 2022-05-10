@@ -16,7 +16,6 @@ window.addEventListener("message", ({ data, source }): void => {
   }
 
   if (data.id && data.payload) {
-    alert(data.payload)
     handleResponse(data)
   }
 })

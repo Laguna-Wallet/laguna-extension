@@ -1,19 +1,19 @@
 import React, { useRef, useState } from 'react';
 import styled from 'styled-components';
-import LeftArrowIcon from 'assets/svgComponents/LeftArrowIcon';
+import BackIcon from 'assets/svgComponents/BackIcon';
 import MenuCloseIcon from 'assets/svgComponents/MenuIcons/MenuCloseIcon'
 import { useAccount } from 'context/AccountContext';
 import { resizeFile, truncateString } from 'utils';
 import useOutsideClick from 'hooks/useOutsideClick';
 import { addAccountMeta, changeAccountPicture } from 'utils/polkadot';
-import EditIcon from 'assets/svgComponents/EditIcon';
 import PencilIcon from 'assets/svgComponents/PencilIcon';
 import MenuLockIcon from 'assets/svgComponents/MenuIcons/MenuLockIcon';
 import { StorageKeys } from 'utils/types';
-import { clearFromStorage, saveToStorage } from 'utils/chrome';
+import { saveToStorage } from 'utils/chrome';
 import { goTo } from 'react-chrome-extension-router';
 import WelcomeBack from 'pages/WelcomeBack/WelcomeBack';
 import MenuMainLogo from 'assets/svgComponents/MenuIcons/MenuMainLogo';
+import AvatarEditIcon from 'assets/svgComponents/AvatarEditIcon';
 
 type Props = {
   isOpen: boolean;
@@ -104,7 +104,7 @@ export default function MenuHeader({
       {title && (
         <Title>
           <LeftArrowContainer onClick={backAction}>
-            <LeftArrowIcon fill="#111" stroke="#fff" />
+            <BackIcon stroke='white'/>
           </LeftArrowContainer>
           <TitleText>{title}</TitleText>
         </Title>
@@ -113,7 +113,7 @@ export default function MenuHeader({
         <User>
           <IconContainer img={accountImg} onClick={onButtonClick}>
             <ImageContainerOverlay>
-            <PencilIcon width={25} height={25} fill="#fff" />
+            <AvatarEditIcon/>
             </ImageContainerOverlay>
           </IconContainer>
           <input
@@ -165,7 +165,7 @@ const Header = styled.div`
   font-size: 17px;
   font-family: 'Work Sans';
   font-weight: 500;
-  height: 48px;
+  height: 58px;
 `;
 
 const LogoContainer = styled.div`
@@ -219,12 +219,12 @@ const Text = styled.div`
 
 const Name = styled.div`
   display: flex;
-  justify-content: space-between;
   align-items: center;
-`;
-
-const NameInput = styled.input`
-  width: 200px;
+  `;
+  
+  const NameInput = styled.input`
+  max-width: 146px;
+  width: 100%;
   background-color: transparent;
   color: #fff;
   font-size: 23px;
@@ -243,7 +243,6 @@ const ImageContainerOverlay = styled.div`
   width: 100%;
   height: 100%;
   background-color: #1111118c;
-  position: absolute;
   cursor: pointer;
   align-items: center;
   justify-content: center;
@@ -259,29 +258,33 @@ const IconContainer = styled.div<{ img: string }>`
   background-size: contain;
   background-position: center center;
   background-repeat: no-repeat;
-  position: relative;
   &:hover ${ImageContainerOverlay} {
     display: flex;
   }
 `;
 
-const Title = styled.span`
-  width: 100%;
-  font-family: '';
-  font-size: 17px;
-  letter-spacing: 0.85px;
-  color: #fff;
+const Title = styled.div`
+  position: relative;
   display: flex;
   justify-content: center;
-  margin-top: 10px;
+  align-items: center;
 `;
 
-const TitleText = styled.div`
-  margin-right: auto;
-  font-family: 'IBM Plex Sans';
+const TitleText = styled.p`
+font-family: 'IBM Plex Sans';
+font-weight: 500;
+font-size: 17px;
+line-height: 40px;
+text-align: center;
+letter-spacing: 0.1em;
+color: #FFFFFF;
 `;
 
 const LeftArrowContainer = styled.div`
+  position: absolute;
+  left: 0;
+  top: 8px;
+  height: 24px;
   margin-right: auto;
   cursor: pointer;
 `;
