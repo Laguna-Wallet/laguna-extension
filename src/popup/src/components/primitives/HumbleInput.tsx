@@ -3,11 +3,7 @@ import { memo, useRef } from 'react';
 import styled from 'styled-components/macro';
 import { truncateString } from 'utils';
 import { AccountMeta } from 'utils/types';
-<<<<<<< HEAD
-import debounce from 'debounce-promise';
-=======
 import CopyIcon from 'assets/svgComponents/CopyIcon';
->>>>>>> develop
 
 type InputProps = {
   id: string;
@@ -92,13 +88,6 @@ function HumbleInput({
     return value;
   };
 
-  const debouncedOnChange = debounce(
-    (event: React.ChangeEvent<HTMLTextAreaElement>, onChange: (val: any) => void) => {
-      onChange(event.target.value);
-    },
-    1200
-  );
-
   return (
     <Container marginBottom={marginBottom} marginTop={marginTop}>
       <InputContainer
@@ -114,7 +103,7 @@ function HumbleInput({
           <StyledTextarea
             id={id}
             value={value || input?.value}
-            onChange={(event) => debounce(onChange(event.target.value), 1200)}
+            onChange={onChange || input.onChange}
             placeholder={placeholder}
             fontSize={fontSize}
             placeholderColor={placeholderColor}
@@ -124,7 +113,7 @@ function HumbleInput({
           />
         ) : (
           <>
-            {IconAlignment === 'left' && accountMeta && <AccountAvatar img={accountMeta.img}/> }
+            {IconAlignment === 'left' && accountMeta && <AccountAvatar img={accountMeta.img} />}
             <StyledInput
               id={id}
               value={handleValue(value || input?.value)}
@@ -142,9 +131,9 @@ function HumbleInput({
             {IconAlignment === 'right' && Icon && <IconContainer>{Icon}</IconContainer>}
             {copy && handleClickCopy && (
               <Copy onClick={() => handleClickCopy(value || input?.value)}>
-                <CopyIcon/>
+                <CopyIcon />
                 <Text>Copy</Text>
-                </Copy>
+              </Copy>
             )}
             {rightLabel && <RightLabel>{rightLabel}</RightLabel>}
 
@@ -200,7 +189,7 @@ const InputContainer = styled.div<{
 
   align-items: center;
   /* flex-direction: column; */
-  padding: ${({padding}) => padding || '8px 8px 5px 16px'} ;
+  padding: ${({ padding }) => padding || '8px 8px 5px 16px'};
   box-sizing: border-box;
   border: 1px solid;
   border-color: ${({ error, borderColor, errorBorderColor }) =>
@@ -235,13 +224,13 @@ const StyledInput = styled.input<{
   font-family: Inter;
   font-weight: ${({ fontWeight }) => fontWeight || 400};
   :-webkit-autofill,
-  :-webkit-autofill:hover, 
-  :-webkit-autofill:focus, 
-  :-webkit-autofill:active{
+  :-webkit-autofill:hover,
+  :-webkit-autofill:focus,
+  :-webkit-autofill:active {
     -webkit-box-shadow: 0 0 0 30px #303030 inset !important;
     -webkit-text-fill-color: #fff !important;
     font-size: ${({ fontSize }) => (fontSize ? fontSize : '14.8px')} !important;
-}
+  }
   &:focus {
     outline: none;
   }
@@ -312,20 +301,20 @@ const Copy = styled.div`
   justify-content: center;
   cursor: pointer;
   padding: 4.5px 12px;
-  background-color: #18191A;
+  background-color: #18191a;
   border-radius: 20px;
 `;
 
 const Text = styled.p`
-font-family: 'IBM Plex Sans';
-font-weight: 400;
-font-size: 12px;
-display: flex;
-align-items: center;
-text-align: center;
-color: #FFFFFF;
-margin-left: 4px;
-`
+  font-family: 'IBM Plex Sans';
+  font-weight: 400;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: #ffffff;
+  margin-left: 4px;
+`;
 
 const RightLabel = styled.span`
   position: absolute;
