@@ -217,6 +217,14 @@ const StyledInput = styled.input<{
   color: ${({ color }) => (color ? color : '#111')};
   font-family: Inter;
   font-weight: ${({ fontWeight }) => fontWeight || 400};
+  :-webkit-autofill,
+  :-webkit-autofill:hover, 
+  :-webkit-autofill:focus, 
+  :-webkit-autofill:active{
+    -webkit-box-shadow: 0 0 0 30px #303030 inset !important;
+    -webkit-text-fill-color: #fff !important;
+    font-size: ${({ fontSize }) => (fontSize ? fontSize : '14.8px')} !important;
+}
   &:focus {
     outline: none;
   }

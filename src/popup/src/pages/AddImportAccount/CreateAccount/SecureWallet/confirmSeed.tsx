@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { useEffect, useMemo, useState } from 'react';
 import {
+  copyToClipboard,
   generateNumberAbbreviation,
   generateThreeRandomMnemonicIndexes,
   validateMnemonicChoice
@@ -33,11 +34,17 @@ export default function ConfirmSeed({ handleNextSection }: Props) {
     setMnemonicIndexes(generateThreeRandomMnemonicIndexes());
   }, []);
 
+
   const handleClick = (name: string) => {
     if (chosenMnemonics.length === 3) return;
     setChosenMnemonics((prev) => [...prev, name]);
     setMnemonicIndexToChoose((prev) => prev + 1);
   };
+
+  const handleWrittenClick = ()=>{
+    handleNextSection();
+    copyToClipboard('');
+  }
 
   useEffect(() => {
     if (chosenMnemonics.length === 3) {
@@ -102,7 +109,7 @@ export default function ConfirmSeed({ handleNextSection }: Props) {
         />
 
         <Button
-          onClick={() => handleNextSection()}
+          onClick={handleWrittenClick}
           disabled={
             !validateMnemonicChoice(mnemonics, chosenMnemonics, mnemonicIndexes as MnemonicsTriple)
           }
