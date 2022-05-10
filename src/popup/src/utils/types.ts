@@ -251,8 +251,14 @@ export interface TokenInfo {
 // Inject
 //==============================================================================
 
+//==============================================================================
+// Account
+//==============================================================================
+
 export interface AccountMeta {
   img: string;
   name: string;
   whenCreated?: number;
+  notSecured?: boolean;
+  encodedSeed?: string;
 }

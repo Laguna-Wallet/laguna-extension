@@ -1,4 +1,4 @@
-import { memo, ReactNode, useCallback, useEffect, useState } from 'react';
+import { memo, ReactNode, useCallback, useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
 import Header from './Header';
 import Footer from './Footer';
@@ -22,6 +22,13 @@ import { State } from 'redux/store';
 import SecureNowIcon from 'assets/svgComponents/SecureNowIcon';
 import RightArrowMenuIcon from 'assets/svgComponents/MenuIcons/RightArrowMenuIcon';
 import CreateAccount from 'pages/AddImportAccount/CreateAccount/CreateAccount';
+import {
+  getFromChromeStorage,
+  getFromStorage,
+  saveToChromeStorage,
+  saveToStorage
+} from 'utils/chrome';
+import keyring from '@polkadot/ui-keyring';
 
 export interface ShowSnackbar {
   message: string;
@@ -114,6 +121,44 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
       </>
     );
   };
+
+  useEffect(() => {
+    async function go() {
+      const keyrings = keyring.getPairs();
+      // await saveToStorage({ key: 'rings', value: keyrings });
+      // const then = await getFromStorage('rings');
+      // console.log('~ then', then);
+    }
+
+    go();
+  }, []);
+
+  const logoutTimerIdRef = useRef<any>(null);
+
+  function logoutUser() {
+    console.log('log out');
+  }
+
+  useEffect(() => {
+    const autoLogout = () => {
+      if (document.visibilityState === 'hidden') {
+        console.log(1);
+        const timeOutId = window.setTimeout(logoutUser, 5 * 60 * 1000);
+        console.log(2);
+        logoutTimerIdRef.current = timeOutId;
+        console.log(3);
+      } else {
+        console.log(4);
+        window.clearTimeout(logoutTimerIdRef.current);
+      }
+    };
+
+    document.addEventListener('visibilitychange', autoLogout);
+
+    return () => {
+      document.removeEventListener('visibilitychange', autoLogout);
+    };
+  }, []);
 
   return (
     <Container bg={dashboardBG}>

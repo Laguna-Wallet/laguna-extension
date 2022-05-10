@@ -2,6 +2,7 @@ import { memo, useRef } from 'react';
 import styled from 'styled-components/macro';
 import { truncateString } from 'utils';
 import { AccountMeta } from 'utils/types';
+import debounce from 'debounce-promise';
 
 type InputProps = {
   id: string;
@@ -37,6 +38,7 @@ type InputProps = {
   IconAlignment?: 'left' | 'right';
   accountMeta?: AccountMeta;
   readOnly?: boolean;
+  meta?: any;
 };
 
 function HumbleInput({
@@ -70,7 +72,8 @@ function HumbleInput({
   Icon,
   IconAlignment,
   accountMeta,
-  readOnly
+  readOnly,
+  meta
 }: InputProps) {
   const handleValue = (value: string) => {
     if (!value) return '';
@@ -79,6 +82,13 @@ function HumbleInput({
     }
     return value;
   };
+
+  const debouncedOnChange = debounce(
+    (event: React.ChangeEvent<HTMLTextAreaElement>, onChange: (val: any) => void) => {
+      onChange(event.target.value);
+    },
+    1200
+  );
 
   return (
     <Container marginBottom={marginBottom} marginTop={marginTop}>
@@ -94,7 +104,7 @@ function HumbleInput({
           <StyledTextarea
             id={id}
             value={value || input?.value}
-            onChange={onChange || input?.onChange}
+            onChange={(event) => debounce(onChange(event.target.value), 1200)}
             placeholder={placeholder}
             fontSize={fontSize}
             placeholderColor={placeholderColor}
@@ -140,9 +150,11 @@ function HumbleInput({
         )}
       </InputContainer>
 
-      {error && showError && (
+      {(meta.error || error) && showError && (
         <ErrorContainer>
-          <ErrorMessage errorColor={errorColor}>{error}</ErrorMessage>
+          <ErrorMessage errorColor={errorColor}>
+            {error || (meta.dirty && meta?.error)}
+          </ErrorMessage>
         </ErrorContainer>
       )}
     </Container>
@@ -169,6 +181,8 @@ const InputContainer = styled.div<{
   width: 100%;
   height: ${({ height }) => (height ? height : 'auto')};
   display: flex;
+  /* display: grid; */
+
   align-items: center;
   /* flex-direction: column; */
   padding: 8px 8px 5px 16px;
@@ -233,9 +247,19 @@ const StyledTextarea = styled.textarea<{
   outline: none;
   resize: none;
   font-family: Inter;
+  overflow: hidden;
 
   &::placeholder {
     color: ${({ placeholderColor }) => placeholderColor || '#111'};
+  }
+
+  &:after {
+    border: 1px solid black;
+    padding: 0.5rem;
+    font: inherit;
+
+    /* Place on top of each other */
+    grid-area: 1 / 1 / 2 / 2;
   }
 `;
 

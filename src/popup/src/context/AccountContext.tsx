@@ -14,6 +14,7 @@ import { getFromStorage, saveToStorage } from 'utils/chrome';
 import { StorageKeys } from 'utils/types';
 import keyring from '@polkadot/ui-keyring';
 import { encryptPassword } from 'utils';
+import type { KeyringPair } from '@polkadot/keyring/types';
 
 // todoProperTyping
 interface IAccountCtx {
@@ -59,7 +60,7 @@ const AccountProvider = ({ children }: { children?: ReactNode }) => {
   const [json, setJson] = useState<any>('');
 
   // todo typing
-  const [activeAccount, setActiveAccount] = useState<any>();
+  const [activeAccount, setActiveAccount] = useState<KeyringPair>();
   const [encryptedPassword, setEncryptedPassword] = useState<string | null>(null);
   const [mnemonics, setMnemonics] = useState<string[]>([]);
 
@@ -88,12 +89,11 @@ const AccountProvider = ({ children }: { children?: ReactNode }) => {
     return mnemonics;
   }, []);
 
-  const getActiveAccount = () => {
+  const getActiveAccount = (): KeyringPair | undefined => {
     // if no account in the storage than insert first one from keyring
-
-    if (!activeAccount) {
-      return;
-    }
+    // if (!activeAccount) {
+    //   return;
+    // }
 
     return activeAccount;
   };

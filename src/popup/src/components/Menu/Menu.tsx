@@ -22,12 +22,16 @@ import ChangePasswordMenuIcon from 'assets/svgComponents/MenuIcons/ChangePasswor
 import BackupMenuIcon from 'assets/svgComponents/MenuIcons/BackupMenuIcon';
 import RemoveWalletMenuIcon from 'assets/svgComponents/MenuIcons/RemoveWalletMenuIcon';
 import RightArrowMenuIcon from 'assets/svgComponents/MenuIcons/RightArrowMenuIcon';
+import { useAccount } from 'context/AccountContext';
+import CreateAccount from 'pages/AddImportAccount/CreateAccount/CreateAccount';
 
 type Props = {
   onClose: () => void;
 };
 
 export default function Menu({ onClose }: Props) {
+  const account = useAccount();
+  const activeUser = account.getActiveAccount();
   const [isOpen, setOpen] = useState<boolean>(true);
 
   return (
@@ -84,7 +88,9 @@ export default function Menu({ onClose }: Props) {
           </StyledLink>
         </ListItem> */}
         <ListItem>
-          <StyledLink component={BackupAccount}>
+          <StyledLink
+            component={activeUser?.meta?.notSecured ? CreateAccount : BackupAccount}
+            props={{ redirectedFromDashboard: true }}>
             <BackupMenuIcon />
             <span>Backup Account</span>
             <RightIconContainer>

@@ -79,3 +79,9 @@ export function isNumeric(str: string | number) {
 export function parseNumeric(str: string) {
   return str.replace(/[^0-9\.]+/g, '');
 }
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const asyncValidate = (values: Record<string, unknown>) => {
+  return sleep(1000).then(() => {});
+};
