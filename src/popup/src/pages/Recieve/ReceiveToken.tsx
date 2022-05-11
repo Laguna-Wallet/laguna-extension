@@ -30,9 +30,6 @@ export default function ReceiveToken({ selectedNetwork, recoded, propsFromTokenD
   // todo case when there are multiple symbols
   const [selectedToken, setSelectedToken] = useState<string>();
   const tokens = selectedNetwork && [selectedNetwork.symbol];
-  const handleChange = () => {
-    console.log('change');
-  };
 
   const handleClickCopy = (value: string) => {
     navigator.clipboard.writeText(value);
@@ -61,7 +58,6 @@ export default function ReceiveToken({ selectedNetwork, recoded, propsFromTokenD
           <HumbleInput
             id="address"
             type={'text'}
-            onChange={handleChange}
             value={recoded}
             height="48px"
             bgColor="#F2F2F2"

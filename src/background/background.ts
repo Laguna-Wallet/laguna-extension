@@ -39,9 +39,7 @@ let declinedDapps = []
 
 keyring.loadAll({ ss58Format: 0, type: "ed25519", store: new AccountsStore() })
 
-function onMessage(msg, port) {
-  console.log("received", msg, "from", port.sender)
-}
+function onMessage(msg, port) {}
 
 function forceReconnect(port) {
   deleteTimer(port)
@@ -71,10 +69,8 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
         target: { tabId },
         files: ["content.js"],
       })
-      .then(() => {
-        console.log("INJECTED THE FOREGROUND SCRIPT.")
-      })
-      .catch((err) => console.log("ierorie", err))
+      .then(() => {})
+      .catch((err) => err)
   }
 })
 
@@ -189,7 +185,6 @@ chrome.runtime.onMessage.addListener(async (msg) => {
       if (validatePassword(msg.payload.password)) {
         isLoggedIn = true
         keyPairs = unlockKeyPairs(msg.payload.password)
-        console.log("~ keyPairs", keyPairs)
       }
       break
     case Messages.CheckPendingDappAuth:
@@ -243,13 +238,10 @@ chrome.runtime.onInstalled.addListener(async (port) => {
 
   saveToStorage({ key: StorageKeys.TokenPrices, value: JSON.stringify(prices) })
 
-  console.log("Prices injected...")
   const Infos = await Retrieve_Coin_Infos()
   chrome.runtime.sendMessage({ type: Messages.CoinInfoUpdated, payload: JSON.stringify(Infos) })
 
   saveToStorage({ key: StorageKeys.TokenInfos, value: JSON.stringify(Infos) })
-
-  console.log("info injected...")
 
   chrome.alarms.create("refresh", { periodInMinutes: 1 })
   chrome.alarms.create("refetch-account-balances", { periodInMinutes: 3 })

@@ -27,22 +27,17 @@ export async function sendTransaction(pairs, { sendTo, sendFrom, amount, chain }
     const api = await ApiPromise.create({ provider: wsProvider })
     const unsub = await api.tx.balances.transfer(sendTo, amount).signAndSend(pair, ({ status }: any) => {
       if (status.isInBlock) {
-        console.log(`Completed at block hash #${status.asInBlock.toString()}`)
-
-        console.log("~ status?.asInBlock?.toString()", status?.asInBlock?.toString())
         chrome.runtime.sendMessage({ type: Messages.TransactionSuccess, payload: { block: status?.asInBlock?.toString() } })
         unsub()
         api.disconnect()
-      } else {
-        console.log(`Current status: ${status.type}`)
       }
     })
 
     // setTimeout(() => {
     //   unsub()
     // }, 30000)
-  } catch (err) {
-    console.log("err", err)
+  } catch (err){
+   return err
   }
 }
 
@@ -102,8 +97,8 @@ export async function Retrieve_Coin_Decimals() {
     saveToStorage({ key: StorageKeys.TokenDecimals, value: JSON.stringify(transformedObj) })
     chrome.runtime.sendMessage({ type: Messages.TokenDecimalsUpdated, payload: JSON.stringify({ tokenDecimals: transformedObj }) })
   } catch (err) {
-    console.log(err)
     Retrieve_Coin_Decimals()
+    return err
   }
 }
 
@@ -164,12 +159,11 @@ export async function fetchAccountsBalances() {
         chrome.runtime.sendMessage({ type: Messages.TokenReceived, payload: JSON.stringify({ tokenReceived: hasReceived }) })
       }
     }
-    console.log("balances updated")
-    console.log(new Date())
+
     setTimeout(() => fetchAccountsBalances(), 3000)
   } catch (err) {
-    console.log("err", err)
     setTimeout(() => fetchAccountsBalances(), 5000)
+    return err
   }
 }
 
@@ -211,7 +205,6 @@ export async function fetchAccountsBalances() {
 //       }
 //     }
 
-//     console.log("transactions fetched")
 
 //     chrome.runtime.sendMessage({ type: Messages.TransactionsUpdated, payload: JSON.stringify(result_obj) })
 //     saveToStorage({ key: StorageKeys.Transactions, value: JSON.stringify(result_obj) })
@@ -220,7 +213,6 @@ export async function fetchAccountsBalances() {
 //       fetchAccountsTransactions()
 //     }, 1000)
 //   } catch (err) {
-//     console.log(err)
 //     setTimeout(() => {
 //       fetchAccountsTransactions()
 //     }, 1000)

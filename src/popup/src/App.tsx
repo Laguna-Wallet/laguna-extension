@@ -70,9 +70,6 @@ function App() {
   //   function connect() {
   //     keepAlivePort = chrome.runtime.connect({ name: 'keep_alive' });
   //     keepAlivePort.onDisconnect.addListener(connect);
-  //     keepAlivePort.onMessage.addListener((msg) => {
-  //       console.log('received', msg, 'from bg');
-  //     });
   //   }
   //   connect();
   // }, []);

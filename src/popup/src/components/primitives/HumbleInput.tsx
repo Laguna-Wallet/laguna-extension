@@ -1,5 +1,5 @@
 import { SearchIcon } from '@heroicons/react/outline';
-import { memo, useRef } from 'react';
+import { memo, ReactElement, useRef } from 'react';
 import styled from 'styled-components/macro';
 import { truncateString } from 'utils';
 import { AccountMeta } from 'utils/types';
@@ -13,7 +13,7 @@ type InputProps = {
   value: string;
   color?: string;
   // Todo formik doesn't provides types, check for better solution
-  onChange: any;
+  onChange?: (e?: any) => void;
   error?: string | undefined;
   errorColor?: string;
   errorBorderColor?: string;
@@ -37,7 +37,7 @@ type InputProps = {
   handleClickCopy?: (value: string) => void;
   rightLabel?: string;
   // todo asap
-  Icon?: any;
+  Icon?: ReactElement;
   IconAlignment?: 'left' | 'right';
   accountMeta?: AccountMeta;
   readOnly?: boolean;
@@ -140,9 +140,8 @@ function HumbleInput({
               onClick={async () => {
                 try {
                   const text = await navigator.clipboard.readText();
-                  console.log('~ text', text);
                 } catch (err) {
-                  console.log('err', err);
+                  return err;
                 }
               }}>
               Paste

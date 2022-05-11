@@ -5,9 +5,6 @@ let keepAlivePort
 function connect() {
   keepAlivePort = chrome.runtime.connect({ name: "keep_alive" })
   keepAlivePort.onDisconnect.addListener(connect)
-  keepAlivePort.onMessage.addListener((msg) => {
-    console.log("received", msg, "from bg")
-  })
 }
 
 connect()
@@ -26,7 +23,6 @@ window.addEventListener("message", ({ data, source }) => {
     return
   }
 
-  console.log("~ data", data)
   port.postMessage({ ...data, origin: process.env.MESSAGE_ORIGIN_CONTENT })
   // if (data.message === "GET_ACCOUNTS") {
   // }
@@ -34,7 +30,6 @@ window.addEventListener("message", ({ data, source }) => {
 
 if (chrome.runtime.getURL) {
   const script = document.createElement("script")
-  console.log(chrome.runtime.getURL("page.js"))
   script.src = chrome.runtime.getURL("page.js")
 
   script.onload = (): void => {

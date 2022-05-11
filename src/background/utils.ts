@@ -53,9 +53,7 @@ export function getFromChromeStorage(key: string) {
 }
 
 export async function saveToChromeStorage({ key, value }: { key: string; value: string }) {
-  await chrome.storage.local.set({ [key]: value }, function () {
-    console.log("Value is set to " + value)
-  })
+  await chrome.storage.local.set({ [key]: value }, function () {})
 }
 
 // export function saveToStorage({ key, value }: { key: string; value: string }) {
@@ -90,9 +88,7 @@ export function handleInitialIdleTimeout() {
 
 export function getAccountAddresses() {
   try {
-    chrome.storage.local.get(null, function (items) {
-      console.log("items", items)
-    })
+    chrome.storage.local.get(null, function (items) {})
 
     const local = localStorage
     const accountAddresses: string[] = []
@@ -110,7 +106,7 @@ export function getAccountAddresses() {
 
     return accountAddresses
   } catch (err) {
-    console.warn(err)
+    return err
   }
 }
 

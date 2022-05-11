@@ -34,7 +34,6 @@ export default function MnemonicsSeed({ redirectedFromSignUp, redirectedFromDash
   useEffect(() => {
     if (redirectedFromDashboard) {
       // set from decodeToViewSeed page
-      console.log('~ account.mnemonics', account.mnemonics);
       setMnemonics(account.mnemonics);
     } else {
       const mnemonics = account.generateMnemonics();

@@ -78,9 +78,8 @@ export function validateSeed(suri: string) {
     }
 
     return true;
-  } catch (err) {
-    console.log('err', err);
-    return false;
+  } catch (err) { 
+    return err;
   }
 }
 
@@ -368,8 +367,8 @@ export async function getAssets(
         price,
         encodeType
       });
-    } catch (err) {
-      console.log('err', err);
+    } catch (err) { 
+      err
     }
   }
 
@@ -535,7 +534,6 @@ export async function getLatestTransactionsForSingleChain(
 //     let newPairs = [];
 
 //     const unlockedPairs = getFromStorage(StorageKeys.UnlockedPairs);
-//     console.log('~ unlockedPairs', unlockedPairs);
 
 //     if (unlockedPairs) {
 //       const parsed = JSON.parse(unlockedPairs);
