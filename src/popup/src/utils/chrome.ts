@@ -27,7 +27,7 @@ export const getFromStorage = async function (key: string): Promise<string> {
   });
 };
 
-export const saveToStorage = async function ({ key, value }: { key: string; value: string }) {
+export const saveToStorage = async function ({ key, value }: { key: string; value: any }) {
   return new Promise((resolve, reject) => {
     try {
       chrome.storage.local.set({ [key]: value }, function () {

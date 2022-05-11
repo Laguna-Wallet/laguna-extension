@@ -162,7 +162,7 @@ function ImportPhase({
                 component={HumbleInput}
                 props={{
                   type: 'textarea',
-                  height: '80px',
+                  height: '180px',
                   fontSize: '18px',
                   marginTop: '20px',
                   textAlign: 'center',

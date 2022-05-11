@@ -28,7 +28,7 @@ function SetupComplete() {
             </CheckMarkContainer>
           </Circle>
         </IconContainer>
-        <Heading>Setup Complete !</Heading>
+        <Heading>Setup Complete!</Heading>
 
         <Title>
           Connect with our community to stay up to date with feature updates and opportunities.

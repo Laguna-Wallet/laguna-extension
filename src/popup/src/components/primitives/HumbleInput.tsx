@@ -41,6 +41,7 @@ type InputProps = {
   IconAlignment?: 'left' | 'right';
   accountMeta?: AccountMeta;
   readOnly?: boolean;
+  meta?: any;
 };
 
 function HumbleInput({
@@ -76,7 +77,8 @@ function HumbleInput({
   padding,
   IconAlignment,
   accountMeta,
-  readOnly
+  readOnly,
+  meta
 }: InputProps) {
   const handleValue = (value: string) => {
     if (!value) return '';
@@ -101,7 +103,7 @@ function HumbleInput({
           <StyledTextarea
             id={id}
             value={value || input?.value}
-            onChange={onChange || input?.onChange}
+            onChange={onChange || input.onChange}
             placeholder={placeholder}
             fontSize={fontSize}
             placeholderColor={placeholderColor}
@@ -111,7 +113,7 @@ function HumbleInput({
           />
         ) : (
           <>
-            {IconAlignment === 'left' && accountMeta && <AccountAvatar img={accountMeta.img}/> }
+            {IconAlignment === 'left' && accountMeta && <AccountAvatar img={accountMeta.img} />}
             <StyledInput
               id={id}
               value={handleValue(value || input?.value)}
@@ -129,9 +131,9 @@ function HumbleInput({
             {IconAlignment === 'right' && Icon && <IconContainer>{Icon}</IconContainer>}
             {copy && handleClickCopy && (
               <Copy onClick={() => handleClickCopy(value || input?.value)}>
-                <CopyIcon/>
+                <CopyIcon />
                 <Text>Copy</Text>
-                </Copy>
+              </Copy>
             )}
             {rightLabel && <RightLabel>{rightLabel}</RightLabel>}
 
@@ -151,9 +153,11 @@ function HumbleInput({
         )}
       </InputContainer>
 
-      {error && showError && (
+      {(meta?.error || error) && showError && (
         <ErrorContainer>
-          <ErrorMessage errorColor={errorColor}>{error}</ErrorMessage>
+          <ErrorMessage errorColor={errorColor}>
+            {error || (meta?.dirty && meta?.error)}
+          </ErrorMessage>
         </ErrorContainer>
       )}
     </Container>
@@ -181,9 +185,11 @@ const InputContainer = styled.div<{
   width: 100%;
   height: ${({ height }) => (height ? height : 'auto')};
   display: flex;
+  /* display: grid; */
+
   align-items: center;
   /* flex-direction: column; */
-  padding: ${({padding}) => padding || '8px 8px 5px 16px'} ;
+  padding: ${({ padding }) => padding || '8px 8px 5px 16px'};
   box-sizing: border-box;
   border: 1px solid;
   border-color: ${({ error, borderColor, errorBorderColor }) =>
@@ -218,13 +224,13 @@ const StyledInput = styled.input<{
   font-family: Inter;
   font-weight: ${({ fontWeight }) => fontWeight || 400};
   :-webkit-autofill,
-  :-webkit-autofill:hover, 
-  :-webkit-autofill:focus, 
-  :-webkit-autofill:active{
+  :-webkit-autofill:hover,
+  :-webkit-autofill:focus,
+  :-webkit-autofill:active {
     -webkit-box-shadow: 0 0 0 30px #303030 inset !important;
     -webkit-text-fill-color: #fff !important;
     font-size: ${({ fontSize }) => (fontSize ? fontSize : '14.8px')} !important;
-}
+  }
   &:focus {
     outline: none;
   }
@@ -255,9 +261,19 @@ const StyledTextarea = styled.textarea<{
   outline: none;
   resize: none;
   font-family: Inter;
+  overflow: hidden;
 
   &::placeholder {
     color: ${({ placeholderColor }) => placeholderColor || '#111'};
+  }
+
+  &:after {
+    border: 1px solid black;
+    padding: 0.5rem;
+    font: inherit;
+
+    /* Place on top of each other */
+    grid-area: 1 / 1 / 2 / 2;
   }
 `;
 
@@ -285,20 +301,20 @@ const Copy = styled.div`
   justify-content: center;
   cursor: pointer;
   padding: 4.5px 12px;
-  background-color: #18191A;
+  background-color: #18191a;
   border-radius: 20px;
 `;
 
 const Text = styled.p`
-font-family: 'IBM Plex Sans';
-font-weight: 400;
-font-size: 12px;
-display: flex;
-align-items: center;
-text-align: center;
-color: #FFFFFF;
-margin-left: 4px;
-`
+  font-family: 'IBM Plex Sans';
+  font-weight: 400;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: #ffffff;
+  margin-left: 4px;
+`;
 
 const RightLabel = styled.span`
   position: absolute;
