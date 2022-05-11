@@ -37,7 +37,7 @@ export async function sendTransaction(pairs, { sendTo, sendFrom, amount, chain }
     //   unsub()
     // }, 30000)
   } catch (err){
-   return err
+    console.log(err);
   }
 }
 
@@ -98,7 +98,7 @@ export async function Retrieve_Coin_Decimals() {
     chrome.runtime.sendMessage({ type: Messages.TokenDecimalsUpdated, payload: JSON.stringify({ tokenDecimals: transformedObj }) })
   } catch (err) {
     Retrieve_Coin_Decimals()
-    return err
+    console.log(err);
   }
 }
 
@@ -163,7 +163,7 @@ export async function fetchAccountsBalances() {
     setTimeout(() => fetchAccountsBalances(), 3000)
   } catch (err) {
     setTimeout(() => fetchAccountsBalances(), 5000)
-    return err
+    console.log(err);
   }
 }
 

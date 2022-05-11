@@ -98,7 +98,7 @@ export default function Activity() {
   useEffect(() => {
     async function go() {
       setLoading(true);
-      const transactions: Transaction[] = await fetchAccountsTransactions(address);
+      const transactions = await fetchAccountsTransactions(address) as Transaction[];
       setTransactions(transactions);
       setLoading(false);
     }

@@ -79,7 +79,7 @@ export function validateSeed(suri: string) {
 
     return true;
   } catch (err) { 
-    return err;
+    console.log(err);
   }
 }
 
@@ -145,7 +145,8 @@ export function isValidPolkadotAddress(address: string): boolean {
 
     return false;
   } catch (error) {
-    return false;
+    console.log(error);
+    return false
   }
 }
 
@@ -368,7 +369,7 @@ export async function getAssets(
         encodeType
       });
     } catch (err) { 
-      err
+      console.log(err);
     }
   }
 
@@ -422,6 +423,7 @@ export function isKeyringJson(
 
     return !!address;
   } catch (e) {
+    console.log(e);
     return false;
   }
 }
@@ -453,6 +455,7 @@ export async function isValidKeyringPassword(
 
     return false;
   } catch (err) {
+    console.log(err);
     return false;
   }
 }

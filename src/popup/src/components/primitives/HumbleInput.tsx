@@ -141,7 +141,7 @@ function HumbleInput({
                 try {
                   const text = await navigator.clipboard.readText();
                 } catch (err) {
-                  return err;
+                  console.log(err);
                 }
               }}>
               Paste

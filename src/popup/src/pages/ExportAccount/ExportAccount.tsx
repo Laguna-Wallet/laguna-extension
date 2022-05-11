@@ -26,7 +26,7 @@ export default function ExportAccount({ address }: Props) {
         goTo(Wallet);
       } catch (err) {
         // todo add snackbar
-       return err;
+        console.log(err);
       }
     }
   });

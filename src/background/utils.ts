@@ -115,7 +115,7 @@ export function isValidPolkadotAddress(address: string): boolean {
     encodeAddress(isHex(address) ? hexToU8a(address) : decodeAddress(address))
     return true
   } catch (error) {
-    return false
+    console.log(error);
   }
 }
 

@@ -52,6 +52,7 @@ export default function DecodeToViewSeed({ handleEncode, title, onClose, onBack 
       nextStep();
     } catch (err: any) {
       // todo proper typing
+      console.log(err);
       setIsSnackbarOpen(true);
       setSnackbarError(err.message);
     }

@@ -70,7 +70,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
         files: ["content.js"],
       })
       .then(() => {})
-      .catch((err) => err)
+      .catch((err) => console.log(err))
   }
 })
 

@@ -27,7 +27,7 @@ export async function fetchAccountsTransactions(address: string) {
           results = [...results, ...data.data.transfers];
           page++;
         } catch (err) {
-          err
+          console.log(err);
         }
       }
 
@@ -39,7 +39,7 @@ export async function fetchAccountsTransactions(address: string) {
 
     return result_arr;
   } catch (err) {
-    return err
+    console.log(err);
   }
 }
 
