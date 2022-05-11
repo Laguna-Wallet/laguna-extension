@@ -1,18 +1,5 @@
 import { chrome } from "@polkadot/extension-inject/chrome"
 
-// need to keep alive service_worker
-let keepAlivePort
-function connect() {
-  console.log("connect")
-  keepAlivePort = chrome.runtime.connect({ name: "keep_alive" })
-  keepAlivePort.onDisconnect.addListener(connect)
-  keepAlivePort.onMessage.addListener((msg) => {
-    console.log("received", msg, "from bg")
-  })
-}
-
-connect()
-
 const port = chrome.runtime.connect({ name: process.env.MESSAGING_PORT })
 // handles from background to page
 port.onMessage.addListener(function (data) {
@@ -32,10 +19,11 @@ window.addEventListener("message", ({ data, source }) => {
   // }
 })
 
-if (chrome.runtime.getURL) {
+console.log("~ chrome?.extension?.getURL", chrome?.extension?.getURL)
+if (chrome?.extension?.getURL) {
   const script = document.createElement("script")
-  console.log(chrome.runtime.getURL("page.js"))
-  script.src = chrome.runtime.getURL("page.js")
+  console.log(chrome.extension.getURL("page.js"))
+  script.src = chrome.extension.getURL("page.js")
 
   script.onload = (): void => {
     if (script.parentNode) {

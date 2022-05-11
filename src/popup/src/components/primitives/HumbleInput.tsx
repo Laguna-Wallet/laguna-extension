@@ -153,10 +153,10 @@ function HumbleInput({
         )}
       </InputContainer>
 
-      {(meta.error || error) && showError && (
+      {(meta?.error || error) && showError && (
         <ErrorContainer>
           <ErrorMessage errorColor={errorColor}>
-            {error || (meta.dirty && meta?.error)}
+            {error || (meta?.dirty && meta?.error)}
           </ErrorMessage>
         </ErrorContainer>
       )}

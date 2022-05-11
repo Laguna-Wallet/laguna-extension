@@ -23,7 +23,7 @@ import keyring from "@polkadot/ui-keyring"
 import { TypeRegistry } from "@polkadot/types"
 import { AccountsStore } from "./stores"
 import { ApiPromise } from "@polkadot/api"
-import { getCurrentTab } from "./utils"
+// import { getCurrentTab } from "./utils"
 
 // import { initWasm } from "@polkadot/wasm-crypto/initOnlyAsm"
 // import "@polkadot/wasm-crypto/initOnlyAsm"
@@ -67,19 +67,19 @@ chrome.runtime.onConnect.addListener((port: any) => {
   port.timer = setTimeout(forceReconnect, 4500, port)
 })
 
-chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  if (changeInfo.status === "complete") {
-    chrome.scripting
-      .executeScript({
-        target: { tabId },
-        files: ["content.js"],
-      })
-      .then(() => {
-        console.log("INJECTED THE FOREGROUND SCRIPT.")
-      })
-      .catch((err) => console.log("err", err))
-  }
-})
+// chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+//   if (changeInfo.status === "complete") {
+//     chrome.scripting
+//       .executeScript({
+//         target: { tabId },
+//         files: ["content.js"],
+//       })
+//       .then(() => {
+//         console.log("INJECTED THE FOREGROUND SCRIPT.")
+//       })
+//       .catch((err) => console.log("err", err))
+//   }
+// })
 
 chrome.runtime.onConnect.addListener(function (port) {
   chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
@@ -163,10 +163,10 @@ chrome.runtime.onConnect.addListener(function (port) {
       // port.postMessage({ ...data, payload: { id: data.id, result } })
     }
     if (data.message === "AUTHORIZE_TAB") {
-      console.log("~ await getCurrentTab()", await getCurrentTab())
-      const host = new URL((await getCurrentTab()).url).host
+      // console.log("~ await getCurrentTab()", await getCurrentTab())
+      // const host = new URL((await getCurrentTab()).url).host
 
-      isInPhishingList(host).then((isDenied) => {
+      isInPhishingList(window.location.host).then((isDenied) => {
         console.log("~ isDenied", isDenied)
         if (isDenied) {
           port.postMessage({ ...data, payload: { id: data.id, approved: false } })
@@ -174,12 +174,12 @@ chrome.runtime.onConnect.addListener(function (port) {
         }
       })
 
-      if (authorizedDapps.includes(host)) {
+      if (authorizedDapps.includes(window.location.host)) {
         port.postMessage({ ...data, payload: { id: data.id, approved: true } })
         return true
       }
 
-      if (declinedDapps.includes(host)) {
+      if (declinedDapps.includes(window.location.host)) {
         port.postMessage({ ...data, payload: { id: data.id, approved: false } })
         return false
       }
