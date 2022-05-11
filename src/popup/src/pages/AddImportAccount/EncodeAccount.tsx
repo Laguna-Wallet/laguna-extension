@@ -1,28 +1,17 @@
 import CheckMarkIcon from 'assets/svgComponents/CheckMarkIcon';
-import LockIcon from 'assets/svgComponents/LockIcon';
-import RightArrow from 'assets/svgComponents/RightArrow';
 import Button from 'components/primitives/Button';
 import HumbleInput from 'components/primitives/HumbleInput';
 import Snackbar from 'components/Snackbar/Snackbar';
 import Wallet from 'pages/Wallet/Wallet';
 import { useState } from 'react';
 import { goTo } from 'react-chrome-extension-router';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { importJson, importViaSeed, validatePassword } from 'utils/polkadot';
-import WizardHeader from './WizardHeader';
+import { validatePassword } from 'utils/polkadot';
 import encodeBg from 'assets/imgs/encode-bg.png';
 import { useWizard } from 'react-use-wizard';
 import { State } from 'redux/store';
-import {
-  reduxForm,
-  change,
-  reset,
-  Field,
-  FormErrors,
-  getFormSyncErrors,
-  InjectedFormProps
-} from 'redux-form';
+import { reduxForm,  Field } from 'redux-form';
 
 type Props = {
   handleEncode: (password: string) => void;
@@ -34,11 +23,15 @@ type Props = {
 function EncodeAccount({ handleEncode, title, onClose, onBack }: Props) {
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
   const [snackbarError, setSnackbarError] = useState<string>('');
-  const { nextStep, previousStep } = useWizard();
+  const { nextStep, handleStep } = useWizard();
   const hasBoarded = useSelector((state: State) => state?.wallet?.onboarding);
 
   const formValues = useSelector((state: any) => state?.form?.EncodeAccount?.values);
   const { password }: any = { ...formValues };
+
+  handleStep(() => {
+    return;
+  });
 
   const submit = async (password: string) => {
     if (!password) {
@@ -114,11 +107,11 @@ function EncodeAccount({ handleEncode, title, onClose, onBack }: Props) {
           isOpen={isSnackbarOpen}
           message={snackbarError}
           close={() => setIsSnackbarOpen(false)}
-          width="80%"
           type="error"
-          left="50%"
+          left="26px"
           bottom={'145px'}
-        />
+          transform='translateX(0)'
+          />
       </Content>
     </Container>
   );
@@ -136,7 +129,7 @@ const Container = styled.div<{ bg?: string }>`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 30px 16px 38px 16px;
+  padding: 30px 26px 29px;
   box-sizing: border-box;
   background-image: ${({ bg }) => `url(${bg})`};
   background-size: cover;

@@ -210,9 +210,10 @@ export default function AddAddress({
           close={() => setIsSnackbarOpen(false)}
           message={snackbarError}
           type="error"
-          left="0px"
+          left="8.5px"
           transform='translateX(0)'
-          bottom="52px"></Snackbar>
+          bottom={edit ? "31px" : "-2px"}>
+          </Snackbar>
       </Content>
     </Container>
   );

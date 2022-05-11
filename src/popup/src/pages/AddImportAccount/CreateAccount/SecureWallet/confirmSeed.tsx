@@ -42,8 +42,10 @@ export default function ConfirmSeed({ handleNextSection }: Props) {
   };
 
   const handleWrittenClick = ()=>{
-    handleNextSection();
-    copyToClipboard('');
+    if(validateMnemonicChoice(mnemonics, chosenMnemonics, mnemonicIndexes as MnemonicsTriple) && !isSnackbarOpen){
+      handleNextSection();
+      copyToClipboard('');
+    }
   }
 
   useEffect(() => {
@@ -53,7 +55,7 @@ export default function ConfirmSeed({ handleNextSection }: Props) {
         chosenMnemonics,
         mnemonicIndexes as MnemonicsTriple
       );
-
+      
       if (isValid) {
         // handleNextSection();
       } else {
@@ -100,12 +102,13 @@ export default function ConfirmSeed({ handleNextSection }: Props) {
         </MainContent> 
 
         <Snackbar
-          width="90%"
           isOpen={isSnackbarOpen}
           message="Please choose words in provided order"
           close={() => setIsSnackbarOpen(false)}
           type="error"
-          bottom="36px"
+          left='26px'
+          bottom="28px"
+          transform='translateX(0)'
         />
 
         <Button

@@ -6,6 +6,8 @@ import ChooseSecurityLevel from './chooseSecurityLevel';
 import CreatePassword from '../CreatePassword/CreatePassword';
 import DecodeToViewSeed from './decodeToVeiwSeed';
 import MnemonicsSeed from './mnemonicsSeed';
+import SetupComplete from '../../SetupComplete';
+import { useAccount } from 'context/AccountContext';
 
 type Props = {
   redirectedFromSignUp?: boolean;
@@ -21,6 +23,8 @@ export default function SecureWallet({
   redirectedFromDashboard
 }: Props) {
   const { nextStep } = useWizard();
+  const account = useAccount();
+  const encoded = account.encryptedPassword;
 
   // todo refactor
   // pass onClose function instead of redirectedFromSignUp prop
@@ -42,10 +46,11 @@ export default function SecureWallet({
           redirectedFromSignUp={redirectedFromSignUp}
         />
       )}
-
-      {level === SecurityLevelEnum.Secured && (
+ 
+      {!encoded && (
         <CreatePassword redirectedFromSignUp={redirectedFromSignUp}/>
       )}
+      <SetupComplete/>
     </Wizard>
   );
 }
