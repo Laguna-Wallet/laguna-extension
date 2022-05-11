@@ -22,6 +22,7 @@ import { State } from 'redux/store';
 import '@polkadot/wasm-crypto/initOnlyAsm';
 
 function App() {
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const account = useAccount();
   const dispatch = useDispatch();
   const { idleTimeout, pendingDappAuthorization, pendingToSign, tokenReceived } = useSelector(
@@ -29,12 +30,12 @@ function App() {
   );
 
   const { isLoggedIn } = useSelector((state: any) => state.wallet);
-  const [loading, setLoading] = useState<boolean>(false);
   const pendingDapps = pendingDappAuthorization?.pendingDappAuthorization;
 
   useEffect(() => {
     chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
       MessageListener(msg, dispatch);
+      sendResponse({});
     });
   }, []);
 
@@ -43,7 +44,7 @@ function App() {
     chrome.runtime.sendMessage({ type: Messages.CheckPendingDappAuth });
     chrome.runtime.sendMessage({ type: 'AUTH_CHECK' });
 
-    chrome.runtime.onMessage.addListener(async (msg) => {
+    chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
       if (msg.type === Messages.AuthCheck && !msg.payload.isLoggedIn) {
         const signedIn = await getFromStorage(StorageKeys.SignedIn);
         const createdAccount = Boolean(signedIn);
@@ -65,18 +66,26 @@ function App() {
     });
   }, []);
 
-  // useEffect(() => {
-  //   let keepAlivePort;
-  //   function connect() {
-  //     keepAlivePort = chrome.runtime.connect({ name: 'keep_alive' });
-  //     keepAlivePort.onDisconnect.addListener(connect);
-  //   }
-  //   connect();
-  // }, []);
+  useEffect(() => {
+    let keepAlivePort;
+    function connect() {
+      keepAlivePort = chrome.runtime.connect({ name: 'keep_alive' });
+      keepAlivePort.onDisconnect.addListener(connect);
+    }
+    connect();
+  }, []);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+  }, []);
 
   return (
     <div className="App">
       {handlePage(pendingDapps, pendingToSign)}
+      {/* {isLoading ? '' : handlePage(pendingDapps, pendingToSign)} */}
+      {/* {} */}
       <Snackbar
         width="194.9px"
         isOpen={tokenReceived}
@@ -101,8 +110,32 @@ const handlePage = (pendingDapps: any[], pendingToSign: any) => {
       setCreatedAccount(Boolean(await getFromStorage(StorageKeys.SignedIn)));
       setLoggedOut(Boolean(await getFromStorage(StorageKeys.LoggedOut)));
     }
-
     go();
+
+    chrome.runtime.sendMessage({ type: Messages.CheckPendingSign });
+    chrome.runtime.sendMessage({ type: Messages.CheckPendingDappAuth });
+    chrome.runtime.sendMessage({ type: Messages.AuthCheck });
+
+    chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
+      if (msg.type === Messages.AuthCheck && !msg.payload.isLoggedIn) {
+        const signedIn = await getFromStorage(StorageKeys.SignedIn);
+        const createdAccount = Boolean(signedIn);
+
+        // if () {
+        //   goTo(RequestToSign);
+        // }
+
+        if (pendingDapps?.length > 0) {
+          goTo(RequestToConnect);
+        }
+
+        if (createdAccount) {
+          goTo(WelcomeBack);
+        } else {
+          goTo(SignUp);
+        }
+      }
+    });
   }, []);
 
   //todo check for timeout and require password

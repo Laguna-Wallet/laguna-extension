@@ -56,6 +56,12 @@ export async function saveToChromeStorage({ key, value }: { key: string; value: 
   await chrome.storage.local.set({ [key]: value }, function () {})
 }
 
+// export async function getCurrentTab() {
+//   let queryOptions = { active: true, currentWindow: true }
+//   let [tab] = await chrome.tabs.query(queryOptions)
+//   return tab
+// }
+
 // export function saveToStorage({ key, value }: { key: string; value: string }) {
 //   localStorage.setItem(key, value)
 // }
