@@ -174,11 +174,11 @@ function SendToken({
   };
 
   useEffect(() => {
-    if (!abilityToTransfer) {
+    if (!abilityToTransfer && !loading) {
       setSnackbarError('No enough founds to make transfer');
       setIsSnackbarOpen(true);
     }
-  }, [abilityToTransfer]);
+  }, [loading]);
 
   const isDisabled = (
     errors: Record<string, string>,
@@ -186,7 +186,7 @@ function SendToken({
     abilityToTransfer: boolean
   ) => {
     if (!isObjectEmpty(errors)) return true;
-    if (!loading) return true;
+    if (loading) return true;
     if (!abilityToTransfer) return true;
     return false;
   };
@@ -336,7 +336,7 @@ function SendToken({
             close={() => setIsSnackbarOpen(false)}
             message={snackbarError}
             type="error"
-            left="0px"
+            left="50%"
             bottom="138px"
           />
         </Content>
