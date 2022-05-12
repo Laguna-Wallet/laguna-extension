@@ -75,8 +75,6 @@ export default function MenuHeader({ showUser, onClose, title, backAction }: Pro
   };
 
   const handleLogout = () => {
-    // clearFromStorage(StorageKeys.SignedIn);
-    saveToStorage({ key: StorageKeys.LoggedOut, value: 'true' });
     chrome.runtime.sendMessage({
       type: Messages.LogOutUser
     });

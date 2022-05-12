@@ -39,6 +39,18 @@ export const saveToStorage = async function ({ key, value }: { key: string; valu
   });
 };
 
+export function sendMessagePromise(obj: Record<string, unknown>): Promise<Record<string, any>> {
+  return new Promise((resolve, reject) => {
+    chrome.runtime.sendMessage(obj, (response) => {
+      if (response) {
+        resolve(response);
+      } else {
+        reject('Something wrong');
+      }
+    });
+  });
+}
+
 export const clearFromStorage = async function (keys: string) {
   return new Promise((resolve, reject) => {
     try {
