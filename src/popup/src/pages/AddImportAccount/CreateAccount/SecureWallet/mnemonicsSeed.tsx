@@ -20,14 +20,18 @@ type Props = {
 };
 
 export default function MnemonicsSeed({ redirectedFromSignUp, redirectedFromDashboard }: Props) {
-  const { nextStep, previousStep } = useWizard();
+  const { nextStep, previousStep, handleStep  } = useWizard();
   const [mnemonics, setMnemonics] = useState<string[]>([]);
   const [isConfirm, setIsConfirm] = useState<boolean>(false)
-
+  
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
   const [snackbarMessage, setSnackbarMessage] = useState<string>('');
   const [isMnemonicDescriptionOpen, setIsMnemonicDescriptionOpen] = useState<boolean>();
-
+  
+  handleStep(() => {
+    return;
+  });
+  
   const handleClick = () => nextStep();
 
   const account = useAccount();

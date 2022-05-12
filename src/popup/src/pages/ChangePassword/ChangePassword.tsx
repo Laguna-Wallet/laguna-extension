@@ -179,8 +179,9 @@ function ChangePassword({ handleSubmit }: Props) {
         close={() => setIsSnackbarOpen(false)}
         message={snackbarError}
         type="error"
-        left="0px"
-        bottom="94px"
+        left="26px"
+        bottom="42px"
+        transform='translateX(0)'
       />
     </Container>
   );

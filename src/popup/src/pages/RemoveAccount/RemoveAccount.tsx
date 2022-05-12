@@ -120,8 +120,9 @@ export default function RemoveAccount() {
         close={() => setIsSnackbarOpen(false)}
         message={snackbarError}
         type="error"
-        left="0px"
-        bottom="145px"
+        left="26px"
+        bottom="44px"
+        transform='translateX(0)'
       />
     </Container>
   );

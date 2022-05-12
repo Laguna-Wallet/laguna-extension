@@ -86,10 +86,10 @@ export default function DecodeToViewSeed({ handleEncode, title, onClose, onBack 
           isOpen={isSnackbarOpen}
           message={snackbarError}
           close={() => setIsSnackbarOpen(false)}
-          width="91%"
           type="error"
-          left="50%"
+          left="26px"
           bottom={'90px'}
+          transform='translateX(0)'
         />
       </Content>
     </Container>

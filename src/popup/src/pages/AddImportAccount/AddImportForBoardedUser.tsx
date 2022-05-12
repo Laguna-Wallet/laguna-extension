@@ -20,6 +20,7 @@ export default function AddImportForBoardedUser() {
         title={'ADD / IMPORT WALLET'}
         onBack={() => goTo(Wallet)}
         onClose={() => goTo(SignUp)}
+        isHidden={false}
           />
       <PlusIconContainer>
         <PlusIcon width={46} stroke="#999999" />
