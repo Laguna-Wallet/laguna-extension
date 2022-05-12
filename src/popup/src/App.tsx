@@ -1,7 +1,7 @@
 import './App.css';
 import ProductIntro from 'pages/ProductIntro/ProductIntro';
 import { useAccount } from 'context/AccountContext';
-import { getFromChromeStorage, getFromStorage } from 'utils/chrome';
+import { getFromChromeStorage, getFromStorage, sendMessagePromise } from 'utils/chrome';
 import SignUp from 'pages/SignUp/SignUp';
 import WelcomeBack from 'pages/WelcomeBack/WelcomeBack';
 import Wallet from 'pages/Wallet/Wallet';
@@ -22,7 +22,6 @@ import { State } from 'redux/store';
 import '@polkadot/wasm-crypto/initOnlyAsm';
 
 function App() {
-  const [isLoading, setIsLoading] = useState<boolean>(true);
   const account = useAccount();
   const dispatch = useDispatch();
   const { idleTimeout, pendingDappAuthorization, pendingToSign, tokenReceived } = useSelector(
@@ -39,53 +38,9 @@ function App() {
     });
   }, []);
 
-  useEffect(() => {
-    chrome.runtime.sendMessage({ type: Messages.CheckPendingSign });
-    chrome.runtime.sendMessage({ type: Messages.CheckPendingDappAuth });
-    chrome.runtime.sendMessage({ type: 'AUTH_CHECK' });
-
-    chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
-      if (msg.type === Messages.AuthCheck && !msg.payload.isLoggedIn) {
-        const signedIn = await getFromStorage(StorageKeys.SignedIn);
-        const createdAccount = Boolean(signedIn);
-
-        // if () {
-        //   goTo(RequestToSign);
-        // }
-
-        if (pendingDapps?.length > 0) {
-          goTo(RequestToConnect);
-        }
-
-        if (createdAccount) {
-          goTo(WelcomeBack);
-        } else {
-          goTo(SignUp);
-        }
-      }
-    });
-  }, []);
-
-  useEffect(() => {
-    let keepAlivePort;
-    function connect() {
-      keepAlivePort = chrome.runtime.connect({ name: 'keep_alive' });
-      keepAlivePort.onDisconnect.addListener(connect);
-    }
-    connect();
-  }, []);
-
-  useEffect(() => {
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
-  }, []);
-
   return (
     <div className="App">
       {handlePage(pendingDapps, pendingToSign)}
-      {/* {isLoading ? '' : handlePage(pendingDapps, pendingToSign)} */}
-      {/* {} */}
       <Snackbar
         width="194.9px"
         isOpen={tokenReceived}
@@ -102,60 +57,61 @@ function App() {
 export default App;
 
 const handlePage = (pendingDapps: any[], pendingToSign: any) => {
-  const [createdAccount, setCreatedAccount] = useState(false);
-  const [loggedOut, setLoggedOut] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     async function go() {
-      setCreatedAccount(Boolean(await getFromStorage(StorageKeys.SignedIn)));
-      setLoggedOut(Boolean(await getFromStorage(StorageKeys.LoggedOut)));
-    }
-    go();
+      // Login State
+      const AuthResponse = await sendMessagePromise({ type: Messages.AuthCheck });
 
-    chrome.runtime.sendMessage({ type: Messages.CheckPendingSign });
-    chrome.runtime.sendMessage({ type: Messages.CheckPendingDappAuth });
-    chrome.runtime.sendMessage({ type: Messages.AuthCheck });
+      const PendingDappAuthResponse = await sendMessagePromise({
+        type: Messages.CheckPendingDappAuth
+      });
 
-    chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
-      if (msg.type === Messages.AuthCheck && !msg.payload.isLoggedIn) {
-        const signedIn = await getFromStorage(StorageKeys.SignedIn);
-        const createdAccount = Boolean(signedIn);
+      const CheckPendingDappSign = await sendMessagePromise({
+        type: Messages.CheckPendingSign
+      });
 
-        // if () {
-        //   goTo(RequestToSign);
-        // }
-
-        if (pendingDapps?.length > 0) {
-          goTo(RequestToConnect);
-        }
-
-        if (createdAccount) {
+      // If user is not logged in redirect to WelcomeBack or SignUp
+      if (!AuthResponse?.payload?.isLoggedIn) {
+        const hasBoarded = Boolean(await getFromStorage(StorageKeys.OnBoarding));
+        if (hasBoarded) {
           goTo(WelcomeBack);
+          return;
         } else {
           goTo(SignUp);
+          return;
         }
       }
-    });
+
+      // Check if Pending Auth From Dapp(connected site)
+      if (
+        AuthResponse?.payload?.isLoggedIn &&
+        PendingDappAuthResponse?.payload?.pendingDappAuthorization?.length > 0
+      ) {
+        goTo(RequestToConnect);
+        return;
+      }
+
+      // Check if Dapp is asking for Sign Transaction(connected site)
+      if (AuthResponse?.payload?.isLoggedIn && CheckPendingDappSign?.payload?.pending) {
+        goTo(RequestToSign);
+        return;
+      }
+
+      // in case no pending requests from dapp and user is loggedIn go to Wallet
+      if (AuthResponse?.payload?.isLoggedIn) {
+        goTo(Wallet);
+        return;
+      }
+
+      setIsLoading(false);
+      return;
+    }
+    go();
   }, []);
 
-  //todo check for timeout and require password
-  // return <WelcomeBack />;
-
-  if (loggedOut) {
-    return <WelcomeBack />;
+  if (isLoading) {
+    <div>Loading</div>;
   }
-
-  if (pendingToSign?.pending) {
-    return <RequestToSign />;
-  }
-
-  if (pendingDapps?.length > 0) {
-    return <RequestToConnect />;
-  }
-
-  if (createdAccount) {
-    return <Wallet />;
-  }
-
-  return <SignUp />;
 };

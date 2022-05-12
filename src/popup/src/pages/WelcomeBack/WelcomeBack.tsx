@@ -8,7 +8,7 @@ import Input from 'components/primitives/Input';
 import { welcomeBackSchema } from 'utils/validations';
 // import { validatePassword } from 'utils/polkadot';
 import Wallet from 'pages/Wallet/Wallet';
-import { clearFromStorage, saveToStorage } from 'utils/chrome';
+import { clearFromStorage, saveToStorage, sendMessagePromise } from 'utils/chrome';
 import { Messages, StorageKeys } from 'utils/types';
 import { useEffect, useState } from 'react';
 import Snackbar from 'components/Snackbar/Snackbar';
@@ -58,12 +58,19 @@ function WelcomeBack({ handleSubmit }: Props) {
     const isValid = await validatePassword(values.password);
 
     if (isValid) {
-      // saveToStorage({ key: StorageKeys.SignedIn, value: 'true' });
-      clearFromStorage(StorageKeys.LoggedOut);
       chrome.runtime.sendMessage({
         type: Messages.AuthUser,
         payload: { password: values.password }
       });
+
+      // const PendingDappAuthResponse = await sendMessagePromise({
+      //   type: Messages.CheckPendingDappAuth
+      // });
+
+      // if (PendingDappAuthResponse?.payload?.pendingDappAuthorization?.length > 0) {
+      //   goTo(RequestToConnect);
+      //   return;
+      // }
 
       if (pendingDapps?.length > 0) {
         goTo(RequestToConnect);
@@ -86,8 +93,6 @@ function WelcomeBack({ handleSubmit }: Props) {
   //   onSubmit: ({ password }) => {
   //     const isValid = validatePassword(password);
   //     if (isValid) {
-  //       saveToStorage({ key: StorageKeys.SignedIn, value: 'true' });
-  //       clearFromStorage(StorageKeys.LoggedOut);
   //       chrome.runtime.sendMessage({ type: Messages.AuthUser, payload: { password } });
 
   //       if (pendingDapps?.length > 0) {

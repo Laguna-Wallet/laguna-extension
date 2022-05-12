@@ -20,7 +20,6 @@ export interface State {
     tokenReceived: boolean;
     disabledTokens: Token[];
     onboarding: boolean;
-    boardedAccounts: Record<string, boolean>;
   };
 }
 
@@ -31,12 +30,11 @@ async function handleInitialState(): Promise<State> {
   const transactions = await getFromStorage(StorageKeys.Transactions);
   const idleTimeout = await getFromStorage(StorageKeys.IdleTimeout);
   const tokenDecimals = await getFromStorage(StorageKeys.TokenDecimals);
-  const pendingDappAuthorization: [] = await [];
-  const pendingToSign = await {};
-  const connectedApps: [] = await [];
+  const pendingDappAuthorization: [] = [];
+  const pendingToSign = {};
+  const connectedApps: [] = [];
   const disabledTokens = await getFromStorage(StorageKeys.DisabledTokens);
   const onboarding = await getFromStorage(StorageKeys.OnBoarding);
-  const boardedAccounts = await getFromStorage(StorageKeys.OnBoarding);
 
   return {
     // todo proper Typing of properties
@@ -54,8 +52,7 @@ async function handleInitialState(): Promise<State> {
       idleTimeout: Number(idleTimeout) || 10,
       tokenReceived: false,
       disabledTokens: disabledTokens ? JSON.parse(disabledTokens) : [],
-      onboarding: onboarding ? JSON.parse(onboarding) : false,
-      boardedAccounts: boardedAccounts ? JSON.parse(boardedAccounts) : {}
+      onboarding: onboarding ? JSON.parse(onboarding) : false
     }
   };
 }

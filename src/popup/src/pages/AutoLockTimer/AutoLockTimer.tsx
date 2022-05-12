@@ -20,7 +20,7 @@ function AutoLockTimer() {
   const [timeout, changeTimeout] = useState<string>(idleTimeout || '');
 
   const [snackbarError, setSnackbarError] = useState<string>('');
-  const [isChangeValue, setIsChangeValue] =useState<boolean>(false);
+  const [isChangeValue, setIsChangeValue] = useState<boolean>(false);
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
 
   const handleSetTimeout = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -54,7 +54,7 @@ function AutoLockTimer() {
       />
       <Content>
         <IconContainer>
-          <TimerIcon/>
+          <TimerIcon />
         </IconContainer>
         <Text>How many minutes should pass before the wallet automatically locks?</Text>
         <HumbleInput
@@ -64,11 +64,11 @@ function AutoLockTimer() {
           onChange={handleSetTimeout}
           bgColor="#221d1d"
           borderColor="#303030"
-          color= {isChangeValue ? "#fff" : '#777E91'} 
+          color={isChangeValue ? '#fff' : '#777E91'}
           height="48px"
           marginTop="22px"
           rightLabel="minutes"
-          fontSize='16px'
+          fontSize="16px"
         />
         <ButtonContainer>
           <StyledLink component={Wallet} props={{ closeAction: () => goTo(Wallet) }}>
@@ -78,8 +78,8 @@ function AutoLockTimer() {
               color="#fff"
               justify="center"
               margin="auto 10px 0 0"
-              borderColor='transparent'
-              width='154px'
+              borderColor="transparent"
+              width="154px"
             />
           </StyledLink>
           <Button
@@ -88,9 +88,9 @@ function AutoLockTimer() {
             color="#23262F"
             justify="center"
             margin="0 0 0 15px"
-            bgColor='#fff'
-            borderColor='transparent'
-            width='154px'
+            bgColor="#fff"
+            borderColor="transparent"
+            width="154px"
           />
         </ButtonContainer>
       </Content>
@@ -101,7 +101,7 @@ function AutoLockTimer() {
         type="error"
         left="26px"
         bottom="42px"
-        transform='translateX(0)'
+        transform="translateX(0)"
       />
     </Container>
   );
