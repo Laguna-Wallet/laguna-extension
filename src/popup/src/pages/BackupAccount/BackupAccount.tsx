@@ -143,8 +143,9 @@ function BackupAccount() {
         close={() => setIsSnackbarOpen(false)}
         message={snackbarError}
         type="error"
-        left="0px"
-        bottom="100px"
+        left="26px"
+        bottom="30px"
+        transform='translateX(0)'
       />
     </Container>
   );
@@ -166,9 +167,9 @@ const Container = styled.div<{opened: boolean}>`
   box-sizing: border-box;
   background-color: #18191a;
   z-index: 99999;
-`;
-
-const Content = styled.div`
+  `;
+  
+  const Content = styled.div`
   height: 100%;
   display: flex;
   padding: 0 8.5px;

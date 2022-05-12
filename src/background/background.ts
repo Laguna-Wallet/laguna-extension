@@ -45,9 +45,7 @@ let declinedDapps = []
 
 keyring.loadAll({ ss58Format: 0, type: "ed25519", store: new AccountsStore() })
 
-function onMessage(msg, port) {
-  console.log("received", msg, "from", port.sender)
-}
+function onMessage(msg, port) {}
 
 function forceReconnect(port) {
   deleteTimer(port)
@@ -78,7 +76,6 @@ chrome.runtime.onConnect.addListener((port: any) => {
 //         files: ["content.js"],
 //       })
 //       .then(() => {
-//         console.log("INJECTED THE FOREGROUND SCRIPT.")
 //       })
 //       .catch((err) => console.log("err", err))
 //   }
@@ -169,7 +166,6 @@ chrome.runtime.onConnect.addListener(function (port) {
       // port.postMessage({ ...data, payload: { id: data.id, result } })
     }
     if (data.message === "AUTHORIZE_TAB") {
-      // console.log("~ await getCurrentTab()", await getCurrentTab())
       // const host = new URL((await getCurrentTab()).url).host
 
       isInPhishingList(window.location.host).then((isDenied) => {
@@ -265,13 +261,10 @@ chrome.runtime.onInstalled.addListener(async (port) => {
 
   saveToStorage({ key: StorageKeys.TokenPrices, value: JSON.stringify(prices) })
 
-  console.log("Prices injected...")
   const Infos = await Retrieve_Coin_Infos()
   chrome.runtime.sendMessage({ type: Messages.CoinInfoUpdated, payload: JSON.stringify(Infos) })
 
   saveToStorage({ key: StorageKeys.TokenInfos, value: JSON.stringify(Infos) })
-
-  console.log("info injected...")
 
   chrome.alarms.create("refresh", { periodInMinutes: 1 })
   chrome.alarms.create("refetch-account-balances", { periodInMinutes: 3 })
@@ -330,13 +323,10 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
 
   // coin info
   const Infos = await Retrieve_Coin_Infos()
-  console.log("~ Infos", Infos)
   chrome.runtime.sendMessage({ type: Messages.CoinInfoUpdated, payload: JSON.stringify(Infos) })
   saveToStorage({ key: StorageKeys.TokenInfos, value: JSON.stringify(Infos) })
 
   if (alarm.name === "24-hr-ballance-change") {
     // const balance24hrChangeRate = Retrieve_balance_change_rates()
   }
-
-  console.log(alarm, isLoggedIn)
 })

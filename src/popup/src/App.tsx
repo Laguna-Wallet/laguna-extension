@@ -44,28 +44,35 @@ function App() {
     chrome.runtime.sendMessage({ type: Messages.CheckPendingDappAuth });
     chrome.runtime.sendMessage({ type: 'AUTH_CHECK' });
 
-    // chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
-    //   if (msg.type === Messages.AuthCheck && !msg.payload.isLoggedIn) {
-    //     const signedIn = await getFromStorage(StorageKeys.SignedIn);
-    //     const createdAccount = Boolean(signedIn);
+    chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
+      if (msg.type === Messages.AuthCheck && !msg.payload.isLoggedIn) {
+        const signedIn = await getFromStorage(StorageKeys.SignedIn);
+        const createdAccount = Boolean(signedIn);
 
-    //     // if () {
-    //     //   goTo(RequestToSign);
-    //     // }
+        // if () {
+        //   goTo(RequestToSign);
+        // }
 
-    //     if (pendingDapps?.length > 0) {
-    //       goTo(RequestToConnect);
-    //     }
+        if (pendingDapps?.length > 0) {
+          goTo(RequestToConnect);
+        }
 
-    //     if (createdAccount) {
-    //       goTo(WelcomeBack);
-    //     } else {
-    //       goTo(SignUp);
-    //     }
-    //   } else {
-    //     goTo(Wallet);
-    //   }
-    // });
+        if (createdAccount) {
+          goTo(WelcomeBack);
+        } else {
+          goTo(SignUp);
+        }
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    let keepAlivePort;
+    function connect() {
+      keepAlivePort = chrome.runtime.connect({ name: 'keep_alive' });
+      keepAlivePort.onDisconnect.addListener(connect);
+    }
+    connect();
   }, []);
 
   useEffect(() => {

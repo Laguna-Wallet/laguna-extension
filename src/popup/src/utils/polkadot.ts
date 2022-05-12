@@ -78,9 +78,8 @@ export function validateSeed(suri: string) {
     }
 
     return true;
-  } catch (err) {
-    console.log('err', err);
-    return false;
+  } catch (err) { 
+    console.log(err);
   }
 }
 
@@ -146,7 +145,8 @@ export function isValidPolkadotAddress(address: string): boolean {
 
     return false;
   } catch (error) {
-    return false;
+    console.log(error);
+    return false
   }
 }
 
@@ -368,8 +368,8 @@ export async function getAssets(
         price,
         encodeType
       });
-    } catch (err) {
-      console.log('err', err);
+    } catch (err) { 
+      console.log(err);
     }
   }
 
@@ -423,6 +423,7 @@ export function isKeyringJson(
 
     return !!address;
   } catch (e) {
+    console.log(e);
     return false;
   }
 }
@@ -454,6 +455,7 @@ export async function isValidKeyringPassword(
 
     return false;
   } catch (err) {
+    console.log(err);
     return false;
   }
 }
@@ -535,7 +537,6 @@ export async function getLatestTransactionsForSingleChain(
 //     let newPairs = [];
 
 //     const unlockedPairs = getFromStorage(StorageKeys.UnlockedPairs);
-//     console.log('~ unlockedPairs', unlockedPairs);
 
 //     if (unlockedPairs) {
 //       const parsed = JSON.parse(unlockedPairs);
