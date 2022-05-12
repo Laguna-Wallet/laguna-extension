@@ -52,6 +52,7 @@ export default function DecodeToViewSeed({ handleEncode, title, onClose, onBack 
       nextStep();
     } catch (err: any) {
       // todo proper typing
+      console.log(err);
       setIsSnackbarOpen(true);
       setSnackbarError(err.message);
     }
@@ -85,10 +86,10 @@ export default function DecodeToViewSeed({ handleEncode, title, onClose, onBack 
           isOpen={isSnackbarOpen}
           message={snackbarError}
           close={() => setIsSnackbarOpen(false)}
-          width="91%"
           type="error"
-          left="50%"
+          left="26px"
           bottom={'90px'}
+          transform='translateX(0)'
         />
       </Content>
     </Container>

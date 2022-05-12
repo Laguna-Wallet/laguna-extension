@@ -1,29 +1,22 @@
 import styled from 'styled-components';
-import { connect, useDispatch, useSelector } from 'react-redux';
-import { getFormSyncErrors, reduxForm, reset } from 'redux-form';
+import { useDispatch, useSelector } from 'react-redux';
+import { reset } from 'redux-form';
 import { Wizard } from 'react-use-wizard';
 import { goTo } from 'react-chrome-extension-router';
 
-import { keyExtractSuri, mnemonicValidate, randomAsHex } from '@polkadot/util-crypto';
+import { mnemonicValidate } from '@polkadot/util-crypto';
 import { isHex } from '@polkadot/util';
 import {
-  accountsChangePassword,
   encryptKeyringPair,
   importFromMnemonic,
-  importFromPrivateKey,
-  importFromPublicKey,
   importJson,
-  importViaSeed,
   isValidPolkadotAddress,
-  // unlockAndSavePair,
-  validatePassword
 } from 'utils/polkadot';
 import { KeyringPair$Json } from '@polkadot/keyring/types';
 import { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
 import { Messages, SEED_LENGTHS, StorageKeys } from 'utils/types';
 
 import { State } from 'redux/store';
-
 import { useAccount } from 'context/AccountContext';
 
 import CreatePassword from '../CreateAccount/CreatePassword/CreatePassword';

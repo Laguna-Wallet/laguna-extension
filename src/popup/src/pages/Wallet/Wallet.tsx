@@ -47,18 +47,17 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
   const [activeTab, setActiveTab] = useState<number>(1);
   const [overallBalance, setOverallBalance] = useState<number | undefined>(undefined);
   const [overallPriceChange, setOverallPriceChange] = useState<number | undefined>(undefined);
-  const hasViewedDashboard = account?.getActiveAccount()?.meta?.hasViewedDashboard;
-  const currentAccountAddress = account?.getActiveAccount()?.address;
   const activeAccount = useCallback(account.getActiveAccount(), [account]);
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
   const [snackbarMessage, setSnackbarMessage] = useState<string>('');
+
+  const negativeValue = String(overallPriceChange).includes('-');
 
   const {
     prices,
     infos,
     accountsBalances,
     loading: accountsChanging,
-    tokenReceived,
     disabledTokens
   } = useSelector((state: State) => state.wallet);
 
@@ -127,7 +126,6 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
       const keyrings = keyring.getPairs();
       // await saveToStorage({ key: 'rings', value: keyrings });
       // const then = await getFromStorage('rings');
-      // console.log('~ then', then);
     }
 
     go();
@@ -136,19 +134,15 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
   const logoutTimerIdRef = useRef<any>(null);
 
   function logoutUser() {
-    console.log('log out');
+    return;
   }
 
   useEffect(() => {
     const autoLogout = () => {
       if (document.visibilityState === 'hidden') {
-        console.log(1);
         const timeOutId = window.setTimeout(logoutUser, 5 * 60 * 1000);
-        console.log(2);
         logoutTimerIdRef.current = timeOutId;
-        console.log(3);
       } else {
-        console.log(4);
         window.clearTimeout(logoutTimerIdRef.current);
       }
     };
@@ -196,7 +190,7 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
                   : '...'}{' '}
               </span>
             </Balance>
-            <PriceChange>
+            <PriceChange negativeValue={negativeValue}>
               {accountsChanging ? (
                 '...'
               ) : (
@@ -371,9 +365,9 @@ const Balance = styled.div`
     font-size: 30px;
     font-weight: 500;
   }
-`;
-
-const PriceChange = styled.div`
+  `;
+  
+  const PriceChange = styled.div<{negativeValue: boolean}>`
   font-family: 'IBM Plex Sans';
   font-size: 14px;
   color: #606060;
@@ -382,6 +376,7 @@ const PriceChange = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  color: ${(negativeValue) => negativeValue ? '#606060': '#45b26b'};
 `;
 
 const TitleSmallText = styled.span`

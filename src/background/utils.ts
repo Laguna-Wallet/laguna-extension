@@ -53,9 +53,7 @@ export function getFromChromeStorage(key: string) {
 }
 
 export async function saveToChromeStorage({ key, value }: { key: string; value: string }) {
-  await chrome.storage.local.set({ [key]: value }, function () {
-    console.log("Value is set to " + value)
-  })
+  await chrome.storage.local.set({ [key]: value }, function () {})
 }
 
 // export async function getCurrentTab() {
@@ -96,9 +94,7 @@ export function handleInitialIdleTimeout() {
 
 export function getAccountAddresses() {
   try {
-    chrome.storage.local.get(null, function (items) {
-      console.log("items", items)
-    })
+    chrome.storage.local.get(null, function (items) {})
 
     const local = localStorage
     const accountAddresses: string[] = []
@@ -116,7 +112,7 @@ export function getAccountAddresses() {
 
     return accountAddresses
   } catch (err) {
-    console.warn(err)
+    return err
   }
 }
 
@@ -125,7 +121,7 @@ export function isValidPolkadotAddress(address: string): boolean {
     encodeAddress(isHex(address) ? hexToU8a(address) : decodeAddress(address))
     return true
   } catch (error) {
-    return false
+    console.log(error);
   }
 }
 

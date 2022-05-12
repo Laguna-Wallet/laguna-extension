@@ -72,7 +72,5 @@ export function getFromChromeStorage(key: string) {
 }
 
 export async function saveToChromeStorage({ key, value }: { key: string; value: string }) {
-  await chrome.storage.local.set({ [key]: value }, function () {
-    console.log('Value is set to ' + value);
-  });
+  await chrome.storage.local.set({ [key]: value });
 }

@@ -19,10 +19,8 @@ window.addEventListener("message", ({ data, source }) => {
   // }
 })
 
-console.log("~ chrome?.extension?.getURL", chrome?.extension?.getURL)
 if (chrome?.extension?.getURL) {
   const script = document.createElement("script")
-  console.log(chrome.extension.getURL("page.js"))
   script.src = chrome.extension.getURL("page.js")
 
   script.onload = (): void => {

@@ -82,6 +82,8 @@ export default function TokenDashboard({ asset }: Props) {
     setTransaction(transaction);
   };
 
+  const negativeValue = String(price_change_percentage_24h).includes('-');
+
   return (
     <Container bg={dashboardBG}>
       <Header title={`${chain} Balance`} backAction={() => goTo(Wallet)}></Header>
@@ -95,8 +97,13 @@ export default function TokenDashboard({ asset }: Props) {
             </Balance>
             <BalanceInUsd>${new BigNumber(balanceInUsd).toFormat(2)}</BalanceInUsd>
             <CardBottom>
-              <Tag>{handleChain(chain)}</Tag> 
-              <Rate>{price_change_percentage_24h ? new BigNumber(price_change_percentage_24h).toFormat(2) : 0}%</Rate>
+              <Tag>{handleChain(chain)}</Tag>
+              <Rate negativeValue={negativeValue}>
+                {price_change_percentage_24h
+                  ? new BigNumber(price_change_percentage_24h).toFormat(2)
+                  : 0}
+                %
+              </Rate>
             </CardBottom>
           </Card>
         </CardContainer>
@@ -249,11 +256,11 @@ const Tag = styled.div`
   );
 `;
 
-const Rate = styled.div`
+const Rate = styled.div<{ negativeValue: boolean }>`
   font-family: Inter;
   font-size: 14px;
   font-weight: 500;
-  color: #45b26b;
+  color: ${(negativeValue) => (negativeValue ? '#606060' : '#45b26b')};
 `;
 
 const ButtonsContainer = styled.div`
