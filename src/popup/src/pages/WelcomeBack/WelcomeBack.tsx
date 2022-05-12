@@ -48,7 +48,6 @@ function WelcomeBack({ handleSubmit }: Props) {
     const errors = validate(values);
 
     if (!isObjectEmpty(errors)) {
-      console.log('here');
       const errArray = objectToArray(errors);
 
       setSnackbarError(errArray[0]);

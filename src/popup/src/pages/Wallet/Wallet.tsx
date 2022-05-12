@@ -127,7 +127,6 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
       const keyrings = keyring.getPairs();
       // await saveToStorage({ key: 'rings', value: keyrings });
       // const then = await getFromStorage('rings');
-      // console.log('~ then', then);
     }
 
     go();
@@ -136,19 +135,15 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
   const logoutTimerIdRef = useRef<any>(null);
 
   function logoutUser() {
-    console.log('log out');
+    return;
   }
 
   useEffect(() => {
     const autoLogout = () => {
       if (document.visibilityState === 'hidden') {
-        console.log(1);
         const timeOutId = window.setTimeout(logoutUser, 5 * 60 * 1000);
-        console.log(2);
         logoutTimerIdRef.current = timeOutId;
-        console.log(3);
       } else {
-        console.log(4);
         window.clearTimeout(logoutTimerIdRef.current);
       }
     };

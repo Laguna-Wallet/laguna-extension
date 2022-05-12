@@ -105,6 +105,7 @@ function ImportPhase({
       }
     } catch (err: any) {
       // todo proper error typing
+      console.log(err);
       setIsSnackbarOpen(true);
       setSnackbarError(err.message);
     }

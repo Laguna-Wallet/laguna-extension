@@ -63,6 +63,7 @@ function EncodeAccount({ handleEncode, title, onClose, onBack }: Props) {
       }
     } catch (err: any) {
       // todo proper typing
+      console.log(err);
       setIsSnackbarOpen(true);
       setSnackbarError(err.message);
     }

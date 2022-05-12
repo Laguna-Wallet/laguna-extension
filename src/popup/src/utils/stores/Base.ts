@@ -7,7 +7,7 @@ const lastError = (type: string): void => {
   const error = chrome.runtime.lastError;
 
   if (error) {
-    console.error(`BaseStore.${type}:: runtime.lastError:`, error);
+    return;
   }
 };
 
