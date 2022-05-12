@@ -10,22 +10,12 @@ type Props = {
 };
 
 export default function QRPopup({ handleCloseQR }: Props) {
-  const handleScan = () => {
-    console.log('error');
-  };
-
-  const handleError = (error: any) => {
-    console.log('error', error);
-  };
-
   useEffect(() => {
     const codeReader = new BrowserQRCodeReader();
 
     // const videoInputDevices = await ZXingBrowser.BrowserCodeReader.listVideoInputDevices();
 
-    codeReader.decodeFromVideoDevice(undefined, 'webcam-preview', (result, err) => {
-      console.log('~ result', result);
-    });
+    codeReader.decodeFromVideoDevice(undefined, 'webcam-preview', (result) => {result});
   });
 
   return (
@@ -34,7 +24,7 @@ export default function QRPopup({ handleCloseQR }: Props) {
       <Content>
         <ScannerContainer>
           {/* <QrReader
-            onLoad={() => console.log('load')}
+            onLoad={}
             delay={300}
             onError={handleError}
             facingMode="environment"

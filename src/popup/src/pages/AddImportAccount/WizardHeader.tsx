@@ -13,6 +13,7 @@ type Props = {
   onClose?: () => void;
   onBack?: () => void;
   uploaded?: boolean;
+  isHidden?: boolean;
 };
 
 const calcProgressBarSize = (activeStep: number, uploaded: boolean): string | undefined => {
@@ -21,7 +22,7 @@ const calcProgressBarSize = (activeStep: number, uploaded: boolean): string | un
   if (activeStep === 2) return '100%';
 };
 
-export default function WizardHeader({ title, onClose, uploaded=false, onBack }: Props) {
+export default function WizardHeader({ title, onClose, uploaded = false, isHidden = true, onBack }: Props) {
   const { activeStep, previousStep, isFirstStep } = useWizard();
   const [activeCount, setActiveCount] = useState(1);
 
@@ -51,7 +52,7 @@ export default function WizardHeader({ title, onClose, uploaded=false, onBack }:
 
   return (
     <Container>
-      <TopSection>
+      {isHidden && <TopSection>
         <IconContainer onClick={handleIconClick}>
           {onClose ? <CloseIcon stroke="#777e90" /> : <LeftArrowThinIcon stroke="#777e90" />}
         </IconContainer>
@@ -59,7 +60,7 @@ export default function WizardHeader({ title, onClose, uploaded=false, onBack }:
           <Progress activeStep={activeStep} uploaded={uploaded} calcProgressBarSize={()=>calcProgressBarSize(activeStep, uploaded)}></Progress>
         </Line>
         <StepNumber>{activeCount}/3</StepNumber>
-      </TopSection>
+      </TopSection>}
       {title && (
         <BottomSection>
           <LeftIconContainer onClick={handleBack}>

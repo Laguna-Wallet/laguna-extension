@@ -52,7 +52,7 @@ function Snackbar({
     if (type === 'error') {
       return (
         <>
-          <CloseIconContainer>
+          <CloseIconContainer onClick={close}>
             <CloseIcon stroke="#111" />
           </CloseIconContainer>
           <ErrorMessage align={align}>{message}</ErrorMessage>
@@ -109,7 +109,7 @@ const Container = styled.div<{
   transform?: string;
   isOpen?: boolean;
 }>`
-  width: ${({ width }) => width || '100%'};
+  width: ${({ width }) => width || '323px'};
   display: block;
   height: ${({ isOpen }) => (isOpen ? '48px' : '0px')};
   box-sizing: border-box;
@@ -164,6 +164,7 @@ const CloseIconContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
 `;
 
 const CheckIconContainer = styled.div`

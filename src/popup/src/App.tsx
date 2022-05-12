@@ -34,7 +34,6 @@ function App() {
 
   useEffect(() => {
     chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
-      console.log('~ msg', msg);
       MessageListener(msg, dispatch);
       sendResponse({});
     });
@@ -46,7 +45,6 @@ function App() {
     chrome.runtime.sendMessage({ type: 'AUTH_CHECK' });
 
     chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
-      console.log('~ msg', msg);
       if (msg.type === Messages.AuthCheck && !msg.payload.isLoggedIn) {
         const signedIn = await getFromStorage(StorageKeys.SignedIn);
         const createdAccount = Boolean(signedIn);
@@ -73,9 +71,6 @@ function App() {
     function connect() {
       keepAlivePort = chrome.runtime.connect({ name: 'keep_alive' });
       keepAlivePort.onDisconnect.addListener(connect);
-      keepAlivePort.onMessage.addListener((msg) => {
-        console.log('received', msg, 'from bg');
-      });
     }
     connect();
   }, []);

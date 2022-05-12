@@ -1,17 +1,19 @@
 import styled from 'styled-components';
 import Button from 'components/primitives/Button';
 import { useWizard } from 'react-use-wizard';
-import { useFormik } from 'formik';
 import { passwordStrength } from 'check-password-strength';
 import { calculatePasswordCheckerColor, enhancePasswordStrength, isObjectEmpty } from 'utils';
-import { createPasswordSchema } from 'utils/validations';
 import Snackbar from 'components/Snackbar/Snackbar';
 import { useAccount } from 'context/AccountContext';
-import { memo, useState } from 'react';
+import { useState } from 'react';
 import RightArrow from 'assets/svgComponents/RightArrow';
 import HumbleInput from 'components/primitives/HumbleInput';
 import { reduxForm, Field, getFormSyncErrors } from 'redux-form';
 import { useSelector, connect } from 'react-redux';
+import WizardHeader from 'pages/AddImportAccount/WizardHeader';
+import { goTo } from 'react-chrome-extension-router';
+import Wallet from 'pages/Wallet/Wallet';
+
 
 const validate = (values: { password: string; confirmPassword: string }) => {
   const errors: { password?: string; confirmPassword?: string } = {};
@@ -41,15 +43,20 @@ type Props = {
 };
 
 function CreatePassword({ handleSubmit, errors }: Props) {
-  const { nextStep } = useWizard();
+  const { nextStep, handleStep, previousStep } = useWizard();
+
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
   const [snackbarMessage, setSnackbarMessage] = useState<string>('Please fix the existing errors');
-
+  
   const formValues = useSelector((state: any) => state?.form?.CreatePassword?.values);
-
+  
   const account = useAccount();
-
+  
   const passwordLength = enhancePasswordStrength(passwordStrength(formValues?.password).value);
+
+  handleStep(() => {
+   return
+  });
 
   const submit = (values: Record<string, string>) => {
     account.setPassword(values.password);
@@ -57,6 +64,12 @@ function CreatePassword({ handleSubmit, errors }: Props) {
 
   return (
     <Container>
+      <WizardHeader
+        onClose={() => goTo(Wallet)}
+        onBack={() => {
+          previousStep();
+        }}
+      />
       <Form onSubmit={handleSubmit(submit)}>
         <MainContent>
           <Title>Create a Password</Title>
@@ -127,7 +140,7 @@ function CreatePassword({ handleSubmit, errors }: Props) {
 
         <Button
           type="submit"
-          // onClick={handleSubmit}
+          onClick={nextStep}
           Icon={<RightArrow width={23} />}
           text={'Create Password'}
           margin="auto 0px 0px 0px"
