@@ -11,55 +11,59 @@ import { validatePassword } from 'utils/polkadot';
 import encodeBg from 'assets/imgs/encode-bg.png';
 import { useWizard } from 'react-use-wizard';
 import { State } from 'redux/store';
-import { reduxForm,  Field } from 'redux-form';
+import { reduxForm,  Field, InjectedFormProps } from 'redux-form';
+import { isObjectEmpty, objectToArray, validPassword } from 'utils';
 
 type Props = {
   handleEncode: (password: string) => void;
-  onClose: () => void;
-  onBack: (backAction: () => void) => void;
   title: string;
 };
 
-function EncodeAccount({ handleEncode, title, onClose, onBack }: Props) {
-  const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
-  const [snackbarError, setSnackbarError] = useState<string>('');
-  const { nextStep, handleStep } = useWizard();
-  const hasBoarded = useSelector((state: State) => state?.wallet?.onboarding);
+type FormProps  = { 
+  password: string;
+}
 
-  const formValues = useSelector((state: any) => state?.form?.EncodeAccount?.values);
-  const { password }: any = { ...formValues };
+function EncodeAccount({ handleEncode, handleSubmit, title, pristine, submitting  }: InjectedFormProps<FormProps> & Props) {
+  const { nextStep, handleStep } = useWizard();
+
+  const [snackbarError, setSnackbarError] = useState<string>('');
+  const [isChangeValue, setIsChangeValue] = useState<boolean>(false);
+  const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
+
+  const hasBoarded = useSelector((state: State) => state?.wallet?.onboarding);
 
   handleStep(() => {
     return;
   });
 
-  const submit = async (password: string) => {
-    if (!password) {
-      throw new Error('Password is required');
+  const submit = async (values: FormProps) => {
+    const {password} = values;
+    const errors = validPassword(password);
+
+    if (!isObjectEmpty(errors)) {
+      const errArray = objectToArray(errors);
+
+      setSnackbarError(errArray[0]);
+      setIsSnackbarOpen(true);
+      return;
     }
 
     const isValid = await validatePassword(password);
 
-    if (!isValid) {
-      setIsSnackbarOpen(true);
-      setSnackbarError('Invalid Password');
-      return;
-    }
-
-    try {
+    if (isValid){
       await handleEncode(password);
-
+  
       if (hasBoarded) {
         goTo(Wallet);
       } else {
         nextStep();
       }
-    } catch (err: any) {
-      // todo proper typing
-      console.log(err);
+    }else {
       setIsSnackbarOpen(true);
-      setSnackbarError(err.message);
-    }
+      setSnackbarError('Invalid Password');
+      setIsChangeValue(true);
+      return;
+    } 
   };
 
   return (
@@ -71,11 +75,7 @@ function EncodeAccount({ handleEncode, title, onClose, onBack }: Props) {
         <Title>{title}</Title>
         <Description>To encrypt your new wallet please enter your password below:</Description>
         <Form
-          onSubmit={(e: React.SyntheticEvent) => {
-            e.preventDefault();
-            submit(password);
-          }}>
-          {/* todo proper event typing */}
+          onSubmit={handleSubmit(submit)}>
           <Field
             id="password"
             name="password"
@@ -93,15 +93,18 @@ function EncodeAccount({ handleEncode, title, onClose, onBack }: Props) {
               color: '#b1b5c3',
               placeholderColor: '#b1b5c3',
               hideErrorMsg: false,
-              autoFocus: true
+              autoFocus: true,
+              isChangeValue,
+              setIsChangeValue,
+              errorBorderColor: '#fb5a5a',
             }}
           />
           <Button
             type="submit"
             margin="10px 0 0 0"
             text={'Finish'}
-            // onClick={() => onClick(password)}
             justify="center"
+            disabled={pristine || submitting}
           />
         </Form>
         <Snackbar
@@ -118,7 +121,7 @@ function EncodeAccount({ handleEncode, title, onClose, onBack }: Props) {
   );
 }
 
-export default reduxForm<Record<string, unknown>, Props>({
+export default reduxForm<Record<string, unknown>, any>({
   form: 'EncodeAccount',
   destroyOnUnmount: false
 })(EncodeAccount);

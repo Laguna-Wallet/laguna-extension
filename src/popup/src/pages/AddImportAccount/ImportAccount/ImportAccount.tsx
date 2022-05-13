@@ -63,10 +63,6 @@ function ImportAccount({ redirectedFromSignUp }: Props) {
   const encoded = account.encryptedPassword;
 
   const dispatch = useDispatch();
-  // todo proper typing
-
-  // dispatch(reset('ImportPhase'));
-  // dispatch(reset('EncodeAccount'));
 
   const importPhaseFormValues = useSelector((state: any) => state?.form?.ImportPhase?.values);
   const hasBoarded = useSelector((state: State) => state.wallet.onboarding);
@@ -87,15 +83,6 @@ function ImportAccount({ redirectedFromSignUp }: Props) {
           payload: { seed: seedPhase }
         });
       }
-      // save from private key
-      // if (isHex(seedPhase) && isValidPolkadotAddress(seedPhase)) {
-      //   importFromPrivateKey(seedPhase, password);
-      // }
-      // save from public key
-
-      // if (!isHex(seedPhase) && isValidPolkadotAddress(seedPhase)) {
-      //   importFromPublicKey(seedPhase);
-      // }
     }
 
     if (file) {
@@ -132,12 +119,6 @@ function ImportAccount({ redirectedFromSignUp }: Props) {
     }
   };
 
-  const onBack = (backAction: () => void) => {
-    dispatch(reset('ImportPhase'));
-    dispatch(reset('EncodeAccount'));
-    backAction();
-  };
-
   return (
     <Container>
       <Wizard>
@@ -146,8 +127,6 @@ function ImportAccount({ redirectedFromSignUp }: Props) {
         <EncodeAccount
           title="Import Complete!"
           handleEncode={handleEncode}
-          onBack={onBack}
-          onClose={onClose}
         />
         {!hasBoarded && <SetupComplete />}
       </Wizard>
