@@ -103,7 +103,12 @@ function ImportAccount({ redirectedFromSignUp }: Props) {
       });
     }
 
-    saveToStorage({ key: StorageKeys.SignedIn, value: 'true' });
+    chrome.runtime.sendMessage({
+      type: Messages.AuthUser,
+      payload: { password }
+    });
+
+    saveToStorage({ key: StorageKeys.OnBoarding, value: true });
 
     dispatch(reset('ImportPhase'));
     dispatch(reset('EncodeAccount'));

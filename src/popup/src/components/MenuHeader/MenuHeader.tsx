@@ -1,14 +1,14 @@
 import React, { useRef, useState } from 'react';
 import styled from 'styled-components';
 import BackIcon from 'assets/svgComponents/BackIcon';
-import MenuCloseIcon from 'assets/svgComponents/MenuIcons/MenuCloseIcon'
+import MenuCloseIcon from 'assets/svgComponents/MenuIcons/MenuCloseIcon';
 import { useAccount } from 'context/AccountContext';
 import { resizeFile, truncateString } from 'utils';
 import useOutsideClick from 'hooks/useOutsideClick';
 import { addAccountMeta, changeAccountPicture } from 'utils/polkadot';
 import PencilIcon from 'assets/svgComponents/PencilIcon';
 import MenuLockIcon from 'assets/svgComponents/MenuIcons/MenuLockIcon';
-import { StorageKeys } from 'utils/types';
+import { Messages, StorageKeys } from 'utils/types';
 import { saveToStorage } from 'utils/chrome';
 import { goTo } from 'react-chrome-extension-router';
 import WelcomeBack from 'pages/WelcomeBack/WelcomeBack';
@@ -24,12 +24,7 @@ type Props = {
   backAction?: () => void;
 };
 
-export default function MenuHeader({
-  showUser,
-  onClose,
-  title,
-  backAction
-}: Props) {
+export default function MenuHeader({ showUser, onClose, title, backAction }: Props) {
   const account = useAccount();
   const [name, setName] = useState(account?.getActiveAccount()?.meta?.name);
   const [editMode, setEditMode] = useState<boolean>(false);
@@ -80,8 +75,9 @@ export default function MenuHeader({
   };
 
   const handleLogout = () => {
-    // clearFromStorage(StorageKeys.SignedIn);
-    saveToStorage({ key: StorageKeys.LoggedOut, value: 'true' });
+    chrome.runtime.sendMessage({
+      type: Messages.LogOutUser
+    });
     goTo(WelcomeBack);
   };
 
@@ -104,7 +100,7 @@ export default function MenuHeader({
       {title && (
         <Title>
           <LeftArrowContainer onClick={backAction}>
-            <BackIcon stroke='white'/>
+            <BackIcon stroke="white" />
           </LeftArrowContainer>
           <TitleText>{title}</TitleText>
         </Title>
@@ -113,7 +109,7 @@ export default function MenuHeader({
         <User>
           <IconContainer img={accountImg} onClick={onButtonClick}>
             <ImageContainerOverlay>
-            <AvatarEditIcon/>
+              <AvatarEditIcon />
             </ImageContainerOverlay>
           </IconContainer>
           <input
@@ -220,9 +216,9 @@ const Text = styled.div`
 const Name = styled.div`
   display: flex;
   align-items: center;
-  `;
-  
-  const NameInput = styled.input`
+`;
+
+const NameInput = styled.input`
   max-width: 146px;
   width: 100%;
   background-color: transparent;
@@ -271,13 +267,13 @@ const Title = styled.div`
 `;
 
 const TitleText = styled.p`
-font-family: 'IBM Plex Sans';
-font-weight: 500;
-font-size: 17px;
-line-height: 40px;
-text-align: center;
-letter-spacing: 0.1em;
-color: #FFFFFF;
+  font-family: 'IBM Plex Sans';
+  font-weight: 500;
+  font-size: 17px;
+  line-height: 40px;
+  text-align: center;
+  letter-spacing: 0.1em;
+  color: #ffffff;
 `;
 
 const LeftArrowContainer = styled.div`

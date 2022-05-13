@@ -3,8 +3,7 @@ import { goTo } from 'react-chrome-extension-router';
 import styled from 'styled-components';
 import { PageContainer } from 'components/ui';
 import Wallet from 'pages/Wallet/Wallet';
-import { clearFromStorage } from 'utils/chrome';
-import { Messages, StorageKeys } from 'utils/types';
+import { Messages } from 'utils/types';
 import { useState } from 'react';
 import Snackbar from 'components/Snackbar/Snackbar';
 import HumbleInput from 'components/primitives/HumbleInput';
@@ -44,8 +43,6 @@ function WelcomeBack({ handleSubmit, pristine, submitting }: InjectedFormProps<P
     const isValid = await validatePassword(password);
 
     if (isValid) {
-      // saveToStorage({ key: StorageKeys.SignedIn, value: 'true' });
-      clearFromStorage(StorageKeys.LoggedOut);
       chrome.runtime.sendMessage({
         type: Messages.AuthUser,
         payload: { password }

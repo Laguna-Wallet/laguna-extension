@@ -1,8 +1,6 @@
 import NetworkIcons from 'components/primitives/NetworkIcons';
-import { FormikProps } from 'formik/dist/types';
 import styled from 'styled-components';
-import { getApiInstance } from 'utils/polkadot';
-import { Asset, Network } from 'utils/types';
+import { Network } from 'utils/types';
 import SelectArrowIcon from 'assets/svgComponents/SelectArrowIcon';
 
 type Props = {
@@ -15,7 +13,6 @@ type Props = {
 export default function Select({
   options,
   selectedToken,
-  setSelectedToken,
   selectedNetwork
 }: Props) {
   const handleChange = async (e: any) => {
@@ -24,7 +21,7 @@ export default function Select({
 
   return (
     <Container>
-      <NetworkIcons   width='27' height='27' chain={selectedNetwork?.chain as string} />
+      <NetworkIcons   width='28px' height='28px' fill='#18191A' isSmallIcon chain={selectedNetwork?.chain as string} />
       <StyledSelect
         defaultValue={selectedToken}
         onChange={(e) => handleChange(e)}
@@ -64,7 +61,7 @@ top: 20px;
 
 const StyledSelect = styled.select`
   flex: 1;
-  height: 53px;
+  height: 48px;
   border: 0;
   background-color: #f3f3f3;
   font-size: 16px;

@@ -8,6 +8,7 @@ import {
   Retrieve_Coin_Prices,
   sendTransaction,
 } from "./api"
+
 import {
   saveToStorage,
   validatePassword,
@@ -18,11 +19,14 @@ import {
   reEncryptKeyringPairs,
   recodeToPolkadotAddress,
   isInPhishingList,
+  getFromStorage,
 } from "./utils"
 import keyring from "@polkadot/ui-keyring"
 import { TypeRegistry } from "@polkadot/types"
 import { AccountsStore } from "./stores"
 import { ApiPromise } from "@polkadot/api"
+import { cryptoWaitReady } from "@polkadot/util-crypto"
+
 // import { getCurrentTab } from "./utils"
 
 // import { initWasm } from "@polkadot/wasm-crypto/initOnlyAsm"
@@ -81,7 +85,8 @@ chrome.runtime.onConnect.addListener((port: any) => {
 chrome.runtime.onConnect.addListener(function (port) {
   chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
     if (msg.type === Messages.DappAuthRequest) {
-      const dappName = msg.payload.pendingDapp[0].request.requestOrigin
+      // const dappName = msg.payload.pendingDapp[0].request.requestOrigin
+      const dappName = window.location.host
       if (authorizedDapps.includes(dappName) || declinedDapps.includes(dappName)) return
       if (msg.payload.approved) {
         pendingRequests = []
@@ -104,6 +109,8 @@ chrome.runtime.onConnect.addListener(function (port) {
           return recodeToPolkadotAddress(pair.address) === recodeToPolkadotAddress(data.request.address)
         })
         if (data.message === "SIGN_PAYLOAD") {
+          await cryptoWaitReady()
+          registry.setSignedExtensions(data.request.signedExtensions)
           const result = registry.createType("ExtrinsicPayload", data.request, { version: data.request.version }).sign(pair)
           port.postMessage({ ...data, payload: { id: data.id, approved: true, ...result } })
         }
@@ -162,6 +169,13 @@ chrome.runtime.onConnect.addListener(function (port) {
     if (data.message === "AUTHORIZE_TAB") {
       // const host = new URL((await getCurrentTab()).url).host
 
+      const hasBoarded = Boolean(await getFromStorage(StorageKeys.OnBoarding))
+
+      // if no account is created don't allow dap to connect
+      if (!hasBoarded) {
+        port.postMessage({ ...data, payload: { id: data.id, approved: false } })
+      }
+
       isInPhishingList(window.location.host).then((isDenied) => {
         if (isDenied) {
           port.postMessage({ ...data, payload: { id: data.id, approved: false } })
@@ -206,6 +220,7 @@ chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
       break
     case Messages.CheckPendingDappAuth:
       chrome.runtime.sendMessage({ type: Messages.DappAuthorization, payload: { pendingDappAuthorization: pendingRequests } })
+      sendResponse({ type: Messages.DappAuthorization, payload: { pendingDappAuthorization: pendingRequests } })
       break
     case Messages.LogOutUser:
       isLoggedIn = false
@@ -214,6 +229,7 @@ chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
 
     case Messages.CheckPendingSign:
       chrome.runtime.sendMessage({ type: Messages.CheckPendingSign, payload: { pending: signRequestPending, data: signRequest } })
+      sendResponse({ type: Messages.CheckPendingSign, payload: { pending: signRequestPending, data: signRequest } })
       break
     case Messages.RemoveFromKeyring:
       isLoggedIn = false
@@ -223,7 +239,7 @@ chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
       chrome.runtime.sendMessage({ type: Messages.ConnectedApps, payload: { connectedApps: authorizedDapps } })
       break
     case Messages.AuthCheck:
-      chrome.runtime.sendMessage({ type: Messages.AuthCheck, payload: { isLoggedIn } })
+      sendResponse({ payload: { isLoggedIn } })
       break
     case Messages.RevokeDapp:
       authorizedDapps = authorizedDapps.filter((item) => item !== msg.payload.dappName)

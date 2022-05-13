@@ -117,14 +117,14 @@ export default function Send({ initialIsContactsPopupOpen, propsFromTokenDashboa
 
       const { partialFee, weight } = await transfer.paymentInfo(recoded);
 
-      const fees = new BigNumber(`{partialFee}`).multipliedBy(110).dividedBy(100);
+      const fees = new BigNumber(`${partialFee}`).multipliedBy(110).dividedBy(100);
 
       // todo check this
       const total = amount.plus(fees).plus(api.consts.balances.existentialDeposit.toString());
 
       api.disconnect();
-      if (total.gt(new BigNumber(available))) {
 
+      if (total.gt(new BigNumber(available))) {
         setAbilityToTransfer(false);
       } else {
         setAbilityToTransfer(true);
@@ -138,6 +138,11 @@ export default function Send({ initialIsContactsPopupOpen, propsFromTokenDashboa
 
     go();
   }, [reduxSendTokenState.selectedAsset, form?.address, form?.amount]);
+
+  useEffect(() => {
+    setLoading(true);
+    setAbilityToTransfer(false);
+  }, [form?.amount]);
 
   return (
     <Container>

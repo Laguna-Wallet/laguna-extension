@@ -1,4 +1,5 @@
 export enum StorageKeys {
+  OnBoarding = "onboarding",
   SignedIn = "signed-in",
   Encoded = "encoded",
   LoggedOut = "logged-out",
@@ -34,7 +35,7 @@ export enum Messages {
   SignRequest = "SIGN_REQUEST",
   ConnectedApps = "CONNECTED_APPS",
   RevokeDapp = "REVOKE_DAPP",
-  TokenReceived= "TOKEN_RECEIVED"
+  TokenReceived = "TOKEN_RECEIVED",
 }
 
 export const chains = ["westend", "polkadot", "kusama", "moonriver", "moonbeam", "shiden", "astar"]

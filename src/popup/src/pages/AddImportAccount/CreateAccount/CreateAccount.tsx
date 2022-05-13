@@ -78,6 +78,13 @@ export default function CreateAccount({
         type: Messages.AddToKeyring,
         payload: { seed: mnemonicsStr, password }
       });
+
+      chrome.runtime.sendMessage({
+        type: Messages.AuthUser,
+        payload: { password }
+      });
+
+      saveToStorage({ key: StorageKeys.OnBoarding, value: true });
     } else {
       const mnemonicsStr = account?.generateMnemonics().join(' ');
       const encodedSeed = AES.encrypt(mnemonicsStr, password).toString();
@@ -101,7 +108,12 @@ export default function CreateAccount({
         account.saveActiveAccount(newPair);
       }
 
-      saveToStorage({ key: StorageKeys.SignedIn, value: 'true' });
+      chrome.runtime.sendMessage({
+        type: Messages.AuthUser,
+        payload: { password }
+      });
+
+      saveToStorage({ key: StorageKeys.OnBoarding, value: true });
 
       chrome.runtime.sendMessage({
         type: Messages.AddToKeyring,

@@ -24,7 +24,6 @@ export const SEED_LENGTHS = [12, 24];
 export enum StorageKeys {
   SignedIn = 'signed-in',
   Encoded = 'encoded',
-  LoggedOut = 'logged-out',
   ActiveAccount = 'active-account',
   TokenPrices = 'token-prices',
   TokenInfos = 'token-infos',
