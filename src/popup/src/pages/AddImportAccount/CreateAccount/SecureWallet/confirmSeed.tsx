@@ -107,7 +107,7 @@ export default function ConfirmSeed({ handleNextSection }: Props) {
           close={() => setIsSnackbarOpen(false)}
           type="error"
           left='26px'
-          bottom="28px"
+          bottom="80px"
           transform='translateX(0)'
         />
 
