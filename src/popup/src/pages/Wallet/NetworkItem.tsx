@@ -1,33 +1,32 @@
+import BigNumber from 'bignumber.js';
 import NetworkIcons from 'components/primitives/NetworkIcons';
 import styled from 'styled-components';
+import { Asset } from 'utils/types';
 
 type Props = {
-  network: any;
-};
+  isMarketCap?: boolean;
+  network: Asset
+}
 
-export default function NetworkItem({ network }: Props) {
+export default function NetworkItem({network, isMarketCap = false }: Props) {
+  const {chain, assetsCount, calculatedPrice, marketCap} = network;
+  
   return (
     <Container>
       <ListItemIcon>
-        <NetworkIcons chain={network.chain} />
+        <NetworkIcons chain={chain} />
       </ListItemIcon>
       <ListItemText>
-        <Title>{network.chain}</Title>
-        <Tag>1 Asset</Tag>
+        <Title>{chain}</Title>
+        <Tag>{assetsCount || 1} Asset</Tag>
       </ListItemText>
       <ListItemText>
         <Title>
-          $
-          {network?.marketCap &&
-            String(network.marketCap)
+          $ {!isMarketCap ?  (new BigNumber(calculatedPrice).toFormat(2, 1) || 0) :  (marketCap &&
+            String(marketCap)
               .replace(/,/g, '')
-              .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+              .replace(/\B(?=(\d{3})+(?!\d))/g, ',')) || 0}
         </Title>
-        {/* <Value>
-          {' '}
-          {network?.price_change_percentage_24h &&
-            `${Number(network?.price_change_percentage_24h).toFixed(2)}%`}
-        </Value> */}
       </ListItemText>
     </Container>
   );

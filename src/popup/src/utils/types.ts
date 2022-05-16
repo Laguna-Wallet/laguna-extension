@@ -54,10 +54,12 @@ export interface Asset {
   name: string;
   symbol: string;
   chain: string;
-  balance: string;
+  balance: number;
   calculatedPrice: number;
   price: number;
   encodeType?: string;
+  assetsCount?: number;
+  marketCap?: number;
 }
 
 export type Prices = Record<string, Record<string, number>>;
