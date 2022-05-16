@@ -76,6 +76,7 @@ export default function AccountsPopup({ handleClickAccount, onBack }: Props) {
             placeholderColor="#777e90"
             color="#111"
             value={filter}
+            IconAlignment={'left'}
             Icon={<LoopIcon />}
             onChange={(e: any) => setFilter(e.target.value)}
           />

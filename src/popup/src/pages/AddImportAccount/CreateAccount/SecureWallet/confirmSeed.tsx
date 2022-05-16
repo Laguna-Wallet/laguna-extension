@@ -34,19 +34,22 @@ export default function ConfirmSeed({ handleNextSection }: Props) {
     setMnemonicIndexes(generateThreeRandomMnemonicIndexes());
   }, []);
 
-
   const handleClick = (name: string) => {
     if (chosenMnemonics.length === 3) return;
     setChosenMnemonics((prev) => [...prev, name]);
     setMnemonicIndexToChoose((prev) => prev + 1);
   };
 
-  const handleWrittenClick = ()=>{
-    if(validateMnemonicChoice(mnemonics, chosenMnemonics, mnemonicIndexes as MnemonicsTriple) && !isSnackbarOpen){
+  const handleWrittenClick = () => {
+    if (
+      validateMnemonicChoice(mnemonics, chosenMnemonics, mnemonicIndexes as MnemonicsTriple) &&
+      !isSnackbarOpen
+    ) {
+      console.log('here');
       handleNextSection();
       copyToClipboard('');
     }
-  }
+  };
 
   useEffect(() => {
     if (chosenMnemonics.length === 3) {
@@ -55,7 +58,7 @@ export default function ConfirmSeed({ handleNextSection }: Props) {
         chosenMnemonics,
         mnemonicIndexes as MnemonicsTriple
       );
-      
+
       if (isValid) {
         // handleNextSection();
       } else {

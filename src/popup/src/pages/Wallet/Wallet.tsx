@@ -29,6 +29,8 @@ import {
   saveToStorage
 } from 'utils/chrome';
 import keyring from '@polkadot/ui-keyring';
+import { StorageKeys } from 'utils/types';
+import { toggleLoading } from 'redux/actions';
 
 export interface ShowSnackbar {
   message: string;
@@ -50,8 +52,10 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
   const activeAccount = useCallback(account.getActiveAccount(), [account]);
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
   const [snackbarMessage, setSnackbarMessage] = useState<string>('');
+  const accountBalances = useSelector((state: State) => state.wallet?.accountsBalances);
 
   const negativeValue = String(overallPriceChange).includes('-');
+  const dispatch = useDispatch();
 
   const {
     prices,
@@ -110,6 +114,16 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
   // }
   // }, []);
 
+  useEffect(() => {
+    async function go() {
+      if (accountBalances && accountBalances?.address !== activeAccount?.address) {
+        dispatch(toggleLoading(true));
+      }
+    }
+
+    go();
+  }, []);
+
   const renderBallance = (balance: string): ReactNode => {
     const splited = balance.split('.');
 
@@ -120,39 +134,6 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
       </>
     );
   };
-
-  useEffect(() => {
-    async function go() {
-      const keyrings = keyring.getPairs();
-      // await saveToStorage({ key: 'rings', value: keyrings });
-      // const then = await getFromStorage('rings');
-    }
-
-    go();
-  }, []);
-
-  const logoutTimerIdRef = useRef<any>(null);
-
-  function logoutUser() {
-    return;
-  }
-
-  useEffect(() => {
-    const autoLogout = () => {
-      if (document.visibilityState === 'hidden') {
-        const timeOutId = window.setTimeout(logoutUser, 5 * 60 * 1000);
-        logoutTimerIdRef.current = timeOutId;
-      } else {
-        window.clearTimeout(logoutTimerIdRef.current);
-      }
-    };
-
-    document.addEventListener('visibilitychange', autoLogout);
-
-    return () => {
-      document.removeEventListener('visibilitychange', autoLogout);
-    };
-  }, []);
 
   return (
     <Container bg={dashboardBG}>
@@ -365,9 +346,9 @@ const Balance = styled.div`
     font-size: 30px;
     font-weight: 500;
   }
-  `;
-  
-  const PriceChange = styled.div<{negativeValue: boolean}>`
+`;
+
+const PriceChange = styled.div<{ negativeValue: boolean }>`
   font-family: 'IBM Plex Sans';
   font-size: 14px;
   color: #606060;
@@ -376,7 +357,7 @@ const Balance = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  color: ${(negativeValue) => negativeValue ? '#606060': '#45b26b'};
+  color: ${(negativeValue) => (negativeValue ? '#606060' : '#45b26b')};
 `;
 
 const TitleSmallText = styled.span`

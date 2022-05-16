@@ -38,6 +38,7 @@ export function ConfirmSecuritySkip({ nextStep, nextStepFromParent, setLevel }: 
 
         <ButtonContainer>
           <Button
+            type="button"
             onClick={handleSkip}
             bgColor="#f2f2f2"
             borderColor="#f2f2f2"
@@ -48,6 +49,7 @@ export function ConfirmSecuritySkip({ nextStep, nextStepFromParent, setLevel }: 
           />
           <Gap />
           <Button
+            type="button"
             bgColor="#18191a"
             color="#ffffff"
             onClick={handleSecure}

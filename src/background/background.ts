@@ -24,7 +24,6 @@ import {
 import keyring from "@polkadot/ui-keyring"
 import { TypeRegistry } from "@polkadot/types"
 import { AccountsStore } from "./stores"
-import { ApiPromise } from "@polkadot/api"
 import { cryptoWaitReady } from "@polkadot/util-crypto"
 
 // import { getCurrentTab } from "./utils"
@@ -43,6 +42,9 @@ const registry = new TypeRegistry()
 let authorizedDapps = []
 let pendingRequests = []
 let declinedDapps = []
+
+let timeout = 900000
+let timeoutStart = Date.now()
 
 keyring.loadAll({ ss58Format: 0, type: "ed25519", store: new AccountsStore() })
 
@@ -215,6 +217,7 @@ chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
     case Messages.AuthUser:
       if (validatePassword(msg.payload.password)) {
         isLoggedIn = true
+        timeoutStart = Date.now()
         keyPairs = unlockKeyPairs(msg.payload.password)
       }
       break
@@ -247,8 +250,12 @@ chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
       break
     case Messages.ChangeInterval:
       if (msg?.payload?.timeout) {
-        // chrome.idle.setDetectionInterval(Number(msg.payload.timeout) * 60)
+        timeout = timeout
+        timeoutStart = Date.now()
       }
+      break
+    case Messages.Timeout:
+      sendResponse({ payload: { timeout } })
       break
     case Messages.SendTransaction:
       if (msg?.payload) {
@@ -276,7 +283,7 @@ chrome.runtime.onInstalled.addListener(async (port) => {
 
   saveToStorage({ key: StorageKeys.TokenInfos, value: JSON.stringify(Infos) })
 
-  chrome.alarms.create("refresh", { periodInMinutes: 1 })
+  chrome.alarms.create("check-timeout", { periodInMinutes: 1 })
   chrome.alarms.create("refetch-account-balances", { periodInMinutes: 3 })
   chrome.alarms.create("24-hr-ballance-change", { periodInMinutes: 3600 })
 
@@ -338,5 +345,10 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
 
   if (alarm.name === "24-hr-ballance-change") {
     // const balance24hrChangeRate = Retrieve_balance_change_rates()
+  }
+
+  // check if login-timeout has passed
+  if (Date.now() - timeoutStart > timeout) {
+    isLoggedIn = false
   }
 })

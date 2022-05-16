@@ -13,6 +13,7 @@ import { useWizard } from 'react-use-wizard';
 import { State } from 'redux/store';
 import { reduxForm,  Field, InjectedFormProps } from 'redux-form';
 import { isObjectEmpty, objectToArray, validPassword } from 'utils';
+import { useAccount } from 'context/AccountContext';
 
 type Props = {
   handleEncode: (password: string) => void;
@@ -24,6 +25,7 @@ type FormProps  = {
 }
 
 function EncodeAccount({ handleEncode, handleSubmit, title, pristine, submitting  }: InjectedFormProps<FormProps> & Props) {
+  const account = useAccount();
   const { nextStep, handleStep } = useWizard();
 
   const [snackbarError, setSnackbarError] = useState<string>('');
@@ -32,9 +34,9 @@ function EncodeAccount({ handleEncode, handleSubmit, title, pristine, submitting
 
   const hasBoarded = useSelector((state: State) => state?.wallet?.onboarding);
 
-  handleStep(() => {
-    return;
-  });
+  // handleStep(() => {
+  //   return;
+  // });
 
   const submit = async (values: FormProps) => {
     const {password} = values;
@@ -114,8 +116,8 @@ function EncodeAccount({ handleEncode, handleSubmit, title, pristine, submitting
           type="error"
           left="26px"
           bottom={'145px'}
-          transform='translateX(0)'
-          />
+          transform="translateX(0)"
+        />
       </Content>
     </Container>
   );
@@ -123,7 +125,6 @@ function EncodeAccount({ handleEncode, handleSubmit, title, pristine, submitting
 
 export default reduxForm<Record<string, unknown>, any>({
   form: 'EncodeAccount',
-  destroyOnUnmount: false
 })(EncodeAccount);
 
 const Container = styled.div<{ bg?: string }>`

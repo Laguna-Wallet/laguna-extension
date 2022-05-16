@@ -99,7 +99,8 @@ export enum Messages {
   DappAuthRequest = 'DAPP_AUTH_REQUEST',
   ConnectedApps = 'CONNECTED_APPS',
   RevokeDapp = 'REVOKE_DAPP',
-  TokenReceived = 'TOKEN_RECEIVED'
+  TokenReceived = 'TOKEN_RECEIVED',
+  Timeout = 'TIMEOUT'
 }
 
 //==============================================================================

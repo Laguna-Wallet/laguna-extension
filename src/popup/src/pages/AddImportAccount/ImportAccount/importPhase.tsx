@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import FileUploadIcon from 'assets/svgComponents/FileUploadIcon';
 import RightArrow from 'assets/svgComponents/RightArrow';
@@ -17,6 +17,7 @@ import { reduxForm, change, reset, Field, InjectedFormProps } from 'redux-form';
 import styled from 'styled-components';
 import { convertUploadedFileToJson, validPassword } from 'utils';
 import { isKeyringJson, isValidKeyringPassword } from 'utils/polkadot';
+import { mnemonicValidate } from '@polkadot/util-crypto';
 import Popup from 'components/Popup/Popup';
 import { HelpImport } from 'components/popups/HelpImport';
 import ButtonsIcon from 'assets/svgComponents/ButtonsIcon';
@@ -99,6 +100,22 @@ function ImportPhase({
     }
   };
 
+  useEffect(() => {
+    const seedLength = seedPhase?.split(' ').filter((item: string) => item?.length).length;
+
+    /* eslint-disable */
+    if (seedPhase && /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(seedPhase)) {
+      setIsSnackbarOpen(true);
+      setSnackbarError('Please remove special characters (!,#:*)');
+    } else if ((seedLength === 12 || seedLength === 24) && !mnemonicValidate(seedPhase)) {
+      setIsSnackbarOpen(true);
+      setSnackbarError('Not a valid blockchain address');
+    } else if (seedLength > 12 && !mnemonicValidate(seedPhase)) {
+      setIsSnackbarOpen(true);
+      setSnackbarError('Please enter 12 or 24 words');
+    }
+  }, [seedPhase]);
+
   return (
     <Container>
       <WizardHeader
@@ -147,7 +164,6 @@ function ImportPhase({
                 component={HumbleInput}
                 props={{
                   type: 'textarea',
-                  height: '180px',
                   fontSize: '18px',
                   marginTop: '20px',
                   textAlign: 'center',
@@ -193,7 +209,7 @@ function ImportPhase({
         )}
 
         {isPopupOpen && (
-          <Popup onClose={() => setIsPopupOpen(false)}>
+          <Popup onClose={() => setIsPopupOpen(false)} bg={'rgba(0, 0, 0, 0.3)'}>
             <HelpImport onClose={() => setIsPopupOpen(false)} />
           </Popup>
         )}

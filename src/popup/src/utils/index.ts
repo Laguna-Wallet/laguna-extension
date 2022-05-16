@@ -132,7 +132,8 @@ export function objectValuesToArray(obj: Record<string, string>): string[] {
   return Object.values(obj).map((item) => item);
 }
 
-export function isObjectEmpty(obj: Record<string, string>): boolean {
+export function isObjectEmpty(obj: Record<string, string> | undefined): boolean {
+  if (!obj) return false;
   return obj && Object.keys(obj).length === 0 && Object.getPrototypeOf(obj) === Object.prototype;
 }
 
@@ -146,6 +147,7 @@ export function transformAmount(obj: Record<string, unknown>): any[] {
 
 export async function accountHasChanged(balances: Record<string, string>) {
   const account = await getFromStorage(StorageKeys.ActiveAccount);
+  if (!account) return false;
   const address = JSON.parse(account as string).address;
   if (balances.address === address) return true;
   return false;

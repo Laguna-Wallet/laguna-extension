@@ -14,7 +14,6 @@ import WizardHeader from 'pages/AddImportAccount/WizardHeader';
 import { goTo } from 'react-chrome-extension-router';
 import Wallet from 'pages/Wallet/Wallet';
 
-
 const validate = (values: { password: string; confirmPassword: string }) => {
   const errors: { password?: string; confirmPassword?: string } = {};
   if (!values.password || !values.confirmPassword) {
@@ -34,20 +33,16 @@ type Props = {
 };
 
 function CreatePassword({ handleSubmit, errors }: InjectedFormProps & Props) {
-  const { nextStep, handleStep, previousStep } = useWizard();
+  const { nextStep, previousStep } = useWizard();
 
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
   const [snackbarMessage, setSnackbarMessage] = useState<string>('');
   
   const formValues = useSelector((state: any) => state?.form?.CreatePassword?.values);
-  
-  const account = useAccount();
-  
-  const passwordLength = enhancePasswordStrength(passwordStrength(formValues?.password).value);
 
-  handleStep(() => {
-   return
-  });
+  const account = useAccount();
+
+  const passwordLength = enhancePasswordStrength(passwordStrength(formValues?.password).value);
 
   const submit = (values: Record<string, string>) => {
         
@@ -116,7 +111,6 @@ function CreatePassword({ handleSubmit, errors }: InjectedFormProps & Props) {
               fontSize: '14px',
               color: '#b1b5c3',
               placeholderColor: '#b1b5c3',
-              error: errors && errors['confirmPassword'],
               errorColor: '#FB5A5A',
               errorBorderColor: '#FB5A5A',
               showError: true,
@@ -136,7 +130,7 @@ function CreatePassword({ handleSubmit, errors }: InjectedFormProps & Props) {
         <Button
           type="submit"
           Icon={<RightArrow width={23} />}
-          text={'Create Password'}
+          text={'Create a Password'}
           margin="auto 0px 0px 0px"
           justify="center"
           disabled={!isObjectEmpty(errors || {})}
@@ -176,7 +170,7 @@ const Form = styled.form`
 const Title = styled.span`
   font-family: 'IBM Plex Sans';
   font-size: 22px;
-  font-weight: 500;
+  font-weight: 600;
   line-height: 1.82;
   text-align: left;
   color: #18191a;

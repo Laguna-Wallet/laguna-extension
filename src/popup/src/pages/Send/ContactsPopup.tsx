@@ -67,6 +67,7 @@ export default function ContactsPopup({ handleCloseContacts, onBack, closeAction
               color="#111"
               value={filter}
               onChange={(e: any) => setFilter(e.target.value)}
+              IconAlignment={'left'}
               Icon={<LoopIcon />}
             />
           )}

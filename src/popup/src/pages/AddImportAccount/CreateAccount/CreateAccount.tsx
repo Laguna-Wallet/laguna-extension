@@ -45,8 +45,6 @@ export default function CreateAccount({
 
   const hasBoarded = useSelector((state: State) => state?.wallet?.onboarding);
 
-  // const hasBoarded = onboardingObj[accountAddress];
-
   const [securityLevel, setSecurityLevel] = useState<
     SecurityLevelEnum.Secured | SecurityLevelEnum.Skipped
   >(SecurityLevelEnum.Secured);
@@ -135,7 +133,7 @@ export default function CreateAccount({
   };
 
   return (
-    <Wizard>
+    <Wizard startIndex={0}>
       {!encoded && <CreatePassword />}
 
       <SecureWallet

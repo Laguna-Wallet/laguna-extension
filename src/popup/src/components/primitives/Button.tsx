@@ -21,12 +21,13 @@ type Props = {
   fontSize?: string;
   boxShadow?: string;
   disabledBgColor?: string;
+  fontWeight?: string;
 };
 
 export default function Button({ Icon, text, bgColor = '#111', ...rest }: Props) {
   return (
-    <StyledButton {...rest} bgColor={bgColor}>
-      <Text {...rest}>{text}</Text>
+    <StyledButton bgColor={bgColor} {...rest}>
+      <Text>{text}</Text>
       {Icon && Icon}
     </StyledButton>
   );
@@ -45,6 +46,7 @@ const StyledButton = styled.button<{
   width?: string;
   boxShadow?: string;
   disabledBgColor?: string;
+  fontWeight?: string;
 }>`
   width: ${({ width }) => width || '100%'};
   display: flex;
@@ -70,10 +72,11 @@ const StyledButton = styled.button<{
   :disabled {
     cursor: default;
   }
+  font-weight: ${({ fontWeight }) => fontWeight || '500'};
 `;
 
-const Text = styled.div<{
+const Text = styled.span<{
   marginText?: string;
 }>`
-  margin: ${({ marginText })=> marginText || '0 5px'};
+  margin: ${({ marginText }) => marginText || '0 5px'};
 `;

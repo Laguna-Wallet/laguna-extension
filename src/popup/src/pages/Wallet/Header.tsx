@@ -62,7 +62,7 @@ export default function Header({
         <TitleContainer>
           {backAction && (
             <TopIconContainer onClick={backAction}>
-              <BackIcon stroke={stroke}/>
+              <BackIcon stroke={stroke} />
             </TopIconContainer>
           )}
 
@@ -164,8 +164,8 @@ const TopIconContainer = styled.div`
 `;
 
 const CloseIconContainer = styled.div`
-  cursor:pointer;
-`
+  cursor: pointer;
+`;
 
 const Title = styled.span`
   margin-left: auto;
