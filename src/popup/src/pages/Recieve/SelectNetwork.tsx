@@ -74,10 +74,10 @@ export default function SelectNetwork({ networks, setSelectedNetwork }: Props) {
           {networks
             ? networks.length === 0
               ? 'no assets'
-              : renderNetworks(networks, networksFilter).map((network: Network) => {
+              : renderNetworks(networks, networksFilter).map((network: any) => {
                   return (
                     <ChainItemContainer onClick={() => handleClick(network)} key={network.symbol}>
-                      <NetworkItem network={network} />
+                      <NetworkItem network={network} isMarketCap />
                     </ChainItemContainer>
                   );
                 })

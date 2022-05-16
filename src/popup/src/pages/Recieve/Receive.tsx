@@ -24,7 +24,7 @@ export default function Receive({ propsFromTokenDashboard }: Props) {
   const activeAccount = account.getActiveAccount();
   const { prices, infos, disabledTokens } = useSelector((state: State) => state.wallet);
 
-  const [networks, setNetworks] = useState<Network[]>(getNetworks(prices, infos, disabledTokens));
+  const [networks, setNetworks] = useState<any>(getNetworks(prices, infos, disabledTokens));
   const [selectedNetwork, setSelectedNetwork] = useState<Network>();
 
   const [recoded, setRecoded] = useState<string>('');
@@ -46,7 +46,7 @@ export default function Receive({ propsFromTokenDashboard }: Props) {
 
   useEffect(() => {
     if (propsFromTokenDashboard?.fromTokenDashboard) {
-      const network = networks.find((network) => network.chain === propsFromTokenDashboard.chain);
+      const network = networks.find((network: any) => network.chain === propsFromTokenDashboard.chain);
       setSelectedNetwork(network);
     }
   }, []);

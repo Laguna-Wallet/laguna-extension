@@ -1,17 +1,17 @@
-import { memo, ReactNode, useCallback, useEffect, useState, useRef } from 'react';
+import { memo, ReactNode, useCallback, useEffect, useState, useRef, useMemo } from 'react';
 import styled from 'styled-components';
 import Header from './Header';
 import Footer from './Footer';
 import { useAccount } from 'context/AccountContext';
 import ChainItem from './ChainItem';
-import { getAssets, getNetworks } from 'utils/polkadot';
+import { getAssets } from 'utils/polkadot';
 import NetworkItem from './NetworkItem';
 import dashboardBG from 'assets/imgs/dashboard-bg.png';
 import { goTo, Link } from 'react-chrome-extension-router';
 import Send from 'pages/Send/Send';
 import Receive from 'pages/Recieve/Receive';
 import BigNumber from 'bignumber.js';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import Snackbar from 'components/Snackbar/Snackbar';
 import TokenDashboard from 'pages/TokenDashboard/TokenDashboard';
 import ReceiveIcon from 'assets/svgComponents/ReceiveIcon';
@@ -22,13 +22,8 @@ import { State } from 'redux/store';
 import SecureNowIcon from 'assets/svgComponents/SecureNowIcon';
 import RightArrowMenuIcon from 'assets/svgComponents/MenuIcons/RightArrowMenuIcon';
 import CreateAccount from 'pages/AddImportAccount/CreateAccount/CreateAccount';
-import {
-  getFromChromeStorage,
-  getFromStorage,
-  saveToChromeStorage,
-  saveToStorage
-} from 'utils/chrome';
 import keyring from '@polkadot/ui-keyring';
+import { Asset } from 'utils/types';
 
 export interface ShowSnackbar {
   message: string;
@@ -42,14 +37,14 @@ type Props = {
 
 function Wallet({ isMenuOpen, snackbar }: Props) {
   const account = useAccount();
-  const [assets, setAssets] = useState<any>([]);
-  const [networks, setNetworks] = useState<any>([]);
-  const [activeTab, setActiveTab] = useState<number>(1);
-  const [overallBalance, setOverallBalance] = useState<number | undefined>(undefined);
-  const [overallPriceChange, setOverallPriceChange] = useState<number | undefined>(undefined);
   const activeAccount = useCallback(account.getActiveAccount(), [account]);
+
+  const [assets, setAssets] = useState<Asset[]>([]);
+  const [activeTab, setActiveTab] = useState<number>(1);
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
+  const [overallBalance, setOverallBalance] = useState<number | undefined>(undefined);
   const [snackbarMessage, setSnackbarMessage] = useState<string>('');
+  const [overallPriceChange, setOverallPriceChange] = useState<number | undefined>(undefined);
 
   const negativeValue = String(overallPriceChange).includes('-');
 
@@ -87,13 +82,6 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
   }, [activeAccount, balances]);
 
   useEffect(() => {
-    const networks = getNetworks(prices, infos, disabledTokens).filter(
-      (network) => network.symbol !== 'wnd'
-    );
-    setNetworks(networks);
-  }, [prices, infos]);
-
-  useEffect(() => {
     if (snackbar?.show) {
       setTimeout(() => {
         setIsSnackbarOpen(true);
@@ -101,14 +89,6 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
       }, 400);
     }
   }, []);
-
-  // snackbarMessage
-  // useEffect(() => {
-  // if (!hasViewedDashboard) {
-  //   addAccountMeta(currentAccountAddress, { hasViewedDashboard: true });
-  //   account.saveActiveAccount(currentAccountAddress);
-  // }
-  // }, []);
 
   const renderBallance = (balance: string): ReactNode => {
     const splited = balance.split('.');
@@ -154,6 +134,30 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
     };
   }, []);
 
+  const itemName = useMemo(() => assets.map((el: Asset) => el.chain), [assets]);
+  const filtered = useMemo(() =>  assets.filter(
+    ({ chain }, index: number) =>chain !== "westend" && !itemName.includes(chain, index + 1)
+  ), [assets])
+
+  const reduceAssets = useMemo(() =>  assets.reduce((c: any, v: Asset) => {
+    c[v.chain] = (c[v.chain] || 0) + v.calculatedPrice;
+    return c;
+  }, {}), [assets])
+
+  const networks = useMemo(() =>  filtered.map((el: Asset) => {
+    const samCalculatedPrice = Object.keys(reduceAssets).filter((item) => el.chain === item);
+    const filteredSimilarAssets = assets.filter((item: Asset) => item.chain === el.chain);
+
+    return {
+      ...el,
+      calculatedPrice: reduceAssets[samCalculatedPrice[0]],
+      assetsCount: filteredSimilarAssets.length
+    };
+  }),
+  [assets, filtered, reduceAssets])
+
+  console.log(assets, 'networks');
+
   return (
     <Container bg={dashboardBG}>
       <Header menuInitialOpenState={isMenuOpen} />
@@ -165,20 +169,6 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
             <RightArrowMenuIcon fill="#e1e7f3" stroke="#111" />
           </SecureNowMessage>
         )}
-        {/* {!true ? (
-          <FirstTimeUserBalance>
-            <h6>welcome, to get started</h6>
-            <h2>Deposit your first asset!</h2>
-            <StyledLink component={Receive}>
-              <Button>
-                <BarcodeIconContainer>
-                  <BarcodeIcon />
-                </BarcodeIconContainer>
-                <span>Recieve</span>
-              </Button>
-            </StyledLink>
-          </FirstTimeUserBalance>
-        ) : ( */}
         <>
           <BalanceContainer>
             {/* <span>Balance</span> */}
@@ -253,7 +243,7 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
                       );
                     })
                   : networks &&
-                    networks.map((network: any) => {
+                    networks.map((network: Asset) => {
                       return <NetworkItem key={network.chain} network={network} />;
                     })}
               </ListContentChild>
@@ -266,7 +256,6 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
           close={() => setIsSnackbarOpen(false)}
           message={snackbarMessage}
           type="success"
-          // left="110px"
           bottom="70px"
         />
       </Content>
@@ -365,9 +354,9 @@ const Balance = styled.div`
     font-size: 30px;
     font-weight: 500;
   }
-  `;
-  
-  const PriceChange = styled.div<{negativeValue: boolean}>`
+`;
+
+const PriceChange = styled.div<{ negativeValue: boolean }>`
   font-family: 'IBM Plex Sans';
   font-size: 14px;
   color: #606060;
@@ -376,7 +365,7 @@ const Balance = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  color: ${(negativeValue) => negativeValue ? '#606060': '#45b26b'};
+  color: ${(negativeValue) => (negativeValue ? '#606060' : '#45b26b')};
 `;
 
 const TitleSmallText = styled.span`
