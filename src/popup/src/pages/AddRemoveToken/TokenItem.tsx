@@ -5,12 +5,16 @@ import WrongSwitch from 'react-switch';
 const Switch: any = WrongSwitch;
 
 import { Network, StorageKeys, Token } from 'utils/types';
-import { getFromStorage, saveToStorage } from 'utils/chrome';
+import { saveToStorage } from 'utils/chrome';
 
 import { changeDisabledTokens } from 'redux/actions';
 
 import NetworkIcons from 'components/primitives/NetworkIcons';
 import { State } from 'redux/store';
+
+import Bg from 'assets/imgs/avatars/avatar-1.png';
+import { url } from 'inspector';
+
 type Props = {
   network: Network;
   balance: string | undefined;
@@ -80,6 +84,7 @@ export default function TokenItem({ network, balance }: Props) {
               OFF
             </div>
           }
+          // backgroundImage: `url(${Bg})`,
         />
       </SwitchContainer>
     </Container>

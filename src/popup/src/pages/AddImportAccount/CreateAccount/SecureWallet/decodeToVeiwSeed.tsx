@@ -16,6 +16,7 @@ import { State } from 'redux/store';
 import { useAccount } from 'context/AccountContext';
 import AES from 'crypto-js/aes';
 import Utf8 from 'crypto-js/enc-utf8';
+import { useEnterClickListener } from 'hooks/useEnterClickListener';
 
 type Props = {
   handleEncode: (password: string) => void;
@@ -52,11 +53,12 @@ export default function DecodeToViewSeed({ handleEncode, title, onClose, onBack 
       nextStep();
     } catch (err: any) {
       // todo proper typing
-      console.log(err);
       setIsSnackbarOpen(true);
       setSnackbarError(err.message);
     }
   };
+
+  useEnterClickListener(() => onClick(password), [password]);
 
   return (
     <Container bg={encodeBg}>
@@ -72,6 +74,7 @@ export default function DecodeToViewSeed({ handleEncode, title, onClose, onBack 
             bgColor=" #ececec"
             color="#434343"
             height="45px"
+            autoFocus={true}
             onChange={(e: any) => setPassword(e.target.value)}
           />
           <Button
@@ -89,7 +92,7 @@ export default function DecodeToViewSeed({ handleEncode, title, onClose, onBack 
           type="error"
           left="26px"
           bottom={'90px'}
-          transform='translateX(0)'
+          transform="translateX(0)"
         />
       </Content>
     </Container>

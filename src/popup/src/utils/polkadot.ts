@@ -78,7 +78,7 @@ export function validateSeed(suri: string) {
     }
 
     return true;
-  } catch (err) { 
+  } catch (err) {
     console.log(err);
   }
 }
@@ -146,7 +146,7 @@ export function isValidPolkadotAddress(address: string): boolean {
     return false;
   } catch (error) {
     console.log(error);
-    return false
+    return false;
   }
 }
 
@@ -200,6 +200,7 @@ export function addAccountMeta(address: string, obj: Record<string, any>): any {
   const pair = keyring.getPair(address);
   keyring.saveAccountMeta(pair, { ...pair.meta, ...obj });
   const newPair = keyring.getPair(address);
+  newPair.setMeta({ ...pair.meta, ...obj });
   return newPair;
 }
 
@@ -368,7 +369,7 @@ export async function getAssets(
         price,
         encodeType
       });
-    } catch (err) { 
+    } catch (err) {
       console.log(err);
     }
   }
@@ -406,7 +407,7 @@ export async function getApiInstance(node: string) {
 export function isKeyringPairs$Json(
   json: KeyringPair$Json | KeyringPairs$Json
 ): json is KeyringPairs$Json {
-  return json.encoding.content.includes('batch-pkcs8');
+  return json?.encoding?.content?.includes('batch-pkcs8');
 }
 
 export function isKeyringJson(

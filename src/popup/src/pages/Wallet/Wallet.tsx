@@ -11,7 +11,7 @@ import { goTo, Link } from 'react-chrome-extension-router';
 import Send from 'pages/Send/Send';
 import Receive from 'pages/Recieve/Receive';
 import BigNumber from 'bignumber.js';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Snackbar from 'components/Snackbar/Snackbar';
 import TokenDashboard from 'pages/TokenDashboard/TokenDashboard';
 import ReceiveIcon from 'assets/svgComponents/ReceiveIcon';
@@ -23,6 +23,8 @@ import SecureNowIcon from 'assets/svgComponents/SecureNowIcon';
 import RightArrowMenuIcon from 'assets/svgComponents/MenuIcons/RightArrowMenuIcon';
 import CreateAccount from 'pages/AddImportAccount/CreateAccount/CreateAccount';
 import keyring from '@polkadot/ui-keyring';
+import { StorageKeys } from 'utils/types';
+import { toggleLoading } from 'redux/actions';
 import { Asset } from 'utils/types';
 
 export interface ShowSnackbar {
@@ -44,9 +46,11 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
   const [overallBalance, setOverallBalance] = useState<number | undefined>(undefined);
   const [snackbarMessage, setSnackbarMessage] = useState<string>('');
+  const accountBalances = useSelector((state: State) => state.wallet?.accountsBalances);
   const [overallPriceChange, setOverallPriceChange] = useState<number | undefined>(undefined);
 
   const negativeValue = String(overallPriceChange).includes('-');
+  const dispatch = useDispatch();
 
   const {
     prices,
@@ -90,6 +94,16 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
     }
   }, []);
 
+  useEffect(() => {
+    async function go() {
+      if (accountBalances && accountBalances?.address !== activeAccount?.address) {
+        dispatch(toggleLoading(true));
+      }
+    }
+
+    go();
+  }, []);
+
   const renderBallance = (balance: string): ReactNode => {
     const splited = balance.split('.');
 
@@ -100,63 +114,41 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
       </>
     );
   };
-
-  useEffect(() => {
-    async function go() {
-      const keyrings = keyring.getPairs();
-      // await saveToStorage({ key: 'rings', value: keyrings });
-      // const then = await getFromStorage('rings');
-    }
-
-    go();
-  }, []);
-
-  const logoutTimerIdRef = useRef<any>(null);
-
-  function logoutUser() {
-    return;
-  }
-
-  useEffect(() => {
-    const autoLogout = () => {
-      if (document.visibilityState === 'hidden') {
-        const timeOutId = window.setTimeout(logoutUser, 5 * 60 * 1000);
-        logoutTimerIdRef.current = timeOutId;
-      } else {
-        window.clearTimeout(logoutTimerIdRef.current);
-      }
-    };
-
-    document.addEventListener('visibilitychange', autoLogout);
-
-    return () => {
-      document.removeEventListener('visibilitychange', autoLogout);
-    };
-  }, []);
-
+  // Todo refactor Hrant, attach price to the network from polkadot.js file
+  // it can be calculated via [prices, tokenInfos] that are stored in the
+  // localStorage and globalState as well
   const itemName = useMemo(() => assets.map((el: Asset) => el.chain), [assets]);
-  const filtered = useMemo(() =>  assets.filter(
-    ({ chain }, index: number) =>chain !== "westend" && !itemName.includes(chain, index + 1)
-  ), [assets])
+  const filtered = useMemo(
+    () =>
+      assets.filter(
+        ({ chain }, index: number) => chain !== 'westend' && !itemName.includes(chain, index + 1)
+      ),
+    [assets]
+  );
 
-  const reduceAssets = useMemo(() =>  assets.reduce((c: any, v: Asset) => {
-    c[v.chain] = (c[v.chain] || 0) + v.calculatedPrice;
-    return c;
-  }, {}), [assets])
+  const reduceAssets = useMemo(
+    () =>
+      assets.reduce((c: any, v: Asset) => {
+        c[v.chain] = (c[v.chain] || 0) + v.calculatedPrice;
+        return c;
+      }, {}),
+    [assets]
+  );
 
-  const networks = useMemo(() =>  filtered.map((el: Asset) => {
-    const samCalculatedPrice = Object.keys(reduceAssets).filter((item) => el.chain === item);
-    const filteredSimilarAssets = assets.filter((item: Asset) => item.chain === el.chain);
+  const networks = useMemo(
+    () =>
+      filtered.map((el: Asset) => {
+        const samCalculatedPrice = Object.keys(reduceAssets).filter((item) => el.chain === item);
+        const filteredSimilarAssets = assets.filter((item: Asset) => item.chain === el.chain);
 
-    return {
-      ...el,
-      calculatedPrice: reduceAssets[samCalculatedPrice[0]],
-      assetsCount: filteredSimilarAssets.length
-    };
-  }),
-  [assets, filtered, reduceAssets])
-
-  console.log(assets, 'networks');
+        return {
+          ...el,
+          calculatedPrice: reduceAssets[samCalculatedPrice[0]],
+          assetsCount: filteredSimilarAssets.length
+        };
+      }),
+    [assets, filtered, reduceAssets]
+  );
 
   return (
     <Container bg={dashboardBG}>

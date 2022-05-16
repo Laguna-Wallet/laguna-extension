@@ -66,6 +66,7 @@ export default function SelectAsset({ assets }: Props) {
           placeholder="Search"
           height="45px"
           marginTop="20px"
+          IconAlignment="left"
           Icon={<LoopIcon />}
         />
         <List>

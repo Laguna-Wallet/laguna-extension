@@ -44,13 +44,12 @@ export default function SecureWallet({
         <MnemonicsSeed
           redirectedFromDashboard={redirectedFromDashboard}
           redirectedFromSignUp={redirectedFromSignUp}
+          nextStepFromParent={nextStep}
         />
       )}
- 
-      {!encoded && (
-        <CreatePassword redirectedFromSignUp={redirectedFromSignUp}/>
-      )}
-      <SetupComplete/>
+
+      {!encoded && <CreatePassword redirectedFromSignUp={redirectedFromSignUp} />}
+      {/* <SetupComplete /> */}
     </Wizard>
   );
 }

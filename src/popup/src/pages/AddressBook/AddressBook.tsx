@@ -1,7 +1,7 @@
 import keyring from '@polkadot/ui-keyring';
 import AddressBookIcon from 'assets/svgComponents/AdressBookIcon';
 import AlternateEmail from 'assets/svgComponents/AlternateEmailIcon';
-import AddIcon from 'assets/svgComponents/AddIcon'
+import AddIcon from 'assets/svgComponents/AddIcon';
 import MenuHeader from 'components/MenuHeader/MenuHeader';
 import Button from 'components/primitives/Button';
 import Snackbar from 'components/Snackbar/Snackbar';
@@ -50,6 +50,7 @@ export default function AddressBook({ snackbar }: Props) {
         onClose={() => goTo(Wallet)}
         backAction={() => goTo(Wallet, { isMenuOpen: true })}
       />
+
       <Content>
         {addresses?.length === 0 ? (
           <>
@@ -79,13 +80,13 @@ export default function AddressBook({ snackbar }: Props) {
         <StyledLink component={AddAddress} props={{ closeAction: () => goTo(Wallet) }}>
           <Button
             text="Add Address"
-            Icon={<AddIcon/>}
+            Icon={<AddIcon />}
             bgColor="#fff"
             color="#111"
             justify="center"
             direction="row-reverse"
             margin="auto 0 0 0"
-            marginText='0 12px'
+            marginText="0 12px"
           />
         </StyledLink>
       </Content>

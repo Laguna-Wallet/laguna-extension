@@ -66,7 +66,7 @@ function updateCoinInfo(message: any, dispatch: any) {
 async function updateAccountsBalances(message: any, dispatch: any) {
   dispatch(changeAccountsBalances(JSON.parse(message.payload)));
   saveToStorage({ key: StorageKeys.AccountBalances, value: message.payload });
-  
+
   // if account address has changed, background has fetched
   // new balances and loading is finished
   if (await accountHasChanged(JSON.parse(message.payload))) {

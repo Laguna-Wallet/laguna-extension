@@ -36,6 +36,7 @@ export enum Messages {
   ConnectedApps = "CONNECTED_APPS",
   RevokeDapp = "REVOKE_DAPP",
   TokenReceived = "TOKEN_RECEIVED",
+  Timeout = "TIMEOUT",
 }
 
 export const chains = ["westend", "polkadot", "kusama", "moonriver", "moonbeam", "shiden", "astar"]

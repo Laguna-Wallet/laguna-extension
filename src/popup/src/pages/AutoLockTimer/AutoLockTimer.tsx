@@ -4,7 +4,7 @@ import Button from 'components/primitives/Button';
 import HumbleInput from 'components/primitives/HumbleInput';
 import Snackbar from 'components/Snackbar/Snackbar';
 import Wallet from 'pages/Wallet/Wallet';
-import { memo, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { goTo, Link } from 'react-chrome-extension-router';
 import { useDispatch, useSelector } from 'react-redux';
 import { changeIdleTimeout } from 'redux/actions';
@@ -14,10 +14,7 @@ import { Messages, SnackbarMessages, StorageKeys } from 'utils/types';
 
 function AutoLockTimer() {
   const [isOpen, setOpen] = useState<boolean>(true);
-
-  const dispatch = useDispatch();
-  const { idleTimeout } = useSelector((state: any) => state.wallet);
-  const [timeout, changeTimeout] = useState<string>(idleTimeout || '');
+  const [timeout, changeTimeout] = useState<string>('');
 
   const [snackbarError, setSnackbarError] = useState<string>('');
   const [isChangeValue, setIsChangeValue] = useState<boolean>(false);
@@ -37,11 +34,21 @@ function AutoLockTimer() {
       return;
     }
 
-    dispatch(changeIdleTimeout(timeout));
-    saveToStorage({ key: StorageKeys.IdleTimeout, value: timeout });
+    if (Number(timeout) > 1440) {
+      setIsSnackbarOpen(true);
+      setSnackbarError("Timer can't be more than 24 hr");
+      return;
+    }
+
     chrome.runtime.sendMessage({ type: Messages.ChangeInterval, payload: { timeout } });
     goTo(Wallet, { snackbar: { show: true, message: SnackbarMessages.AutoLockUpdated } });
   };
+
+  useEffect(() => {
+    chrome.runtime.sendMessage({ type: Messages.Timeout }, (response) => {
+      changeTimeout(response.payload.timeout);
+    });
+  }, []);
 
   return (
     <Container>

@@ -89,12 +89,7 @@ const AccountProvider = ({ children }: { children?: ReactNode }) => {
     return mnemonics;
   }, []);
 
-  const getActiveAccount = (): KeyringPair | undefined => {
-    // if no account in the storage than insert first one from keyring
-    // if (!activeAccount) {
-    //   return;
-    // }
-
+  const getActiveAccount = () => {
     return activeAccount;
   };
 

@@ -13,10 +13,11 @@ import LockIcon from 'assets/svgComponents/LockIcon';
 import HumbleInput from 'components/primitives/HumbleInput';
 import Button from 'components/primitives/Button';
 import Snackbar from 'components/Snackbar/Snackbar';
-import { exportJson, validPassword } from 'utils';
 import { Field, reduxForm, InjectedFormProps } from 'redux-form';
 import { useSelector } from 'react-redux';
 import { isObjectEmpty, objectToArray } from 'utils';
+import { copyToClipboard, exportJson, validPassword } from 'utils';
+import ButtonsIcon from 'assets/svgComponents/ButtonsIcon';
 
 type Props = {
   password: string;
@@ -25,16 +26,19 @@ type Props = {
 function BackupAccount({ handleSubmit, pristine, submitting }: InjectedFormProps<Props>) {
   const account = useAccount();
   const address = account?.getActiveAccount()?.address;
-  
+
   const formValues = useSelector((state: any) => state?.form?.ImportPhase?.values);
 
   const [seed, setSeed] = useState<string>('');
   const [isOpen, setOpen] = useState<boolean>(true);
   const [opened, setOpened] = useState<boolean>(false);
   const [seedExists, setSeedExists] = useState<boolean>(false);
+  const [snackbarType, setSnackbarType] = useState<'error' | 'success' | 'warning'>('error');
   const [isChangeValue, setIsChangeValue] = useState<boolean>(false);
   const [snackbarError, setSnackbarError] = useState<string>('');
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
+  const [snackbarMessage, setSnackbarMessage] = useState<string>('');
+  const [mnemonicHasBeenCopied, setMnemonicHasBeenCopied] = useState<boolean>(false);
 
   const submit = async (values: Props) => {
     const { password } = values;
@@ -45,24 +49,26 @@ function BackupAccount({ handleSubmit, pristine, submitting }: InjectedFormProps
 
       setSnackbarError(errArray[0]);
       setIsSnackbarOpen(true);
+      setSnackbarMessage('Incorrect Password');
+      setSnackbarType('error');
       return;
     }
 
     const isValid = await validatePassword(password);
 
-    if (isValid){
+    if (isValid) {
       setOpened(true);
-  
+
       const pair = keyring.getPair(address);
       const encodedSeed = pair?.meta?.encodedSeed;
-  
+
       if (encodedSeed) {
         const bytes = AES.decrypt(encodedSeed as string, password);
         const decodedSeed = bytes.toString(Utf8);
-  
+
         setSeed(decodedSeed);
       }
-    }else{
+    } else {
       setIsSnackbarOpen(true);
       setSnackbarError('Incorrect Password');
       setIsChangeValue(true);
@@ -72,6 +78,14 @@ function BackupAccount({ handleSubmit, pristine, submitting }: InjectedFormProps
   const backupJson = async () => {
     const json = await exportAccount(address, formValues.password);
     await exportJson(json);
+  };
+
+  const handleCopy = () => {
+    copyToClipboard(seed);
+    setIsSnackbarOpen(true);
+    setSnackbarMessage('Mnemonics Copied');
+    setSnackbarType('success');
+    setMnemonicHasBeenCopied(true);
   };
 
   useEffect(() => {
@@ -90,8 +104,14 @@ function BackupAccount({ handleSubmit, pristine, submitting }: InjectedFormProps
         isOpen={isOpen}
         setOpen={setOpen}
         title="BACKUP ACCOUNT"
-        onClose={() => goTo(Wallet)}
-        backAction={() => goTo(Wallet, { isMenuOpen: true })}
+        onClose={() => {
+          mnemonicHasBeenCopied && copyToClipboard('');
+          goTo(Wallet);
+        }}
+        backAction={() => {
+          mnemonicHasBeenCopied && copyToClipboard('');
+          goTo(Wallet, { isMenuOpen: true });
+        }}
       />
 
       <Content>
@@ -138,7 +158,7 @@ function BackupAccount({ handleSubmit, pristine, submitting }: InjectedFormProps
                 type="button"
                 text={`Reveal ${seedExists ? 'Seed Phrase' : 'Json export'}`}
                 color="#111"
-                disabledBgColor='rgba(255,255,255,0.6)'
+                disabledBgColor="rgba(255,255,255,0.6)"
                 borderColor="#111"
                 justify="center"
                 margin="15px 0 0 0"
@@ -149,6 +169,12 @@ function BackupAccount({ handleSubmit, pristine, submitting }: InjectedFormProps
           </>
         ) : (
           <>
+            {opened && seed.length && (
+              <CopyBtn onClick={handleCopy}>
+                <ButtonsIcon fill="#fff" />
+                <span>Copy</span>
+              </CopyBtn>
+            )}
             <SeedContainer>{seed}</SeedContainer>
             <Button
               type="button"
@@ -157,17 +183,20 @@ function BackupAccount({ handleSubmit, pristine, submitting }: InjectedFormProps
               justify="center"
               margin="15px 0 0 0"
               bgColor="#e4e4e4"
-              onClick={() => goTo(Wallet, { isMenuOpen: true })}
+              onClick={() => {
+                mnemonicHasBeenCopied && copyToClipboard('');
+                goTo(Wallet, { isMenuOpen: true });
+              }}
             />
           </>
         )}
-        {opened && <ExportJson onClick={backupJson}>Export Json file</ExportJson>}
+        {opened && <ExportJson onClick={backupJson}>Export JSON file</ExportJson>}
       </Content>
       <Snackbar
         isOpen={isSnackbarOpen}
         close={() => setIsSnackbarOpen(false)}
-        message={snackbarError}
-        type="error"
+        message={snackbarMessage}
+        type={snackbarType}
         left="26px"
         bottom="30px"
         transform="translateX(0)"
@@ -267,23 +296,48 @@ const WarningContainer = styled.div`
 
 const SeedContainer = styled.div`
   width: 100%;
-  height: 60px;
+  height: 80px;
   font-size: 16px;
   background-color: #303030;
   color: #fff;
-  margin-top: auto;
   border-radius: 5px;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
+  padding: 10px;
+  box-sizing: border-box;
+  margin-top: 10px;
 `;
 
+const CopyBtn = styled.div`
+  width: 70px;
+  height: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: auto;
+  margin-top: 5px;
+  border-radius: 20px;
+  background-color: #303030;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: 'IBM Plex Sans';
+  margin-top: auto;
+
+  span {
+    margin-left: 5px;
+  }
+`;
 const ExportJson = styled.div`
   color: #fff;
   margin-top: 10px;
   font-size: 16px;
   cursor: pointer;
+  border-bottom: 1px solid #fff;
+  padding-bottom: 3px;
 `;
 
 const LockContainer = styled.div`

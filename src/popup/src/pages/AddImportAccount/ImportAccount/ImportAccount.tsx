@@ -10,7 +10,7 @@ import {
   encryptKeyringPair,
   importFromMnemonic,
   importJson,
-  isValidPolkadotAddress,
+  isValidPolkadotAddress
 } from 'utils/polkadot';
 import { KeyringPair$Json } from '@polkadot/keyring/types';
 import { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
@@ -126,7 +126,7 @@ function ImportAccount({ redirectedFromSignUp }: Props) {
 
   return (
     <Container>
-      <Wizard>
+      <Wizard startIndex={0}>
         {!encoded && <CreatePassword />}
         <ImportPhase redirectedFromSignUp={redirectedFromSignUp} onClose={onClose} />
         <EncodeAccount

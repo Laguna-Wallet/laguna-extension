@@ -35,8 +35,8 @@ export default function AddRemoveToken() {
   const renderNetworks = (networks: Network[], networksFilter: string) => {
     return networks.filter(
       (network) =>
-        network.name.toLowerCase().includes(networksFilter.toLowerCase()) ||
-        network.chain.toLowerCase().includes(networksFilter.toLowerCase())
+        network.name.toLowerCase().includes(networksFilter?.toLowerCase()) ||
+        network.chain.toLowerCase().includes(networksFilter?.toLowerCase())
     );
   };
 
@@ -72,12 +72,12 @@ export default function AddRemoveToken() {
         />
         <List>
           {networks
-            ? networks.length === 0
+            ? networks?.length === 0
               ? 'no assets'
               : renderNetworks(networks, networksFilter).map((network: Network, index: number) => {
                   return (
                     <TokenItem
-                      key={`${network.chain}-${index}`}
+                      key={`${network?.chain}-${index}`}
                       network={network}
                       balance={balances[network?.chain]}
                     />

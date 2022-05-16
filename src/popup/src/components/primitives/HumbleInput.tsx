@@ -3,6 +3,7 @@ import styled from 'styled-components/macro';
 import { truncateString } from 'utils';
 import { AccountMeta } from 'utils/types';
 import CopyIcon from 'assets/svgComponents/CopyIcon';
+import TextareaAutosize from 'react-textarea-autosize';
 
 type InputProps = {
   id: string;
@@ -66,6 +67,7 @@ function HumbleInput({
   color,
   input,
   copy,
+  touched,
   handleClickCopy,
   showError,
   truncate,
@@ -95,8 +97,8 @@ function HumbleInput({
   return (
     <Container marginBottom={marginBottom} marginTop={marginTop}>
       <InputContainer
-        error={meta?.touched || meta?.error}
         isChangeValue={isChangeValue}
+        error={(!touched && !!error) || meta?.touched || meta?.error}
         errorBorderColor={errorBorderColor}
         borderColor={borderColor}
         bgColor={bgColor}
@@ -120,6 +122,7 @@ function HumbleInput({
           <>
             {IconAlignment === 'left' && accountMeta && <AccountAvatar img={accountMeta.img} />}
             <StyledInput
+              {...input}
               id={id}
               value={handleValue(value || input?.value)}
               onChange={onChange || input?.onChange}
@@ -161,7 +164,7 @@ function HumbleInput({
       {(meta?.error || error) && showError && (
         <ErrorContainer>
           <ErrorMessage errorColor={errorColor}>
-            {error || (meta?.dirty && meta?.error)}
+            {error || (meta?.touched && meta?.error)}
           </ErrorMessage>
         </ErrorContainer>
       )}
@@ -192,7 +195,6 @@ const InputContainer = styled.div<{
   height: ${({ height }) => (height ? height : 'auto')};
   display: flex;
   /* display: grid; */
-
   align-items: center;
   /* flex-direction: column; */
   padding: ${({ padding }) => padding || '8px 8px 5px 16px'};
@@ -246,7 +248,7 @@ const StyledInput = styled.input<{
   }
 `;
 
-const StyledTextarea = styled.textarea<{
+const StyledTextarea = styled(TextareaAutosize)<{
   fontSize?: string;
   bgColor?: string;
   color?: string;

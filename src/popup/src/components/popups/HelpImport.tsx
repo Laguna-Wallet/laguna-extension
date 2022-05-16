@@ -1,11 +1,14 @@
 import styled from 'styled-components';
 import Button from 'components/primitives/Button';
+import { useEnterClickListener } from 'hooks/useEnterClickListener';
 
 type Props = {
   onClose: () => void;
 };
 
 export function HelpImport({ onClose }: Props) {
+  useEnterClickListener(() => onClose(), []);
+
   return (
     <Container>
       <MainContent>
@@ -42,7 +45,7 @@ const Container = styled.div`
   display: flex;
   align-items: flex-end;
   box-sizing: border-box;
-  background-color: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.3);
   position: absolute;
   top: 0;
   left: 0;
@@ -75,7 +78,6 @@ const Title = styled.h3`
   font-family: 'IBM Plex Sans';
   margin: 0;
   font-size: 17px;
-  font-weight: 500;
   font-stretch: normal;
   font-style: normal;
   line-height: 2.35;
@@ -83,12 +85,14 @@ const Title = styled.h3`
   text-align: left;
   color: #18191a;
   margin-top: 10px;
+  font-weight: 600;
 `;
 
 const Description = styled.div`
   display: flex;
   color: #353945;
-  font-family: 'IBM Plex Sans';
+  font-family: 'Inter';
+  font-weight: 400;
   flex-direction: column;
   font-size: 16px;
   margin-top: 10px;

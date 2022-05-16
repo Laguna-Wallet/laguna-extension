@@ -17,22 +17,29 @@ import ConfirmSeed from './confirmSeed';
 type Props = {
   redirectedFromSignUp?: boolean;
   redirectedFromDashboard?: boolean;
+  nextStepFromParent: () => void;
 };
 
-export default function MnemonicsSeed({ redirectedFromSignUp, redirectedFromDashboard }: Props) {
-  const { nextStep, previousStep, handleStep  } = useWizard();
+export default function MnemonicsSeed({
+  redirectedFromSignUp,
+  redirectedFromDashboard,
+  nextStepFromParent
+}: Props) {
+  const { nextStep, previousStep, handleStep } = useWizard();
   const [mnemonics, setMnemonics] = useState<string[]>([]);
-  const [isConfirm, setIsConfirm] = useState<boolean>(false)
-  
+  const [isConfirm, setIsConfirm] = useState<boolean>(false);
+
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
   const [snackbarMessage, setSnackbarMessage] = useState<string>('');
   const [isMnemonicDescriptionOpen, setIsMnemonicDescriptionOpen] = useState<boolean>();
-  
+
   handleStep(() => {
     return;
   });
-  
-  const handleClick = () => nextStep();
+
+  const handleClick = () => {
+    nextStepFromParent();
+  };
 
   const account = useAccount();
   useEffect(() => {
@@ -51,7 +58,7 @@ export default function MnemonicsSeed({ redirectedFromSignUp, redirectedFromDash
     setSnackbarMessage('Mnemonics Copied');
   };
 
-  useEnterClickListener(() => handleClick(), []);
+  useEnterClickListener(() => setIsConfirm(true), []);
 
   return (
     <Container isConfirm={isConfirm}>
@@ -67,65 +74,69 @@ export default function MnemonicsSeed({ redirectedFromSignUp, redirectedFromDash
           previousStep();
         }}
       />
-      {!isConfirm ? <>
-      <MainContent>
-        <Title>Backup Seed Phrase</Title>
-        <Description>
-          To secure your wallets please write down this 12 word{' '}
-          <span onClick={() => setIsMnemonicDescriptionOpen(true)}> mnemonic seed phrase.</span>{' '}
-          Store this in a safe place. It&apos;s the only way to recover your wallet if you get
-          locked out or get a new device.
-        </Description>
-        <MnemonicsContainer>
-          {mnemonics?.map((name, index) => (
-            <Mnemonic key={`seed-mnemonic-${index}`}>
-              <MnemonicIndex> {index + 1}</MnemonicIndex>
-              <MnemonicName>{name}</MnemonicName>
-            </Mnemonic>
-          ))}
-        </MnemonicsContainer>
+      {!isConfirm ? (
+        <>
+          <MainContent>
+            <Title>Backup Seed Phrase</Title>
+            <Description>
+              To secure your wallets please write down this 12 word{' '}
+              <span onClick={() => setIsMnemonicDescriptionOpen(true)}> mnemonic seed phrase.</span>{' '}
+              Store this in a safe place. It&apos;s the only way to recover your wallet if you get
+              locked out or get a new device.
+            </Description>
+            <MnemonicsContainer>
+              {mnemonics?.map((name, index) => (
+                <Mnemonic key={`seed-mnemonic-${index}`}>
+                  <MnemonicIndex> {index + 1}</MnemonicIndex>
+                  <MnemonicName>{name}</MnemonicName>
+                </Mnemonic>
+              ))}
+            </MnemonicsContainer>
 
-        {mnemonics && (
-          <CopyBtn onClick={handleCopy}>
-            <ButtonsIcon fill="#18191a" />
-            <span>Copy</span>
-          </CopyBtn>
-        )}
+            {mnemonics && (
+              <CopyBtn onClick={handleCopy}>
+                <ButtonsIcon fill="#18191a" />
+                <span>Copy</span>
+              </CopyBtn>
+            )}
 
-        {isMnemonicDescriptionOpen && (
-          <MnemonicsDescription onClose={() => setIsMnemonicDescriptionOpen(false)} />
-        )}
+            {isMnemonicDescriptionOpen && (
+              <MnemonicsDescription onClose={() => setIsMnemonicDescriptionOpen(false)} />
+            )}
 
-        <Snackbar
-          width="194.9px"
-          isOpen={isSnackbarOpen}
-          close={() => setIsSnackbarOpen(false)}
-          message={snackbarMessage}
-          type="success"
-          // left="110px"
-          bottom="30px"
-        />
-      </MainContent>
+            <Snackbar
+              width="194.9px"
+              isOpen={isSnackbarOpen}
+              close={() => setIsSnackbarOpen(false)}
+              message={snackbarMessage}
+              type="success"
+              // left="110px"
+              bottom="30px"
+            />
+          </MainContent>
 
-      <Button
-        onClick={()=>setIsConfirm(true)}
-        text={'Continue'}
-        justify="center"
-        // Icon={<RightArrow width={23} />}
-        margin="auto 0px 0px 0px"
-      />
-      </> : <ConfirmSeed handleNextSection={handleClick}/>}
+          <Button
+            onClick={() => setIsConfirm(true)}
+            text={'Continue'}
+            justify="center"
+            // Icon={<RightArrow width={23} />}
+            margin="auto 0px 0px 0px"
+          />
+        </>
+      ) : (
+        <ConfirmSeed handleNextSection={handleClick} />
+      )}
     </Container>
   );
 }
 
-const Container = styled.div<{isConfirm: boolean}>`
+const Container = styled.div<{ isConfirm: boolean }>`
   width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
   background-color: #f9fafb;
-  padding: ${({isConfirm}) => !isConfirm ? '30px 26px 43px' : '30px 26px 29px'}} 
+  padding: ${({ isConfirm }) => (!isConfirm ? '30px 26px 43px' : '30px 26px 29px')};
   box-sizing: border-box;
 `;
 

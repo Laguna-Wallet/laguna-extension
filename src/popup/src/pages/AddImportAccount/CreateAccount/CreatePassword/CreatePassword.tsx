@@ -14,46 +14,49 @@ import WizardHeader from 'pages/AddImportAccount/WizardHeader';
 import { goTo } from 'react-chrome-extension-router';
 import Wallet from 'pages/Wallet/Wallet';
 
-
 const validate = (values: { password: string; confirmPassword: string }) => {
   const errors: { password?: string; confirmPassword?: string } = {};
-  if (!values.password || !values.confirmPassword) {
-    errors.password = 'Required';
+  if (!values.password) {
+    errors.password = 'Please fill out this field';
+  } else if (values?.password?.length < 8) {
+    errors.password = 'Password should be minimum 8 characters length';
+  } else if (!values.confirmPassword) {
+    errors.confirmPassword = 'Please fill out this field';
   } else if (values?.confirmPassword?.length < 8) {
-    errors.confirmPassword = 'Must be at least 8 characters';
+    errors.confirmPassword = 'Password should be minimum 8 characters length';
   } else if (
+    values.confirmPassword &&
+    values.password &&
     values.confirmPassword !== values.password
   ) {
+    errors.password = "Passwords don't match";
     errors.confirmPassword = "Passwords don't match";
   }
+
   return errors;
 };
-
 type Props = {
   errors?: Record<string, string>;
 };
 
 function CreatePassword({ handleSubmit, errors }: InjectedFormProps & Props) {
-  const { nextStep, handleStep, previousStep } = useWizard();
+  const { nextStep, previousStep } = useWizard();
 
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
   const [snackbarMessage, setSnackbarMessage] = useState<string>('');
-  
+
   const formValues = useSelector((state: any) => state?.form?.CreatePassword?.values);
-  
+
   const account = useAccount();
-  
+
   const passwordLength = enhancePasswordStrength(passwordStrength(formValues?.password).value);
 
-  handleStep(() => {
-   return
-  });
-
   const submit = (values: Record<string, string>) => {
-        
     if (isObjectEmpty(errors || {})) {
       account.setPassword(values.password);
-      nextStep();
+      // next step is not needed here because, whe the user saves password in the storage
+      // from stepper CreatePassword is removed therefore the next page is rendered
+      // nextStep();
     } else {
       setSnackbarMessage('Please fix the existing errors');
       setIsSnackbarOpen(true);
@@ -87,18 +90,22 @@ function CreatePassword({ handleSubmit, errors }: InjectedFormProps & Props) {
               fontSize: '14px',
               color: '#b1b5c3',
               placeholderColor: '#b1b5c3',
+              errorColor: '#FB5A5A',
+              errorBorderColor: '#FB5A5A',
               hideErrorMsg: false,
+              showError: true,
               autoFocus: true
             }}
           />
 
-          {formValues?.password?.length && 
-          <PasswordStrength>
-            Password strength:
-            <LengthIndicator color={calculatePasswordCheckerColor(passwordLength)}>
-              {passwordLength}
-            </LengthIndicator>
-          </PasswordStrength>}
+          {formValues?.password?.length && (
+            <PasswordStrength>
+              Password strength:
+              <LengthIndicator color={calculatePasswordCheckerColor(passwordLength)}>
+                {passwordLength}
+              </LengthIndicator>
+            </PasswordStrength>
+          )}
 
           <Field
             id="confirmPassword"
@@ -110,13 +117,12 @@ function CreatePassword({ handleSubmit, errors }: InjectedFormProps & Props) {
             props={{
               type: 'password',
               marginTop: formValues?.password?.length ? '12px' : '32px',
-              marginBottom: (errors && errors['confirmPassword']) ? '0' : '18px',
+              marginBottom: errors && errors['confirmPassword'] ? '0' : '18px',
               height: '48.7px',
               borderColor: '#e6e8ec',
               fontSize: '14px',
               color: '#b1b5c3',
               placeholderColor: '#b1b5c3',
-              error: errors && errors['confirmPassword'],
               errorColor: '#FB5A5A',
               errorBorderColor: '#FB5A5A',
               showError: true,
@@ -136,7 +142,7 @@ function CreatePassword({ handleSubmit, errors }: InjectedFormProps & Props) {
         <Button
           type="submit"
           Icon={<RightArrow width={23} />}
-          text={'Create Password'}
+          text={'Create a Password'}
           margin="auto 0px 0px 0px"
           justify="center"
           disabled={!isObjectEmpty(errors || {})}
@@ -176,7 +182,7 @@ const Form = styled.form`
 const Title = styled.span`
   font-family: 'IBM Plex Sans';
   font-size: 22px;
-  font-weight: 500;
+  font-weight: 600;
   line-height: 1.82;
   text-align: left;
   color: #18191a;
