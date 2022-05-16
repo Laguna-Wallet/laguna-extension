@@ -20,6 +20,7 @@ type Props = {
   fontFamily?: string;
   fontSize?: string;
   boxShadow?: string;
+  disabledBgColor?: string;
 };
 
 export default function Button({ Icon, text, bgColor = '#111', ...rest }: Props) {
@@ -43,6 +44,7 @@ const StyledButton = styled.button<{
   fontSize?: string;
   width?: string;
   boxShadow?: string;
+  disabledBgColor?: string;
 }>`
   width: ${({ width }) => width || '100%'};
   display: flex;
@@ -58,13 +60,16 @@ const StyledButton = styled.button<{
   box-sizing: border-box;
   border-radius: 4px;
   background-image: ${({ bgImage }) => bgImage};
-  background-color: ${({ disabled, bgColor }) => (disabled ? 'rgba(24, 25, 26, 0.25)' : bgColor)};
+  background-color: ${({ disabled, bgColor, disabledBgColor }) => (disabled ? (disabledBgColor || 'rgba(24, 25, 26, 0.25)') : bgColor)};
   box-shadow: ${({ boxShadow }) => boxShadow || 'none'};
   color: ${({ color }) => (color ? color : '#fff')};
   border: 1px solid;
   border-color: ${({ disabled, borderColor }) => (disabled ? 'transparent' : borderColor)};
   margin: ${({ margin }) => margin};
   cursor: pointer;
+  :disabled {
+    cursor: default;
+  }
 `;
 
 const Text = styled.div<{

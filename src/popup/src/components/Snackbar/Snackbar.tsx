@@ -1,9 +1,8 @@
-import { useEffect, useState, memo } from 'react';
+import { useEffect, memo } from 'react';
 import styled from 'styled-components';
-import { TransitionGroup, CSSTransition } from 'react-transition-group';
+import { CSSTransition } from 'react-transition-group';
 import '../../App.css';
 import CloseIcon from 'assets/svgComponents/CloseIcon';
-import CheckMarkIcon from 'assets/svgComponents/CheckMarkIcon';
 import CheckedIcon from 'assets/svgComponents/CheckedIcon';
 
 type Props = {
@@ -123,7 +122,6 @@ const Container = styled.div<{
   transform: ${({ transform }) => transform || 'translateX(-50%)'};
   right: ${({ right }) => right && right};
 `;
-/* display: ${({ isOpen }) => (isOpen ? 'block' : 'none')}; */
 
 const Content = styled.div<{
   type: string;

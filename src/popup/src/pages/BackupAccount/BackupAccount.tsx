@@ -13,43 +13,64 @@ import LockIcon from 'assets/svgComponents/LockIcon';
 import HumbleInput from 'components/primitives/HumbleInput';
 import Button from 'components/primitives/Button';
 import Snackbar from 'components/Snackbar/Snackbar';
-import { exportJson } from 'utils';
+import { exportJson, validPassword } from 'utils';
+import { Field, reduxForm, InjectedFormProps } from 'redux-form';
+import { useSelector } from 'react-redux';
+import { isObjectEmpty, objectToArray } from 'utils';
 
-function BackupAccount() {
-  const [isOpen, setOpen] = useState<boolean>(true);
-  const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
-  const [snackbarError, setSnackbarError] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [seed, setSeed] = useState<string>('');
-  const [opened, setOpened] = useState<boolean>(false);
-  const [seedExists, setSeedExists] = useState<boolean>(false);
+type Props = {
+  password: string;
+};
+
+function BackupAccount({ handleSubmit, pristine, submitting }: InjectedFormProps<Props>) {
   const account = useAccount();
   const address = account?.getActiveAccount()?.address;
+  
+  const formValues = useSelector((state: any) => state?.form?.ImportPhase?.values);
 
-  const onClick = async (password: string) => {
-    const isValid = await validatePassword(password);
+  const [seed, setSeed] = useState<string>('');
+  const [isOpen, setOpen] = useState<boolean>(true);
+  const [opened, setOpened] = useState<boolean>(false);
+  const [seedExists, setSeedExists] = useState<boolean>(false);
+  const [isChangeValue, setIsChangeValue] = useState<boolean>(false);
+  const [snackbarError, setSnackbarError] = useState<string>('');
+  const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
 
-    if (!isValid) {
+  const submit = async (values: Props) => {
+    const { password } = values;
+    const errors = validPassword(password);
+
+    if (!isObjectEmpty(errors)) {
+      const errArray = objectToArray(errors);
+
+      setSnackbarError(errArray[0]);
       setIsSnackbarOpen(true);
-      setSnackbarError('Incorrect Password');
       return;
     }
 
-    setOpened(true);
+    const isValid = await validatePassword(password);
 
-    const pair = keyring.getPair(address);
-    const encodedSeed = pair?.meta?.encodedSeed;
-
-    if (encodedSeed) {
-      const bytes = AES.decrypt(encodedSeed as string, password);
-      const decodedSeed = bytes.toString(Utf8);
-
-      setSeed(decodedSeed);
+    if (isValid){
+      setOpened(true);
+  
+      const pair = keyring.getPair(address);
+      const encodedSeed = pair?.meta?.encodedSeed;
+  
+      if (encodedSeed) {
+        const bytes = AES.decrypt(encodedSeed as string, password);
+        const decodedSeed = bytes.toString(Utf8);
+  
+        setSeed(decodedSeed);
+      }
+    }else{
+      setIsSnackbarOpen(true);
+      setSnackbarError('Incorrect Password');
+      setIsChangeValue(true);
     }
   };
 
   const backupJson = async () => {
-    const json = await exportAccount(address, password);
+    const json = await exportAccount(address, formValues.password);
     await exportJson(json);
   };
 
@@ -85,56 +106,60 @@ function BackupAccount() {
         </IconContainer>
 
         {!seed.length ? (
-          <WarningContainer>
-            {seedExists
-              ? `Warning: Do not share your seed phrase. This phrase grants full control of your wallet.`
-              : 'Account has not been secured, only Json file can be exported'}
-          </WarningContainer>
+          <>
+            <WarningContainer>
+              {seedExists
+                ? `Warning: Do not share your seed phrase. This phrase grants full control of your wallet.`
+                : 'Account has not been secured, only Json file can be exported'}
+            </WarningContainer>
+            <Form onSubmit={handleSubmit(submit)}>
+              <Field
+                id="password"
+                name="password"
+                type="password"
+                label="password"
+                placeholder="Enter your password"
+                component={HumbleInput}
+                props={{
+                  type: 'password',
+                  color: '#b1b5c3',
+                  placeholderColor: '#b1b5c3',
+                  bgColor: '#303030',
+                  borderColor: '#303030',
+                  height: '48px',
+                  marginTop: '12px',
+                  errorBorderColor: '#fb5a5a',
+                  autoFocus: true,
+                  isChangeValue,
+                  setIsChangeValue
+                }}
+              />
+              <Button
+                type="button"
+                text={`Reveal ${seedExists ? 'Seed Phrase' : 'Json export'}`}
+                color="#111"
+                disabledBgColor='rgba(255,255,255,0.6)'
+                borderColor="#111"
+                justify="center"
+                margin="15px 0 0 0"
+                bgColor="#e4e4e4"
+                disabled={pristine || submitting}
+              />
+            </Form>
+          </>
         ) : (
-          <SeedContainer>{seed}</SeedContainer>
-        )}
-
-        {!seed.length && (
-          <FieldsContainer>
-            <HumbleInput
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
-              label="password"
-              placeholder="Enter your password"
-              color="#b1b5c3"
-              placeholderColor="#b1b5c3"
-              bgColor="#414141"
-              borderColor="#414141"
-              // bgColor="#303030"
-              // color="#9c9c9c"
-              // borderColor="#303030"
-              height="48px"
-              marginTop="12px"
+          <>
+            <SeedContainer>{seed}</SeedContainer>
+            <Button
+              type="button"
+              text="I’ve Backed my Seed Phrase"
+              color="#111"
+              justify="center"
+              margin="15px 0 0 0"
+              bgColor="#e4e4e4"
+              onClick={() => goTo(Wallet, { isMenuOpen: true })}
             />
-          </FieldsContainer>
-        )}
-        {!seed.length ? (
-          <Button
-            type="button"
-            text={`Reveal ${seedExists ? 'Seed Phrase' : 'Json export'}`}
-            color="#111"
-            justify="center"
-            margin="15px 0 0 0"
-            bgColor="#e4e4e4"
-            onClick={() => onClick(password)}
-          />
-        ) : (
-          <Button
-            type="button"
-            text="I’ve Backed my Seed Phrase"
-            color="#111"
-            justify="center"
-            margin="15px 0 0 0"
-            bgColor="#e4e4e4"
-            onClick={() => goTo(Wallet, { isMenuOpen: true })}
-          />
+          </>
         )}
         {opened && <ExportJson onClick={backupJson}>Export Json file</ExportJson>}
       </Content>
@@ -145,15 +170,17 @@ function BackupAccount() {
         type="error"
         left="26px"
         bottom="30px"
-        transform='translateX(0)'
+        transform="translateX(0)"
       />
     </Container>
   );
 }
 
-export default BackupAccount;
+export default reduxForm<Record<string, unknown>, any>({
+  form: 'backupAccount'
+})(BackupAccount);
 
-const Container = styled.div<{opened: boolean}>`
+const Container = styled.div<{ opened: boolean }>`
   width: 100%;
   height: 600px;
   display: flex;
@@ -167,15 +194,19 @@ const Container = styled.div<{opened: boolean}>`
   box-sizing: border-box;
   background-color: #18191a;
   z-index: 99999;
-  `;
-  
-  const Content = styled.div`
+`;
+
+const Content = styled.div`
   height: 100%;
   display: flex;
   padding: 0 8.5px;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+`;
+
+const Form = styled.form`
+  width: 100%;
 `;
 
 const IconContainer = styled.div`
@@ -258,15 +289,4 @@ const ExportJson = styled.div`
 const LockContainer = styled.div`
   position: absolute;
   top: 70px;
-`;
-
-const FieldsContainer = styled.div`
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-`;
-
-const ButtonsContainer = styled.div`
-  display: flex;
-  width: 100%;
 `;

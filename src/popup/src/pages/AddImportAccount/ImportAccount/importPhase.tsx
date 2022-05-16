@@ -13,41 +13,37 @@ import { goTo } from 'react-chrome-extension-router';
 import { useDropzone } from 'react-dropzone';
 import { useDispatch, useSelector } from 'react-redux';
 import { useWizard } from 'react-use-wizard';
-import {
-  reduxForm,
-  change,
-  reset,
-  Field,
-  InjectedFormProps
-} from 'redux-form';
+import { reduxForm, change, reset, Field, InjectedFormProps } from 'redux-form';
 import styled from 'styled-components';
-import { convertUploadedFileToJson } from 'utils';
-import {
-  isKeyringJson,
-  isValidKeyringPassword,
-  isValidPolkadotAddress,
-} from 'utils/polkadot';
-import { isHex } from '@polkadot/util';
-import { mnemonicValidate } from '@polkadot/util-crypto';
+import { convertUploadedFileToJson, validPassword } from 'utils';
+import { isKeyringJson, isValidKeyringPassword } from 'utils/polkadot';
 import Popup from 'components/Popup/Popup';
 import { HelpImport } from 'components/popups/HelpImport';
 import ButtonsIcon from 'assets/svgComponents/ButtonsIcon';
-
-// import { StorageKeys } from 'utils/types';
-// import { validateSeedPhase } from 'utils/validations';
+import { isObjectEmpty, objectToArray } from 'utils';
+import { KeyringPair$Json } from '@polkadot/keyring/types';
+import { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
 
 type Props = {
   onClose: () => void;
   redirectedFromSignUp?: boolean;
 };
 
+type FormProps ={
+  file: KeyringPair$Json | KeyringPairs$Json,
+  password: string,
+}
+
 function ImportPhase({
-  onClose,
+  pristine,
+  submitting,
+  handleSubmit,
   redirectedFromSignUp,
-  handleSubmit
-}: Props & InjectedFormProps<Record<string, unknown>, Props>) {
+  onClose
+}: InjectedFormProps<FormProps> & Props) {
   const { nextStep } = useWizard();
 
+  const [isChangeValue, setIsChangeValue] = useState<boolean>(false);
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
   const [snackbarError, setSnackbarError] = useState<string>('');
   const [uploaded, setUploaded] = useState<boolean>(false);
@@ -71,43 +67,35 @@ function ImportPhase({
     }
   }, []);
 
-  const { getRootProps, getInputProps, open } =
-    useDropzone({
-      onDrop,
-      noClick: true,
-      accept: '.json'
-    });
+  const { getRootProps, getInputProps, open } = useDropzone({
+    onDrop,
+    noClick: true,
+    accept: '.json'
+  });
 
-  const isDisabled = () => {
-    if (
-      !isKeyringJson(file) &&
-      !isHex(seedPhase) &&
-      !isValidPolkadotAddress(seedPhase) &&
-      !mnemonicValidate(seedPhase)
-    )
-      return true;
-    return false;
-  };
+  const submit = async (values: FormProps) => {
+    const {file, password} = values
+    const errors = validPassword(password);
 
-  // todo proper typing
-  const submit = async ({file, password }: any) => {
-    try {
-      if (file) {
-        const isValid = await isValidKeyringPassword(file, password);
-        if (isValid) {          
-          nextStep();
-        } else {
-          setIsSnackbarOpen(true);
-          setSnackbarError('Invalid password');
-        }
-      } else {
-        nextStep();
-      }
-    } catch (err: any) {
-      // todo proper error typing
-      console.log(err);
+    if (!isObjectEmpty(errors)) {
+      const errArray = objectToArray(errors);
+
+      setSnackbarError(errArray[0]);
       setIsSnackbarOpen(true);
-      setSnackbarError(err.message);
+      return;
+    }
+
+    if (file) {
+      const isValid = await isValidKeyringPassword(file, password);
+      if (isValid) {
+        nextStep();
+      } else {
+        setIsSnackbarOpen(true);
+        setSnackbarError('Invalid password');
+        setIsChangeValue(true);
+      }
+    } else {
+      nextStep();
     }
   };
 
@@ -128,11 +116,7 @@ function ImportPhase({
         }}
       />
 
-      <Form
-        onSubmit={(e: React.SyntheticEvent) => {
-          e.preventDefault();
-          submit({ seedPhase, file, password });
-        }}>
+      <Form onSubmit={handleSubmit(submit)}>
         <DndContainer {...getRootProps()} role={'Box'}>
           {!seedPhase && (
             <FileUploadContainer>
@@ -172,7 +156,7 @@ function ImportPhase({
                   color: '#b1b5c3',
                   placeholderColor: '#b1b5c3',
                   hideErrorMsg: false,
-                  autoFocus: true
+                  autoFocus: true.valueOf
                 }}
               />
             </InputContainer>
@@ -197,10 +181,13 @@ function ImportPhase({
               marginTop: '20px',
               textAlign: 'center',
               bgColor: '#f2f2f2',
+              errorBorderColor: '#fb5a5a',
               color: '#b1b5c3',
               placeholderColor: '#b1b5c3',
               hideErrorMsg: false,
-              autoFocus: true
+              autoFocus: true,
+              isChangeValue,
+              setIsChangeValue
             }}
           />
         )}
@@ -212,12 +199,11 @@ function ImportPhase({
         )}
 
         <Button
-          // onClick={() => handleClick({ seedPhase, file, password })}
           type="submit"
-          disabled={isDisabled()}
           text="import"
           margin="10px 0 0 0"
           justify="center"
+          disabled={pristine || submitting || !password}
           Icon={<RightArrow width={23} fill="#fff" />}
         />
 
@@ -239,7 +225,7 @@ function ImportPhase({
 //   errors: getFormSyncErrors('ImportPhaze')(state)
 // }))();
 
-export default reduxForm<Record<string, unknown>, Props>({
+export default reduxForm<Record<string, unknown>, any>({
   form: 'ImportPhase',
   destroyOnUnmount: false
 })(ImportPhase);

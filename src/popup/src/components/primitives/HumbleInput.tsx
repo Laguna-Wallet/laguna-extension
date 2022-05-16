@@ -1,5 +1,4 @@
-import { SearchIcon } from '@heroicons/react/outline';
-import { memo, ReactElement, useRef } from 'react';
+import { memo, ReactElement } from 'react';
 import styled from 'styled-components/macro';
 import { truncateString } from 'utils';
 import { AccountMeta } from 'utils/types';
@@ -42,19 +41,19 @@ type InputProps = {
   accountMeta?: AccountMeta;
   readOnly?: boolean;
   meta?: any;
+  isChangeValue?: boolean;
+  setIsChangeValue?: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 function HumbleInput({
   id,
   type,
   placeholder,
-  label,
   value,
   onChange,
   error,
   errorColor,
   errorBorderColor,
-  touched,
   marginTop,
   marginBottom,
   borderColor = '#f4f4f6',
@@ -63,7 +62,6 @@ function HumbleInput({
   fontWeight,
   textAlign,
   bgColor,
-  hideErrorMsg,
   autoFocus,
   color,
   input,
@@ -78,7 +76,9 @@ function HumbleInput({
   IconAlignment,
   accountMeta,
   readOnly,
-  meta
+  meta,
+  isChangeValue = false,
+  setIsChangeValue = () => void 0
 }: InputProps) {
   const handleValue = (value: string) => {
     if (!value) return '';
@@ -88,10 +88,15 @@ function HumbleInput({
     return value;
   };
 
+  const handelKeyPress = () => {
+    setIsChangeValue(false);
+  };
+
   return (
     <Container marginBottom={marginBottom} marginTop={marginTop}>
       <InputContainer
-        error={!touched && !!error}
+        error={meta?.touched || meta?.error}
+        isChangeValue={isChangeValue}
         errorBorderColor={errorBorderColor}
         borderColor={borderColor}
         bgColor={bgColor}
@@ -118,6 +123,7 @@ function HumbleInput({
               id={id}
               value={handleValue(value || input?.value)}
               onChange={onChange || input?.onChange}
+              onKeyPress={handelKeyPress}
               type={type}
               placeholder={placeholder}
               fontSize={fontSize}
@@ -180,6 +186,7 @@ const InputContainer = styled.div<{
   bgColor?: string;
   padding?: string;
   errorBorderColor?: string;
+  isChangeValue?: boolean;
 }>`
   width: 100%;
   height: ${({ height }) => (height ? height : 'auto')};
@@ -191,8 +198,8 @@ const InputContainer = styled.div<{
   padding: ${({ padding }) => padding || '8px 8px 5px 16px'};
   box-sizing: border-box;
   border: 1px solid;
-  border-color: ${({ error, borderColor, errorBorderColor }) =>
-    error && errorBorderColor ? errorBorderColor : borderColor};
+  border-color: ${({ error, borderColor, errorBorderColor, isChangeValue }) =>
+    error && isChangeValue && errorBorderColor ? errorBorderColor : borderColor};
   border-radius: 5px;
   background-color: ${({ bgColor }) => bgColor || '#fff'};
   position: relative;

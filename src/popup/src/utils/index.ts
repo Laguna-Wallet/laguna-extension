@@ -196,3 +196,12 @@ export const enhancePasswordStrength = (string: string): string => {
   if (string === 'Strong') return 'Excellent';
   return '';
 };
+
+export const validPassword = ( password: string )=>{
+  const errors: Record<string, string> = {};
+  if (!password) {
+    errors.password = 'Required';
+  }
+
+  return errors;
+}
