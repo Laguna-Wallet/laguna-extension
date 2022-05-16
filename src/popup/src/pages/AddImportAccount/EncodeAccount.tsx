@@ -11,7 +11,7 @@ import { validatePassword } from 'utils/polkadot';
 import encodeBg from 'assets/imgs/encode-bg.png';
 import { useWizard } from 'react-use-wizard';
 import { State } from 'redux/store';
-import { reduxForm,  Field, InjectedFormProps } from 'redux-form';
+import { reduxForm, Field, InjectedFormProps } from 'redux-form';
 import { isObjectEmpty, objectToArray, validPassword } from 'utils';
 import { useAccount } from 'context/AccountContext';
 
@@ -20,11 +20,17 @@ type Props = {
   title: string;
 };
 
-type FormProps  = { 
+type FormProps = {
   password: string;
-}
+};
 
-function EncodeAccount({ handleEncode, handleSubmit, title, pristine, submitting  }: InjectedFormProps<FormProps> & Props) {
+function EncodeAccount({
+  handleEncode,
+  handleSubmit,
+  title,
+  pristine,
+  submitting
+}: InjectedFormProps<FormProps> & Props) {
   const account = useAccount();
   const { nextStep, handleStep } = useWizard();
 
@@ -39,7 +45,7 @@ function EncodeAccount({ handleEncode, handleSubmit, title, pristine, submitting
   // });
 
   const submit = async (values: FormProps) => {
-    const {password} = values;
+    const { password } = values;
     const errors = validPassword(password);
 
     if (!isObjectEmpty(errors)) {
@@ -52,20 +58,20 @@ function EncodeAccount({ handleEncode, handleSubmit, title, pristine, submitting
 
     const isValid = await validatePassword(password);
 
-    if (isValid){
+    if (isValid) {
       await handleEncode(password);
-  
+
       if (hasBoarded) {
         goTo(Wallet);
       } else {
         nextStep();
       }
-    }else {
+    } else {
       setIsSnackbarOpen(true);
       setSnackbarError('Invalid Password');
       setIsChangeValue(true);
       return;
-    } 
+    }
   };
 
   return (
@@ -76,8 +82,7 @@ function EncodeAccount({ handleEncode, handleSubmit, title, pristine, submitting
         </IconContainer>
         <Title>{title}</Title>
         <Description>To encrypt your new wallet please enter your password below:</Description>
-        <Form
-          onSubmit={handleSubmit(submit)}>
+        <Form onSubmit={handleSubmit(submit)}>
           <Field
             id="password"
             name="password"
@@ -98,7 +103,7 @@ function EncodeAccount({ handleEncode, handleSubmit, title, pristine, submitting
               autoFocus: true,
               isChangeValue,
               setIsChangeValue,
-              errorBorderColor: '#fb5a5a',
+              errorBorderColor: '#fb5a5a'
             }}
           />
           <Button
@@ -124,7 +129,7 @@ function EncodeAccount({ handleEncode, handleSubmit, title, pristine, submitting
 }
 
 export default reduxForm<Record<string, unknown>, any>({
-  form: 'EncodeAccount',
+  form: 'EncodeAccount'
 })(EncodeAccount);
 
 const Container = styled.div<{ bg?: string }>`

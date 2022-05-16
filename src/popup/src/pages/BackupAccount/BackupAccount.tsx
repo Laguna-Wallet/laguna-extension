@@ -26,9 +26,8 @@ type Props = {
 function BackupAccount({ handleSubmit, pristine, submitting }: InjectedFormProps<Props>) {
   const account = useAccount();
   const address = account?.getActiveAccount()?.address;
-  
-  const formValues = useSelector((state: any) => state?.form?.ImportPhase?.values);
 
+  const formValues = useSelector((state: any) => state?.form?.ImportPhase?.values);
 
   const [seed, setSeed] = useState<string>('');
   const [isOpen, setOpen] = useState<boolean>(true);
@@ -57,19 +56,19 @@ function BackupAccount({ handleSubmit, pristine, submitting }: InjectedFormProps
 
     const isValid = await validatePassword(password);
 
-    if (isValid){
+    if (isValid) {
       setOpened(true);
-  
+
       const pair = keyring.getPair(address);
       const encodedSeed = pair?.meta?.encodedSeed;
-  
+
       if (encodedSeed) {
         const bytes = AES.decrypt(encodedSeed as string, password);
         const decodedSeed = bytes.toString(Utf8);
-  
+
         setSeed(decodedSeed);
       }
-    }else{
+    } else {
       setIsSnackbarOpen(true);
       setSnackbarError('Incorrect Password');
       setIsChangeValue(true);
@@ -159,7 +158,7 @@ function BackupAccount({ handleSubmit, pristine, submitting }: InjectedFormProps
                 type="button"
                 text={`Reveal ${seedExists ? 'Seed Phrase' : 'Json export'}`}
                 color="#111"
-                disabledBgColor='rgba(255,255,255,0.6)'
+                disabledBgColor="rgba(255,255,255,0.6)"
                 borderColor="#111"
                 justify="center"
                 margin="15px 0 0 0"
@@ -170,6 +169,12 @@ function BackupAccount({ handleSubmit, pristine, submitting }: InjectedFormProps
           </>
         ) : (
           <>
+            {opened && seed.length && (
+              <CopyBtn onClick={handleCopy}>
+                <ButtonsIcon fill="#fff" />
+                <span>Copy</span>
+              </CopyBtn>
+            )}
             <SeedContainer>{seed}</SeedContainer>
             <Button
               type="button"
@@ -181,7 +186,8 @@ function BackupAccount({ handleSubmit, pristine, submitting }: InjectedFormProps
               onClick={() => {
                 mnemonicHasBeenCopied && copyToClipboard('');
                 goTo(Wallet, { isMenuOpen: true });
-              }}            />
+              }}
+            />
           </>
         )}
         {opened && <ExportJson onClick={backupJson}>Export JSON file</ExportJson>}

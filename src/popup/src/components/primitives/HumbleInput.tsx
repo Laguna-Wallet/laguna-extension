@@ -98,7 +98,7 @@ function HumbleInput({
     <Container marginBottom={marginBottom} marginTop={marginTop}>
       <InputContainer
         isChangeValue={isChangeValue}
-        error={(!touched && !!error) || (meta?.touched || meta?.error)}
+        error={(!touched && !!error) || meta?.touched || meta?.error}
         errorBorderColor={errorBorderColor}
         borderColor={borderColor}
         bgColor={bgColor}
@@ -195,7 +195,6 @@ const InputContainer = styled.div<{
   height: ${({ height }) => (height ? height : 'auto')};
   display: flex;
   /* display: grid; */
-
   align-items: center;
   /* flex-direction: column; */
   padding: ${({ padding }) => padding || '8px 8px 5px 16px'};
