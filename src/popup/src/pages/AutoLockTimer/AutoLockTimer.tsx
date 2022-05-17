@@ -8,11 +8,8 @@ import { minutesToMilliseconds } from 'date-fns/esm';
 import Wallet from 'pages/Wallet/Wallet';
 import { memo, useEffect, useState } from 'react';
 import { goTo, Link } from 'react-chrome-extension-router';
-import { useDispatch, useSelector } from 'react-redux';
-import { changeIdleTimeout } from 'redux/actions';
 import styled from 'styled-components';
-import { saveToStorage } from 'utils/chrome';
-import { Messages, SnackbarMessages, StorageKeys } from 'utils/types';
+import { Messages, SnackbarMessages } from 'utils/types';
 
 function AutoLockTimer() {
   const [isOpen, setOpen] = useState<boolean>(true);
@@ -112,7 +109,7 @@ function AutoLockTimer() {
         message={snackbarError}
         type="error"
         left="26px"
-        bottom="42px"
+        bottom="96px"
         transform="translateX(0)"
       />
     </Container>

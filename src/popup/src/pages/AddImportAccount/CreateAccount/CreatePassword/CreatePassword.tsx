@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import Button from 'components/primitives/Button';
 import { useWizard } from 'react-use-wizard';
 import { passwordStrength } from 'check-password-strength';
-import { calculatePasswordCheckerColor, enhancePasswordStrength, isObjectEmpty } from 'utils';
+import { calculatePasswordCheckerColor, isObjectEmpty } from 'utils';
 import Snackbar from 'components/Snackbar/Snackbar';
 import { useAccount } from 'context/AccountContext';
 import { useState } from 'react';
@@ -13,6 +13,7 @@ import { useSelector, connect } from 'react-redux';
 import WizardHeader from 'pages/AddImportAccount/WizardHeader';
 import { goTo } from 'react-chrome-extension-router';
 import Wallet from 'pages/Wallet/Wallet';
+import { checkPasswordStrength } from 'utils/checkPasswordStrength';
 
 const validate = (values: { password: string; confirmPassword: string }) => {
   const errors: { password?: string; confirmPassword?: string } = {};
@@ -35,21 +36,20 @@ const validate = (values: { password: string; confirmPassword: string }) => {
 
   return errors;
 };
+
 type Props = {
   errors?: Record<string, string>;
 };
 
 function CreatePassword({ handleSubmit, errors }: InjectedFormProps & Props) {
-  const { nextStep, previousStep } = useWizard();
+  const account = useAccount();
+  const { previousStep } = useWizard();
+  const formValues = useSelector((state: any) => state?.form?.CreatePassword?.values);
 
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
   const [snackbarMessage, setSnackbarMessage] = useState<string>('');
 
-  const formValues = useSelector((state: any) => state?.form?.CreatePassword?.values);
-
-  const account = useAccount();
-
-  const passwordLength = enhancePasswordStrength(passwordStrength(formValues?.password).value);
+  const passwordLength = passwordStrength(formValues?.password, checkPasswordStrength).value;
 
   const submit = (values: Record<string, string>) => {
     if (isObjectEmpty(errors || {})) {

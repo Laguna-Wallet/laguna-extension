@@ -12,6 +12,11 @@ import { MnemonicsTriple } from 'utils/types';
 import RightArrow from 'assets/svgComponents/RightArrow';
 import arrayShuffle from 'array-shuffle';
 import Snackbar from 'components/Snackbar/Snackbar';
+import { useWizard } from 'react-use-wizard';
+import WizardHeader from 'pages/AddImportAccount/WizardHeader';
+import SignUp from 'pages/SignUp/SignUp';
+import Wallet from 'pages/Wallet/Wallet';
+import { goTo } from 'react-chrome-extension-router';
 
 const calculateWordColor = (index: number, mnemonicIndexToChoose: number) => {
   if (index === mnemonicIndexToChoose) return '#F9F7CD';
@@ -20,15 +25,20 @@ const calculateWordColor = (index: number, mnemonicIndexToChoose: number) => {
 };
 
 type Props = {
-  handleNextSection: () => void;
+  redirectedFromSignUp?: boolean;
 };
 
-export default function ConfirmSeed({ handleNextSection }: Props) {
+export default function ConfirmSeed({ redirectedFromSignUp }: Props) {
+  const { nextStep, previousStep, handleStep } = useWizard();
   const { mnemonics } = useAccount();
   const [mnemonicIndexes, setMnemonicIndexes] = useState<MnemonicsTriple>();
   const [chosenMnemonics, setChosenMnemonics] = useState<string[] | []>([]);
   const [mnemonicIndexToChoose, setMnemonicIndexToChoose] = useState<number>(0);
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
+
+  handleStep(() => {
+    return;
+  });
 
   useEffect(() => {
     setMnemonicIndexes(generateThreeRandomMnemonicIndexes());
@@ -45,8 +55,7 @@ export default function ConfirmSeed({ handleNextSection }: Props) {
       validateMnemonicChoice(mnemonics, chosenMnemonics, mnemonicIndexes as MnemonicsTriple) &&
       !isSnackbarOpen
     ) {
-      console.log('here');
-      handleNextSection();
+      nextStep();
       copyToClipboard('');
     }
   };
@@ -74,67 +83,81 @@ export default function ConfirmSeed({ handleNextSection }: Props) {
   const shuffledMnemonics: string[] = useMemo(() => arrayShuffle([...mnemonics]), []);
 
   return (
-      <Container>
-        <MainContent>
-          <Title>Confirm Your Backup</Title>
-
-          <SelectWords>
-            <Description>Select each word in the order it was presented to you:</Description>
-            <WordsContainer>
-              {mnemonicIndexes &&
-                mnemonicIndexes.map((num, index) => {
-                  return (
-                    <Word key={num} bgColor={calculateWordColor(index, mnemonicIndexToChoose)}>
-                      <MnemonicName>{generateNumberAbbreviation(num + 1)}</MnemonicName>
-                    </Word>
-                  );
-                })}
-            </WordsContainer>
-          </SelectWords>
-
-          <MnemonicsContainer>
-            {shuffledMnemonics?.map((name, index) => (
-              <Mnemonic
-                active={chosenMnemonics.includes(name as never)}
-                key={name}
-                onClick={() => handleClick(name)}>
-                <MnemonicName active={false}>{name}</MnemonicName>
-              </Mnemonic>
-            ))}
-          </MnemonicsContainer>
-        </MainContent> 
-
-        <Snackbar
-          isOpen={isSnackbarOpen}
-          message="Please choose words in provided order"
-          close={() => setIsSnackbarOpen(false)}
-          type="error"
-          left='26px'
-          bottom="80px"
-          transform='translateX(0)'
-        />
-
-        <Button
-          onClick={handleWrittenClick}
-          disabled={
-            !validateMnemonicChoice(mnemonics, chosenMnemonics, mnemonicIndexes as MnemonicsTriple)
+    <Container>
+      <WizardHeader
+        onClose={() => {
+          if (redirectedFromSignUp) {
+            goTo(SignUp);
+          } else {
+            goTo(Wallet);
           }
-          text={'I’ve Written it Down'}
-          Icon={<RightArrow width={23} fill="#fff" />}
-          bgColor={'#000000'}
-          borderColor="#000000"
-          justify="center"
-        />
-      </Container> 
+        }}
+        onBack={() => {
+          previousStep();
+        }}
+      />
+      <MainContent>
+        <Title>Confirm Your Backup</Title>
+
+        <SelectWords>
+          <Description>Select each word in the order it was presented to you:</Description>
+          <WordsContainer>
+            {mnemonicIndexes &&
+              mnemonicIndexes.map((num, index) => {
+                return (
+                  <Word key={num} bgColor={calculateWordColor(index, mnemonicIndexToChoose)}>
+                    <MnemonicName>{generateNumberAbbreviation(num + 1)}</MnemonicName>
+                  </Word>
+                );
+              })}
+          </WordsContainer>
+        </SelectWords>
+
+        <MnemonicsContainer>
+          {shuffledMnemonics?.map((name, index) => (
+            <Mnemonic
+              active={chosenMnemonics.includes(name as never)}
+              key={name}
+              onClick={() => handleClick(name)}>
+              <MnemonicName active={false}>{name}</MnemonicName>
+            </Mnemonic>
+          ))}
+        </MnemonicsContainer>
+      </MainContent>
+
+      <Snackbar
+        isOpen={isSnackbarOpen}
+        message="Please choose words in provided order"
+        close={() => setIsSnackbarOpen(false)}
+        type="error"
+        left="26px"
+        bottom="80px"
+        transform="translateX(0)"
+      />
+
+      <Button
+        onClick={handleWrittenClick}
+        disabled={
+          !validateMnemonicChoice(mnemonics, chosenMnemonics, mnemonicIndexes as MnemonicsTriple)
+        }
+        text={'I’ve Written it Down'}
+        Icon={<RightArrow width={23} fill="#fff" />}
+        bgColor={'#000000'}
+        borderColor="#000000"
+        justify="center"
+      />
+    </Container>
   );
 }
 
 const Container = styled.div`
+  background-color: #f9fafb;
+  box-sizing: border-box;
   width: 100%;
   height: 100%;
   display: flex;
+  padding: 30px 26px 29px;
   flex-direction: column;
-  justify-content: space-between;
 `;
 const MainContent = styled.div``;
 
