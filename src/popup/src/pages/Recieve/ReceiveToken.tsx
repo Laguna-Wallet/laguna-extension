@@ -82,7 +82,7 @@ export default function ReceiveToken({ selectedNetwork, recoded, propsFromTokenD
         </ContentItem>
 
         <BottomText>
-          This address can only be used to receive assets on the{' '}
+          This address can only be used to receive assets on the {' '}
           <span>{selectedNetwork?.chain}</span> chain.
         </BottomText>
         <Snackbar
@@ -152,12 +152,13 @@ const BottomText = styled.div`
   max-width: 200px;
   width: 100%;
   font-weight: 400;
-  margin-top: 30px;
+  margin-top: 30.5px;
   text-align: center;
-  font-family: 'IBM Plex Sans';
+  font-family: IBMPlexSans;
   font-size: 12px;
   text-align: center;
   color: #18191A;
+  line-height: 1.35;
   span {
     text-transform: capitalize;
   }

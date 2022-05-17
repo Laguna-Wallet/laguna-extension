@@ -85,7 +85,7 @@ function HumbleInput({
   const handleValue = (value: string) => {
     if (!value) return '';
     if (truncate) {
-      return truncateString(value, 5);
+      return truncateString(value, 7);
     }
     return value;
   };
@@ -314,9 +314,9 @@ const Copy = styled.div`
 `;
 
 const Text = styled.p`
-  font-family: 'IBM Plex Sans';
-  font-weight: 400;
+  font-family: 'IBMPlexSans';
   font-size: 12px;
+  line-height: 1.35;
   display: flex;
   align-items: center;
   text-align: center;
@@ -328,8 +328,9 @@ const RightLabel = styled.span`
   position: absolute;
   right: 10px;
   top: 12px;
-  color: #828282;
+  color: #777e90;
   font-size: 16px;
+  backdrop-filter: blur(16px);
 `;
 
 const ErrorContainer = styled.div`

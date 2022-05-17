@@ -35,7 +35,6 @@ function BackupAccount({ handleSubmit, pristine, submitting }: InjectedFormProps
   const [seedExists, setSeedExists] = useState<boolean>(false);
   const [snackbarType, setSnackbarType] = useState<'error' | 'success' | 'warning'>('error');
   const [isChangeValue, setIsChangeValue] = useState<boolean>(false);
-  const [snackbarError, setSnackbarError] = useState<string>('');
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
   const [snackbarMessage, setSnackbarMessage] = useState<string>('');
   const [mnemonicHasBeenCopied, setMnemonicHasBeenCopied] = useState<boolean>(false);
@@ -47,9 +46,8 @@ function BackupAccount({ handleSubmit, pristine, submitting }: InjectedFormProps
     if (!isObjectEmpty(errors)) {
       const errArray = objectToArray(errors);
 
-      setSnackbarError(errArray[0]);
+      setSnackbarMessage(errArray[0]);
       setIsSnackbarOpen(true);
-      setSnackbarMessage('Incorrect Password');
       setSnackbarType('error');
       return;
     }
@@ -70,7 +68,7 @@ function BackupAccount({ handleSubmit, pristine, submitting }: InjectedFormProps
       }
     } else {
       setIsSnackbarOpen(true);
-      setSnackbarError('Incorrect Password');
+      setSnackbarMessage('Incorrect Password');
       setIsChangeValue(true);
     }
   };
@@ -157,7 +155,7 @@ function BackupAccount({ handleSubmit, pristine, submitting }: InjectedFormProps
                 }}
               />
               <Button
-                type="button"
+                type="submit"
                 text={`Reveal ${seedExists ? 'Seed Phrase' : 'Json export'}`}
                 color="#111"
                 disabledBgColor="rgba(255,255,255,0.6)"
@@ -200,7 +198,7 @@ function BackupAccount({ handleSubmit, pristine, submitting }: InjectedFormProps
         message={snackbarMessage}
         type={snackbarType}
         left="26px"
-        bottom="30px"
+        bottom="150px"
         transform="translateX(0)"
       />
     </Container>

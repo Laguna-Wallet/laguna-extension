@@ -149,7 +149,7 @@ const RemoveAccount = ({ handleSubmit, pristine, submitting  }: InjectedFormProp
         message={snackbarError}
         type="error"
         left="26px"
-        bottom="44px"
+        bottom="158px"
         transform='translateX(0)'
       />
     </Container>

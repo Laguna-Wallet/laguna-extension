@@ -43,11 +43,11 @@ html {
       format('svg');
 }
 
-/* @font-face {
-  font-family: 'SFCompactDisplaySemibold';
-  src: url('./assets/fonts/SFCompactDisplayFont/SFCompactDisplaySemibold.otf') format('opentype');
+ @font-face {
+  font-family: 'IBMPlexSans';
+  src: url('./assets/fonts/IbmpPlexFont/IBMPlexSans-Regular.ttf') format('opentype');
 }
-
+/*
 @font-face {
   font-family: 'Sequel100Wide55Wide';
   src: url('./assets/fonts/Sequel100WideFont/Sequel100Wide55Wide.otf') format('opentype');

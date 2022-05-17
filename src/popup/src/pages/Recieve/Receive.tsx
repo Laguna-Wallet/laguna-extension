@@ -4,7 +4,7 @@ import { Asset, Network } from 'utils/types';
 import { Wizard } from 'react-use-wizard';
 import { useEffect, useState } from 'react';
 import ReceiveToken from './ReceiveToken';
-import { accountsTie, getApiInstance, getAssets, getNetworks, recodeAddress } from 'utils/polkadot';
+import { getNetworks, recodeAddress } from 'utils/polkadot';
 import { useSelector } from 'react-redux';
 import SelectNetwork from './SelectNetwork';
 import { State } from 'redux/store';
@@ -50,7 +50,7 @@ export default function Receive({ propsFromTokenDashboard }: Props) {
       setSelectedNetwork(network);
     }
   }, []);
-
+  
   return (
     <Container>
       <Wizard>

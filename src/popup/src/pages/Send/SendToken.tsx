@@ -220,7 +220,7 @@ function SendToken({
           <ContentItem>
             <ContentItemTitle>Amount</ContentItemTitle>
             <TokenAndAmountSelect
-              Icon={<NetworkIcons width="28px" height="28px" chain={selectedAsset?.chain} />}
+              Icon={<NetworkIcons isSmallIcon width="28px" height="28px" chain={selectedAsset?.chain} />}
               tokens={[selectedAsset.symbol]}
               value={amount}
             />
@@ -301,7 +301,7 @@ function SendToken({
           )}
 
           <ContentItem>
-            <ContentItemTitle>Enter note (Optional)</ContentItemTitle>
+            <ContentItemTitle>Add Note (optional)</ContentItemTitle>
             <Field
               id="note"
               name="note"
@@ -473,7 +473,7 @@ const ExchangeIconContainer = styled.div`
 const ContentItemTitle = styled.p`
   font-size: 12px;
   color: #18191a;
-  font-family: 'IBM Plex Sans';
+  font-family: 'IBMPlexSans';
   margin-bottom: 8px;
 `;
 

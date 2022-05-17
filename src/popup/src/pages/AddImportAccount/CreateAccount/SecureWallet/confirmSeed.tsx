@@ -106,7 +106,7 @@ export default function ConfirmSeed({ handleNextSection }: Props) {
 
         <Snackbar
           isOpen={isSnackbarOpen}
-          message="Please choose words in provided order"
+          message="Please select words in provided order"
           close={() => setIsSnackbarOpen(false)}
           type="error"
           left='26px'
