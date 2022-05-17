@@ -16,7 +16,7 @@ import { useWizard } from 'react-use-wizard';
 import { reduxForm, change, reset, Field, InjectedFormProps } from 'redux-form';
 import styled from 'styled-components';
 import { convertUploadedFileToJson, validPassword } from 'utils';
-import { isKeyringJson, isValidKeyringPassword } from 'utils/polkadot';
+import { isKeyringJson, isValidKeyringPassword, isValidPolkadotAddress } from 'utils/polkadot';
 import { mnemonicValidate } from '@polkadot/util-crypto';
 import Popup from 'components/Popup/Popup';
 import { HelpImport } from 'components/popups/HelpImport';
@@ -24,16 +24,17 @@ import ButtonsIcon from 'assets/svgComponents/ButtonsIcon';
 import { isObjectEmpty, objectToArray } from 'utils';
 import { KeyringPair$Json } from '@polkadot/keyring/types';
 import { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
+import { isHex } from '@polkadot/util';
 
 type Props = {
   onClose: () => void;
   redirectedFromSignUp?: boolean;
 };
 
-type FormProps ={
-  file: KeyringPair$Json | KeyringPairs$Json,
-  password: string,
-}
+type FormProps = {
+  file: KeyringPair$Json | KeyringPairs$Json;
+  password: string;
+};
 
 function ImportPhase({
   pristine,
@@ -75,7 +76,7 @@ function ImportPhase({
   });
 
   const submit = async (values: FormProps) => {
-    const {file, password} = values
+    const { file, password } = values;
     const errors = validPassword(password);
 
     if (!isObjectEmpty(errors)) {
@@ -115,6 +116,17 @@ function ImportPhase({
       setSnackbarError('Please enter 12 or 24 words');
     }
   }, [seedPhase]);
+
+  const isDisabled = () => {
+    if (
+      !isKeyringJson(file) &&
+      !isHex(seedPhase) &&
+      !isValidPolkadotAddress(seedPhase) &&
+      !mnemonicValidate(seedPhase)
+    )
+      return true;
+    return false;
+  };
 
   return (
     <Container>
@@ -219,7 +231,7 @@ function ImportPhase({
           text="import"
           margin="10px 0 0 0"
           justify="center"
-          disabled={pristine || submitting || !password}
+          disabled={isDisabled()}
           Icon={<RightArrow width={23} fill="#fff" />}
         />
 
