@@ -212,7 +212,7 @@ export default function AddAddress({
           type="error"
           left="8.5px"
           transform='translateX(0)'
-          bottom={edit ? "31px" : "-2px"}>
+          bottom={edit ? "86px" : "56px"}>
           </Snackbar>
       </Content>
     </Container>

@@ -180,7 +180,7 @@ function ChangePassword({ handleSubmit }: Props) {
         message={snackbarError}
         type="error"
         left="26px"
-        bottom="42px"
+        bottom="86px"
         transform='translateX(0)'
       />
     </Container>
