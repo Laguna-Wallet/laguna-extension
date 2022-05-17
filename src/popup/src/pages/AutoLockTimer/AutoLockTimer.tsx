@@ -3,6 +3,8 @@ import MenuHeader from 'components/MenuHeader/MenuHeader';
 import Button from 'components/primitives/Button';
 import HumbleInput from 'components/primitives/HumbleInput';
 import Snackbar from 'components/Snackbar/Snackbar';
+import { millisecondsToMinutes } from 'date-fns';
+import { minutesToMilliseconds } from 'date-fns/esm';
 import Wallet from 'pages/Wallet/Wallet';
 import { memo, useEffect, useState } from 'react';
 import { goTo, Link } from 'react-chrome-extension-router';
@@ -40,13 +42,16 @@ function AutoLockTimer() {
       return;
     }
 
-    chrome.runtime.sendMessage({ type: Messages.ChangeInterval, payload: { timeout } });
+    chrome.runtime.sendMessage({
+      type: Messages.ChangeInterval,
+      payload: { timeout: minutesToMilliseconds(Number(timeout)).toString() }
+    });
     goTo(Wallet, { snackbar: { show: true, message: SnackbarMessages.AutoLockUpdated } });
   };
 
   useEffect(() => {
     chrome.runtime.sendMessage({ type: Messages.Timeout }, (response) => {
-      changeTimeout(response.payload.timeout);
+      changeTimeout(millisecondsToMinutes(response.payload.timeout).toString());
     });
   }, []);
 
