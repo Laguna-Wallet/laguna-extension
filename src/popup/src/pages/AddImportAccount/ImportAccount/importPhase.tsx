@@ -76,7 +76,6 @@ function ImportPhase({
   });
 
   const submit = async (values: FormProps) => {
-    console.log('~ values', values);
     // const { file, password } = values;
     // const errors = validPassword(password);
 
@@ -235,7 +234,7 @@ function ImportPhase({
           disabled={isDisabled()}
           Icon={<RightArrow width={23} fill="#fff" />}
         />
-
+l
         <Snackbar
           width={'90%'}
           isOpen={isSnackbarOpen}

@@ -181,7 +181,7 @@ function ChangePassword({ handleSubmit }: Props) {
         type="error"
         left="26px"
         bottom="42px"
-        transform='translateX(0)'
+        transform="translateX(0)"
       />
     </Container>
   );
