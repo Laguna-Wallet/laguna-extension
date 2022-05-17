@@ -117,16 +117,19 @@ function ImportPhase({
     }
   }, [seedPhase]);
 
-  const isDisabled = () => {
-    if (
-      !isKeyringJson(file) &&
-      !isHex(seedPhase) &&
-      !isValidPolkadotAddress(seedPhase) &&
-      !mnemonicValidate(seedPhase)
-    )
-      return true;
-    return false;
-  };
+  // const isDisabled = () => {
+  //   if (
+
+  //   )
+  //     return true;
+  //   return false;
+  // };
+
+  const isDisabled =
+    !isKeyringJson(file) &&
+    !isHex(seedPhase) &&
+    !isValidPolkadotAddress(seedPhase) &&
+    !mnemonicValidate(seedPhase);
 
   return (
     <Container>
@@ -181,7 +184,7 @@ function ImportPhase({
                   textAlign: 'center',
                   bgColor: '#fff',
                   borderColor: '#fff',
-                  color: '#b1b5c3',
+                  color: isDisabled ? '#b1b5c3' : '#111',
                   placeholderColor: '#b1b5c3',
                   hideErrorMsg: false,
                   autoFocus: true.valueOf
@@ -219,7 +222,6 @@ function ImportPhase({
             }}
           />
         )}
-
         {isPopupOpen && (
           <Popup onClose={() => setIsPopupOpen(false)} bg={'rgba(0, 0, 0, 0.3)'}>
             <HelpImport onClose={() => setIsPopupOpen(false)} />
@@ -231,10 +233,10 @@ function ImportPhase({
           text="import"
           margin="10px 0 0 0"
           justify="center"
-          disabled={isDisabled()}
+          disabled={isDisabled}
           Icon={<RightArrow width={23} fill="#fff" />}
         />
-l
+
         <Snackbar
           width={'90%'}
           isOpen={isSnackbarOpen}
