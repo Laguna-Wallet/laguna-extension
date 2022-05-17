@@ -27,7 +27,7 @@ function BackupAccount({ handleSubmit, pristine, submitting }: InjectedFormProps
   const account = useAccount();
   const address = account?.getActiveAccount()?.address;
 
-  const formValues = useSelector((state: any) => state?.form?.ImportPhase?.values);
+  const formValues = useSelector((state: any) => state?.form?.backupAccount?.values);
 
   const [seed, setSeed] = useState<string>('');
   const [isOpen, setOpen] = useState<boolean>(true);
@@ -76,7 +76,9 @@ function BackupAccount({ handleSubmit, pristine, submitting }: InjectedFormProps
   };
 
   const backupJson = async () => {
+    console.log('formValues.password', formValues);
     const json = await exportAccount(address, formValues.password);
+    console.log('~ json', json);
     await exportJson(json);
   };
 
