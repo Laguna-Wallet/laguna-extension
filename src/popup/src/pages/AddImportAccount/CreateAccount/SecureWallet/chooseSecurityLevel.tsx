@@ -1,10 +1,8 @@
-import ArrowSmRightIcon from '@heroicons/react/outline/ArrowSmRightIcon';
 import RightArrow from 'assets/svgComponents/RightArrow';
 import SecureWalletLogo from 'assets/svgComponents/SecureWalletLogo';
 import { ConfirmSecuritySkip } from 'components/popups/ConfirmSecuritySkip';
 import { MnemonicsDescription } from 'components/popups/MnemonicsDescription';
 import Button from 'components/primitives/Button';
-import { PageContainer } from 'components/ui';
 import WizardHeader from 'pages/AddImportAccount/WizardHeader';
 import SignUp from 'pages/SignUp/SignUp';
 import Wallet from 'pages/Wallet/Wallet';
@@ -12,10 +10,7 @@ import { useState } from 'react';
 import { goTo } from 'react-chrome-extension-router';
 import { useWizard } from 'react-use-wizard';
 import styled from 'styled-components';
-import { SecurityOptions, SecurityOptionsEnum } from 'utils/types';
 import { SecurityLevelEnum } from '../CreateAccount';
-import SecurityInfo from './securityInfo';
-import PopupContainer from './securityInfo';
 
 // todo onBack Prop wizard
 
@@ -53,6 +48,7 @@ export default function ChooseSecurityLevel({
             previousStep();
           }
         }}
+        isMnemonics
       />
 
       {isMnemonicDescriptionOpen && (

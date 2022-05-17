@@ -37,8 +37,6 @@ type FormProps = {
 };
 
 function ImportPhase({
-  pristine,
-  submitting,
   handleSubmit,
   redirectedFromSignUp,
   onClose
@@ -49,6 +47,7 @@ function ImportPhase({
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
   const [snackbarError, setSnackbarError] = useState<string>('');
   const [uploaded, setUploaded] = useState<boolean>(false);
+  const [isFinishSlider, setIsFinishSlider] = useState(false);
   const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false);
 
   const formValues = useSelector((state: any) => state?.form?.ImportPhase?.values);
@@ -62,6 +61,7 @@ function ImportPhase({
     // isKeyringPairs$Json(json) ||
     if (isKeyringJson(json)) {
       setUploaded(true);
+      setIsFinishSlider(true);
       dispatch(change('ImportPhase', 'file', json));
     } else {
       setIsSnackbarOpen(true);
@@ -114,25 +114,30 @@ function ImportPhase({
     } else if (seedLength > 12 && !mnemonicValidate(seedPhase)) {
       setIsSnackbarOpen(true);
       setSnackbarError('Please enter 12 or 24 words');
+    } else if ((seedLength === 12 || seedLength === 24) && mnemonicValidate(seedPhase)) {
+      setIsFinishSlider(true);
     }
   }, [seedPhase]);
 
-  const isDisabled = () => {
-    if (
-      !isKeyringJson(file) &&
-      !isHex(seedPhase) &&
-      !isValidPolkadotAddress(seedPhase) &&
-      !mnemonicValidate(seedPhase)
-    )
-      return true;
-    return false;
-  };
+  // const isDisabled = () => {
+  //   if (
+
+  //   )
+  //     return true;
+  //   return false;
+  // };
+
+  const isDisabled =
+    !isKeyringJson(file) &&
+    !isHex(seedPhase) &&
+    !isValidPolkadotAddress(seedPhase) &&
+    !mnemonicValidate(seedPhase);
 
   return (
     <Container>
       <WizardHeader
         title={'IMPORT WALLET'}
-        uploaded={uploaded}
+        isFinishSlider={isFinishSlider}
         onClose={onClose}
         onBack={() => {
           dispatch(reset('ImportPhase'));
@@ -181,7 +186,7 @@ function ImportPhase({
                   textAlign: 'center',
                   bgColor: '#fff',
                   borderColor: '#fff',
-                  color: '#b1b5c3',
+                  color: isDisabled ? '#b1b5c3' : '#111',
                   placeholderColor: '#b1b5c3',
                   hideErrorMsg: false,
                   autoFocus: true.valueOf
@@ -219,22 +224,20 @@ function ImportPhase({
             }}
           />
         )}
-
         {isPopupOpen && (
           <Popup onClose={() => setIsPopupOpen(false)} bg={'rgba(0, 0, 0, 0.3)'}>
             <HelpImport onClose={() => setIsPopupOpen(false)} />
           </Popup>
         )}
-
         <Button
           type="submit"
           text="import"
           margin="10px 0 0 0"
           justify="center"
-          disabled={isDisabled()}
+          disabled={isDisabled}
           Icon={<RightArrow width={23} fill="#fff" />}
         />
-l
+
         <Snackbar
           width={'90%'}
           isOpen={isSnackbarOpen}
