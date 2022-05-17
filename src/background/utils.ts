@@ -121,7 +121,7 @@ export function isValidPolkadotAddress(address: string): boolean {
     encodeAddress(isHex(address) ? hexToU8a(address) : decodeAddress(address))
     return true
   } catch (error) {
-    console.log(error);
+    console.log(error)
   }
 }
 
@@ -198,8 +198,11 @@ export function recodeToPolkadotAddress(address: string): string {
 }
 
 export function reEncryptKeyringPairs(oldPassword: string, newPassword: string) {
+  console.log("1")
   encryptKeyringPairs(oldPassword, newPassword)
+  console.log("2")
   encryptMetaData(oldPassword, newPassword)
+  console.log("3")
 }
 
 export function encryptKeyringPairs(oldPassword: string, newPassword: string) {
@@ -210,6 +213,7 @@ export function encryptKeyringPairs(oldPassword: string, newPassword: string) {
     pair.unlock(oldPassword)
 
     const { pair: newPair } = keyring.addPair(pair, newPassword)
+    pair.setMeta({ ...newPair.meta })
     keyring.saveAccountMeta(newPair, { ...pair.meta })
   }
 }
@@ -231,6 +235,7 @@ export function encryptMetaData(oldPassword: string, newPassword: string) {
     const pair = pairs[i]
     const meta = pair.meta
 
+    console.log("~ AES", AES)
     // decode key and encode with new password
     if (meta?.encodedKey) {
       const decodedKeyBytes = AES.decrypt(meta?.encodedKey as string, oldPassword)

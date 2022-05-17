@@ -219,6 +219,7 @@ chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
         isLoggedIn = true
         timeoutStart = Date.now()
         keyPairs = unlockKeyPairs(msg.payload.password)
+        console.log("~ keyPairs", keyPairs)
       }
       break
     case Messages.CheckPendingDappAuth:
@@ -250,13 +251,19 @@ chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
       break
     case Messages.ChangeInterval:
       if (msg?.payload?.timeout) {
-        timeout = timeout
+        timeout = msg?.payload?.timeout
         timeoutStart = Date.now()
       }
       break
     case Messages.Timeout:
       sendResponse({ payload: { timeout } })
       break
+    case Messages.ResetTimeout:
+      if (isLoggedIn) {
+        timeoutStart = Date.now()
+      }
+      break
+
     case Messages.SendTransaction:
       if (msg?.payload) {
         await sendTransaction(keyPairs, msg.payload)
