@@ -6,8 +6,9 @@ import ChooseSecurityLevel from './chooseSecurityLevel';
 import CreatePassword from '../CreatePassword/CreatePassword';
 import DecodeToViewSeed from './decodeToVeiwSeed';
 import MnemonicsSeed from './mnemonicsSeed';
-import SetupComplete from '../../SetupComplete';
 import { useAccount } from 'context/AccountContext';
+import ConfirmSeed from './confirmSeed';
+import SetupComplete from 'pages/AddImportAccount/SetupComplete';
 
 type Props = {
   redirectedFromSignUp?: boolean;
@@ -44,12 +45,15 @@ export default function SecureWallet({
         <MnemonicsSeed
           redirectedFromDashboard={redirectedFromDashboard}
           redirectedFromSignUp={redirectedFromSignUp}
-          nextStepFromParent={nextStep}
         />
       )}
-
+      {level === SecurityLevelEnum.Secured && (
+        <ConfirmSeed
+          redirectedFromSignUp={redirectedFromSignUp}
+        />
+      )}
       {!encoded && <CreatePassword redirectedFromSignUp={redirectedFromSignUp} />}
-      {/* <SetupComplete /> */}
+      <SetupComplete />
     </Wizard>
   );
 }
