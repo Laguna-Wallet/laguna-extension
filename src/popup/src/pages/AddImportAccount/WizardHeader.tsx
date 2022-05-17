@@ -1,35 +1,28 @@
 import { useWizard } from 'react-use-wizard';
 import styled from 'styled-components';
 import CloseIcon from 'assets/svgComponents/CloseIcon';
-import LeftArrowIcon from 'assets/svgComponents/LeftArrowIcon';
 import { goTo } from 'react-chrome-extension-router';
-import SignUp from 'pages/SignUp/SignUp';
 import Wallet from 'pages/Wallet/Wallet';
 import LeftArrowThinIcon from 'assets/svgComponents/LeftArrowThinIcon';
-import { useEffect, useState } from 'react';
 
 type Props = {
   title?: string;
   onClose?: () => void;
   onBack?: () => void;
-  uploaded?: boolean;
   isHidden?: boolean;
+  isFinishSlider?: boolean;
+  isMnemonics?: boolean;
 };
 
-const calcProgressBarSize = (activeStep: number, uploaded: boolean): string | undefined => {
-  if (activeStep === 0 && !uploaded) return '33%';
-  if (activeStep === 1 || uploaded) return '66%';
+const calcProgressBarSize = (activeStep: number, isFinishSlider: boolean, isMnemonics: boolean): string | undefined => {
+  if ((activeStep === 0 || isFinishSlider) && !isMnemonics) return isFinishSlider ? '100%' : '50%';
+  if (activeStep === 0 && isMnemonics ) return '33%';
+  if (activeStep === 1) return '66%';
   if (activeStep === 2) return '100%';
 };
 
-export default function WizardHeader({ title, onClose, uploaded = false, isHidden = true, onBack }: Props) {
+export default function WizardHeader({ title, onClose, isHidden = true, onBack, isFinishSlider = false, isMnemonics = false }: Props) {
   const { activeStep, previousStep, isFirstStep } = useWizard();
-  const [activeCount, setActiveCount] = useState(1);
-
-  useEffect(()=>{
-   const step = uploaded? 2: activeStep + 1
-    setActiveCount(step);
-  }, [uploaded, activeStep])
 
   const handleBack = () => {
     if (isFirstStep) {
@@ -57,9 +50,8 @@ export default function WizardHeader({ title, onClose, uploaded = false, isHidde
           {onClose ? <CloseIcon stroke="#777e90" /> : <LeftArrowThinIcon stroke="#777e90" />}
         </IconContainer>
         <Line>
-          <Progress activeStep={activeStep} uploaded={uploaded} calcProgressBarSize={()=>calcProgressBarSize(activeStep, uploaded)}></Progress>
+          <Progress activeStep={activeStep} isMnemonics={isMnemonics} isFinishSlider={isFinishSlider} calcProgressBarSize={()=>calcProgressBarSize(activeStep, isFinishSlider, isMnemonics)}></Progress>
         </Line>
-        <StepNumber>{activeCount}/3</StepNumber>
       </TopSection>}
       {title && (
         <BottomSection>
@@ -95,10 +87,11 @@ const Line = styled.div`
 
 const Progress = styled.div<{
   activeStep: number;
-  uploaded: boolean;
-  calcProgressBarSize: (activeStep: number, uploaded: boolean, isConfirm: boolean) => string | undefined;
+  isFinishSlider: boolean;
+  isMnemonics: boolean
+  calcProgressBarSize: (activeStep: number, isConfirm: boolean, isFinishSlider: boolean, isMnemonics: boolean) => string | undefined;
 }>`
-  width: ${({ activeStep, uploaded }) => calcProgressBarSize(activeStep, uploaded)};
+  width: ${({ activeStep, isFinishSlider, isMnemonics }) => calcProgressBarSize(activeStep, isFinishSlider, isMnemonics)};
   background-image: linear-gradient(
     to right top,
     #d7cce2,

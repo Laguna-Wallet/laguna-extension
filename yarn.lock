@@ -5427,6 +5427,11 @@ randomfill@^1.0.3:
     randombytes "^2.0.5"
     safe-buffer "^5.1.0"
 
+react-idle-timer@^5.2.0:
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/react-idle-timer/-/react-idle-timer-5.2.0.tgz#04874499cc7a07a4d3e27c9ed31dcfb4c6e7ba50"
+  integrity sha512-Q8UQ9n8jGhgtB3xN6U212nmkaqZP6FToWsUT1g1HIl/TqJQP1AnW44+tblu4BEhTukI3fGhrhXjtexz9I6pSpg==
+
 react-textarea-autosize@^8.3.3:
   version "8.3.3"
   resolved "https://registry.yarnpkg.com/react-textarea-autosize/-/react-textarea-autosize-8.3.3.tgz#f70913945369da453fd554c168f6baacd1fa04d8"
