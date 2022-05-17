@@ -76,16 +76,17 @@ function ImportPhase({
   });
 
   const submit = async (values: FormProps) => {
-    const { file, password } = values;
-    const errors = validPassword(password);
+    console.log('~ values', values);
+    // const { file, password } = values;
+    // const errors = validPassword(password);
 
-    if (!isObjectEmpty(errors)) {
-      const errArray = objectToArray(errors);
+    // if (!isObjectEmpty(errors)) {
+    //   const errArray = objectToArray(errors);
 
-      setSnackbarError(errArray[0]);
-      setIsSnackbarOpen(true);
-      return;
-    }
+    //   setSnackbarError(errArray[0]);
+    //   setIsSnackbarOpen(true);
+    //   return;
+    // }
 
     if (file) {
       const isValid = await isValidKeyringPassword(file, password);
