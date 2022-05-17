@@ -102,7 +102,8 @@ export enum Messages {
   ConnectedApps = 'CONNECTED_APPS',
   RevokeDapp = 'REVOKE_DAPP',
   TokenReceived = 'TOKEN_RECEIVED',
-  Timeout = 'TIMEOUT'
+  Timeout = 'TIMEOUT',
+  ResetTimeout = 'RESET_TIMEOUT'
 }
 
 //==============================================================================
