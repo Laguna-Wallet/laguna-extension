@@ -114,6 +114,7 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
       </>
     );
   };
+
   // Todo refactor Hrant, attach price to the network from polkadot.js file
   // it can be calculated via [prices, tokenInfos] that are stored in the
   // localStorage and globalState as well

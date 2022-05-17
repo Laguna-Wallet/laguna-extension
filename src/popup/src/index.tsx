@@ -13,6 +13,8 @@ import { AccountProvider } from 'context/AccountContext';
 import { Provider } from 'react-redux';
 import { AccountsStore } from 'utils/stores';
 import generateStore from 'redux/store';
+import { IdleTimerProvider, useIdleTimerContext } from 'react-idle-timer';
+import IdleTimeoutWrapper from 'pages/IdleTimeoutWrapper/IdleTimeoutWrapper';
 
 // cryptoWaitReady().then(async () => {
 // const store = await generateStore();
@@ -24,12 +26,14 @@ generateStore().then((store) => {
     <React.StrictMode>
       <React.StrictMode>
         <Provider store={store}>
-          <AccountProvider>
-            <Router>
-              <GlobalStyles />
-              <App />
-            </Router>
-          </AccountProvider>
+          <IdleTimeoutWrapper>
+            <AccountProvider>
+              <Router>
+                <GlobalStyles />
+                <App />
+              </Router>
+            </AccountProvider>
+          </IdleTimeoutWrapper>
         </Provider>
       </React.StrictMode>
     </React.StrictMode>,
