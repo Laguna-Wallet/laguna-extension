@@ -26,7 +26,7 @@ import bcrypt from 'bcryptjs';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { decodeAddress, encodeAddress } from '@polkadot/keyring';
 import BigNumber from 'bignumber.js';
-import AES from 'crypto-js/aes';
+import * as AES from 'crypto-js/aes';
 import Utf8 from 'crypto-js/enc-utf8';
 import { fetchTransactions, transformTransfers } from './fetchTransactions';
 import { generateRandomBase64Avatar } from 'utils';
