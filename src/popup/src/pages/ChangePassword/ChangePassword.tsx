@@ -75,10 +75,10 @@ function ChangePassword({ handleSubmit }: Props) {
     const newEncryptedPassword = encryptPassword({ password: values?.newPassword });
     saveToStorage({ key: StorageKeys.Encoded, value: newEncryptedPassword });
 
-    chrome.runtime.sendMessage({
-      type: Messages.ReEncryptPairs,
-      payload: { oldPassword: values?.currentPassword, newPassword: values?.newPassword }
-    });
+    // chrome.runtime.sendMessage({
+    //   type: Messages.ReEncryptPairs,
+    //   payload: { oldPassword: values?.currentPassword, newPassword: values?.newPassword }
+    // });
 
     goTo(Wallet, { isMenuOpen: true });
   };

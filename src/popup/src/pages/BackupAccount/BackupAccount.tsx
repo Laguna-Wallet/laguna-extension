@@ -74,9 +74,7 @@ function BackupAccount({ handleSubmit, pristine, submitting }: InjectedFormProps
   };
 
   const backupJson = async () => {
-    console.log('formValues.password', formValues);
     const json = await exportAccount(address, formValues.password);
-    console.log('~ json', json);
     await exportJson(json);
   };
 
