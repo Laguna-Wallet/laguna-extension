@@ -74,7 +74,7 @@ export default function CreateAccount({
 
       chrome.runtime.sendMessage({
         type: Messages.AddToKeyring,
-        payload: { seed: mnemonicsStr, password }
+        payload: { seed: mnemonicsStr, password, meta: newPair.meta }
       });
 
       chrome.runtime.sendMessage({
@@ -115,7 +115,7 @@ export default function CreateAccount({
 
       chrome.runtime.sendMessage({
         type: Messages.AddToKeyring,
-        payload: { seed: mnemonicsStr, password, meta: keyring.getPair(pair.address).meta }
+        payload: { seed: mnemonicsStr, password, meta: newPair.meta }
       });
     }
   };

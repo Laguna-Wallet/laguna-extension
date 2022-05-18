@@ -1,3 +1,4 @@
+import keyring from '@polkadot/ui-keyring';
 import LockLogoIcon from 'assets/svgComponents/LockLogoIcon';
 import MenuHeader from 'components/MenuHeader/MenuHeader';
 import Button from 'components/primitives/Button';
@@ -27,6 +28,10 @@ const validate = async (values: any) => {
     errors.currentPassword = 'Please enter current password';
   }
 
+  if (values.currentPassword && values.currentPassword.length < 8) {
+    errors.currentPassword = 'Password should be minimum 8 characters length';
+  }
+
   if (values.currentPassword && !(await validatePassword(values.currentPassword))) {
     errors.currentPassword = 'Please enter correct current password';
   }
@@ -35,8 +40,16 @@ const validate = async (values: any) => {
     errors.newPassword = 'Please enter new password';
   }
 
+  if (values.newPassword && values.newPassword.length < 8) {
+    errors.newPassword = 'Password should be minimum 8 characters length';
+  }
+
   if (!values.confirmNewPassword) {
     errors.confirmNewPassword = 'Please confirm new password';
+  }
+
+  if (values.confirmNewPassword && values.confirmNewPassword.length < 8) {
+    errors.confirmNewPassword = 'Please enter correct current password';
   }
 
   if (
@@ -75,9 +88,17 @@ function ChangePassword({ handleSubmit }: Props) {
     const newEncryptedPassword = encryptPassword({ password: values?.newPassword });
     saveToStorage({ key: StorageKeys.Encoded, value: newEncryptedPassword });
 
+    // this is needed to update data encryption for the active account in the storage
+    const newAccount = keyring.getPair(activeAccount?.address);
+    account.saveActiveAccount(newAccount);
+
     chrome.runtime.sendMessage({
       type: Messages.ReEncryptPairs,
-      payload: { oldPassword: values?.currentPassword, newPassword: values?.newPassword }
+      payload: {
+        oldPassword: values?.currentPassword,
+        newPassword: values?.newPassword,
+        pairs: keyring.getPairs()
+      }
     });
 
     goTo(Wallet, { isMenuOpen: true });
