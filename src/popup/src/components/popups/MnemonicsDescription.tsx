@@ -32,7 +32,7 @@ export function MnemonicsDescription({ onClose }: Props) {
           </Description>
         </TopContent>
         <ButtonContainer>
-          <Button onClick={onClose} text={'I Understand'} justify="center" />
+          <Button onClick={onClose} text={'I Understand'} justify="center" color="#fff" />
         </ButtonContainer>
       </MainContent>
     </Container>
@@ -54,7 +54,7 @@ const Container = styled.div`
 
 const MainContent = styled.div`
   width: 100%;
-  height: 450px;
+  height: 350px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -84,7 +84,7 @@ const Title = styled.span`
   width: 100%;
   margin-top: 24px;
   font-size: 18px;
-  font-family: 'SFCompactDisplayRegular';
+  font-family: 'IBMPlexSans';
   font-weight: 600;
   line-height: 1.35;
   text-align: left;
@@ -93,8 +93,9 @@ const Title = styled.span`
 
 const Description = styled.div`
   margin-top: 22px;
-  color: #767e93;
+  color: #353945;
   line-height: 1.45;
+  font-family: 'Inter';
   font-size: 16px;
   p:nth-child(2) {
     margin-top: 20px;
