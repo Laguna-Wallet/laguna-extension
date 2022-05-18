@@ -52,6 +52,19 @@ export default function TokenDashboard({ asset }: Props) {
   const balance = accountsBalances?.balances[chain];
   const balanceInUsd = price ? new BigNumber(balance).multipliedBy(price).toFormat(4) : 0;
 
+  const negativeValue = String(price_change_percentage_24h).includes('-');
+  const renderPusSymbol =
+    !negativeValue &&
+    !String(price_change_percentage_24h).includes('+') &&
+    price_change_percentage_24h !== undefined &&
+    '+';
+
+  console.log(
+    negativeValue,
+    price_change_percentage_24h,
+    'price_change_percentage_24hprice_change_percentage_24h'
+  );
+
   const handleSendRoute = () => {
     goTo(Send, { propsFromTokenDashboard: { chain, fromTokenDashboard: true, asset } });
     dispatch(selectAsset(asset));
@@ -82,8 +95,6 @@ export default function TokenDashboard({ asset }: Props) {
     setTransaction(transaction);
   };
 
-  const negativeValue = String(price_change_percentage_24h).includes('-');
-
   return (
     <Container bg={dashboardBG}>
       <Header title={`${chain} Balance`} backAction={() => goTo(Wallet)}></Header>
@@ -99,6 +110,7 @@ export default function TokenDashboard({ asset }: Props) {
             <CardBottom>
               <Tag>{handleChain(chain)}</Tag>
               <Rate negativeValue={negativeValue}>
+                {renderPusSymbol}
                 {price_change_percentage_24h
                   ? new BigNumber(price_change_percentage_24h).toFormat(2)
                   : 0}
@@ -260,7 +272,7 @@ const Rate = styled.div<{ negativeValue: boolean }>`
   font-family: Inter;
   font-size: 14px;
   font-weight: 500;
-  color: ${(negativeValue) => (negativeValue ? '#606060' : '#45b26b')};
+  color: ${({ negativeValue }) => (!negativeValue ? '#45b26b' : '#606060')};
 `;
 
 const ButtonsContainer = styled.div`
