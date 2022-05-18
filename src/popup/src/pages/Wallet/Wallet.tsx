@@ -1,4 +1,4 @@
-import { memo, ReactNode, useCallback, useEffect, useState, useRef, useMemo } from 'react';
+import { memo, ReactNode, useCallback, useEffect, useState, useMemo } from 'react';
 import styled from 'styled-components';
 import Header from './Header';
 import Footer from './Footer';
@@ -22,10 +22,10 @@ import { State } from 'redux/store';
 import SecureNowIcon from 'assets/svgComponents/SecureNowIcon';
 import RightArrowMenuIcon from 'assets/svgComponents/MenuIcons/RightArrowMenuIcon';
 import CreateAccount from 'pages/AddImportAccount/CreateAccount/CreateAccount';
-import keyring from '@polkadot/ui-keyring';
-import { StorageKeys } from 'utils/types';
 import { toggleLoading } from 'redux/actions';
 import { Asset } from 'utils/types';
+import { emptyAssets } from 'utils/emptyAssets';
+import Loader from 'components/Loader/Loader';
 
 export interface ShowSnackbar {
   message: string;
@@ -61,6 +61,7 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
   } = useSelector((state: State) => state.wallet);
 
   const balances = accountsBalances?.balances;
+  const isEmpty = Object.keys(balances).length === 0;
 
   const handleActiveTab = (activeTab: number): void => {
     setActiveTab(activeTab);
@@ -151,6 +152,44 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
     [assets, filtered, reduceAssets]
   );
 
+  const renderAssets = isEmpty ? (
+    <ListContentChild>
+      {emptyAssets.map((asset: Asset) => {
+        return (
+          <ChainItem
+            key={asset.chain}
+            asset={asset}
+            accountAddress={account.getActiveAccount()?.address}
+            handleClick={() => {
+              goTo(TokenDashboard, { asset });
+            }}
+          />
+        );
+      })}
+    </ListContentChild>
+  ) : (
+    <ListContentChild>
+      {activeTab === 1
+        ? assets.length > 0 &&
+          assets.map((asset: any) => {
+            return (
+              <ChainItem
+                key={asset.chain}
+                asset={asset}
+                accountAddress={account.getActiveAccount()?.address}
+                handleClick={() => {
+                  goTo(TokenDashboard, { asset });
+                }}
+              />
+            );
+          })
+        : networks &&
+          networks.map((network: Asset) => {
+            return <NetworkItem key={network.chain} network={network} />;
+          })}
+    </ListContentChild>
+  );
+
   return (
     <Container bg={dashboardBG}>
       <Header menuInitialOpenState={isMenuOpen} />
@@ -163,39 +202,43 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
           </SecureNowMessage>
         )}
         <>
-          <BalanceContainer>
+          <BalanceContainer isEmpty={isEmpty}>
             {/* <span>Balance</span> */}
-            <Balance>
-              <span>
-                <TitleSmallText>$</TitleSmallText>
-                {(overallBalance || overallBalance === 0) && !accountsChanging
-                  ? renderBallance(new BigNumber(overallBalance).toFormat(2))
-                  : '...'}{' '}
-              </span>
-            </Balance>
-            <PriceChange negativeValue={negativeValue}>
-              {accountsChanging ? (
-                '...'
-              ) : (
-                <>
+            {isEmpty ? (
+              <>
+                <Title>welcome, to get started</Title>
+                <SubTitle>Deposit your first asset!</SubTitle>
+              </>
+            ) : (
+              <>
+                <Balance>
+                  <span>
+                    <TitleSmallText>$</TitleSmallText>
+                    {(overallBalance || overallBalance === 0) &&
+                      renderBallance(new BigNumber(overallBalance).toFormat(2))}
+                  </span>
+                </Balance>
+                <PriceChange negativeValue={negativeValue}>
                   {overallPriceChange && overallPriceChange > 0 ? '+' : ''}
                   {overallPriceChange && new BigNumber(overallPriceChange).toFormat(2)}%
-                </>
-              )}
-            </PriceChange>
+                </PriceChange>
+              </>
+            )}
           </BalanceContainer>
 
           <Buttons>
-            <StyledLink component={Send}>
-              <Button>
-                <RightArrowContainer>
-                  <SendIcon stroke="#111" />
-                </RightArrowContainer>
-                <span>Send</span>
-              </Button>
-            </StyledLink>
+            {!isEmpty && (
+              <StyledLink component={Send}>
+                <Button>
+                  <RightArrowContainer>
+                    <SendIcon stroke="#111" />
+                  </RightArrowContainer>
+                  <span>Send</span>
+                </Button>
+              </StyledLink>
+            )}
             <StyledLink component={Receive}>
-              <Button>
+              <Button isEmpty={isEmpty}>
                 <BarcodeIconContainer>
                   <ReceiveIcon width={20} height={20} />
                 </BarcodeIconContainer>
@@ -204,7 +247,7 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
             </StyledLink>
           </Buttons>
         </>
-        <List>
+        <List isEmpty={isEmpty}>
           <ListHeader>
             <ListHeaderItem onClick={() => handleActiveTab(1)} index={1} active={activeTab}>
               ASSETS
@@ -216,32 +259,7 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
               <SwitchAssetsIcon />
             </SwitchAssetIconContainer>
           </ListHeader>
-          <ListContentParent>
-            {accountsChanging ? (
-              'Loading...'
-            ) : (
-              <ListContentChild>
-                {activeTab === 1
-                  ? assets.length > 0 &&
-                    assets.map((asset: any) => {
-                      return (
-                        <ChainItem
-                          key={asset.chain}
-                          asset={asset}
-                          accountAddress={account.getActiveAccount()?.address}
-                          handleClick={() => {
-                            goTo(TokenDashboard, { asset });
-                          }}
-                        />
-                      );
-                    })
-                  : networks &&
-                    networks.map((network: Asset) => {
-                      return <NetworkItem key={network.chain} network={network} />;
-                    })}
-              </ListContentChild>
-            )}
-          </ListContentParent>
+          <ListContentParent>{renderAssets}</ListContentParent>
         </List>
         <Snackbar
           width="194.9px"
@@ -253,6 +271,8 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
         />
       </Content>
       <Footer activeItem="wallet" />
+
+      {accountsChanging && <Loader />}
     </Container>
   );
 }
@@ -326,11 +346,11 @@ const FirstTimeUserBalance = styled.div`
   }
 `;
 
-const BalanceContainer = styled.div`
+const BalanceContainer = styled.div<{ isEmpty: boolean }>`
   display: flex;
   flex-direction: column;
   text-align: center;
-  margin-top: 59px;
+  margin-top: ${({ isEmpty }) => (isEmpty ? '75px' : '59px')};
   font-size: 44px;
   font-weight: 500;
   span {
@@ -349,6 +369,27 @@ const Balance = styled.div`
   }
 `;
 
+const Title = styled.div`
+  font-family: Inter;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.44;
+  letter-spacing: 0.88px;
+  text-align: center;
+  color: #000;
+  margin-bottom: 3px;
+  text-transform: uppercase;
+`;
+
+const SubTitle = styled.div`
+  font-family: IBM Plex Sans;
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 1.82;
+  text-align: center;
+  color: #000;
+`;
+
 const PriceChange = styled.div<{ negativeValue: boolean }>`
   font-family: 'IBM Plex Sans';
   font-size: 14px;
@@ -358,7 +399,7 @@ const PriceChange = styled.div<{ negativeValue: boolean }>`
   display: flex;
   align-items: center;
   justify-content: center;
-  color: ${({negativeValue}) => (!negativeValue ? '#45b26b' : '#606060')};
+  color: ${({ negativeValue }) => (!negativeValue ? '#45b26b' : '#606060')};
 `;
 
 const TitleSmallText = styled.span`
@@ -386,8 +427,8 @@ const SwitchAssetIconContainer = styled.div`
   margin-left: auto;
 `;
 
-const Button = styled.div`
-  width: 112px;
+const Button = styled.div<{ isEmpty?: boolean }>`
+  width: ${({ isEmpty }) => (isEmpty ? '142px' : '112px')};
   height: 37px;
   display: flex;
   align-items: center;
@@ -404,11 +445,11 @@ const Button = styled.div`
   }
 `;
 
-const List = styled.div`
+const List = styled.div<{ isEmpty: boolean }>`
   width: 323px;
   display: flex;
   flex-direction: column;
-  margin-top: 71px;
+  margin-top: ${({ isEmpty }) => (isEmpty ? '82px' : '71px')};
 `;
 
 const ListHeader = styled.div`

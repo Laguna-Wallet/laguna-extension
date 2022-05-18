@@ -1,6 +1,5 @@
 import BigNumber from 'bignumber.js';
 import NetworkIcons from 'components/primitives/NetworkIcons';
-import TokenDashboard from 'pages/TokenDashboard/TokenDashboard';
 import { Link } from 'react-chrome-extension-router';
 import styled from 'styled-components';
 import { Asset } from 'utils/types';
@@ -12,22 +11,23 @@ type Props = {
   handleClick: () => void;
 };
 
-export default function ChainItem({ asset, accountAddress, handleClick }: Props) {
+export default function ChainItem({ asset, handleClick }: Props) {
+  const {chain, symbol, balance, calculatedPrice} = asset
   return (
     // <StyledLink component={TokenDashboard} props={{ asset }}>
     <Container onClick={handleClick}>
       <ListItemIcon>
-        <NetworkIcons width="36px" height="36px" chain={asset.chain} />
+        <NetworkIcons width="36px" height="36px" chain={chain} />
       </ListItemIcon>
       <ListItemText>
-        <Title fs="17px">{asset.chain}</Title>
-        <Tag>{asset.chain}</Tag>
+        <Title >{chain}</Title>
+        <Tag>{chain} Chain</Tag>
       </ListItemText>
       <ListItemText>
-        <Title fs="14px">
-          {new BigNumber(asset?.balance).toFormat(4, 1) || 0} {asset.symbol}
-        </Title>
-        <Value>${new BigNumber(asset.calculatedPrice).toFixed(2)}</Value>
+        <Symbol>
+          {balance ? new BigNumber(balance).toFormat(4, 1) : 0} {symbol}
+        </Symbol>
+        <Value>${(new BigNumber(calculatedPrice).toFixed(2)) || 0}</Value>
       </ListItemText>
     </Container>
     // </StyledLink>
@@ -73,11 +73,17 @@ const ListItemText = styled.div`
   }
 `;
 
-const Title = styled.div<{ fs: string }>`
-  font-size: ${({ fs }) => fs || '17px'};
+const Title = styled.div`
+  font-size: 17px;
   text-transform: capitalize;
   color: #000;
 `;
+
+const Symbol = styled.div`
+font-size: 14px;
+text-transform: uppercase;
+color: #000;
+`
 
 const Tag = styled.div`
   font-size: 10px;
@@ -91,4 +97,5 @@ const Value = styled.div`
   font-size: 10px;
   font-family: 'IBM Plex Sans';
   color: #23262f;
+  margin-top: 3px;
 `;
