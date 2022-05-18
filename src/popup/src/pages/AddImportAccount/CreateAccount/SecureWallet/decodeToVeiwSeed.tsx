@@ -14,7 +14,7 @@ import encodeBg from 'assets/imgs/encode-bg.png';
 import { useWizard } from 'react-use-wizard';
 import { State } from 'redux/store';
 import { useAccount } from 'context/AccountContext';
-import AES from 'crypto-js/aes';
+import * as AES from 'crypto-js/aes';
 import Utf8 from 'crypto-js/enc-utf8';
 import { useEnterClickListener } from 'hooks/useEnterClickListener';
 
@@ -48,7 +48,11 @@ export default function DecodeToViewSeed({ handleEncode, title, onClose, onBack 
         password
       );
 
-      account.setMnemonics(decodedSeed.toString(Utf8).split(' '));
+      const seed = decodedSeed.toString(Utf8).split(' ');
+
+      console.log('~ seed', seed);
+
+      account.setMnemonics(seed);
 
       nextStep();
     } catch (err: any) {

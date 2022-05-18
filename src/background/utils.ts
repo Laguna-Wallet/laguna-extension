@@ -198,11 +198,8 @@ export function recodeToPolkadotAddress(address: string): string {
 }
 
 export function reEncryptKeyringPairs(oldPassword: string, newPassword: string) {
-  console.log("1")
   encryptKeyringPairs(oldPassword, newPassword)
-  console.log("2")
   encryptMetaData(oldPassword, newPassword)
-  console.log("3")
 }
 
 export function encryptKeyringPairs(oldPassword: string, newPassword: string) {
@@ -235,7 +232,6 @@ export function encryptMetaData(oldPassword: string, newPassword: string) {
     const pair = pairs[i]
     const meta = pair.meta
 
-    console.log("~ AES", AES)
     // decode key and encode with new password
     if (meta?.encodedKey) {
       const decodedKeyBytes = AES.decrypt(meta?.encodedKey as string, oldPassword)
@@ -243,6 +239,7 @@ export function encryptMetaData(oldPassword: string, newPassword: string) {
 
       const reEncodedKey = AES.encrypt(decodedKey, newPassword).toString()
       keyring.saveAccountMeta(pair, { ...pair.meta, encodedKey: reEncodedKey })
+      pair.setMeta({ ...pair.meta, encodedKey: reEncodedKey })
     }
 
     // decode seed and encode with new password
@@ -252,6 +249,7 @@ export function encryptMetaData(oldPassword: string, newPassword: string) {
 
       const reEncodedSeed = AES.encrypt(decodedSeed, newPassword).toString()
       keyring.saveAccountMeta(pair, { ...pair.meta, encodedSeed: reEncodedSeed })
+      pair.setMeta({ ...pair.meta, encodedSeed: reEncodedSeed })
     }
   }
 }

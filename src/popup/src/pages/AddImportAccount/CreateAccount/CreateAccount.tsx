@@ -76,7 +76,7 @@ export default function CreateAccount({
         type: Messages.AddToKeyring,
         payload: { seed: mnemonicsStr, password }
       });
-
+      
       chrome.runtime.sendMessage({
         type: Messages.AuthUser,
         payload: { password }
