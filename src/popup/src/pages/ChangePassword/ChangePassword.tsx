@@ -28,6 +28,10 @@ const validate = async (values: any) => {
     errors.currentPassword = 'Please enter current password';
   }
 
+  if (values.currentPassword && values.currentPassword.length < 8) {
+    errors.currentPassword = 'Password should be minimum 8 characters length';
+  }
+
   if (values.currentPassword && !(await validatePassword(values.currentPassword))) {
     errors.currentPassword = 'Please enter correct current password';
   }
@@ -36,8 +40,16 @@ const validate = async (values: any) => {
     errors.newPassword = 'Please enter new password';
   }
 
+  if (values.newPassword && values.newPassword.length < 8) {
+    errors.newPassword = 'Password should be minimum 8 characters length';
+  }
+
   if (!values.confirmNewPassword) {
     errors.confirmNewPassword = 'Please confirm new password';
+  }
+
+  if (values.confirmNewPassword && values.confirmNewPassword.length < 8) {
+    errors.confirmNewPassword = 'Please enter correct current password';
   }
 
   if (
@@ -82,7 +94,11 @@ function ChangePassword({ handleSubmit }: Props) {
 
     chrome.runtime.sendMessage({
       type: Messages.ReEncryptPairs,
-      payload: { oldPassword: values?.currentPassword, newPassword: values?.newPassword }
+      payload: {
+        oldPassword: values?.currentPassword,
+        newPassword: values?.newPassword,
+        pairs: keyring.getPairs()
+      }
     });
 
     goTo(Wallet, { isMenuOpen: true });
