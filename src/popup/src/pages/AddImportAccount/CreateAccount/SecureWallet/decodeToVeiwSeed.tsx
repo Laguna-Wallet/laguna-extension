@@ -50,8 +50,6 @@ export default function DecodeToViewSeed({ handleEncode, title, onClose, onBack 
 
       const seed = decodedSeed.toString(Utf8).split(' ');
 
-      console.log('~ seed', seed);
-
       account.setMnemonics(seed);
 
       nextStep();

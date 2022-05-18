@@ -219,7 +219,6 @@ chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
         isLoggedIn = true
         timeoutStart = Date.now()
         keyPairs = unlockKeyPairs(msg.payload.password)
-        console.log("~ keyPairs", keyPairs)
       }
       break
     case Messages.CheckPendingDappAuth:
@@ -274,7 +273,7 @@ chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
       keyPairs = [...keyPairs, pair]
       break
     case Messages.ReEncryptPairs:
-      reEncryptKeyringPairs(msg.payload.oldPassword, msg.payload.newPassword)
+      reEncryptKeyringPairs(keyPairs, msg.payload.oldPassword, msg.payload.newPassword)
       break
   }
 })
@@ -357,5 +356,6 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
   // check if login-timeout has passed
   if (Date.now() - timeoutStart > timeout) {
     isLoggedIn = false
+    keyPairs = []
   }
 })

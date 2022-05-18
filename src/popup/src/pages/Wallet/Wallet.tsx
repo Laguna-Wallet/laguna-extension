@@ -26,6 +26,7 @@ import keyring from '@polkadot/ui-keyring';
 import { StorageKeys } from 'utils/types';
 import { toggleLoading } from 'redux/actions';
 import { Asset } from 'utils/types';
+import { getFromStorage, saveToStorage } from 'utils/chrome';
 
 export interface ShowSnackbar {
   message: string;
@@ -358,7 +359,7 @@ const PriceChange = styled.div<{ negativeValue: boolean }>`
   display: flex;
   align-items: center;
   justify-content: center;
-  color: ${({negativeValue}) => (!negativeValue ? '#45b26b' : '#606060')};
+  color: ${({ negativeValue }) => (!negativeValue ? '#45b26b' : '#606060')};
 `;
 
 const TitleSmallText = styled.span`

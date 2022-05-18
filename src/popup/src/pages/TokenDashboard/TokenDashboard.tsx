@@ -59,12 +59,6 @@ export default function TokenDashboard({ asset }: Props) {
     price_change_percentage_24h !== undefined &&
     '+';
 
-  console.log(
-    negativeValue,
-    price_change_percentage_24h,
-    'price_change_percentage_24hprice_change_percentage_24h'
-  );
-
   const handleSendRoute = () => {
     goTo(Send, { propsFromTokenDashboard: { chain, fromTokenDashboard: true, asset } });
     dispatch(selectAsset(asset));
