@@ -358,7 +358,7 @@ const PriceChange = styled.div<{ negativeValue: boolean }>`
   display: flex;
   align-items: center;
   justify-content: center;
-  color: ${(negativeValue) => (negativeValue ? '#606060' : '#45b26b')};
+  color: ${({negativeValue}) => (!negativeValue ? '#45b26b' : '#606060')};
 `;
 
 const TitleSmallText = styled.span`

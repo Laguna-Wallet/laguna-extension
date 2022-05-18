@@ -173,7 +173,7 @@ const Avatar = styled.div<{ img: string }>`
   border-radius: 100%;
   background-color: #ccc;
   background-image: ${({ img }) => `url(${img})`};
-  background-size: contain;
+  background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
 `;

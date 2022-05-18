@@ -251,7 +251,7 @@ const IconContainer = styled.div<{ img: string }>`
   background-color: #ccc;
   cursor: pointer;
   background-image: ${({ img }) => `url(${img})`};
-  background-size: contain;
+  background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
   &:hover ${ImageContainerOverlay} {
