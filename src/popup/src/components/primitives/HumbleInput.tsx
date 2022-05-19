@@ -235,8 +235,8 @@ const StyledInput = styled.input<{
   :-webkit-autofill:hover,
   :-webkit-autofill:focus,
   :-webkit-autofill:active {
-    -webkit-box-shadow: 0 0 0 30px #303030 inset !important;
-    -webkit-text-fill-color: #fff !important;
+    -webkit-box-shadow: ${({bgColor}) => (`0 0 0 30px ${bgColor}` || '0 0 0 30px #303030')} inset !important;
+    -webkit-text-fill-color: ${({color}) => color || '#fff'} !important;
     font-size: ${({ fontSize }) => (fontSize ? fontSize : '14.8px')} !important;
   }
   &:focus {

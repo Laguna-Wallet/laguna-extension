@@ -45,6 +45,8 @@ const PlaceHolder = styled.div`
 const IconContainer = styled.div<{ width?: string; height?: string; img: string }>`
   width: ${({ width }) => width || '36px'};
   height: ${({ height }) => height || '36px'};
+  min-width: ${({ width }) => width || '36px'};
+  min-height: ${({ height }) => height || '36px'};
   background-image: ${({ img }) => `url(${img})`};
   background-size: 100% 100%;
   background-position: center center;
