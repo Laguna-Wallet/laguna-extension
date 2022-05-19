@@ -97,7 +97,7 @@ function ChangePassword({ handleSubmit }: Props) {
       payload: {
         oldPassword: values?.currentPassword,
         newPassword: values?.newPassword,
-        pairs: keyring.getPairs()
+        metaData: keyring.getPairs().map((pair) => ({ address: pair.address, meta: pair.meta }))
       }
     });
 

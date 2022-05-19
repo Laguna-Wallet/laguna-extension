@@ -20,11 +20,13 @@ import {
   recodeToPolkadotAddress,
   isInPhishingList,
   getFromStorage,
+  renewMetaToKeyPairs,
 } from "./utils"
 import keyring from "@polkadot/ui-keyring"
 import { TypeRegistry } from "@polkadot/types"
 import { AccountsStore } from "./stores"
 import { cryptoWaitReady } from "@polkadot/util-crypto"
+import type { KeyringPair } from "@polkadot/keyring/types"
 
 // import { getCurrentTab } from "./utils"
 
@@ -34,7 +36,7 @@ import { cryptoWaitReady } from "@polkadot/util-crypto"
 // import "@polkadot/wasm-crypto/initWasmAsm"
 
 let isLoggedIn = false
-let keyPairs = []
+let keyPairs: KeyringPair[] = []
 let signRequestPending = false
 let signRequest = {}
 const registry = new TypeRegistry()
@@ -273,7 +275,8 @@ chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
       keyPairs = [...keyPairs, pair]
       break
     case Messages.ReEncryptPairs:
-      reEncryptKeyringPairs(keyPairs, msg.payload.oldPassword, msg.payload.newPassword)
+      keyPairs = renewMetaToKeyPairs(keyPairs, msg.payload.metaData)
+      keyPairs = reEncryptKeyringPairs(keyPairs, msg.payload.oldPassword, msg.payload.newPassword)
       break
   }
 })
