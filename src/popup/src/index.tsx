@@ -16,31 +16,31 @@ import generateStore from 'redux/store';
 import { IdleTimerProvider, useIdleTimerContext } from 'react-idle-timer';
 import IdleTimeoutWrapper from 'pages/IdleTimeoutWrapper/IdleTimeoutWrapper';
 
-// cryptoWaitReady().then(async () => {
-// const store = await generateStore();
-// load all available addresses and accounts
-generateStore().then((store) => {
-  keyring.loadAll({ ss58Format: 0, type: 'ed25519', store: new AccountsStore() });
-  // generateStore.then((store: any) => {
-  ReactDOM.render(
-    <React.StrictMode>
+cryptoWaitReady().then(async () => {
+  // const store = await generateStore();
+  // load all available addresses and accounts
+  generateStore().then((store) => {
+    keyring.loadAll({ store: new AccountsStore() });
+    // generateStore.then((store: any) => {
+    ReactDOM.render(
       <React.StrictMode>
-        <Provider store={store}>
-          <IdleTimeoutWrapper>
-            <AccountProvider>
-              <Router>
-                <GlobalStyles />
-                <App />
-              </Router>
-            </AccountProvider>
-          </IdleTimeoutWrapper>
-        </Provider>
-      </React.StrictMode>
-    </React.StrictMode>,
-    document.getElementById('root')
-  );
+        <React.StrictMode>
+          <Provider store={store}>
+            <IdleTimeoutWrapper>
+              <AccountProvider>
+                <Router>
+                  <GlobalStyles />
+                  <App />
+                </Router>
+              </AccountProvider>
+            </IdleTimeoutWrapper>
+          </Provider>
+        </React.StrictMode>
+      </React.StrictMode>,
+      document.getElementById('root')
+    );
 
-  reportWebVitals();
+    reportWebVitals();
+  });
 });
-// });
 // });

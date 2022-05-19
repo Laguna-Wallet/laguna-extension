@@ -117,6 +117,8 @@ export async function importFromMnemonic(seed: string, password: string) {
     img
   });
 
+  newPair.setMeta({ encodedKey, encodedSeed, name: pair.address, img });
+
   return newPair;
 }
 

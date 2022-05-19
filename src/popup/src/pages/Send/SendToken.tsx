@@ -220,7 +220,9 @@ function SendToken({
           <ContentItem>
             <ContentItemTitle>Amount</ContentItemTitle>
             <TokenAndAmountSelect
-              Icon={<NetworkIcons isSmallIcon width="28px" height="28px" chain={selectedAsset?.chain} />}
+              Icon={
+                <NetworkIcons isSmallIcon width="28px" height="28px" chain={selectedAsset?.chain} />
+              }
               tokens={[selectedAsset.symbol]}
               value={amount}
             />

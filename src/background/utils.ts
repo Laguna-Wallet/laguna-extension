@@ -162,10 +162,13 @@ export function handleUnlockPair(payload) {
   if (payload?.json) {
     const pair = keyring.restoreAccount(payload.json, payload.jsonPassword)
     const newPair = encryptKeyringPair(pair, payload.jsonPassword, payload.password)
+    keyring.saveAccountMeta(newPair, { ...payload.meta })
+    newPair.setMeta({ ...payload.meta })
     return newPair
   }
 
   if (payload.seed) {
+    console.log("~ payload.meta", payload.meta)
     const { pair } = keyring.addUri(payload.seed, payload.password)
     keyring.saveAccountMeta(pair, { ...payload.meta })
     pair.setMeta({ ...payload.meta })
