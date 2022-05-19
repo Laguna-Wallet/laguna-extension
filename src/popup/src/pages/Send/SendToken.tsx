@@ -212,6 +212,7 @@ function SendToken({
           goTo(Wallet);
         }}
         backAction={handleBack}
+        smallIcon
         bgColor="#f2f2f2"
       />
 
@@ -317,18 +318,6 @@ function SendToken({
                 fontSize: '14px'
               }}
             />
-            {/* <HumbleInput
-              id="note"
-              placeholder="Enter note here"
-              type="text"
-              value=""
-              onChange={() => undefined}
-              // value={formik.values.note}
-              // onChange={formik.handleChange}
-              bgColor="#f3f3f3"
-              height="53px"
-              marginTop="5px"
-            /> */}
           </ContentItem>
 
           <Snackbar
@@ -466,14 +455,14 @@ const ExchangeIconContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-left: 6px;
+  margin: 0 8px 0 6px;
   cursor: pointer;
 `;
 
 const ContentItemTitle = styled.p`
   font-size: 12px;
   color: #18191a;
-  font-family: 'IBMPlexSans';
+  font-family: 'IBM Plex Sans';
   margin-bottom: 8px;
 `;
 

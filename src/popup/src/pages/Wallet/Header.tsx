@@ -9,6 +9,7 @@ import Menu from 'components/Menu/Menu';
 import BackIcon from 'assets/svgComponents/BackIcon';
 import CloseArrowIcon from 'assets/svgComponents/CloseArrowIcon';
 import { truncateString } from 'utils';
+import CloseSmallIcon from 'assets/svgComponents/CloseSmallIcon';
 
 type Props = {
   title?: string;
@@ -18,6 +19,7 @@ type Props = {
   menuInitialOpenState?: boolean;
   bgColor?: string;
   stroke?: string;
+  smallIcon?: boolean;
 };
 
 export default function Header({
@@ -27,7 +29,8 @@ export default function Header({
   closeAction,
   menuInitialOpenState,
   bgColor,
-  stroke
+  stroke,
+  smallIcon = false
 }: Props) {
   const account = useAccount();
 
@@ -69,8 +72,8 @@ export default function Header({
           <Title>{title}</Title>
 
           {closeAction && (
-            <CloseIconContainer onClick={closeAction}>
-              <CloseArrowIcon />
+            <CloseIconContainer smallIcon={smallIcon} onClick={closeAction}>
+              {smallIcon ? <CloseSmallIcon /> : <CloseArrowIcon />}
             </CloseIconContainer>
           )}
         </TitleContainer>
@@ -163,7 +166,8 @@ const TopIconContainer = styled.div`
   cursor: pointer;
 `;
 
-const CloseIconContainer = styled.div`
+const CloseIconContainer = styled.div<{ smallIcon: boolean }>`
+  margin-right: ${({ smallIcon }) => (smallIcon ? '6px' : '0')};
   cursor: pointer;
 `;
 
