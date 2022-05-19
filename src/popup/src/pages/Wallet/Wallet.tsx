@@ -26,6 +26,7 @@ import { toggleLoading } from 'redux/actions';
 import { Asset } from 'utils/types';
 import { emptyAssets } from 'utils/emptyAssets';
 import Loader from 'components/Loader/Loader';
+import { mnemonicGenerate } from '@polkadot/util-crypto';
 
 export interface ShowSnackbar {
   message: string;

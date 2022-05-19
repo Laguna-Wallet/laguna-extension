@@ -2,12 +2,17 @@ import styled from 'styled-components';
 import Header from 'pages/Wallet/Header';
 import Button from 'components/primitives/Button';
 import { FlowValue, SendAccountFlowEnum } from './Send';
-import { goTo} from 'react-chrome-extension-router';
+import { goTo } from 'react-chrome-extension-router';
 import { useAccount } from 'context/AccountContext';
 import { useWizard } from 'react-use-wizard';
 import { memo, useEffect, useState } from 'react';
 import Wallet from 'pages/Wallet/Wallet';
-import { getAccountNameByAddress, getContactNameByAddress, truncateString } from 'utils';
+import {
+  getAccountNameByAddress,
+  getContactNameByAddress,
+  recodeToPolkadotAddress,
+  truncateString
+} from 'utils';
 import BigNumber from 'bignumber.js';
 import { useDispatch, useSelector } from 'react-redux';
 import { Messages, SnackbarMessages } from 'utils/types';
@@ -83,7 +88,7 @@ function Confirm({ fee, transfer, amountToSend, recoded, setBlockHash, flow }: P
     if (flow === SendAccountFlowEnum.SendToAccount) {
       return getAccountNameByAddress(recoded);
     } else if (flow === SendAccountFlowEnum.SendToTrustedContact) {
-      return getContactNameByAddress(recoded);
+      return getContactNameByAddress(recodeToPolkadotAddress(recoded));
     }
 
     return '';
@@ -182,9 +187,7 @@ function Confirm({ fee, transfer, amountToSend, recoded, setBlockHash, flow }: P
         />
       </BottomSection>
 
-      {loadingTransaction && (
-        <Loader/>
-      )}
+      {loadingTransaction && <Loader />}
     </Container>
   );
 }
@@ -289,7 +292,7 @@ const BottomSection = styled.div`
 `;
 
 const Tag = styled.div`
-  text-transform: capitalize; 
+  text-transform: capitalize;
   width: 97px;
   height: 23px;
   display: flex;

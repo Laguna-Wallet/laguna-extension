@@ -80,7 +80,7 @@ function ImportAccount({ redirectedFromSignUp }: Props) {
 
         chrome.runtime.sendMessage({
           type: Messages.AddToKeyring,
-          payload: { seed: seedPhase }
+          payload: { seed: seedPhase, meta: pair.meta }
         });
       }
     }
@@ -99,7 +99,7 @@ function ImportAccount({ redirectedFromSignUp }: Props) {
 
       chrome.runtime.sendMessage({
         type: Messages.AddToKeyring,
-        payload: { password, json: file, jsonPassword }
+        payload: { password, json: file, jsonPassword, meta: newPair.meta }
       });
     }
 

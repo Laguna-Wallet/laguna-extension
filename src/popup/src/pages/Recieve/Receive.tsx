@@ -46,11 +46,13 @@ export default function Receive({ propsFromTokenDashboard }: Props) {
 
   useEffect(() => {
     if (propsFromTokenDashboard?.fromTokenDashboard) {
-      const network = networks.find((network: any) => network.chain === propsFromTokenDashboard.chain);
+      const network = networks.find(
+        (network: any) => network.chain === propsFromTokenDashboard.chain
+      );
       setSelectedNetwork(network);
     }
   }, []);
-  
+
   return (
     <Container>
       <Wizard>

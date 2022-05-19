@@ -7,6 +7,7 @@ import bcrypt from 'bcryptjs';
 import { getFromStorage } from './chrome';
 import keyring from '@polkadot/ui-keyring';
 import Resizer from 'react-image-file-resizer';
+import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 //==============================================================================
 // Mnemonics
@@ -116,6 +117,11 @@ export async function convertUploadedFileToJson(
   }
 }
 
+export function recodeToPolkadotAddress(address: string): string {
+  const publicKey = decodeAddress(address);
+  return encodeAddress(publicKey, 0);
+}
+
 export function encryptPassword({ password }: { password: string }) {
   return bcrypt.hashSync(password, bcrypt.genSaltSync());
 }
@@ -124,7 +130,7 @@ export function truncateString(string: string, length?: number): string {
   if (!string) return string;
   if (string.length <= (length || 4 * 2)) return string;
   const part1 = string.slice(0, length || 4).concat('...');
-  const part2 = string.substring(string.length - ((length && length + 2 )|| 4), string.length);
+  const part2 = string.substring(string.length - ((length && length + 2) || 4), string.length);
   return `${part1}${part2}`;
 }
 
@@ -199,11 +205,11 @@ export const enhancePasswordStrength = (string: string): string => {
   return '';
 };
 
-export const validPassword = ( password: string )=>{
+export const validPassword = (password: string) => {
   const errors: Record<string, string> = {};
   if (!password) {
     errors.password = 'Required';
   }
 
   return errors;
-}
+};
