@@ -3,25 +3,24 @@ import { useAccount } from 'context/AccountContext';
 import activityBg from 'assets/imgs/activity-bg.png';
 import Header from 'pages/Wallet/Header';
 import Footer from 'pages/Wallet/Footer';
-import { goTo, Link } from 'react-chrome-extension-router';
+import { goTo } from 'react-chrome-extension-router';
 import Wallet from 'pages/Wallet/Wallet';
-import { getApiInstance, recodeAddress } from 'utils/polkadot';
+import { recodeAddress } from 'utils/polkadot';
 import { useEffect, useState } from 'react';
 import ThreeDotsIcon from 'assets/svgComponents/ThreeDotsIcon';
 import ActivityInfo from './ActivityInfo';
 import { useSelector } from 'react-redux';
-import { FixedSizeList as List } from 'react-window';
 import { truncateString } from 'utils';
-import { format, compareAsc } from 'date-fns';
+import { format } from 'date-fns';
 import RightArrow from 'assets/svgComponents/RightArrow';
 import { PlusIcon } from '@heroicons/react/outline';
 import PolkadotLogoIcon from 'assets/svgComponents/PolkadotLogoIcon';
 import KusamaLogoIcon from 'assets/svgComponents/KusamaLogoIcon';
-import KusamaIcon from 'assets/svgComponents/KusamaIcon';
 import { TokenSymbols, Transaction } from 'utils/types';
 import { fetchAccountsTransactions } from 'utils/fetchTransactions';
 import Popup from 'components/Popup/Popup';
-import NetworkIcons from 'components/primitives/NetworkIcons';
+import Loader from 'components/Loader/Loader';
+import InactiveField from 'components/InactiveField/InactiveField';
 
 type Props = {
   isMenuOpen?: boolean;
@@ -98,7 +97,7 @@ export default function Activity() {
   useEffect(() => {
     async function go() {
       setLoading(true);
-      const transactions = await fetchAccountsTransactions(address) as Transaction[];
+      const transactions = (await fetchAccountsTransactions(address)) as Transaction[];
       setTransactions(transactions);
       setLoading(false);
     }
@@ -112,15 +111,14 @@ export default function Activity() {
   };
 
   return (
-    <Container bg={activityBg}>
-      <Header title="Activity" />
-
-      <Content>
-        {!loading ? (
-          <ListContentParent>
-            <ListContentChild>
-              {sortedTransactions &&
-                sortedTransactions.map((transaction: any) => {
+    <Container bg={activityBg} isEmpty={!transactions.length}>
+      <Header backAction={() => goTo(Wallet)} title="Activity" />
+      {transactions.length ? (
+        <>
+          <Content>
+            <ListContentParent>
+              <ListContentChild>
+                {sortedTransactions.map((transaction: any) => {
                   return (
                     <ActivityItem
                       key={transaction.hex}
@@ -129,22 +127,22 @@ export default function Activity() {
                     />
                   );
                 })}
-            </ListContentChild>
-          </ListContentParent>
-        ) : (
-          <Loading>Loading...</Loading>
-        )}
-      </Content>
-
-      {isPopupOpen && transaction && (
-        <Popup justify="center" align="center" onClose={() => setIsPopupOpen(false)}>
-          <ActivityContainer>
-            <ActivityInfo transaction={transaction} />
-          </ActivityContainer>
-        </Popup>
+              </ListContentChild>
+            </ListContentParent>
+          </Content>
+          {isPopupOpen && transaction && (
+            <Popup justify="center" align="center" onClose={() => setIsPopupOpen(false)}>
+              <ActivityContainer>
+                <ActivityInfo transaction={transaction} />
+              </ActivityContainer>
+            </Popup>
+          )}
+        </>
+      ) : (
+        <InactiveField />
       )}
-
       <Footer activeItem="activity" />
+      {loading && <Loader />}
     </Container>
   );
 }
@@ -172,7 +170,7 @@ function handleIcons(chain: any) {
   }
 }
 
-const Container = styled.div<{ bg: string }>`
+const Container = styled.div<{ bg: string, isEmpty: boolean }>`
   width: 100%;
   height: 100%;
   display: flex;
@@ -182,7 +180,7 @@ const Container = styled.div<{ bg: string }>`
   position: relative;
   background-image: ${({ bg }) => `url(${bg})`};
   background-size: cover;
-  padding-top: 50px;
+  padding-top: ${({isEmpty}) => (isEmpty ? '88px' : '50px')};
   padding-bottom: 50px;
   overflow: hidden;
 `;
@@ -230,10 +228,6 @@ const ListContentChild = styled.div`
 //   margin-top: 75px;
 //   padding-bottom: 20px;
 // `;
-
-const Loading = styled.div`
-  margin-top: 90px;
-`;
 
 const ActivityItemContainer = styled.div<{ bgColor?: string }>`
   /* width: 345px; */
