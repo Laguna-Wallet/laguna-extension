@@ -12,15 +12,13 @@ import encodeBg from 'assets/imgs/encode-bg.png';
 import { useWizard } from 'react-use-wizard';
 import { State } from 'redux/store';
 import { reduxForm, Field, InjectedFormProps } from 'redux-form';
-import { isObjectEmpty, objectToArray, validPassword } from 'utils';
-import { useAccount } from 'context/AccountContext';
 
 type Props = {
   handleEncode: (password: string) => void;
   title: string;
 };
 
-type FormProps = {
+type Form = {
   password: string;
 };
 
@@ -30,9 +28,8 @@ function EncodeAccount({
   title,
   pristine,
   submitting
-}: InjectedFormProps<FormProps> & Props) {
-  const account = useAccount();
-  const { nextStep, handleStep } = useWizard();
+}: InjectedFormProps<Form> & Props) {
+  const { nextStep } = useWizard();
 
   const [snackbarError, setSnackbarError] = useState<string>('');
   const [isChangeValue, setIsChangeValue] = useState<boolean>(false);
@@ -40,26 +37,15 @@ function EncodeAccount({
 
   const hasBoarded = useSelector((state: State) => state?.wallet?.onboarding);
 
-  // handleStep(() => {
-  //   return;
-  // });
-
-  const submit = async (values: FormProps) => {
-    const { password } = values;
-    const errors = validPassword(password);
-
-    if (!isObjectEmpty(errors)) {
-      const errArray = objectToArray(errors);
-
-      setSnackbarError(errArray[0]);
-      setIsSnackbarOpen(true);
-      return;
+  const submit = async (values: Form) => {
+    if (!values?.password) {
+      setIsChangeValue(true);
     }
 
-    const isValid = await validatePassword(password);
+    const isValid = await validatePassword(values?.password);
 
     if (isValid) {
-      await handleEncode(password);
+      await handleEncode(values?.password);
 
       if (hasBoarded) {
         goTo(Wallet);
@@ -109,9 +95,9 @@ function EncodeAccount({
           <Button
             type="submit"
             margin="10px 0 0 0"
-            text={'Finish'}
+            text='Finish'
             justify="center"
-            disabled={pristine || submitting}
+            // falseDisable={pristine || submitting}
           />
         </Form>
         <Snackbar

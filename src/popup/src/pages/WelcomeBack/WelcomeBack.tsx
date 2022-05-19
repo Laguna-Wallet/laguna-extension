@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { PageContainer } from 'components/ui';
 import Wallet from 'pages/Wallet/Wallet';
 import { Messages } from 'utils/types';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Snackbar from 'components/Snackbar/Snackbar';
 import HumbleInput from 'components/primitives/HumbleInput';
 import { validatePassword } from 'utils/polkadot';
@@ -33,11 +33,7 @@ function WelcomeBack({ handleSubmit, pristine, submitting }: InjectedFormProps<P
     const errors = validPassword(password);
 
     if (!isObjectEmpty(errors)) {
-      const errArray = objectToArray(errors);
-
-      setSnackbarError(errArray[0]);
-      setIsSnackbarOpen(true);
-      return;
+      setIsChangeValue(true);
     }
 
     const isValid = await validatePassword(password);
@@ -99,7 +95,7 @@ function WelcomeBack({ handleSubmit, pristine, submitting }: InjectedFormProps<P
             borderColor="#111"
             margin="12px 0 0 0"
             justify="center"
-            disabled={pristine || submitting}
+            falseDisable={pristine || submitting}
           />
         </Form>
         <Text>Contact Support</Text>

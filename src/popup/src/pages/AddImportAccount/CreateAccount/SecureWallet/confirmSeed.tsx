@@ -144,6 +144,7 @@ export default function ConfirmSeed({ redirectedFromSignUp }: Props) {
         Icon={<RightArrow width={23} fill="#fff" />}
         bgColor={'#000000'}
         borderColor="#000000"
+        margin='43px 0 0'
         justify="center"
       />
     </Container>
@@ -208,8 +209,8 @@ const Mnemonic = styled.div<{ indexesHt?: Record<string, string>; active: boolea
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 10px;
-  margin-right: 10px;
+  margin-bottom: 16px;
+  margin-right: 16px;
   font-size: 13.4px;
   cursor: pointer;
   font-family: 'SFCompactDisplayRegular';
