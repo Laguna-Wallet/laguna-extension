@@ -17,6 +17,7 @@ import WizardHeader from 'pages/AddImportAccount/WizardHeader';
 import SignUp from 'pages/SignUp/SignUp';
 import Wallet from 'pages/Wallet/Wallet';
 import { goTo } from 'react-chrome-extension-router';
+import { accountsTie, addAccountMeta } from 'utils/polkadot';
 
 const calculateWordColor = (index: number, mnemonicIndexToChoose: number) => {
   if (index === mnemonicIndexToChoose) return '#F9F7CD';
@@ -26,11 +27,17 @@ const calculateWordColor = (index: number, mnemonicIndexToChoose: number) => {
 
 type Props = {
   redirectedFromSignUp?: boolean;
+  redirectedFromDashboard?: boolean;
+  nextStepFromParent: () => void;
 };
 
-export default function ConfirmSeed({ redirectedFromSignUp }: Props) {
+export default function ConfirmSeed({
+  redirectedFromSignUp,
+  redirectedFromDashboard,
+  nextStepFromParent
+}: Props) {
   const { nextStep, previousStep, handleStep } = useWizard();
-  const { mnemonics } = useAccount();
+  const { mnemonics, getActiveAccount, saveActiveAccount } = useAccount();
   const [mnemonicIndexes, setMnemonicIndexes] = useState<MnemonicsTriple>();
   const [chosenMnemonics, setChosenMnemonics] = useState<string[] | []>([]);
   const [mnemonicIndexToChoose, setMnemonicIndexToChoose] = useState<number>(0);
@@ -55,7 +62,12 @@ export default function ConfirmSeed({ redirectedFromSignUp }: Props) {
       validateMnemonicChoice(mnemonics, chosenMnemonics, mnemonicIndexes as MnemonicsTriple) &&
       !isSnackbarOpen
     ) {
-      nextStep();
+      if (redirectedFromDashboard) {
+        const pair = addAccountMeta(getActiveAccount()?.address, { notSecured: false });
+        saveActiveAccount(pair);
+      }
+
+      nextStepFromParent();
       copyToClipboard('');
     }
   };
@@ -69,7 +81,7 @@ export default function ConfirmSeed({ redirectedFromSignUp }: Props) {
       );
 
       if (isValid) {
-        // handleNextSection();
+        // nextStepFromParent();
       } else {
         setTimeout(() => {
           setChosenMnemonics([]);

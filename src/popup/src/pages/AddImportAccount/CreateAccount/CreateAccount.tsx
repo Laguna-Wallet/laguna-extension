@@ -57,12 +57,10 @@ export default function CreateAccount({
       const mnemonicsStr = account?.mnemonics.join(' ');
       const encodedSeed = AES.encrypt(account?.mnemonics.join(' '), password).toString();
 
-      const { pair } = keyring.addUri(
-        mnemonicsStr,
-        password,
-        { encodedSeed, img: await generateRandomBase64Avatar() },
-        'ed25519'
-      );
+      const { pair } = keyring.addUri(mnemonicsStr, password, {
+        encodedSeed,
+        img: await generateRandomBase64Avatar()
+      });
 
       const newPair = addAccountMeta(pair.address, {
         name: pair.address
@@ -87,16 +85,11 @@ export default function CreateAccount({
       const mnemonicsStr = account?.generateMnemonics().join(' ');
       const encodedSeed = AES.encrypt(mnemonicsStr, password).toString();
 
-      const { pair } = keyring.addUri(
-        mnemonicsStr,
-        password,
-        {
-          encodedSeed,
-          img: await generateRandomBase64Avatar(),
-          notSecured: true
-        },
-        'ed25519'
-      );
+      const { pair } = keyring.addUri(mnemonicsStr, password, {
+        encodedSeed,
+        img: await generateRandomBase64Avatar(),
+        notSecured: true
+      });
 
       const newPair = addAccountMeta(pair.address, {
         name: pair.address

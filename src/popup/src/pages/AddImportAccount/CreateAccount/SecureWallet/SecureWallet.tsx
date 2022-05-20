@@ -48,10 +48,15 @@ export default function SecureWallet({
         />
       )}
       {level === SecurityLevelEnum.Secured && (
-        <ConfirmSeed redirectedFromSignUp={redirectedFromSignUp} />
+        <ConfirmSeed
+          redirectedFromDashboard={redirectedFromDashboard}
+          redirectedFromSignUp={redirectedFromSignUp}
+          nextStepFromParent={nextStep}
+        />
       )}
       {!encoded && <CreatePassword redirectedFromSignUp={redirectedFromSignUp} />}
-      <SetupComplete />
+
+      {redirectedFromDashboard && <SetupComplete />}
     </Wizard>
   );
 }

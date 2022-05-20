@@ -22,6 +22,7 @@ import ReceiveIcon from 'assets/svgComponents/ReceiveIcon';
 import SendIcon from 'assets/svgComponents/SendIIcon';
 import Popup from 'components/Popup/Popup';
 import ActivityInfo from 'pages/Activity/ActivityInfo';
+import InactiveField from 'components/InactiveField/InactiveField';
 
 type Props = {
   asset: Asset;
@@ -92,74 +93,83 @@ export default function TokenDashboard({ asset }: Props) {
   return (
     <Container bg={dashboardBG}>
       <Header title={`${chain} Balance`} backAction={() => goTo(Wallet)}></Header>
-      <Content>
-        <CardContainer>
-          <Card>
-            <Balance>
-              <NetworkIcons chain={chain} />
-              <span>{new BigNumber(balance).toFormat(4)}</span>
-              <span>{symbol}</span>
-            </Balance>
-            <BalanceInUsd>${new BigNumber(balanceInUsd).toFormat(2)}</BalanceInUsd>
-            <CardBottom>
-              <Tag>{handleChain(chain)}</Tag>
-              <Rate negativeValue={negativeValue}>
-                {renderPusSymbol}
-                {price_change_percentage_24h
-                  ? new BigNumber(price_change_percentage_24h).toFormat(2)
-                  : 0}
-                %
-              </Rate>
-            </CardBottom>
-          </Card>
-        </CardContainer>
-        <ButtonsContainer>
-          <Button onClick={handleSendRoute}>
-            <RightArrowContainer>
-              <SendIcon stroke="#111" />
-            </RightArrowContainer>
-            <span>Send</span>
-          </Button>
-          <StyledLink
-            component={Receive}
-            props={{ propsFromTokenDashboard: { chain, fromTokenDashboard: true, asset } }}>
-            <Button>
-              <BarcodeIconContainer>
-                <ReceiveIcon width={20} height={20} />
-              </BarcodeIconContainer>
-              <span>Recieve</span>
-            </Button>
-          </StyledLink>
-        </ButtonsContainer>
-        <Transactions>
-          <TransactionsHeader>
-            <TransactionsTitle>ACTIVITY</TransactionsTitle>
-            <TransactionsTitle
-              onClick={() => {
-                goTo(ChainActivity, { chain, asset });
-                // ChainActivity;
-              }}>
-              SEE ALL
-            </TransactionsTitle>
-          </TransactionsHeader>
-          {transactions &&
-            transactions
-              .slice(0, 2)
-              .map((transaction, index) => (
-                <ActivityItem
-                  key={`chain-actvity-${transaction.chain}-${index}`}
-                  transaction={transaction}
-                  bgColor={'#f9fafb'}
-                  onClick={() => handleClick(transaction)}
-                />
-              ))}
-        </Transactions>
-        {isPopupOpen && transaction && (
-          <Popup justify="center" align="center" onClose={() => setIsPopupOpen(false)}>
-            <ActivityContainer>
-              <ActivityInfo closeAction={() => setIsPopupOpen(false)} transaction={transaction} />
-            </ActivityContainer>
-          </Popup>
+      <Content isEmpty={!balance}>
+        {!balance ? (
+          <InactiveField />
+        ) : (
+          <>
+            <CardContainer>
+              <Card>
+                <Balance>
+                  <NetworkIcons chain={chain} />
+                  <span>{new BigNumber(balance).toFormat(4) || 0}</span>
+                  <span>{symbol}</span>
+                </Balance>
+                <BalanceInUsd>${new BigNumber(balanceInUsd).toFormat(2)}</BalanceInUsd>
+                <CardBottom>
+                  <Tag>{handleChain(chain)}</Tag>
+                  <Rate negativeValue={negativeValue}>
+                    {renderPusSymbol}
+                    {price_change_percentage_24h
+                      ? new BigNumber(price_change_percentage_24h).toFormat(2)
+                      : 0}
+                    %
+                  </Rate>
+                </CardBottom>
+              </Card>
+            </CardContainer>
+            <ButtonsContainer>
+              <Button onClick={handleSendRoute}>
+                <RightArrowContainer>
+                  <SendIcon stroke="#111" />
+                </RightArrowContainer>
+                <span>Send</span>
+              </Button>
+              <StyledLink
+                component={Receive}
+                props={{ propsFromTokenDashboard: { chain, fromTokenDashboard: true, asset } }}>
+                <Button>
+                  <BarcodeIconContainer>
+                    <ReceiveIcon width={20} height={20} />
+                  </BarcodeIconContainer>
+                  <span>Recieve</span>
+                </Button>
+              </StyledLink>
+            </ButtonsContainer>
+            <Transactions>
+              <TransactionsHeader>
+                <TransactionsTitle>ACTIVITY</TransactionsTitle>
+                <TransactionsTitle
+                  onClick={() => {
+                    goTo(ChainActivity, { chain, asset });
+                    // ChainActivity;
+                  }}>
+                  SEE ALL
+                </TransactionsTitle>
+              </TransactionsHeader>
+              {transactions &&
+                transactions
+                  .slice(0, 2)
+                  .map((transaction, index) => (
+                    <ActivityItem
+                      key={`chain-actvity-${transaction.chain}-${index}`}
+                      transaction={transaction}
+                      bgColor={'#f9fafb'}
+                      onClick={() => handleClick(transaction)}
+                    />
+                  ))}
+            </Transactions>
+            {isPopupOpen && transaction && (
+              <Popup justify="center" align="center" onClose={() => setIsPopupOpen(false)}>
+                <ActivityContainer>
+                  <ActivityInfo
+                    closeAction={() => setIsPopupOpen(false)}
+                    transaction={transaction}
+                  />
+                </ActivityContainer>
+              </Popup>
+            )}
+          </>
         )}
         <Footer activeItem="wallet" />
       </Content>
@@ -181,10 +191,10 @@ const Container = styled.div<{ bg: string }>`
   overflow: hidden;
 `;
 
-const Content = styled.div`
+const Content = styled.div<{isEmpty: boolean}>`
   width: 100%;
   height: 100%;
-  margin-top: 60px;
+  margin-top: ${({isEmpty}) => (isEmpty ? '38px' : '60px')};
   box-sizing: border-box;
 `;
 

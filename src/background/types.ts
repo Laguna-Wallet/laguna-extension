@@ -117,3 +117,10 @@ export const networks: Network[] = [
     prefix: 5,
   },
 ]
+export interface AccountMeta {
+  img: string
+  name: string
+  whenCreated?: number
+  notSecured?: boolean
+  encodedSeed?: string
+}

@@ -1,12 +1,13 @@
 import { decodeAddress, encodeAddress } from "@polkadot/keyring"
 import { hexToU8a, isHex } from "@polkadot/util"
-import { StorageKeys } from "./types"
+import { AccountMeta, StorageKeys } from "./types"
 import * as bcrypt from "bcryptjs"
 import keyring from "@polkadot/ui-keyring"
 import * as AES from "crypto-js/aes"
 import Utf8 from "crypto-js/enc-utf8"
 import { ethereumEncode } from "@polkadot/util-crypto"
 import { checkIfDenied } from "@polkadot/phishing"
+import type { KeyringPair } from "@polkadot/keyring/types"
 
 export const getFromStorage = async function (key: string): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -161,10 +162,13 @@ export function handleUnlockPair(payload) {
   if (payload?.json) {
     const pair = keyring.restoreAccount(payload.json, payload.jsonPassword)
     const newPair = encryptKeyringPair(pair, payload.jsonPassword, payload.password)
+    keyring.saveAccountMeta(newPair, { ...payload.meta })
+    newPair.setMeta({ ...payload.meta })
     return newPair
   }
 
   if (payload.seed) {
+    console.log("~ payload.meta", payload.meta)
     const { pair } = keyring.addUri(payload.seed, payload.password)
     keyring.saveAccountMeta(pair, { ...payload.meta })
     pair.setMeta({ ...payload.meta })
@@ -197,14 +201,29 @@ export function recodeToPolkadotAddress(address: string): string {
   const publicKey = decodeAddress(address)
   return encodeAddress(publicKey, 0)
 }
+// todo proper typing
+export function renewMetaToKeyPairs(pairs: KeyringPair[], metaData: { address: string; meta: AccountMeta }[]): KeyringPair[] {
+  return pairs.map((pair) => {
+    const foundPair = metaData.find((item) => recodeToPolkadotAddress(item.address) === recodeToPolkadotAddress(pair.address))
+    if (foundPair) {
+      pair.setMeta({ ...pair.meta, ...foundPair.meta })
+    }
+    return pair
+  })
+}
 
-export function reEncryptKeyringPairs(pairs: any, oldPassword: string, newPassword: string) {
-  encryptKeyringPairs(pairs, oldPassword, newPassword)
-  encryptMetaData(pairs, oldPassword, newPassword)
+// todo proper typing
+export function reEncryptKeyringPairs(pairs: any, oldPassword: string, newPassword: string): KeyringPair[] {
+  const encryptedPairs = encryptKeyringPairs(pairs, oldPassword, newPassword)
+  // const newPairs = encryptMetaData(encryptedPairs, oldPassword, newPassword)
+  return encryptedPairs
 }
 
 export function encryptKeyringPairs(pairs, oldPassword: string, newPassword: string) {
   // const pairs = keyring.getPairs()
+
+  const newPairs = []
+
   for (let i = 0; i < pairs.length; i++) {
     const pair = pairs[i]
     pair.unlock(oldPassword)
@@ -214,7 +233,11 @@ export function encryptKeyringPairs(pairs, oldPassword: string, newPassword: str
 
     newPair.setMeta({ ...pair.meta })
     keyring.saveAccountMeta(newPair, { ...pair.meta })
+
+    newPairs.push(newPair)
   }
+
+  return newPairs
 }
 
 export function recodeAddress(address: string, prefix: any, type?: string): string {
@@ -247,12 +270,12 @@ export function encryptMetaData(pairs, oldPassword: string, newPassword: string)
     if (meta?.encodedSeed) {
       const decodedSeedBytes = AES.decrypt(meta?.encodedSeed as string, oldPassword)
       const decodedSeed = decodedSeedBytes.toString(Utf8)
-
       const reEncodedSeed = AES.encrypt(decodedSeed, newPassword).toString()
 
       pair.setMeta({ ...pair.meta, encodedSeed: reEncodedSeed })
       keyring.saveAccountMeta(pair, { ...pair.meta, encodedSeed: reEncodedSeed })
     }
+    return pair
   }
 }
 

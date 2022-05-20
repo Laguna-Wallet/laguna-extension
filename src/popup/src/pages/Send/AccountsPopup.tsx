@@ -59,10 +59,11 @@ export default function AccountsPopup({ handleClickAccount, onBack }: Props) {
   return (
     <Container>
       <Header
-        title="SELECT WALLET"
+        title="SELECT ACCOUNT"
         bgColor="#f2f2f2"
         closeAction={() => goTo(Wallet)}
         iconStyle="LeftArrow"
+        smallIcon
         backAction={onBack}
       />
       <InnerContainer>
@@ -120,7 +121,7 @@ const Container = styled.div<{ bg?: string }>`
   background-color: #f2f2f2;
   background-size: cover;
   position: absolute;
-  padding: 110px 0px 0px 0px;
+  padding: 92px 0px 0px 0px;
   box-sizing: border-box;
   top: 0;
   z-index: 100;
@@ -132,7 +133,7 @@ const InnerContainer = styled.div`
   position: relative;
   box-sizing: border-box;
   background-color: #fff;
-  padding: 20px 15px;
+  padding: 20px 26px;
   border-top-left-radius: 15px;
   border-top-right-radius: 15px;
 `;
@@ -160,6 +161,10 @@ const AddressBookContainer = styled.div`
 const AddressesContainer = styled.div`
   width: 100%;
   margin-top: 12px;
+  overflow-y: scroll;
+  ::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const AddressComponent = styled.div`

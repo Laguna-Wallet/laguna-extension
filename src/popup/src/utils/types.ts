@@ -54,9 +54,9 @@ export interface Asset {
   name: string;
   symbol: string;
   chain: string;
-  balance: number;
+  balance?: number;
   calculatedPrice: number;
-  price: number;
+  price?: number;
   encodeType?: string;
   assetsCount?: number;
   marketCap?: number;

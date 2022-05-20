@@ -8,7 +8,7 @@ import { useAccount } from 'context/AccountContext';
 import Wallet from 'pages/Wallet/Wallet';
 import { useState } from 'react';
 import { goTo } from 'react-chrome-extension-router';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import { Field, reduxForm } from 'redux-form';
 import styled from 'styled-components';
 import { encryptPassword, isObjectEmpty, objectToArray } from 'utils';
@@ -41,7 +41,7 @@ const validate = async (values: any) => {
   }
 
   if (values.newPassword && values.newPassword.length < 8) {
-    errors.newPassword = 'Password should be minimum 8 characters length';
+    errors.newPassword = 'New Password should be minimum 8 characters length';
   }
 
   if (!values.confirmNewPassword) {
@@ -49,7 +49,7 @@ const validate = async (values: any) => {
   }
 
   if (values.confirmNewPassword && values.confirmNewPassword.length < 8) {
-    errors.confirmNewPassword = 'Please enter correct current password';
+    errors.confirmNewPassword = 'New Password should be minimum 8 characters length';
   }
 
   if (
@@ -57,7 +57,7 @@ const validate = async (values: any) => {
     values.confirmNewPassword &&
     values.newPassword !== values.confirmNewPassword
   ) {
-    errors.newPassword = 'Passwords should match';
+    errors.newPassword = 'New Passwords do not match';
   }
 
   return errors;
@@ -69,6 +69,7 @@ function ChangePassword({ handleSubmit }: Props) {
   const [snackbarError, setSnackbarError] = useState<string>('');
   const account = useAccount();
   const activeAccount = account.getActiveAccount();
+  const formValues = useSelector((state: any) => state?.form?.changePassword?.values);
 
   // todo proper typing
   const submit = async (values: any) => {
@@ -97,7 +98,7 @@ function ChangePassword({ handleSubmit }: Props) {
       payload: {
         oldPassword: values?.currentPassword,
         newPassword: values?.newPassword,
-        pairs: keyring.getPairs()
+        metaData: keyring.getPairs().map((pair) => ({ address: pair.address, meta: pair.meta }))
       }
     });
 
@@ -191,6 +192,12 @@ function ChangePassword({ handleSubmit }: Props) {
               margin="auto 0 0 0"
               bgColor="#fff"
               bgImage="#fff"
+              disabledBgColor="#ffffff7d"
+              disabled={
+                !formValues?.currentPassword ||
+                !formValues?.newPassword ||
+                !formValues?.confirmNewPassword
+              }
             />
           </ButtonsContainer>
         </Form>
