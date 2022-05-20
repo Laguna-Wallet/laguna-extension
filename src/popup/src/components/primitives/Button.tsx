@@ -21,7 +21,9 @@ type Props = {
   fontFamily?: string;
   fontSize?: string;
   boxShadow?: string;
+  disabledColor?: string;
   disabledBgColor?: string;
+  disabledBorderColor?: string;
   fontWeight?: string;
 };
 
@@ -48,6 +50,8 @@ const StyledButton = styled.button<{
   width?: string;
   boxShadow?: string;
   disabledBgColor?: string;
+  disabledColor?: string;
+  disabledBorderColor?: string;
   fontWeight?: string;
 }>`
   width: ${({ width }) => width || '100%'};
@@ -67,7 +71,8 @@ const StyledButton = styled.button<{
   background-color: ${({ disabled, styledDisabled, bgColor, disabledBgColor }) =>
     disabled || styledDisabled ? disabledBgColor || 'rgba(24, 25, 26, 0.25)' : bgColor};
   box-shadow: ${({ boxShadow }) => boxShadow || 'none'};
-  color: ${({ color }) => (color ? color : '#fff')};
+  color: ${({ color, disabled, disabledColor }) =>
+    disabled && disabledColor ? disabledColor : color ? color : '#fff'};
   border: 1px solid;
   border-color: ${({ disabled, styledDisabled, borderColor }) =>
     disabled || styledDisabled ? 'transparent' : borderColor};

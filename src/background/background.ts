@@ -204,8 +204,8 @@ chrome.runtime.onConnect.addListener(function (port) {
       chrome.windows.create({
         focused: true,
         height: 621,
-        left: 150,
-        top: 150,
+        left: 1250,
+        top: 60,
         type: "popup",
         url: POPUP_URL,
         width: 370,
