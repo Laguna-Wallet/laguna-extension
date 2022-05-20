@@ -27,6 +27,7 @@ import { Asset } from 'utils/types';
 import { emptyAssets } from 'utils/emptyAssets';
 import Loader from 'components/Loader/Loader';
 import { mnemonicGenerate } from '@polkadot/util-crypto';
+import keyring from '@polkadot/ui-keyring';
 
 export interface ShowSnackbar {
   message: string;
@@ -62,7 +63,7 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
   } = useSelector((state: State) => state.wallet);
 
   const balances = accountsBalances?.balances;
-  const isEmpty = Object.keys(balances).length === 0;
+  const isEmpty = balances && Object.keys(balances).length === 0;
 
   const handleActiveTab = (activeTab: number): void => {
     setActiveTab(activeTab);
