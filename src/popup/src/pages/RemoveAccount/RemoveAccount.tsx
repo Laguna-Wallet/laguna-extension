@@ -61,7 +61,7 @@ const RemoveAccount = ({ handleSubmit, pristine, submitting }: InjectedFormProps
         goTo(Wallet, { snackbar: { show: true, message: SnackbarMessages.WalletRemoved } });
       } else {
         setIsSnackbarOpen(true);
-        setSnackbarError('Password is not valid');
+        setSnackbarError('Incorrect password');
       }
     }
   };
