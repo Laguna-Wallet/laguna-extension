@@ -201,11 +201,12 @@ chrome.runtime.onConnect.addListener(function (port) {
       if (pendingRequests.length === 0) {
         pendingRequests.push(data)
       }
+      console.log("probably here")
       chrome.windows.create({
         focused: true,
         height: 621,
-        left: 150,
-        top: 150,
+        left: 1250,
+        top: 60,
         type: "popup",
         url: POPUP_URL,
         width: 370,
