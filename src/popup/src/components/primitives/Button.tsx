@@ -12,7 +12,6 @@ type Props = {
   justify?: string;
   direction?: string;
   type?: 'button' | 'submit' | 'reset' | undefined;
-  disabled?: boolean;
   color?: string;
   borderColor?: string;
   margin?: string;
@@ -20,7 +19,10 @@ type Props = {
   fontFamily?: string;
   fontSize?: string;
   boxShadow?: string;
+  disabled?: boolean;
+  disabledColor?: string;
   disabledBgColor?: string;
+  disabledBorderColor?: string;
   fontWeight?: string;
 };
 
@@ -46,6 +48,8 @@ const StyledButton = styled.button<{
   width?: string;
   boxShadow?: string;
   disabledBgColor?: string;
+  disabledColor?: string;
+  disabledBorderColor?: string;
   fontWeight?: string;
 }>`
   width: ${({ width }) => width || '100%'};
@@ -62,11 +66,14 @@ const StyledButton = styled.button<{
   box-sizing: border-box;
   border-radius: 4px;
   background-image: ${({ bgImage }) => bgImage};
-  background-color: ${({ disabled, bgColor, disabledBgColor }) => (disabled ? (disabledBgColor || 'rgba(24, 25, 26, 0.25)') : bgColor)};
+  background-color: ${({ disabled, bgColor, disabledBgColor }) =>
+    disabled ? disabledBgColor || 'rgba(24, 25, 26, 0.25)' : bgColor};
   box-shadow: ${({ boxShadow }) => boxShadow || 'none'};
-  color: ${({ color }) => (color ? color : '#fff')};
+  color: ${({ color, disabled, disabledColor }) =>
+    disabled && disabledColor ? disabledColor : color ? color : '#fff'};
   border: 1px solid;
-  border-color: ${({ disabled, borderColor }) => (disabled ? 'transparent' : borderColor)};
+  border-color: ${({ disabled, disabledBorderColor, borderColor }) =>
+    disabled ? disabledBorderColor : borderColor};
   margin: ${({ margin }) => margin};
   cursor: pointer;
   :disabled {

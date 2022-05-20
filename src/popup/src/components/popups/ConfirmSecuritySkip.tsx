@@ -45,6 +45,10 @@ export function ConfirmSecuritySkip({ nextStep, nextStepFromParent, setLevel }: 
             color="#18191a"
             // Icon={<ArrowSmRightIcon width={23} />}
             justify="center"
+            disabledBgColor="transparent"
+            disabledBorderColor="#ECEFF2"
+            disabledColor="#cbced1"
+            disabled={!checked}
             text={'Skip'}
           />
           <Gap />

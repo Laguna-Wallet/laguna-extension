@@ -98,7 +98,7 @@ function HumbleInput({
     <Container marginBottom={marginBottom} marginTop={marginTop}>
       <InputContainer
         isChangeValue={isChangeValue}
-        error={(!touched && !!error) || meta?.touched || meta?.error}
+        error={(!touched && !!error) || (meta?.touched && meta?.error)}
         errorBorderColor={errorBorderColor}
         borderColor={borderColor}
         bgColor={bgColor}
@@ -235,8 +235,8 @@ const StyledInput = styled.input<{
   :-webkit-autofill:hover,
   :-webkit-autofill:focus,
   :-webkit-autofill:active {
-    -webkit-box-shadow: ${({bgColor}) => (`0 0 0 30px ${bgColor}` || '0 0 0 30px #303030')} inset !important;
-    -webkit-text-fill-color: ${({color}) => color || '#fff'} !important;
+    -webkit-box-shadow: ${({ bgColor }) => `0 0 0 30px ${bgColor}` || '0 0 0 30px #303030'} inset !important;
+    -webkit-text-fill-color: ${({ color }) => color || '#fff'} !important;
     font-size: ${({ fontSize }) => (fontSize ? fontSize : '14.8px')} !important;
   }
   &:focus {

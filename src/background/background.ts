@@ -201,7 +201,6 @@ chrome.runtime.onConnect.addListener(function (port) {
       if (pendingRequests.length === 0) {
         pendingRequests.push(data)
       }
-      console.log("probably here")
       chrome.windows.create({
         focused: true,
         height: 621,
