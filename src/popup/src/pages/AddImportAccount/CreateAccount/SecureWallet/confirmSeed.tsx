@@ -28,9 +28,14 @@ const calculateWordColor = (index: number, mnemonicIndexToChoose: number) => {
 type Props = {
   redirectedFromSignUp?: boolean;
   redirectedFromDashboard?: boolean;
+  nextStepFromParent: () => void;
 };
 
-export default function ConfirmSeed({ redirectedFromSignUp, redirectedFromDashboard }: Props) {
+export default function ConfirmSeed({
+  redirectedFromSignUp,
+  redirectedFromDashboard,
+  nextStepFromParent
+}: Props) {
   const { nextStep, previousStep, handleStep } = useWizard();
   const { mnemonics, getActiveAccount, saveActiveAccount } = useAccount();
   const [mnemonicIndexes, setMnemonicIndexes] = useState<MnemonicsTriple>();
@@ -62,7 +67,7 @@ export default function ConfirmSeed({ redirectedFromSignUp, redirectedFromDashbo
         saveActiveAccount(pair);
       }
 
-      nextStep();
+      nextStepFromParent();
       copyToClipboard('');
     }
   };
@@ -76,7 +81,7 @@ export default function ConfirmSeed({ redirectedFromSignUp, redirectedFromDashbo
       );
 
       if (isValid) {
-        // handleNextSection();
+        // nextStepFromParent();
       } else {
         setTimeout(() => {
           setChosenMnemonics([]);
