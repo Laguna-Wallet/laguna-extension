@@ -15,13 +15,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useWizard } from 'react-use-wizard';
 import { reduxForm, change, reset, Field, InjectedFormProps } from 'redux-form';
 import styled from 'styled-components';
-import { convertUploadedFileToJson, validPassword } from 'utils';
+import { convertUploadedFileToJson } from 'utils';
 import { isKeyringJson, isValidKeyringPassword, isValidPolkadotAddress } from 'utils/polkadot';
 import { mnemonicValidate } from '@polkadot/util-crypto';
 import Popup from 'components/Popup/Popup';
 import { HelpImport } from 'components/popups/HelpImport';
 import ButtonsIcon from 'assets/svgComponents/ButtonsIcon';
-import { isObjectEmpty, objectToArray } from 'utils';
 import { KeyringPair$Json } from '@polkadot/keyring/types';
 import { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
 import { isHex } from '@polkadot/util';
@@ -43,7 +42,6 @@ function ImportPhase({
 }: InjectedFormProps<FormProps> & Props) {
   const { nextStep } = useWizard();
 
-  const [isChangeValue, setIsChangeValue] = useState<boolean>(false);
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
   const [snackbarError, setSnackbarError] = useState<string>('');
   const [uploaded, setUploaded] = useState<boolean>(false);
@@ -76,25 +74,15 @@ function ImportPhase({
   });
 
   const submit = async (values: FormProps) => {
-    // const { file, password } = values;
-    // const errors = validPassword(password);
-
-    // if (!isObjectEmpty(errors)) {
-    //   const errArray = objectToArray(errors);
-
-    //   setSnackbarError(errArray[0]);
-    //   setIsSnackbarOpen(true);
-    //   return;
-    // }
-
     if (file) {
       const isValid = await isValidKeyringPassword(file, password);
       if (isValid) {
         nextStep();
       } else {
-        setIsSnackbarOpen(true);
-        setSnackbarError('Invalid password');
-        setIsChangeValue(true);
+        if (password) {
+          setIsSnackbarOpen(true);
+          setSnackbarError('Invalid password');
+        }
       }
     } else {
       nextStep();
@@ -119,20 +107,17 @@ function ImportPhase({
     }
   }, [seedPhase]);
 
-  // const isDisabled = () => {
-  //   if (
-
-  //   )
-  //     return true;
-  //   return false;
-  // };
-
   const isDisabled =
     !isKeyringJson(file) &&
     !isHex(seedPhase) &&
     !isValidPolkadotAddress(seedPhase) &&
     !mnemonicValidate(seedPhase);
-
+  console.log('====================================');
+  console.log(
+    !!seedPhase,
+    'one insect coach agree degree benefit toward place butter menu mammal result'
+  );
+  console.log('====================================');
   return (
     <Container>
       <WizardHeader
@@ -218,9 +203,7 @@ function ImportPhase({
               color: '#b1b5c3',
               placeholderColor: '#b1b5c3',
               hideErrorMsg: false,
-              autoFocus: true,
-              isChangeValue,
-              setIsChangeValue
+              autoFocus: true
             }}
           />
         )}
@@ -234,7 +217,7 @@ function ImportPhase({
           text="import"
           margin="10px 0 0 0"
           justify="center"
-          disabled={isDisabled}
+          styledDisabled={uploaded ? !(uploaded && password) : !seedPhase}
           Icon={<RightArrow width={23} fill="#fff" />}
         />
 

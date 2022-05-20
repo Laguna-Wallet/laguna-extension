@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { PageContainer } from 'components/ui';
 import Wallet from 'pages/Wallet/Wallet';
 import { Messages } from 'utils/types';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Snackbar from 'components/Snackbar/Snackbar';
 import HumbleInput from 'components/primitives/HumbleInput';
 import { validatePassword } from 'utils/polkadot';
@@ -14,14 +14,13 @@ import RequestToSign from 'pages/RequestToSign';
 import backgroundImage from 'assets/imgs/sign-up-bg.png';
 import mainLogoSvg from 'assets/imgs/main-logo-white.svg';
 import { Field, reduxForm, InjectedFormProps } from 'redux-form';
-import { isObjectEmpty, objectToArray, validPassword } from 'utils';
+import { isObjectEmpty, validPassword } from 'utils';
 
 type Props = {
   password: string;
 };
 
 function WelcomeBack({ handleSubmit, pristine, submitting }: InjectedFormProps<Props>) {
-  const [isChangeValue, setIsChangeValue] = useState<boolean>(false);
   const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
   const [snackbarError, setSnackbarError] = useState<string | undefined>();
   const { pendingDappAuthorization, pendingToSign } = useSelector((state: any) => state.wallet);
@@ -32,29 +31,26 @@ function WelcomeBack({ handleSubmit, pristine, submitting }: InjectedFormProps<P
     const { password } = values;
     const errors = validPassword(password);
 
-    if (!isObjectEmpty(errors)) {
-      setIsChangeValue(true);
-    }
+    if (isObjectEmpty(errors)) {
+      const isValid = await validatePassword(password);
 
-    const isValid = await validatePassword(password);
+      if (isValid) {
+        chrome.runtime.sendMessage({
+          type: Messages.AuthUser,
+          payload: { password }
+        });
 
-    if (isValid) {
-      chrome.runtime.sendMessage({
-        type: Messages.AuthUser,
-        payload: { password }
-      });
-
-      if (pendingDapps?.length > 0) {
-        goTo(RequestToConnect);
-      } else if (pendingToSign.pending) {
-        goTo(RequestToSign);
+        if (pendingDapps?.length > 0) {
+          goTo(RequestToConnect);
+        } else if (pendingToSign.pending) {
+          goTo(RequestToSign);
+        } else {
+          goTo(Wallet);
+        }
       } else {
-        goTo(Wallet);
+        setSnackbarError('Invalid Password');
+        setIsSnackbarOpen(true);
       }
-    } else {
-      setIsChangeValue(true);
-      setSnackbarError('Invalid Password');
-      setIsSnackbarOpen(true);
     }
   };
 
@@ -82,9 +78,7 @@ function WelcomeBack({ handleSubmit, pristine, submitting }: InjectedFormProps<P
               borderColor: '#e6e8ec',
               errorBorderColor: '#fb5a5a',
               bgColor: 'transparent',
-              autoFocus: true,
-              isChangeValue,
-              setIsChangeValue
+              autoFocus: true
             }}
           />
           <Button
@@ -95,7 +89,7 @@ function WelcomeBack({ handleSubmit, pristine, submitting }: InjectedFormProps<P
             borderColor="#111"
             margin="12px 0 0 0"
             justify="center"
-            falseDisable={pristine || submitting}
+            styledDisabled={pristine || submitting}
           />
         </Form>
         <Text>Contact Support</Text>

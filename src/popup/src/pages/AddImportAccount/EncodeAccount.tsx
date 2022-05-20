@@ -12,6 +12,7 @@ import encodeBg from 'assets/imgs/encode-bg.png';
 import { useWizard } from 'react-use-wizard';
 import { State } from 'redux/store';
 import { reduxForm, Field, InjectedFormProps } from 'redux-form';
+import { isObjectEmpty, validPassword } from 'utils';
 
 type Props = {
   handleEncode: (password: string) => void;
@@ -38,25 +39,26 @@ function EncodeAccount({
   const hasBoarded = useSelector((state: State) => state?.wallet?.onboarding);
 
   const submit = async (values: Form) => {
-    if (!values?.password) {
-      setIsChangeValue(true);
-    }
+    const { password } = values;
+    const errors = validPassword(password);
 
-    const isValid = await validatePassword(values?.password);
+    if (isObjectEmpty(errors)) {
+      const isValid = await validatePassword(values?.password);
 
-    if (isValid) {
-      await handleEncode(values?.password);
+      if (isValid) {
+        await handleEncode(values?.password);
 
-      if (hasBoarded) {
-        goTo(Wallet);
+        if (hasBoarded) {
+          goTo(Wallet);
+        } else {
+          nextStep();
+        }
       } else {
-        nextStep();
+        setIsSnackbarOpen(true);
+        setSnackbarError('Invalid Password');
+        setIsChangeValue(true);
+        return;
       }
-    } else {
-      setIsSnackbarOpen(true);
-      setSnackbarError('Invalid Password');
-      setIsChangeValue(true);
-      return;
     }
   };
 
@@ -95,9 +97,9 @@ function EncodeAccount({
           <Button
             type="submit"
             margin="10px 0 0 0"
-            text='Finish'
+            text="Finish"
             justify="center"
-            // falseDisable={pristine || submitting}
+            styledDisabled={pristine || submitting}
           />
         </Form>
         <Snackbar
