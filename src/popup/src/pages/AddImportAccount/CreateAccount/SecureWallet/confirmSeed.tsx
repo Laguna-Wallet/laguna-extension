@@ -157,6 +157,7 @@ export default function ConfirmSeed({
         bgColor={'#000000'}
         borderColor="#000000"
         justify="center"
+        margin="auto 0px 0px 0px"
       />
     </Container>
   );
