@@ -217,7 +217,7 @@ const Container = styled.div<{ opened: boolean }>`
   left: 0;
   z-index: 999;
   padding: ${({ opened }) => (opened ? '0 17.5px 24px' : '0 17.5px 32px')};
-  padding: 0 17.5px 32px;
+  padding: 0 17.5px 28px;
   box-sizing: border-box;
   background-color: #18191a;
   z-index: 99999;
@@ -332,7 +332,7 @@ const CopyBtn = styled.div`
 const ExportJson = styled.div`
   color: #fff;
   margin-top: 10px;
-  font-size: 16px;
+  font-size: 14px;
   cursor: pointer;
   border-bottom: 1px solid #fff;
   padding-bottom: 3px;
