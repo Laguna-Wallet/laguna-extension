@@ -54,7 +54,7 @@ const Container = styled.div`
 
 const MainContent = styled.div`
   width: 100%;
-  height: 350px;
+  height: 395px;
   display: flex;
   flex-direction: column;
   align-items: center;

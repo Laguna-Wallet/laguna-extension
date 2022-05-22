@@ -116,7 +116,8 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   background-color: #f9fafb;
-  padding: 30px 26px 43px;
+  /* padding: 30px 26px 43px; */
+  padding: 30px 16px 26px 16px;
   box-sizing: border-box;
 `;
 
