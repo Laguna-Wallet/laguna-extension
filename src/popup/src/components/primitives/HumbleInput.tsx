@@ -42,8 +42,6 @@ type InputProps = {
   accountMeta?: AccountMeta;
   readOnly?: boolean;
   meta?: any;
-  isChangeValue?: boolean;
-  setIsChangeValue?: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 function HumbleInput({
@@ -78,9 +76,7 @@ function HumbleInput({
   IconAlignment,
   accountMeta,
   readOnly,
-  meta,
-  isChangeValue = false,
-  setIsChangeValue = () => void 0
+  meta
 }: InputProps) {
   const handleValue = (value: string) => {
     if (!value) return '';
@@ -90,15 +86,11 @@ function HumbleInput({
     return value;
   };
 
-  const handelKeyPress = () => {
-    setIsChangeValue(false);
-  };
-
   return (
     <Container marginBottom={marginBottom} marginTop={marginTop}>
       <InputContainer
-        isChangeValue={isChangeValue}
-        error={(!touched && !!error) || (meta?.touched && meta?.error)}
+        isChangeValue={touched || meta?.touched}
+        error={(!touched && !!error) || meta?.touched || meta?.error}
         errorBorderColor={errorBorderColor}
         borderColor={borderColor}
         bgColor={bgColor}
@@ -126,7 +118,6 @@ function HumbleInput({
               id={id}
               value={handleValue(value || input?.value)}
               onChange={onChange || input?.onChange}
-              onKeyPress={handelKeyPress}
               type={type}
               placeholder={placeholder}
               fontSize={fontSize}
@@ -145,18 +136,6 @@ function HumbleInput({
               </Copy>
             )}
             {rightLabel && <RightLabel>{rightLabel}</RightLabel>}
-
-            {/* </Paste> */}
-            {/* <Paste
-              onClick={async () => {
-                try {
-                  const text = await navigator.clipboard.readText();
-                } catch (err) {
-                  console.log(err);
-                }
-              }}>
-              Paste
-            </Paste> */}
           </>
         )}
       </InputContainer>

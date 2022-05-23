@@ -16,11 +16,9 @@ function AutoLockTimer() {
   const [timeout, changeTimeout] = useState<string>('');
 
   const [snackbarError, setSnackbarError] = useState<string>('');
-  const [isChangeValue, setIsChangeValue] = useState<boolean>(false);
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
 
   const handleSetTimeout = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setIsChangeValue(true);
     if (new RegExp(/[^0-9]+/g).test(e.target.value)) return;
 
     changeTimeout(e.target.value);
@@ -73,7 +71,7 @@ function AutoLockTimer() {
           onChange={handleSetTimeout}
           bgColor="#221d1d"
           borderColor="#303030"
-          color={isChangeValue ? '#fff' : '#777E91'}
+          color={!timeout ? '#fff' : '#777E91'}
           height="48px"
           marginTop="22px"
           rightLabel="minutes"
@@ -98,8 +96,10 @@ function AutoLockTimer() {
             justify="center"
             margin="0 0 0 15px"
             bgColor="#fff"
+            disabledBgColor="rgba(255,255,255,0.6)"
             borderColor="transparent"
             width="154px"
+            styledDisabled={!timeout}
           />
         </ButtonContainer>
       </Content>

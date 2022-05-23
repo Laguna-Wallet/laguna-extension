@@ -16,13 +16,13 @@ import { truncateString, validPassword } from 'utils';
 import { clearFromStorage } from 'utils/chrome';
 import { validatePassword } from 'utils/polkadot';
 import { Messages, SnackbarMessages, StorageKeys } from 'utils/types';
-import { isObjectEmpty, objectToArray } from 'utils';
+import { isObjectEmpty } from 'utils';
 
 type Props = {
   password: string;
 };
 
-const RemoveAccount = ({ handleSubmit, pristine, submitting  }: InjectedFormProps<Props>) => {
+const RemoveAccount = ({ handleSubmit, pristine, submitting }: InjectedFormProps<Props>) => {
   const dispatch = useDispatch();
   const account = useAccount();
   const activeAccount = account.getActiveAccount();
@@ -30,47 +30,39 @@ const RemoveAccount = ({ handleSubmit, pristine, submitting  }: InjectedFormProp
   const address = activeAccount?.address;
 
   const [isOpen, setOpen] = useState<boolean>(true);
-  const [isChangeValue, setIsChangeValue] = useState<boolean>(false);
   const [snackbarError, setSnackbarError] = useState<string>('');
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
 
   const submit = async (values: Props) => {
-    const {password} = values;
+    const { password } = values;
     const errors = validPassword(password);
-
-    if (!isObjectEmpty(errors)) {
-      const errArray = objectToArray(errors);
-
-      setSnackbarError(errArray[0]);
-      setIsSnackbarOpen(true);
-      return;
-    }
 
     if (!address) return;
 
-    const isValid = await validatePassword(password);
+    if (isObjectEmpty(errors)) {
+      const isValid = await validatePassword(password);
 
-    if (isValid){
-      keyring.forgetAccount(address);
-      const first = keyring?.getAccounts()[0];
-      clearFromStorage(StorageKeys.AccountBalances);
-      dispatch(toggleLoading(true));
-      if (first) {
-        account.saveActiveAccount(first);
+      if (isValid) {
+        keyring.forgetAccount(address);
+        const first = keyring?.getAccounts()[0];
+        clearFromStorage(StorageKeys.AccountBalances);
+        dispatch(toggleLoading(true));
+        if (first) {
+          account.saveActiveAccount(first);
+        } else {
+          account.saveActiveAccount({});
+        }
+
+        chrome.runtime.sendMessage({
+          type: Messages.RemoveFromKeyring,
+          payload: { address }
+        });
+
+        goTo(Wallet, { snackbar: { show: true, message: SnackbarMessages.WalletRemoved } });
       } else {
-        account.saveActiveAccount({});
+        setIsSnackbarOpen(true);
+        setSnackbarError('Incorrect password');
       }
-  
-      chrome.runtime.sendMessage({
-        type: Messages.RemoveFromKeyring,
-        payload: { address }
-      });
-  
-      goTo(Wallet, { snackbar: { show: true, message: SnackbarMessages.WalletRemoved } });
-    }else {
-      setIsSnackbarOpen(true);
-      setSnackbarError('Password is not valid');
-      setIsChangeValue(true);
     }
   };
 
@@ -97,7 +89,7 @@ const RemoveAccount = ({ handleSubmit, pristine, submitting  }: InjectedFormProp
           from your account. Please confirm below.
         </Text>
         <Form onSubmit={handleSubmit(submit)}>
-        <Field
+          <Field
             id="password"
             name="password"
             type="password"
@@ -113,34 +105,32 @@ const RemoveAccount = ({ handleSubmit, pristine, submitting  }: InjectedFormProp
               borderColor: '#color',
               errorBorderColor: '#fb5a5a',
               bgColor: '#303030',
-              autoFocus: true,
-              isChangeValue,
-              setIsChangeValue
+              autoFocus: true
             }}
           />
-        <ButtonContainer>
-          <Button
-            onClick={() => goTo(Wallet, { isMenuOpen: true })}
-            type='button'
-            text="Cancel"
-            color="#fff"
-            bgColor="#414141"
-            borderColor="transparent"
-            justify="center"
-            margin="0"
-          />
-          <Button
-            text="Save"
-            type='submit'
-            color="#23262F"
-            bgColor="#fff"
-            borderColor="transparent"
-            justify="center"
-            margin="0 0 0 15px"
-            disabledBgColor='rgba(255,255,255,0.6)'
-            disabled={pristine || submitting}
-          />
-        </ButtonContainer>
+          <ButtonContainer>
+            <Button
+              onClick={() => goTo(Wallet, { isMenuOpen: true })}
+              type="button"
+              text="Cancel"
+              color="#fff"
+              bgColor="#414141"
+              borderColor="transparent"
+              justify="center"
+              margin="0"
+            />
+            <Button
+              text="Save"
+              type="submit"
+              color="#23262F"
+              bgColor="#fff"
+              borderColor="transparent"
+              justify="center"
+              margin="0 0 0 15px"
+              disabledBgColor="rgba(255,255,255,0.6)"
+              styledDisabled={pristine || submitting}
+            />
+          </ButtonContainer>
         </Form>
       </Content>
       <Snackbar
@@ -150,11 +140,11 @@ const RemoveAccount = ({ handleSubmit, pristine, submitting  }: InjectedFormProp
         type="error"
         left="26px"
         bottom="158px"
-        transform='translateX(0)'
+        transform="translateX(0)"
       />
     </Container>
   );
-}
+};
 
 export default reduxForm<Record<string, unknown>, any>({
   form: 'removeAccount'

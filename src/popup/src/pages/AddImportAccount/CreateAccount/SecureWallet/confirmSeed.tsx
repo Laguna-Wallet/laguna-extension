@@ -17,7 +17,7 @@ import WizardHeader from 'pages/AddImportAccount/WizardHeader';
 import SignUp from 'pages/SignUp/SignUp';
 import Wallet from 'pages/Wallet/Wallet';
 import { goTo } from 'react-chrome-extension-router';
-import { accountsTie, addAccountMeta } from 'utils/polkadot';
+import { addAccountMeta } from 'utils/polkadot';
 
 const calculateWordColor = (index: number, mnemonicIndexToChoose: number) => {
   if (index === mnemonicIndexToChoose) return '#F9F7CD';
@@ -139,7 +139,7 @@ export default function ConfirmSeed({
 
       <Snackbar
         isOpen={isSnackbarOpen}
-        message="Please choose words in provided order"
+        message="Please select words in provided order"
         close={() => setIsSnackbarOpen(false)}
         type="error"
         left="26px"
@@ -156,6 +156,7 @@ export default function ConfirmSeed({
         Icon={<RightArrow width={23} fill="#fff" />}
         bgColor={'#000000'}
         borderColor="#000000"
+        margin="43px 0 0"
         justify="center"
         margin="auto 0px 0px 0px"
       />
@@ -221,8 +222,8 @@ const Mnemonic = styled.div<{ indexesHt?: Record<string, string>; active: boolea
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 10px;
-  margin-right: 10px;
+  margin-bottom: 16px;
+  margin-right: 16px;
   font-size: 13.4px;
   cursor: pointer;
   font-family: 'SFCompactDisplayRegular';
