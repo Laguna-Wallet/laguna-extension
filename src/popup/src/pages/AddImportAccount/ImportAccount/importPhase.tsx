@@ -25,10 +25,12 @@ import { isObjectEmpty, objectToArray } from 'utils';
 import { KeyringPair$Json } from '@polkadot/keyring/types';
 import { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
 import { isHex } from '@polkadot/util';
+import WelcomeBack from 'pages/WelcomeBack/WelcomeBack';
 
 type Props = {
   onClose: () => void;
   redirectedFromSignUp?: boolean;
+  redirectedFromForgotPassword?: boolean;
 };
 
 type FormProps = {
@@ -39,6 +41,7 @@ type FormProps = {
 function ImportPhase({
   handleSubmit,
   redirectedFromSignUp,
+  redirectedFromForgotPassword,
   onClose
 }: InjectedFormProps<FormProps> & Props) {
   const { nextStep } = useWizard();
@@ -143,6 +146,8 @@ function ImportPhase({
           dispatch(reset('ImportPhase'));
           if (redirectedFromSignUp) {
             goTo(SignUp);
+          } else if (redirectedFromForgotPassword) {
+            goTo(WelcomeBack);
           } else {
             goTo(Wallet);
           }

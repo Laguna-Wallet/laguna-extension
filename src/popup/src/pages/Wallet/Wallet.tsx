@@ -4,7 +4,7 @@ import Header from './Header';
 import Footer from './Footer';
 import { useAccount } from 'context/AccountContext';
 import ChainItem from './ChainItem';
-import { getAssets } from 'utils/polkadot';
+import { getAssets, recodeAddress } from 'utils/polkadot';
 import NetworkItem from './NetworkItem';
 import dashboardBG from 'assets/imgs/dashboard-bg.png';
 import { goTo, Link } from 'react-chrome-extension-router';
@@ -99,7 +99,14 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
 
   useEffect(() => {
     async function go() {
+      console.log(
+        '~ accountBalances && accountBalances?.address !== activeAccount?.address',
+        accountBalances,
+        accountBalances?.address,
+        activeAccount?.address
+      );
       if (accountBalances && accountBalances?.address !== activeAccount?.address) {
+        console.log('should load');
         dispatch(toggleLoading(true));
       }
     }
@@ -117,6 +124,8 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
       </>
     );
   };
+
+  console.log('~ accountsChanging', accountsChanging);
 
   // Todo refactor Hrant, attach price to the network from polkadot.js file
   // it can be calculated via [prices, tokenInfos] that are stored in the

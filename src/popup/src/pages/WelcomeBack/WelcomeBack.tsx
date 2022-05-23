@@ -15,6 +15,7 @@ import backgroundImage from 'assets/imgs/sign-up-bg.png';
 import mainLogoSvg from 'assets/imgs/main-logo-white.svg';
 import { Field, reduxForm, InjectedFormProps } from 'redux-form';
 import { isObjectEmpty, objectToArray, validPassword } from 'utils';
+import ImportAccount from 'pages/AddImportAccount/ImportAccount/ImportAccount';
 
 type Props = {
   password: string;
@@ -102,7 +103,13 @@ function WelcomeBack({ handleSubmit, pristine, submitting }: InjectedFormProps<P
             disabled={pristine || submitting}
           />
         </Form>
-        <Text>Contact Support</Text>
+        <BottomContainer>
+          <Text>Contact Support</Text>
+          <Text onClick={() => goTo(ImportAccount, { redirectedFromForgotPassword: true })}>
+            Forgot your password?
+          </Text>
+        </BottomContainer>
+
         <Snackbar
           message={snackbarError}
           isOpen={isSnackbarOpen}
@@ -159,9 +166,16 @@ const Title = styled.div`
   font-family: 'IBM Plex Sans';
 `;
 
+const BottomContainer = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+`;
+
 const Text = styled.div`
   font-size: 12px;
   color: #777e90;
   font-family: 'IBM Plex Sans';
   margin-top: 38px;
+  cursor: pointer;
 `;

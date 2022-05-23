@@ -39,9 +39,16 @@ const validate = (values: { password: string; confirmPassword: string }) => {
 
 type Props = {
   errors?: Record<string, string>;
+  redirectedFromForgotPassword?: boolean;
+  handleEncode?: (password: string) => void;
 };
 
-function CreatePassword({ handleSubmit, errors }: InjectedFormProps & Props) {
+function CreatePassword({
+  handleSubmit,
+  errors,
+  handleEncode,
+  redirectedFromForgotPassword
+}: InjectedFormProps & Props) {
   const account = useAccount();
   const { previousStep } = useWizard();
   const formValues = useSelector((state: any) => state?.form?.CreatePassword?.values);
@@ -51,9 +58,15 @@ function CreatePassword({ handleSubmit, errors }: InjectedFormProps & Props) {
 
   const passwordLength = passwordStrength(formValues?.password, checkPasswordStrength).value;
 
-  const submit = (values: Record<string, string>) => {
+  const submit = async (values: Record<string, string>) => {
     if (isObjectEmpty(errors || {})) {
       account.setPassword(values.password);
+
+      if (redirectedFromForgotPassword && handleEncode) {
+        await handleEncode(formValues?.password);
+        goTo(Wallet);
+      }
+
       // next step is not needed here because, whe the user saves password in the storage
       // from stepper CreatePassword is removed therefore the next page is rendered
       // nextStep();
@@ -65,12 +78,14 @@ function CreatePassword({ handleSubmit, errors }: InjectedFormProps & Props) {
 
   return (
     <Container>
-      <WizardHeader
-        onClose={() => goTo(Wallet)}
-        onBack={() => {
-          previousStep();
-        }}
-      />
+      {!redirectedFromForgotPassword && (
+        <WizardHeader
+          onClose={() => goTo(Wallet)}
+          onBack={() => {
+            previousStep();
+          }}
+        />
+      )}
       <Form onSubmit={handleSubmit(submit)}>
         <MainContent>
           <Title>Create a Password</Title>

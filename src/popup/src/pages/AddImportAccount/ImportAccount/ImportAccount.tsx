@@ -26,6 +26,9 @@ import SetupComplete from 'pages/AddImportAccount/SetupComplete';
 import ImportPhase from 'pages/AddImportAccount/ImportAccount/importPhase';
 import Wallet from 'pages/Wallet/Wallet';
 import { saveToStorage } from 'utils/chrome';
+import WelcomeBack from 'pages/WelcomeBack/WelcomeBack';
+import keyring from '@polkadot/ui-keyring';
+import { clearAccountsFromStorage } from 'utils';
 
 const validate = (values: any) => {
   const errors: any = {};
@@ -56,9 +59,10 @@ const validate = (values: any) => {
 
 type Props = {
   redirectedFromSignUp?: boolean;
+  redirectedFromForgotPassword?: boolean;
 };
 
-function ImportAccount({ redirectedFromSignUp }: Props) {
+function ImportAccount({ redirectedFromSignUp, redirectedFromForgotPassword }: Props) {
   const account = useAccount();
   const encoded = account.encryptedPassword;
 
@@ -73,6 +77,11 @@ function ImportAccount({ redirectedFromSignUp }: Props) {
     if (seedPhase) {
       if (mnemonicValidate(seedPhase)) {
         const pair = await importFromMnemonic(seedPhase, password);
+
+        if (redirectedFromForgotPassword) {
+          clearAccountsFromStorage(pair.address);
+          account.saveActiveAccount(pair);
+        }
 
         if (!account.getActiveAccount()) {
           account.saveActiveAccount(pair);
@@ -92,6 +101,11 @@ function ImportAccount({ redirectedFromSignUp }: Props) {
       );
 
       const newPair = await encryptKeyringPair(pair, jsonPassword, password);
+
+      if (redirectedFromForgotPassword) {
+        clearAccountsFromStorage(pair.address);
+        account.saveActiveAccount(newPair);
+      }
 
       if (!account.getActiveAccount()) {
         account.saveActiveAccount(newPair);
@@ -119,6 +133,8 @@ function ImportAccount({ redirectedFromSignUp }: Props) {
     dispatch(reset('EncodeAccount'));
     if (redirectedFromSignUp) {
       goTo(SignUp);
+    } else if (redirectedFromForgotPassword) {
+      goTo(WelcomeBack);
     } else {
       goTo(Wallet);
     }
@@ -128,8 +144,20 @@ function ImportAccount({ redirectedFromSignUp }: Props) {
     <Container>
       <Wizard startIndex={0}>
         {!encoded && <CreatePassword />}
-        <ImportPhase redirectedFromSignUp={redirectedFromSignUp} onClose={onClose} />
-        <EncodeAccount title="Import Complete!" handleEncode={handleEncode} />
+        <ImportPhase
+          redirectedFromForgotPassword={redirectedFromForgotPassword}
+          redirectedFromSignUp={redirectedFromSignUp}
+          onClose={onClose}
+        />
+        {!redirectedFromForgotPassword && (
+          <EncodeAccount title="Import Complete!" handleEncode={handleEncode} />
+        )}
+        {redirectedFromForgotPassword && (
+          <CreatePassword
+            handleEncode={handleEncode}
+            redirectedFromForgotPassword={redirectedFromForgotPassword}
+          />
+        )}
         {!hasBoarded && <SetupComplete />}
       </Wizard>
     </Container>
