@@ -132,7 +132,7 @@ export default function TokenDashboard({ asset }: Props) {
                   <BarcodeIconContainer>
                     <ReceiveIcon width={20} height={20} />
                   </BarcodeIconContainer>
-                  <span>Recieve</span>
+                  <span>Receive</span>
                 </Button>
               </StyledLink>
             </ButtonsContainer>
@@ -191,10 +191,10 @@ const Container = styled.div<{ bg: string }>`
   overflow: hidden;
 `;
 
-const Content = styled.div<{isEmpty: boolean}>`
+const Content = styled.div<{ isEmpty: boolean }>`
   width: 100%;
   height: 100%;
-  margin-top: ${({isEmpty}) => (isEmpty ? '38px' : '60px')};
+  margin-top: ${({ isEmpty }) => (isEmpty ? '38px' : '60px')};
   box-sizing: border-box;
 `;
 

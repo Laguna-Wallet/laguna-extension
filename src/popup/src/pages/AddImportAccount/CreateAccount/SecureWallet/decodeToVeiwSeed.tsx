@@ -93,7 +93,7 @@ export default function DecodeToViewSeed({ handleEncode, title, onClose, onBack 
           close={() => setIsSnackbarOpen(false)}
           type="error"
           left="26px"
-          bottom={'90px'}
+          bottom={'148px'}
           transform="translateX(0)"
         />
       </Content>
@@ -108,7 +108,7 @@ const Container = styled.div<{ bg?: string }>`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 30px 16px 38px 16px;
+  padding: 30px 26px 38px;
   box-sizing: border-box;
   background-image: ${({ bg }) => `url(${bg})`};
   background-size: cover;

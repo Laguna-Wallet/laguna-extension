@@ -14,6 +14,7 @@ import WizardHeader from 'pages/AddImportAccount/WizardHeader';
 import { goTo } from 'react-chrome-extension-router';
 import Wallet from 'pages/Wallet/Wallet';
 import { checkPasswordStrength } from 'utils/checkPasswordStrength';
+import SignUp from 'pages/SignUp/SignUp';
 
 const validate = (values: { password: string; confirmPassword: string }) => {
   const errors: { password?: string; confirmPassword?: string } = {};
@@ -30,7 +31,6 @@ const validate = (values: { password: string; confirmPassword: string }) => {
     values.password &&
     values.confirmPassword !== values.password
   ) {
-    errors.password = "Passwords don't match";
     errors.confirmPassword = "Passwords don't match";
   }
 
@@ -39,9 +39,10 @@ const validate = (values: { password: string; confirmPassword: string }) => {
 
 type Props = {
   errors?: Record<string, string>;
+  redirectedFromSignUp?: boolean;
 };
 
-function CreatePassword({ handleSubmit, errors }: InjectedFormProps & Props) {
+function CreatePassword({ handleSubmit, errors, redirectedFromSignUp }: InjectedFormProps & Props) {
   const account = useAccount();
   const { previousStep } = useWizard();
   const formValues = useSelector((state: any) => state?.form?.CreatePassword?.values);
@@ -66,9 +67,19 @@ function CreatePassword({ handleSubmit, errors }: InjectedFormProps & Props) {
   return (
     <Container>
       <WizardHeader
-        onClose={() => goTo(Wallet)}
+        onClose={() => {
+          if (redirectedFromSignUp) {
+            goTo(SignUp);
+          } else {
+            goTo(Wallet);
+          }
+        }}
         onBack={() => {
-          previousStep();
+          if (redirectedFromSignUp) {
+            goTo(SignUp);
+          } else {
+            previousStep();
+          }
         }}
       />
       <Form onSubmit={handleSubmit(submit)}>

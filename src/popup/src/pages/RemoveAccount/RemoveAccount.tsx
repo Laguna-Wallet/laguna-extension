@@ -17,12 +17,13 @@ import { clearFromStorage } from 'utils/chrome';
 import { validatePassword } from 'utils/polkadot';
 import { Messages, SnackbarMessages, StorageKeys } from 'utils/types';
 import { isObjectEmpty, objectToArray } from 'utils';
+import SignUp from 'pages/SignUp/SignUp';
 
 type Props = {
   password: string;
 };
 
-const RemoveAccount = ({ handleSubmit, pristine, submitting  }: InjectedFormProps<Props>) => {
+const RemoveAccount = ({ handleSubmit, pristine, submitting }: InjectedFormProps<Props>) => {
   const dispatch = useDispatch();
   const account = useAccount();
   const activeAccount = account.getActiveAccount();
@@ -35,7 +36,7 @@ const RemoveAccount = ({ handleSubmit, pristine, submitting  }: InjectedFormProp
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
 
   const submit = async (values: Props) => {
-    const {password} = values;
+    const { password } = values;
     const errors = validPassword(password);
 
     if (!isObjectEmpty(errors)) {
@@ -50,24 +51,27 @@ const RemoveAccount = ({ handleSubmit, pristine, submitting  }: InjectedFormProp
 
     const isValid = await validatePassword(password);
 
-    if (isValid){
+    if (isValid) {
       keyring.forgetAccount(address);
       const first = keyring?.getAccounts()[0];
       clearFromStorage(StorageKeys.AccountBalances);
       dispatch(toggleLoading(true));
       if (first) {
         account.saveActiveAccount(first);
+        goTo(Wallet, { snackbar: { show: true, message: SnackbarMessages.WalletRemoved } });
+        console.log('at first');
       } else {
         account.saveActiveAccount({});
+        clearFromStorage(StorageKeys.OnBoarding);
+        goTo(SignUp);
+        console.log('at list');
       }
-  
+
       chrome.runtime.sendMessage({
         type: Messages.RemoveFromKeyring,
         payload: { address }
       });
-  
-      goTo(Wallet, { snackbar: { show: true, message: SnackbarMessages.WalletRemoved } });
-    }else {
+    } else {
       setIsSnackbarOpen(true);
       setSnackbarError('Password is not valid');
       setIsChangeValue(true);
@@ -97,7 +101,7 @@ const RemoveAccount = ({ handleSubmit, pristine, submitting  }: InjectedFormProp
           from your account. Please confirm below.
         </Text>
         <Form onSubmit={handleSubmit(submit)}>
-        <Field
+          <Field
             id="password"
             name="password"
             type="password"
@@ -118,29 +122,29 @@ const RemoveAccount = ({ handleSubmit, pristine, submitting  }: InjectedFormProp
               setIsChangeValue
             }}
           />
-        <ButtonContainer>
-          <Button
-            onClick={() => goTo(Wallet, { isMenuOpen: true })}
-            type='button'
-            text="Cancel"
-            color="#fff"
-            bgColor="#414141"
-            borderColor="transparent"
-            justify="center"
-            margin="0"
-          />
-          <Button
-            text="Save"
-            type='submit'
-            color="#23262F"
-            bgColor="#fff"
-            borderColor="transparent"
-            justify="center"
-            margin="0 0 0 15px"
-            disabledBgColor='rgba(255,255,255,0.6)'
-            disabled={pristine || submitting}
-          />
-        </ButtonContainer>
+          <ButtonContainer>
+            <Button
+              onClick={() => goTo(Wallet, { isMenuOpen: true })}
+              type="button"
+              text="Cancel"
+              color="#fff"
+              bgColor="#414141"
+              borderColor="transparent"
+              justify="center"
+              margin="0"
+            />
+            <Button
+              text="Save"
+              type="submit"
+              color="#23262F"
+              bgColor="#fff"
+              borderColor="transparent"
+              justify="center"
+              margin="0 0 0 15px"
+              disabledBgColor="rgba(255,255,255,0.6)"
+              disabled={pristine || submitting}
+            />
+          </ButtonContainer>
         </Form>
       </Content>
       <Snackbar
@@ -150,11 +154,11 @@ const RemoveAccount = ({ handleSubmit, pristine, submitting  }: InjectedFormProp
         type="error"
         left="26px"
         bottom="158px"
-        transform='translateX(0)'
+        transform="translateX(0)"
       />
     </Container>
   );
-}
+};
 
 export default reduxForm<Record<string, unknown>, any>({
   form: 'removeAccount'

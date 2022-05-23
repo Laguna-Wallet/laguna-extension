@@ -244,7 +244,7 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
                 <BarcodeIconContainer>
                   <ReceiveIcon width={20} height={20} />
                 </BarcodeIconContainer>
-                <span>Recieve</span>
+                <span>Receive</span>
               </Button>
             </StyledLink>
           </Buttons>
@@ -274,7 +274,7 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
       </Content>
       <Footer activeItem="wallet" />
 
-      {accountsChanging && <Loader />}
+      {/* {accountsChanging && <Loader />} */}
     </Container>
   );
 }

@@ -62,7 +62,7 @@ export default function AccountInfo({ transaction, closeAction }: Props) {
     <Container>
       <ContentItem>
         <Title>
-          <span>Recieve</span>
+          <span>Receive</span>
           <CloseIconContainer onClick={() => (closeAction ? closeAction() : goTo(Activity))}>
             <CloseIcon stroke={'#111'} />
           </CloseIconContainer>
