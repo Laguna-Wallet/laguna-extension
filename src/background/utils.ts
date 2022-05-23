@@ -168,7 +168,6 @@ export function handleUnlockPair(payload) {
   }
 
   if (payload.seed) {
-    console.log("~ payload.meta", payload.meta)
     const { pair } = keyring.addUri(payload.seed, payload.password)
     keyring.saveAccountMeta(pair, { ...payload.meta })
     pair.setMeta({ ...payload.meta })

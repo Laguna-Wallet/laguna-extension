@@ -34,7 +34,6 @@ function BackupAccount({ handleSubmit, pristine, submitting }: InjectedFormProps
   const [opened, setOpened] = useState<boolean>(false);
   const [seedExists, setSeedExists] = useState<boolean>(false);
   const [snackbarType, setSnackbarType] = useState<'error' | 'success' | 'warning'>('error');
-  const [isChangeValue, setIsChangeValue] = useState<boolean>(false);
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
   const [snackbarMessage, setSnackbarMessage] = useState<string>('');
   const [mnemonicHasBeenCopied, setMnemonicHasBeenCopied] = useState<boolean>(false);
@@ -43,33 +42,25 @@ function BackupAccount({ handleSubmit, pristine, submitting }: InjectedFormProps
     const { password } = values;
     const errors = validPassword(password);
 
-    if (!isObjectEmpty(errors)) {
-      const errArray = objectToArray(errors);
+    if (isObjectEmpty(errors)) {
+      const isValid = await validatePassword(password);
 
-      setSnackbarMessage(errArray[0]);
-      setIsSnackbarOpen(true);
-      setSnackbarType('error');
-      return;
-    }
+      if (isValid) {
+        setOpened(true);
 
-    const isValid = await validatePassword(password);
+        const pair = keyring.getPair(address);
+        const encodedSeed = pair?.meta?.encodedSeed;
 
-    if (isValid) {
-      setOpened(true);
+        if (encodedSeed) {
+          const bytes = AES.decrypt(encodedSeed as string, password);
+          const decodedSeed = bytes.toString(Utf8);
 
-      const pair = keyring.getPair(address);
-      const encodedSeed = pair?.meta?.encodedSeed;
-
-      if (encodedSeed) {
-        const bytes = AES.decrypt(encodedSeed as string, password);
-        const decodedSeed = bytes.toString(Utf8);
-
-        setSeed(decodedSeed);
+          setSeed(decodedSeed);
+        }
+      } else {
+        setIsSnackbarOpen(true);
+        setSnackbarMessage('Incorrect Password');
       }
-    } else {
-      setIsSnackbarOpen(true);
-      setSnackbarMessage('Incorrect Password');
-      setIsChangeValue(true);
     }
   };
 
@@ -147,9 +138,7 @@ function BackupAccount({ handleSubmit, pristine, submitting }: InjectedFormProps
                   height: '48px',
                   marginTop: '12px',
                   errorBorderColor: '#fb5a5a',
-                  autoFocus: true,
-                  isChangeValue,
-                  setIsChangeValue
+                  autoFocus: true
                 }}
               />
               <Button
@@ -161,7 +150,7 @@ function BackupAccount({ handleSubmit, pristine, submitting }: InjectedFormProps
                 justify="center"
                 margin="15px 0 0 0"
                 bgColor="#e4e4e4"
-                disabled={pristine || submitting}
+                styledDisabled={pristine || submitting}
               />
             </Form>
           </>
@@ -217,7 +206,7 @@ const Container = styled.div<{ opened: boolean }>`
   left: 0;
   z-index: 999;
   padding: ${({ opened }) => (opened ? '0 17.5px 24px' : '0 17.5px 32px')};
-  padding: 0 17.5px 32px;
+  padding: 0 17.5px 28px;
   box-sizing: border-box;
   background-color: #18191a;
   z-index: 99999;
@@ -332,7 +321,7 @@ const CopyBtn = styled.div`
 const ExportJson = styled.div`
   color: #fff;
   margin-top: 10px;
-  font-size: 16px;
+  font-size: 14px;
   cursor: pointer;
   border-bottom: 1px solid #fff;
   padding-bottom: 3px;

@@ -116,7 +116,8 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   background-color: #f9fafb;
-  padding: 30px 26px 43px;
+  /* padding: 30px 26px 43px; */
+  padding: 30px 16px 26px 16px;
   box-sizing: border-box;
 `;
 
@@ -133,13 +134,14 @@ const Title = styled.span`
 `;
 
 const Description = styled.div`
-  margin-top: 20px;
+  margin-top: 16px;
   font-family: Inter;
   font-size: 16px;
   line-height: 1.45;
   color: #353945;
   text-align: left;
-
+  max-width: 314px;
+  width: 100%;
   span {
     font-weight: 600;
     cursor: pointer;
@@ -162,8 +164,8 @@ const Mnemonic = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 10px;
-  margin-right: 10px;
+  margin-bottom: 14px;
+  margin-right: 14px;
 
   &:nth-child(3n + 3) {
     margin-right: 0;

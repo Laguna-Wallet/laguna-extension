@@ -25,9 +25,6 @@ import CreateAccount from 'pages/AddImportAccount/CreateAccount/CreateAccount';
 import { toggleLoading } from 'redux/actions';
 import { Asset } from 'utils/types';
 import { emptyAssets } from 'utils/emptyAssets';
-import Loader from 'components/Loader/Loader';
-import { mnemonicGenerate } from '@polkadot/util-crypto';
-import keyring from '@polkadot/ui-keyring';
 
 export interface ShowSnackbar {
   message: string;
@@ -206,7 +203,7 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
         <>
           <BalanceContainer isEmpty={isEmpty}>
             {/* <span>Balance</span> */}
-            {isEmpty ? (
+            {isEmpty && !accountsChanging ? (
               <>
                 <Title>welcome, to get started</Title>
                 <SubTitle>Deposit your first asset!</SubTitle>
@@ -216,13 +213,20 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
                 <Balance>
                   <span>
                     <TitleSmallText>$</TitleSmallText>
-                    {(overallBalance || overallBalance === 0) &&
-                      renderBallance(new BigNumber(overallBalance).toFormat(2))}
+                    {(overallBalance || overallBalance === 0) && !accountsChanging
+                      ? renderBallance(new BigNumber(overallBalance).toFormat(2))
+                      : '...'}{' '}
                   </span>
                 </Balance>
                 <PriceChange negativeValue={negativeValue}>
-                  {overallPriceChange && overallPriceChange > 0 ? '+' : ''}
-                  {overallPriceChange && new BigNumber(overallPriceChange).toFormat(2)}%
+                  {accountsChanging ? (
+                    '...'
+                  ) : (
+                    <>
+                      {overallPriceChange && overallPriceChange > 0 ? '+' : ''}
+                      {overallPriceChange && new BigNumber(overallPriceChange).toFormat(2)}%
+                    </>
+                  )}
                 </PriceChange>
               </>
             )}
@@ -261,7 +265,7 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
               <SwitchAssetsIcon />
             </SwitchAssetIconContainer>
           </ListHeader>
-          <ListContentParent>{renderAssets}</ListContentParent>
+          <ListContentParent>{accountsChanging ? 'Loading...' : renderAssets}</ListContentParent>
         </List>
         <Snackbar
           width="194.9px"
@@ -273,8 +277,6 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
         />
       </Content>
       <Footer activeItem="wallet" />
-
-      {/* {accountsChanging && <Loader />} */}
     </Container>
   );
 }

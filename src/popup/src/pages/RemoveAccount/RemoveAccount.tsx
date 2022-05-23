@@ -16,8 +16,8 @@ import { truncateString, validPassword } from 'utils';
 import { clearFromStorage } from 'utils/chrome';
 import { validatePassword } from 'utils/polkadot';
 import { Messages, SnackbarMessages, StorageKeys } from 'utils/types';
-import { isObjectEmpty, objectToArray } from 'utils';
 import SignUp from 'pages/SignUp/SignUp';
+import { isObjectEmpty } from 'utils';
 
 type Props = {
   password: string;
@@ -31,7 +31,6 @@ const RemoveAccount = ({ handleSubmit, pristine, submitting }: InjectedFormProps
   const address = activeAccount?.address;
 
   const [isOpen, setOpen] = useState<boolean>(true);
-  const [isChangeValue, setIsChangeValue] = useState<boolean>(false);
   const [snackbarError, setSnackbarError] = useState<string>('');
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
 
@@ -39,42 +38,33 @@ const RemoveAccount = ({ handleSubmit, pristine, submitting }: InjectedFormProps
     const { password } = values;
     const errors = validPassword(password);
 
-    if (!isObjectEmpty(errors)) {
-      const errArray = objectToArray(errors);
-
-      setSnackbarError(errArray[0]);
-      setIsSnackbarOpen(true);
-      return;
-    }
-
     if (!address) return;
 
-    const isValid = await validatePassword(password);
+    if (isObjectEmpty(errors)) {
+      const isValid = await validatePassword(password);
 
-    if (isValid) {
-      keyring.forgetAccount(address);
-      const first = keyring?.getAccounts()[0];
-      clearFromStorage(StorageKeys.AccountBalances);
-      dispatch(toggleLoading(true));
-      if (first) {
-        account.saveActiveAccount(first);
-        goTo(Wallet, { snackbar: { show: true, message: SnackbarMessages.WalletRemoved } });
-        console.log('at first');
+      if (isValid) {
+        keyring.forgetAccount(address);
+        const first = keyring?.getAccounts()[0];
+        clearFromStorage(StorageKeys.AccountBalances);
+        dispatch(toggleLoading(true));
+        if (first) {
+          account.saveActiveAccount(first);
+          goTo(Wallet, { snackbar: { show: true, message: SnackbarMessages.WalletRemoved } });
+        } else {
+          account.saveActiveAccount({});
+          clearFromStorage(StorageKeys.OnBoarding);
+          goTo(SignUp);
+        }
+
+        chrome.runtime.sendMessage({
+          type: Messages.RemoveFromKeyring,
+          payload: { address }
+        });
       } else {
-        account.saveActiveAccount({});
-        clearFromStorage(StorageKeys.OnBoarding);
-        goTo(SignUp);
-        console.log('at list');
+        setIsSnackbarOpen(true);
+        setSnackbarError('Incorrect password');
       }
-
-      chrome.runtime.sendMessage({
-        type: Messages.RemoveFromKeyring,
-        payload: { address }
-      });
-    } else {
-      setIsSnackbarOpen(true);
-      setSnackbarError('Password is not valid');
-      setIsChangeValue(true);
     }
   };
 
@@ -117,9 +107,7 @@ const RemoveAccount = ({ handleSubmit, pristine, submitting }: InjectedFormProps
               borderColor: '#color',
               errorBorderColor: '#fb5a5a',
               bgColor: '#303030',
-              autoFocus: true,
-              isChangeValue,
-              setIsChangeValue
+              autoFocus: true
             }}
           />
           <ButtonContainer>
@@ -142,7 +130,7 @@ const RemoveAccount = ({ handleSubmit, pristine, submitting }: InjectedFormProps
               justify="center"
               margin="0 0 0 15px"
               disabledBgColor="rgba(255,255,255,0.6)"
-              disabled={pristine || submitting}
+              styledDisabled={pristine || submitting}
             />
           </ButtonContainer>
         </Form>
