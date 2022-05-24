@@ -25,6 +25,7 @@ type Props = {
   disabledBgColor?: string;
   disabledBorderColor?: string;
   fontWeight?: string;
+  height?: string;
 };
 
 export default function Button({ Icon, text, bgColor = '#111', ...rest }: Props) {
@@ -53,6 +54,7 @@ const StyledButton = styled.button<{
   disabledColor?: string;
   disabledBorderColor?: string;
   fontWeight?: string;
+  height?: string;
 }>`
   width: ${({ width }) => width || '100%'};
   display: flex;
@@ -62,7 +64,7 @@ const StyledButton = styled.button<{
   font-family: ${({ fontFamily }) => fontFamily || 'Inter'};
   font-size: ${({ fontSize }) => fontSize || '14px'};
   font-weight: 500;
-  height: 45px;
+  height: ${({ height }) => height || '45px'};
   margin-top: 20px;
   padding: 0 14px;
   box-sizing: border-box;
