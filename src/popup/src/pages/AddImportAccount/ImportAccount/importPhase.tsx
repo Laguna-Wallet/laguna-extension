@@ -112,16 +112,11 @@ function ImportPhase({
     !isHex(seedPhase) &&
     !isValidPolkadotAddress(seedPhase) &&
     !mnemonicValidate(seedPhase);
-  console.log('====================================');
-  console.log(
-    !!seedPhase,
-    'one insect coach agree degree benefit toward place butter menu mammal result'
-  );
-  console.log('====================================');
+
   return (
     <Container>
       <WizardHeader
-        title={'IMPORT WALLET'}
+        title={'IMPORT ACCOUNT'}
         isFinishSlider={isFinishSlider}
         onClose={onClose}
         onBack={() => {

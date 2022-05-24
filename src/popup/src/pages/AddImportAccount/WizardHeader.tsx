@@ -1,9 +1,9 @@
 import { useWizard } from 'react-use-wizard';
 import styled from 'styled-components';
-import CloseIcon from 'assets/svgComponents/CloseIcon';
 import { goTo } from 'react-chrome-extension-router';
 import Wallet from 'pages/Wallet/Wallet';
 import LeftArrowThinIcon from 'assets/svgComponents/LeftArrowThinIcon';
+import ProgressBarCloseIcon from 'assets/svgComponents/ProgressBarCloseIcon';
 
 type Props = {
   title?: string;
@@ -58,8 +58,8 @@ export default function WizardHeader({
     <Container>
       {isHidden && (
         <TopSection>
-          <IconContainer onClick={handleIconClick}>
-            {onClose ? <CloseIcon stroke="#777e90" /> : <LeftArrowThinIcon stroke="#777e90" />}
+          <IconContainer onClose={!!onClose} onClick={handleIconClick}>
+            {onClose ? <ProgressBarCloseIcon /> : <LeftArrowThinIcon stroke="#777e90" />}
           </IconContainer>
           <Line>
             <Progress
@@ -92,16 +92,17 @@ const Container = styled.div`
   align-items: center;
 `;
 
-const IconContainer = styled.div`
+const IconContainer = styled.div<{ onClose?: boolean }>`
   cursor: pointer;
-  margin-bottom: 2px;
+  width: ${({ onClose }) => (onClose ? '24px' : '16px')};
+  height: ${({ onClose }) => (onClose ? '24px' : '16px')};
 `;
 
 const Line = styled.div`
   width: 100%;
   background-color: #f4f4f6;
   border-radius: 120px;
-  margin: 8px;
+  margin: 8px 0 8px 12px;
 `;
 
 const Progress = styled.div<{

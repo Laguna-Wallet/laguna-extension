@@ -156,7 +156,6 @@ export default function ConfirmSeed({
         Icon={<RightArrow width={23} fill="#fff" />}
         bgColor={'#000000'}
         borderColor="#000000"
-        margin="43px 0 0"
         justify="center"
         margin="auto 0px 0px 0px"
       />
