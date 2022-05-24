@@ -138,7 +138,7 @@ export default function CreateAccount({
 
       {!redirectedFromDashboard && (
         <EncodeAccount
-          title="Account Created"
+          title="Account Created!"
           handleEncode={handleEncode}
           onClose={onClose}
           onBack={onBack}
