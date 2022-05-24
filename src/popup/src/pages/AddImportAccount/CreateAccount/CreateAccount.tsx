@@ -139,6 +139,7 @@ export default function CreateAccount({
       {!redirectedFromDashboard && (
         <EncodeAccount
           title="Account Created!"
+          descriptionText="To encrypt your new account please enter your password below:"
           handleEncode={handleEncode}
           onClose={onClose}
           onBack={onBack}

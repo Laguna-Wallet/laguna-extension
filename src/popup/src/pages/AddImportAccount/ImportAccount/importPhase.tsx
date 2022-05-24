@@ -214,7 +214,7 @@ function ImportPhase({
         )}
         <Button
           type="submit"
-          text="import"
+          text="Import"
           margin="10px 0 0 0"
           justify="center"
           styledDisabled={uploaded ? !(uploaded && password) : !seedPhase}

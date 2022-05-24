@@ -17,6 +17,7 @@ import { isObjectEmpty, validPassword } from 'utils';
 type Props = {
   handleEncode: (password: string) => void;
   title: string;
+  descriptionText: string;
 };
 
 type Form = {
@@ -28,7 +29,8 @@ function EncodeAccount({
   handleSubmit,
   title,
   pristine,
-  submitting
+  submitting,
+  descriptionText
 }: InjectedFormProps<Form> & Props) {
   const { nextStep } = useWizard();
 
@@ -69,7 +71,7 @@ function EncodeAccount({
           <CheckMarkIcon fill="#111" />
         </IconContainer>
         <Title>{title}</Title>
-        <Description>To encrypt your new account please enter your password below:</Description>
+        <Description>{descriptionText}</Description>
         <Form onSubmit={handleSubmit(submit)}>
           <Field
             id="password"
