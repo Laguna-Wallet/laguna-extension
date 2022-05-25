@@ -127,7 +127,7 @@ function ImportAccount({ redirectedFromSignUp }: Props) {
   return (
     <Container>
       <Wizard startIndex={0}>
-        {!encoded && <CreatePassword />}
+        {!encoded && <CreatePassword redirectedFromSignUp={redirectedFromSignUp} />}
         <ImportPhase redirectedFromSignUp={redirectedFromSignUp} onClose={onClose} />
         <EncodeAccount title="Import Complete!" handleEncode={handleEncode} />
         {!hasBoarded && <SetupComplete />}

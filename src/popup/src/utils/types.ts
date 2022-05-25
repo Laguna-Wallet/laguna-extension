@@ -151,7 +151,7 @@ export enum SnackbarMessages {
   AutoLockUpdated = 'Auto-Lock Updated',
   WalletRemoved = 'Wallet Removed',
   AccessRevoked = 'Access Revoked',
-  DepositRecieved = 'New Deposit Recieved'
+  DepositRecieved = 'New Deposit Received'
 }
 
 //==============================================================================

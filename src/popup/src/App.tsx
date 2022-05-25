@@ -45,7 +45,7 @@ function App() {
         width="194.9px"
         isOpen={tokenReceived}
         close={() => dispatch(changeTokenReceived({ tokenReceived: false }))}
-        message={'Token Recieved'}
+        message={'Token Received'}
         type="success"
         // left="110px"
         bottom="70px"

@@ -127,7 +127,7 @@ export default function CreateAccount({
 
   return (
     <Wizard startIndex={0}>
-      {!encoded && <CreatePassword />}
+      {!encoded && <CreatePassword redirectedFromSignUp={redirectedFromSignUp} />}
 
       <SecureWallet
         level={securityLevel}

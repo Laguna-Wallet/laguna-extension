@@ -89,7 +89,7 @@ function HumbleInput({
   return (
     <Container marginBottom={marginBottom} marginTop={marginTop}>
       <InputContainer
-        isChangeValue={touched || meta?.touched}
+        isChangeValue={touched || (meta?.touched && !meta?.submitting)}
         error={(!touched && !!error) || meta?.touched || meta?.error}
         errorBorderColor={errorBorderColor}
         borderColor={borderColor}

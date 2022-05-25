@@ -84,7 +84,7 @@ function ImportPhase({
           setSnackbarError('Invalid password');
         }
       }
-    } else {
+    } else if (!isDisabled) {
       nextStep();
     }
   };
@@ -112,12 +112,7 @@ function ImportPhase({
     !isHex(seedPhase) &&
     !isValidPolkadotAddress(seedPhase) &&
     !mnemonicValidate(seedPhase);
-  console.log('====================================');
-  console.log(
-    !!seedPhase,
-    'one insect coach agree degree benefit toward place butter menu mammal result'
-  );
-  console.log('====================================');
+
   return (
     <Container>
       <WizardHeader
