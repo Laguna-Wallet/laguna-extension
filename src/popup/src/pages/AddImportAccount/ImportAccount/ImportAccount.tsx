@@ -25,10 +25,11 @@ import EncodeAccount from 'pages/AddImportAccount/EncodeAccount';
 import SetupComplete from 'pages/AddImportAccount/SetupComplete';
 import ImportPhase from 'pages/AddImportAccount/ImportAccount/importPhase';
 import Wallet from 'pages/Wallet/Wallet';
-import { saveToStorage } from 'utils/chrome';
+import { saveToStorage, sendMessagePromise } from 'utils/chrome';
 import WelcomeBack from 'pages/WelcomeBack/WelcomeBack';
 import keyring from '@polkadot/ui-keyring';
 import { clearAccountsFromStorage } from 'utils';
+import { toggleLoading } from 'redux/actions';
 
 const validate = (values: any) => {
   const errors: any = {};
@@ -81,16 +82,24 @@ function ImportAccount({ redirectedFromSignUp, redirectedFromForgotPassword }: P
         if (redirectedFromForgotPassword) {
           clearAccountsFromStorage(pair.address);
           account.saveActiveAccount(pair);
+          dispatch(toggleLoading(true));
         }
 
         if (!account.getActiveAccount()) {
           account.saveActiveAccount(pair);
         }
 
-        chrome.runtime.sendMessage({
-          type: Messages.AddToKeyring,
-          payload: { seed: seedPhase, meta: pair.meta }
-        });
+        if (redirectedFromForgotPassword) {
+          chrome.runtime.sendMessage({
+            type: Messages.ForgotPassword,
+            payload: { seed: seedPhase, password, meta: pair.meta }
+          });
+        } else {
+          chrome.runtime.sendMessage({
+            type: Messages.AddToKeyring,
+            payload: { seed: seedPhase, password, meta: pair.meta }
+          });
+        }
       }
     }
 
@@ -105,16 +114,24 @@ function ImportAccount({ redirectedFromSignUp, redirectedFromForgotPassword }: P
       if (redirectedFromForgotPassword) {
         clearAccountsFromStorage(pair.address);
         account.saveActiveAccount(newPair);
+        dispatch(toggleLoading(true));
       }
 
       if (!account.getActiveAccount()) {
         account.saveActiveAccount(newPair);
       }
 
-      chrome.runtime.sendMessage({
-        type: Messages.AddToKeyring,
-        payload: { password, json: file, jsonPassword, meta: newPair.meta }
-      });
+      if (redirectedFromForgotPassword) {
+        chrome.runtime.sendMessage({
+          type: Messages.ForgotPassword,
+          payload: { password, json: file, jsonPassword, meta: newPair.meta }
+        });
+      } else {
+        chrome.runtime.sendMessage({
+          type: Messages.AddToKeyring,
+          payload: { password, json: file, jsonPassword, meta: newPair.meta }
+        });
+      }
     }
 
     chrome.runtime.sendMessage({
@@ -126,6 +143,10 @@ function ImportAccount({ redirectedFromSignUp, redirectedFromForgotPassword }: P
 
     dispatch(reset('ImportPhase'));
     dispatch(reset('EncodeAccount'));
+
+    if (redirectedFromForgotPassword) {
+      goTo(Wallet);
+    }
   };
 
   const onClose = () => {

@@ -64,7 +64,6 @@ function CreatePassword({
 
       if (redirectedFromForgotPassword && handleEncode) {
         await handleEncode(formValues?.password);
-        goTo(Wallet);
       }
 
       // next step is not needed here because, whe the user saves password in the storage
