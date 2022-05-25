@@ -1,16 +1,14 @@
 import Header from 'pages/Wallet/Header';
 import styled from 'styled-components';
 import { Asset, TokenInfo, Transaction } from 'utils/types';
-import dashboardBG from 'assets/imgs/dashboard-bg.png';
+import dashboardBG from 'assets/imgs/dashboard-bg.jpg';
 import { goTo, Link } from 'react-chrome-extension-router';
 import Wallet from 'pages/Wallet/Wallet';
 import { useDispatch, useSelector } from 'react-redux';
 import NetworkIcons from 'components/primitives/NetworkIcons';
 import BigNumber from 'bignumber.js';
-import RightArrow from 'assets/svgComponents/RightArrow';
 import Send from 'pages/Send/Send';
 import Receive from 'pages/Recieve/Receive';
-import BarcodeIcon from 'assets/svgComponents/BarcodeIcon';
 import { selectAsset } from 'redux/actions';
 import { ActivityItem } from 'pages/Activity/Activity';
 import { useEffect, useState } from 'react';

@@ -20,7 +20,7 @@ cryptoWaitReady().then(async () => {
   // const store = await generateStore();
   // load all available addresses and accounts
   generateStore().then((store) => {
-    keyring.loadAll({ ss58Format: 42, store: new AccountsStore() });
+    keyring.loadAll({ ss58Format: 42, type: 'sr25519', store: new AccountsStore() });
     // generateStore.then((store: any) => {
     ReactDOM.render(
       <React.StrictMode>

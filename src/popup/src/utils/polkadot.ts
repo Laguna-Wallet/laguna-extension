@@ -147,7 +147,6 @@ export function isValidPolkadotAddress(address: string): boolean {
 
     return false;
   } catch (error) {
-    console.log(error);
     return false;
   }
 }
@@ -418,15 +417,10 @@ export function isKeyringJson(
   try {
     if (isKeyringPairs$Json(json)) return false;
 
-    const {
-      address,
-      meta: { genesisHash, name },
-      type
-    } = keyring.createFromJson(json);
+    const { address } = keyring.createFromJson(json);
 
     return !!address;
   } catch (e) {
-    console.log(e);
     return false;
   }
 }

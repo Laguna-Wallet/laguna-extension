@@ -25,7 +25,11 @@ import EncodeAccount from 'pages/AddImportAccount/EncodeAccount';
 import SetupComplete from 'pages/AddImportAccount/SetupComplete';
 import ImportPhase from 'pages/AddImportAccount/ImportAccount/importPhase';
 import Wallet from 'pages/Wallet/Wallet';
-import { saveToStorage } from 'utils/chrome';
+import { saveToStorage, sendMessagePromise } from 'utils/chrome';
+import WelcomeBack from 'pages/WelcomeBack/WelcomeBack';
+import keyring from '@polkadot/ui-keyring';
+import { clearAccountsFromStorage } from 'utils';
+import { toggleLoading } from 'redux/actions';
 
 const validate = (values: any) => {
   const errors: any = {};
@@ -56,9 +60,10 @@ const validate = (values: any) => {
 
 type Props = {
   redirectedFromSignUp?: boolean;
+  redirectedFromForgotPassword?: boolean;
 };
 
-function ImportAccount({ redirectedFromSignUp }: Props) {
+function ImportAccount({ redirectedFromSignUp, redirectedFromForgotPassword }: Props) {
   const account = useAccount();
   const encoded = account.encryptedPassword;
 
@@ -74,14 +79,27 @@ function ImportAccount({ redirectedFromSignUp }: Props) {
       if (mnemonicValidate(seedPhase)) {
         const pair = await importFromMnemonic(seedPhase, password);
 
+        if (redirectedFromForgotPassword) {
+          clearAccountsFromStorage(pair.address);
+          account.saveActiveAccount(pair);
+          dispatch(toggleLoading(true));
+        }
+
         if (!account.getActiveAccount()) {
           account.saveActiveAccount(pair);
         }
 
-        chrome.runtime.sendMessage({
-          type: Messages.AddToKeyring,
-          payload: { seed: seedPhase, meta: pair.meta }
-        });
+        if (redirectedFromForgotPassword) {
+          chrome.runtime.sendMessage({
+            type: Messages.ForgotPassword,
+            payload: { seed: seedPhase, password, meta: pair.meta }
+          });
+        } else {
+          chrome.runtime.sendMessage({
+            type: Messages.AddToKeyring,
+            payload: { seed: seedPhase, password, meta: pair.meta }
+          });
+        }
       }
     }
 
@@ -93,14 +111,27 @@ function ImportAccount({ redirectedFromSignUp }: Props) {
 
       const newPair = await encryptKeyringPair(pair, jsonPassword, password);
 
+      if (redirectedFromForgotPassword) {
+        clearAccountsFromStorage(pair.address);
+        account.saveActiveAccount(newPair);
+        dispatch(toggleLoading(true));
+      }
+
       if (!account.getActiveAccount()) {
         account.saveActiveAccount(newPair);
       }
 
-      chrome.runtime.sendMessage({
-        type: Messages.AddToKeyring,
-        payload: { password, json: file, jsonPassword, meta: newPair.meta }
-      });
+      if (redirectedFromForgotPassword) {
+        chrome.runtime.sendMessage({
+          type: Messages.ForgotPassword,
+          payload: { password, json: file, jsonPassword, meta: newPair.meta }
+        });
+      } else {
+        chrome.runtime.sendMessage({
+          type: Messages.AddToKeyring,
+          payload: { password, json: file, jsonPassword, meta: newPair.meta }
+        });
+      }
     }
 
     chrome.runtime.sendMessage({
@@ -112,6 +143,10 @@ function ImportAccount({ redirectedFromSignUp }: Props) {
 
     dispatch(reset('ImportPhase'));
     dispatch(reset('EncodeAccount'));
+
+    if (redirectedFromForgotPassword) {
+      goTo(Wallet);
+    }
   };
 
   const onClose = () => {
@@ -119,6 +154,8 @@ function ImportAccount({ redirectedFromSignUp }: Props) {
     dispatch(reset('EncodeAccount'));
     if (redirectedFromSignUp) {
       goTo(SignUp);
+    } else if (redirectedFromForgotPassword) {
+      goTo(WelcomeBack);
     } else {
       goTo(Wallet);
     }
@@ -128,12 +165,28 @@ function ImportAccount({ redirectedFromSignUp }: Props) {
     <Container>
       <Wizard startIndex={0}>
         {!encoded && <CreatePassword redirectedFromSignUp={redirectedFromSignUp} />}
-        <ImportPhase redirectedFromSignUp={redirectedFromSignUp} onClose={onClose} />
-        <EncodeAccount
-          title="Import Complete!"
-          descriptionText="To encrypt your new wallet please enter your password below:"
-          handleEncode={handleEncode}
+
+        <ImportPhase
+          redirectedFromForgotPassword={redirectedFromForgotPassword}
+          redirectedFromSignUp={redirectedFromSignUp}
+          onClose={onClose}
         />
+
+        {!redirectedFromForgotPassword && (
+          <EncodeAccount
+            title="Import Complete!"
+            descriptionText="To encrypt your new wallet please enter your password below:"
+            handleEncode={handleEncode}
+          />
+        )}
+
+        {redirectedFromForgotPassword && (
+          <CreatePassword
+            handleEncode={handleEncode}
+            redirectedFromForgotPassword={redirectedFromForgotPassword}
+          />
+        )}
+
         {!hasBoarded && <SetupComplete />}
       </Wizard>
     </Container>
