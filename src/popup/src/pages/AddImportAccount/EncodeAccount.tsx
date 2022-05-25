@@ -17,6 +17,7 @@ import { isObjectEmpty, validPassword } from 'utils';
 type Props = {
   handleEncode: (password: string) => void;
   title: string;
+  descriptionText: string;
 };
 
 type Form = {
@@ -28,7 +29,8 @@ function EncodeAccount({
   handleSubmit,
   title,
   pristine,
-  submitting
+  submitting,
+  descriptionText
 }: InjectedFormProps<Form> & Props) {
   const { nextStep } = useWizard();
 
@@ -69,36 +71,38 @@ function EncodeAccount({
           <CheckMarkIcon fill="#111" />
         </IconContainer>
         <Title>{title}</Title>
-        <Description>To encrypt your new wallet please enter your password below:</Description>
+        <Description>{descriptionText}</Description>
         <Form onSubmit={handleSubmit(submit)}>
           <Field
             id="password"
             name="password"
             type="password"
             label="password"
-            placeholder="Enter Password for this file"
+            placeholder="Enter your password"
             component={HumbleInput}
             props={{
               type: 'password',
-              height: '45px',
-              fontSize: '14px',
+              height: '48px',
+              fontSize: '16px',
               marginTop: '20px',
               textAlign: 'center',
               bgColor: '#f2f2f2',
               color: '#b1b5c3',
-              placeholderColor: '#b1b5c3',
+              placeholderColor: '#000',
               hideErrorMsg: false,
               autoFocus: true,
               isChangeValue,
               setIsChangeValue,
-              errorBorderColor: '#fb5a5a'
+              errorBorderColor: '#fb5a5a',
+              padding: '0 16px'
             }}
           />
           <Button
             type="submit"
-            margin="10px 0 0 0"
+            margin="13px 0 0 0"
             text="Finish"
             justify="center"
+            height="48px"
             styledDisabled={pristine || submitting}
           />
         </Form>
@@ -152,7 +156,7 @@ const IconContainer = styled.div`
   align-items: center;
   justify-content: center;
   position: relative;
-  margin-top: auto;
+  margin-top: 103px;
 `;
 
 const Circle = styled.div`
@@ -185,27 +189,27 @@ const LockContainer = styled.div`
 
 const Title = styled.div`
   font-size: 22px;
-  margin-top: 28px;
+  margin: 28px 0 10px;
   font-family: 'IBM Plex Sans';
   font-weight: 500;
   text-align: center;
+  line-height: 1.82;
   color: #18191a;
 `;
 
 const Description = styled.div`
   width: 251px;
   height: 38px;
-  margin-top: 10px;
   font-family: Inter;
   font-size: 14px;
+  line-height: 1.35;
   text-align: center;
   color: #353945;
-  margin-bottom: 40px;
+  margin-bottom: 28px;
 `;
 
 const Form = styled.form`
   width: 100%;
   display: flex;
   flex-direction: column;
-  margin-top: auto;
 `;

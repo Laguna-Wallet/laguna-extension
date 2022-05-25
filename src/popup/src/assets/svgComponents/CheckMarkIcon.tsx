@@ -3,27 +3,16 @@ import * as React from 'react';
 function CheckMarkIcon(props: React.SVGProps<SVGSVGElement> | { fill: string }) {
   return (
     <svg
-      width={51}
-      height={40}
-      fill={props.fill || 'none'}
+      width="94"
+      height="94"
+      viewBox="0 0 94 94"
+      fill="none"
       xmlns="http://www.w3.org/2000/svg"
       {...props}>
       <path
-        d="M50.049.722a2.874 2.874 0 01.235 4.033L20.062 39.041a2.823 2.823 0 01-2.117.959c-.81 0-1.58-.349-2.118-.959L.716 21.898a2.874 2.874 0 01.235-4.033 2.817 2.817 0 014 .237L15.536 30.11a3.21 3.21 0 004.817 0L46.049.959a2.817 2.817 0 014-.237z"
-        fill="url(#prefix__paint0_linear_4185_21151)"
+        d="M77.165 24.387a3.531 3.531 0 0 1 .289 4.956L40.318 71.472a3.469 3.469 0 0 1-2.602 1.178 3.469 3.469 0 0 1-2.602-1.178L16.546 50.408a3.531 3.531 0 0 1 .29-4.957 3.461 3.461 0 0 1 4.914.292l15.966 18.112L72.25 24.678a3.461 3.461 0 0 1 4.915-.291z"
+        fill="#18191A"
       />
-      <defs>
-        <linearGradient
-          id="prefix__paint0_linear_4185_21151"
-          x1={66.57}
-          y1={-22.222}
-          x2={-7.485}
-          y2={-15.142}
-          gradientUnits="userSpaceOnUse">
-          <stop stopColor="#111" />
-          <stop offset={1} stopColor="#111" />
-        </linearGradient>
-      </defs>
     </svg>
   );
 }

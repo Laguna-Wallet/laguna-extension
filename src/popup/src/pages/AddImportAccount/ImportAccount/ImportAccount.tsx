@@ -129,7 +129,11 @@ function ImportAccount({ redirectedFromSignUp }: Props) {
       <Wizard startIndex={0}>
         {!encoded && <CreatePassword redirectedFromSignUp={redirectedFromSignUp} />}
         <ImportPhase redirectedFromSignUp={redirectedFromSignUp} onClose={onClose} />
-        <EncodeAccount title="Import Complete!" handleEncode={handleEncode} />
+        <EncodeAccount
+          title="Import Complete!"
+          descriptionText="To encrypt your new wallet please enter your password below:"
+          handleEncode={handleEncode}
+        />
         {!hasBoarded && <SetupComplete />}
       </Wizard>
     </Container>
