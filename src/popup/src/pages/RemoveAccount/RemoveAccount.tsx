@@ -33,6 +33,7 @@ const RemoveAccount = ({ handleSubmit, pristine, submitting }: InjectedFormProps
   const [isOpen, setOpen] = useState<boolean>(true);
   const [snackbarError, setSnackbarError] = useState<string>('');
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
+  const accounts = keyring.getPairs();
 
   const submit = async (values: Props) => {
     const { password } = values;
@@ -84,11 +85,13 @@ const RemoveAccount = ({ handleSubmit, pristine, submitting }: InjectedFormProps
         </IconContainer>
 
         <Text>
-          This will remove the current wallet{' '}
+          {`This will remove ${accounts.length === 1 ? 'your only' : 'the current'} account `}
           <span>
-            ({name?.length > 12 ? truncateString(name) : name}) {address && truncateString(address)}{' '}
+            {name?.length > 12 ? truncateString(name) : name} ({address && truncateString(address)}){' '}
           </span>
-          from your account. Please confirm below.
+          {`${
+            accounts.length === 1 ? 'and log you out of the wallet' : 'from your account'
+          }. Please confirm below.`}
         </Text>
         <Form onSubmit={handleSubmit(submit)}>
           <Field
