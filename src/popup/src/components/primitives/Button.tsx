@@ -79,8 +79,7 @@ const StyledButton = styled.button<{
   border-color: ${({ disabled, styledDisabled, borderColor }) =>
     disabled || styledDisabled ? 'transparent' : borderColor};
   margin: ${({ margin }) => margin};
-  // cursor: ${({ disabled, styledDisabled }) =>
-    disabled || styledDisabled ? 'default' : 'pointer'};
+  cursor: ${({ disabled, styledDisabled }) => (disabled || styledDisabled ? 'default' : 'pointer')};
   font-weight: ${({ fontWeight }) => fontWeight || '500'};
 `;
 
