@@ -31,7 +31,7 @@ import { AccountMeta } from 'utils/types';
 import { FlowValue, SendAccountFlowEnum } from './Send';
 import HashtagIcon from 'assets/svgComponents/HashtagIcon';
 
-const validate = (values: any) => {
+const validate = (values: { address: string; amount: number }) => {
   const errors: any = {};
   if (!values.address) {
     errors.address = 'Please enter address';
