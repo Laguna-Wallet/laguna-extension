@@ -11,36 +11,41 @@ import styled from 'styled-components';
 import SignUp from 'pages/SignUp/SignUp';
 
 import WizardHeader from 'pages/AddImportAccount/WizardHeader';
+import AddBigIcon from 'assets/svgComponents/AddBigIcon';
 
 export default function AddImportForBoardedUser() {
   return (
     <Wizard>
-    <Container>
-       <WizardHeader
-        title={'ADD / IMPORT WALLET'}
-        onBack={() => goTo(Wallet)}
-        onClose={() => goTo(SignUp)}
-        isHidden={false}
+      <Container>
+        <WizardHeader
+          title={'ADD / IMPORT ACCOUNT'}
+          onBack={() => goTo(Wallet)}
+          onClose={() => goTo(SignUp)}
+          isHidden={false}
+        />
+        <PlusIconContainer>
+          <AddBigIcon width={118} height={118} fill="#000" />
+        </PlusIconContainer>
+        <ButtonContainer>
+          <Button
+            type="button"
+            Icon={<RightArrow width={23} />}
+            text={'Create New Account'}
+            justify="center"
+            marginText="0 6px"
+            onClick={() => goTo(CreateAccount)}
           />
-      <PlusIconContainer>
-        <PlusIcon width={46} stroke="#999999" />
-      </PlusIconContainer>
-      <ButtonContainer>
-        <Button
-          type="button"
-          Icon={<RightArrow width={23} />}
-          text={'Create a New Wallet'}
-          onClick={() => goTo(CreateAccount)}
-        />
-        <Button
-          type="button"
-          Icon={<RightArrow width={23} />}
-          text={'Import a Wallet'}
-          margin="10px 0 0 0"
-          onClick={() => goTo(ImportAccount)}
-        />
-      </ButtonContainer>
-    </Container>
+          <Button
+            type="button"
+            Icon={<RightArrow width={23} />}
+            text={'Import Account'}
+            margin="10px 0 0 0"
+            justify="center"
+            marginText="0 6px"
+            onClick={() => goTo(ImportAccount)}
+          />
+        </ButtonContainer>
+      </Container>
     </Wizard>
   );
 }
@@ -58,14 +63,15 @@ const Container = styled.div`
 `;
 
 const PlusIconContainer = styled.div`
-  width: 149px;
-  height: 149px;
   display: flex;
   justify-content: center;
   align-items: center;
   border-radius: 100%;
   margin-top: 110px;
-  background-color: #f4f4f6;
+  filter: drop-shadow(5px 5px 50px rgba(0, 0, 0, 0.05));
+  width: 167.3px;
+  height: 167.3px;
+  background-color: #fff;
 `;
 
 const StepHeading = styled.div`

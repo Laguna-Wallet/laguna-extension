@@ -116,7 +116,7 @@ function ImportPhase({
   return (
     <Container>
       <WizardHeader
-        title={'IMPORT WALLET'}
+        title={'IMPORT ACCOUNT'}
         isFinishSlider={isFinishSlider}
         onClose={onClose}
         onBack={() => {

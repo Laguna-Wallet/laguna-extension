@@ -28,10 +28,10 @@ type Props = {
   height?: string;
 };
 
-export default function Button({ Icon, text, bgColor = '#111', ...rest }: Props) {
+export default function Button({ Icon, text, marginText, bgColor = '#111', ...rest }: Props) {
   return (
     <StyledButton bgColor={bgColor} {...rest}>
-      <Text>{text}</Text>
+      <Text marginText={marginText}>{text}</Text>
       {Icon && Icon}
     </StyledButton>
   );
