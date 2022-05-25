@@ -21,6 +21,7 @@ import {
   isInPhishingList,
   getFromStorage,
   renewMetaToKeyPairs,
+  clearAccountsFromStorage,
 } from "./utils"
 import keyring from "@polkadot/ui-keyring"
 import { TypeRegistry } from "@polkadot/types"
@@ -48,7 +49,13 @@ let declinedDapps = []
 let timeout = 900000
 let timeoutStart = Date.now()
 
-keyring.loadAll({ ss58Format: 0, type: "ed25519", store: new AccountsStore() })
+cryptoWaitReady().then(() => {
+  // load all available addresses and accounts
+  keyring.loadAll({ ss58Format: 42, type: "sr25519" })
+})
+// additional initialization here, including rendering
+
+// keyring.loadAll({ ss58Format: 42, type: "sr25519", store: new AccountsStore() })
 
 function onMessage(msg, port) {}
 
@@ -91,13 +98,13 @@ chrome.runtime.onConnect.addListener(function (port) {
     if (msg.type === Messages.DappAuthRequest) {
       // const dappName = msg.payload.pendingDapp[0].request.requestOrigin
       const dappName = window.location.host
+
       if (authorizedDapps.includes(dappName) || declinedDapps.includes(dappName)) return
       if (msg.payload.approved) {
         pendingRequests = []
         authorizedDapps.push(dappName)
 
         port.postMessage({ ...msg.payload.pendingDapp[0], payload: { id: msg.payload.pendingDapp[0].id, approved: true } })
-        sendResponse({})
         return true
       } else {
         pendingRequests = []
@@ -135,7 +142,7 @@ chrome.runtime.onConnect.addListener(function (port) {
       chrome.windows.create({
         focused: true,
         height: 621,
-        left: 150,
+        left: 1250,
         top: 150,
         type: "popup",
         url: POPUP_URL,
@@ -155,7 +162,7 @@ chrome.runtime.onConnect.addListener(function (port) {
       chrome.windows.create({
         focused: true,
         height: 621,
-        left: 150,
+        left: 1250,
         top: 150,
         type: "popup",
         url: POPUP_URL,
@@ -239,6 +246,12 @@ chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
     case Messages.RemoveFromKeyring:
       isLoggedIn = false
       keyPairs = removeFromKeypair(keyPairs, msg.payload.address)
+      break
+    case Messages.ForgotPassword:
+      isLoggedIn = false
+      const newPair = handleUnlockPair(msg.payload)
+      clearAccountsFromStorage(newPair.address)
+      keyPairs = [newPair]
       break
     case Messages.ConnectedApps:
       chrome.runtime.sendMessage({ type: Messages.ConnectedApps, payload: { connectedApps: authorizedDapps } })

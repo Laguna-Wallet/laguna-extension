@@ -196,6 +196,17 @@ export function removeFromKeypair(pairs, address) {
   return pairs.filter((item) => recodeToPolkadotAddress(item.address) !== recodeToPolkadotAddress(address))
 }
 
+export async function clearAccountsFromStorage(address?: string) {
+  const pairs = keyring.getPairs()
+
+  for (let i = 0; i < pairs.length; i++) {
+    const pair = pairs[i]
+    if (address && recodeToPolkadotAddress(address) !== recodeToPolkadotAddress(pair.address)) {
+      keyring.forgetAccount(pair.address)
+    }
+  }
+}
+
 export function recodeToPolkadotAddress(address: string): string {
   const publicKey = decodeAddress(address)
   return encodeAddress(publicKey, 0)
