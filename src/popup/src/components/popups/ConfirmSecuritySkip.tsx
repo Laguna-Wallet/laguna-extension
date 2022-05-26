@@ -33,7 +33,7 @@ export function ConfirmSecuritySkip({ nextStep, nextStepFromParent, setLevel }: 
 
         <Description>
           <Checkbox value={checked} onChange={setChecked} />
-          <span> I understand that without a seed phrase I cannot restore my wallet</span>
+          <span> I understand that without a seed phrase I cannot restore my wallet.</span>
         </Description>
 
         <ButtonContainer>
@@ -50,6 +50,7 @@ export function ConfirmSecuritySkip({ nextStep, nextStepFromParent, setLevel }: 
             disabledColor="#cbced1"
             disabled={!checked}
             text={'Skip'}
+            fontWeight="600"
           />
           <Gap />
           <Button
@@ -80,6 +81,14 @@ const Container = styled.div`
   z-index: 9999;
 `;
 
+const Indicator = styled.div`
+  width: 48px;
+  height: 6px;
+  flex-grow: 0;
+  border-radius: 100px;
+  background-color: #e6e8ec;
+`;
+
 const MainContent = styled.div`
   width: 100%;
   height: 242px;
@@ -97,7 +106,7 @@ const Title = styled.h3`
   width: 100%;
   font-family: 'IBM Plex Sans';
   font-size: 22px;
-  font-weight: 500;
+  font-weight: 600;
   line-height: 1.82;
   text-align: left;
   color: #090a0b;

@@ -18,6 +18,7 @@ import SignUp from 'pages/SignUp/SignUp';
 import Wallet from 'pages/Wallet/Wallet';
 import { goTo } from 'react-chrome-extension-router';
 import { addAccountMeta } from 'utils/polkadot';
+import { useEnterClickListener } from 'hooks/useEnterClickListener';
 
 const calculateWordColor = (index: number, mnemonicIndexToChoose: number) => {
   if (index === mnemonicIndexToChoose) return '#F9F7CD';
@@ -93,6 +94,11 @@ export default function ConfirmSeed({
   }, [chosenMnemonics]);
 
   const shuffledMnemonics: string[] = useMemo(() => arrayShuffle([...mnemonics]), []);
+
+  useEnterClickListener(
+    () => handleWrittenClick(),
+    [mnemonics, chosenMnemonics, mnemonicIndexes, isSnackbarOpen]
+  );
 
   return (
     <Container>

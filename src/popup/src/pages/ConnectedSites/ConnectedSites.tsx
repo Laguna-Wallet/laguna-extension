@@ -25,7 +25,6 @@ function ConnectedSites({ handleSubmit }: Props) {
   const activeAccount = account.getActiveAccount();
 
   const { connectedApps } = useSelector((state: any) => state.wallet);
-  console.log('~ connectedApps', connectedApps);
 
   useEffect(() => {
     chrome.runtime.sendMessage({

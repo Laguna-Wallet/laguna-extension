@@ -13,7 +13,9 @@ export function HelpImport({ onClose }: Props) {
     <Container>
       <MainContent>
         <Indicator />
-        <Title>Help - Importing a Wallet</Title>
+        <Title>
+          Help <Dash /> Importing a Wallet
+        </Title>
         <Description>
           <span>
             When entering your 12 or 24 mnemonic seed phrase please separate each word with a single
@@ -76,6 +78,8 @@ const MainContent = styled.div`
 const Title = styled.h3`
   width: 100%;
   font-family: 'IBM Plex Sans';
+  display: flex;
+  align-items: center;
   margin: 0;
   font-size: 17px;
   font-stretch: normal;
@@ -86,6 +90,13 @@ const Title = styled.h3`
   color: #18191a;
   margin-top: 10px;
   font-weight: 600;
+`;
+
+const Dash = styled.div`
+  width: 12px;
+  height: 2px;
+  background: #18191a;
+  margin: 0 3px;
 `;
 
 const Description = styled.div`
