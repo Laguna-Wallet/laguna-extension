@@ -41,8 +41,8 @@ function App() {
 
   return (
     <div className="App">
-      <CongratsBackingUp />
-      {/* {handlePage(pendingDapps, pendingToSign)} */}
+      {/* <CongratsBackingUp /> */}
+      {handlePage(pendingDapps, pendingToSign)}
       <Snackbar
         width="194.9px"
         isOpen={tokenReceived}
