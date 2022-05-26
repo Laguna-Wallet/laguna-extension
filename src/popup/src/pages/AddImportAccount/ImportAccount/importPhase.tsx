@@ -84,7 +84,7 @@ function ImportPhase({
       } else {
         if (password) {
           setIsSnackbarOpen(true);
-          setSnackbarError('Invalid password');
+          setSnackbarError('Incorrect password');
         }
       }
     } else if (!isDisabled) {
@@ -180,10 +180,12 @@ function ImportPhase({
             </InputContainer>
           )}
         </DndContainer>
-        <HelpButton onClick={() => setIsPopupOpen(true)}>
-          <ButtonsIcon fill="#18191a" />
-          <span>Help</span>
-        </HelpButton>
+        {!uploaded && !seedPhase && (
+          <HelpButton onClick={() => setIsPopupOpen(true)}>
+            <ButtonsIcon fill="#18191a" />
+            <span>Help</span>
+          </HelpButton>
+        )}
         {uploaded && (
           <Field
             id="password"
@@ -222,13 +224,12 @@ function ImportPhase({
         />
 
         <Snackbar
-          width={'90%'}
           isOpen={isSnackbarOpen}
           message={snackbarError}
           close={() => setIsSnackbarOpen(false)}
           type="error"
           align="left"
-          bottom={seedPhase ? '100px' : file ? '150px' : '100px'}
+          bottom={file ? '148px' : '100px'}
         />
       </Form>
     </Container>
@@ -252,33 +253,26 @@ const Container = styled.div`
   flex-direction: column;
   justify-content: flex-end;
   background-color: #fff;
-  padding: 30px 16px 38px 16px;
+  padding: 30px 26px 38px;
   box-sizing: border-box;
 `;
 
 const IconContainerBorder = styled.div`
-  width: 179px;
-  height: 179px;
+  width: 212px;
+  height: 212px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-image: linear-gradient(
-    to right top,
-    #d7cce2,
-    #ddcde1,
-    #e3cee0,
-    #e8cfdf,
-    #edd0dd,
-    #f1d1db,
-    #f4d2d8,
-    #f6d4d6,
-    #f8d6d3,
-    #f8d8d0,
-    #f7dbcd,
-    #f5decc
+  background: linear-gradient(
+    223.89deg,
+    #f5decc 1.96%,
+    #f2d2db 23.9%,
+    #d7cce2 48.8%,
+    #c7dfe4 73.7%,
+    #edf1e1 96.23%,
+    #ffffff 115.8%
   );
-  padding: 5px;
   border-radius: 100%;
 `;
 
@@ -318,19 +312,23 @@ const IconContainer = styled.div<{ isDragActive?: boolean; acceptedFilesLength?:
 `;
 
 const UploadedIconContainer = styled.div`
-  width: 100%;
-  height: 100%;
+  min-width: 179px;
+  min-height: 179px;
   background-color: #f9fafb;
   border-radius: 100%;
   display: flex;
   align-items: center;
+  border: 8px solid #fff;
   justify-content: center;
 `;
 
 const Text = styled.div`
-  font-family: 'SFCompactDisplayRegular';
-  font-size: 20px;
-  margin-top: 10px;
+  font-family: 'Inter';
+  font-size: 18px;
+  margin-top: 35.5px;
+  color: #18191a;
+  line-height: 1.35;
+}
 `;
 
 const FileUploadContainer = styled.div``;
