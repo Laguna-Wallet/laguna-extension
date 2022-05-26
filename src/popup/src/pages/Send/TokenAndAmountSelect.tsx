@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import { Field } from 'redux-form';
 import { parseNumeric } from 'utils/validations';
 import SelectSmallIcon from 'assets/svgComponents/SelectSmallIcon';
+import { useState } from 'react';
 
 type Props = {
   Icon: any;
@@ -10,34 +11,41 @@ type Props = {
 };
 
 export default function TokenAndAmountSelect({ tokens, Icon, value }: Props) {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+
+  const renderSelect = () => {
+    return (
+      <StyledSelect>
+        <StyledOption onClick={() => setIsOpen(true)}>
+          {tokens[0].toUpperCase()}
+          <IconContainer>
+            <SelectSmallIcon />
+          </IconContainer>
+        </StyledOption>
+        {tokens && isOpen && (
+          <OptionContainer>
+            {tokens.map((symbol: string) => (
+              <StyledOption key={symbol} onClick={() => setIsOpen(false)}>
+                {symbol.toUpperCase()}
+              </StyledOption>
+            ))}
+          </OptionContainer>
+        )}
+      </StyledSelect>
+    );
+  };
+
   return (
     <Container>
       {value && Icon}
       <Field name="amount" type="text" label="amount" component={Input} />
-      <Field name="token" label="token" options={tokens} component={renderSelect} />
-      <IconContainer>
+      <Field name="token" label="token" component={renderSelect} />
+      {/* <IconContainer>
         <SelectSmallIcon />
-      </IconContainer>
+      </IconContainer> */}
     </Container>
   );
 }
-
-const renderSelect = (props: any) => {
-  return (
-    <StyledSelect
-      name={props?.input?.name}
-      value={props?.input?.value || props.options[0]}
-      onChange={props?.input?.onChange}
-      onBlur={() => props?.input?.onBlur(props?.input?.value)}>
-      {props?.options &&
-        props?.options.map((symbol: string) => (
-          <StyledOption key={symbol} value={symbol}>
-            {symbol.toUpperCase()}
-          </StyledOption>
-        ))}
-    </StyledSelect>
-  );
-};
 
 const Input = ({ input: { value, onChange } }: any) => (
   <StyledInput
@@ -66,14 +74,33 @@ const Container = styled.div`
 `;
 
 const IconContainer = styled.div`
-  position: absolute;
-  right: 20px;
-  top: 16px;
+  margin-left: 9px;
+  width: 13px;
+  height: 8px;
+  position: relative;
+  cursor: pointer;
 
   svg {
+    position: absolute;
     min-width: auto;
     min-height: auto;
   }
+`;
+
+const OptionContainer = styled.div`
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  padding: 8px;
+  border-radius: 8px;
+  box-shadow: 0 4px 33px 0 rgba(30, 35, 53, 0.15);
+  position: absolute;
+  min-width: 90px;
+  top: 48px;
+  right: -20px;
+  z-index: 5;
+  background-color: #18191a;
+  color: #fff;
 `;
 
 const StyledInput = styled.input<{ isValue: boolean }>`
@@ -98,7 +125,7 @@ const StyledInput = styled.input<{ isValue: boolean }>`
   }
 `;
 
-const StyledSelect = styled.select`
+const StyledSelect = styled.div`
   min-width: 56px;
   height: 48px;
   border: 0;
@@ -109,13 +136,17 @@ const StyledSelect = styled.select`
   font-size: 16px;
   font-weight: 600;
   color: #18191a;
-  appearance: none;
-  padding-right: 22px;
-
-
+  position: relative;
+  display:flex
+  align-items: center;
+  flex-direction: column;
+  
   &:focus {
     outline: none;
   }
 `;
 
-const StyledOption = styled.option``;
+const StyledOption = styled.div`
+  display: flex;
+  align-items: center;
+`;

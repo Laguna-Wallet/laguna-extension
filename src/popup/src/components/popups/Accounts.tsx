@@ -136,7 +136,9 @@ const HeaderItem = styled.div`
   line-height: 16px;
   letter-spacing: 0.88px;
   use-select: none;
+  cursor: default;
 `;
+
 const MouseOverText = styled.p<{ width?: string }>`
   justify-content: center;
   align-items: center;
@@ -146,7 +148,7 @@ const MouseOverText = styled.p<{ width?: string }>`
   color: #18191a;
   font-family: IBM Plex Sans;
   font-size: 10px;
-  display: flex;
+  display: none;
   position: absolute;
   min-width: ${({ width }) => width || '171px'};
   top: 24px;
