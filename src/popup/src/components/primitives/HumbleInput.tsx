@@ -89,8 +89,8 @@ function HumbleInput({
   return (
     <Container marginBottom={marginBottom} marginTop={marginTop}>
       <InputContainer
-        isChangeValue={touched || (meta?.touched && !meta?.submitting)}
-        error={(!touched && !!error) || meta?.touched || meta?.error}
+        // isChangeValue={touched || (meta?.touched && !meta?.submitting)}
+        error={(!touched && !!error) || (meta?.touched && meta?.error)}
         errorBorderColor={errorBorderColor}
         borderColor={borderColor}
         bgColor={bgColor}
@@ -180,7 +180,7 @@ const InputContainer = styled.div<{
   box-sizing: border-box;
   border: 1px solid;
   border-color: ${({ error, borderColor, errorBorderColor, isChangeValue }) =>
-    error && isChangeValue && errorBorderColor ? errorBorderColor : borderColor};
+    error && errorBorderColor ? errorBorderColor : borderColor};
   border-radius: 5px;
   background-color: ${({ bgColor }) => bgColor || '#fff'};
   position: relative;

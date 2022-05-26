@@ -51,11 +51,8 @@ let timeoutStart = Date.now()
 
 cryptoWaitReady().then(() => {
   // load all available addresses and accounts
-  keyring.loadAll({ ss58Format: 42, type: "sr25519" })
+  keyring.loadAll({ ss58Format: 42, type: "sr25519", store: new AccountsStore() })
 })
-// additional initialization here, including rendering
-
-// keyring.loadAll({ ss58Format: 42, type: "sr25519", store: new AccountsStore() })
 
 function onMessage(msg, port) {}
 
@@ -249,9 +246,11 @@ chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
       break
     case Messages.ForgotPassword:
       isLoggedIn = false
+      console.log("~ keyPairs", keyPairs)
       const newPair = handleUnlockPair(msg.payload)
       clearAccountsFromStorage(newPair.address)
       keyPairs = [newPair]
+      console.log("~ keyPairs", keyPairs)
       break
     case Messages.ConnectedApps:
       chrome.runtime.sendMessage({ type: Messages.ConnectedApps, payload: { connectedApps: authorizedDapps } })

@@ -20,6 +20,7 @@ import Snackbar from 'components/Snackbar/Snackbar';
 import { State } from 'redux/store';
 // import '@polkadot/extension-inject/crossenv';
 import '@polkadot/wasm-crypto/initOnlyAsm';
+import CongratsBackingUp from 'pages/AddImportAccount/CreateAccount/SecureWallet/CongratsBackingUp';
 
 function App() {
   const account = useAccount();
@@ -40,7 +41,8 @@ function App() {
 
   return (
     <div className="App">
-      {handlePage(pendingDapps, pendingToSign)}
+      <CongratsBackingUp />
+      {/* {handlePage(pendingDapps, pendingToSign)} */}
       <Snackbar
         width="194.9px"
         isOpen={tokenReceived}

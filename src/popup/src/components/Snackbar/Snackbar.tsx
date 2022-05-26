@@ -135,6 +135,7 @@ const Content = styled.div<{
   background-color: ${({ type }) => detectColor(type)};
   border-radius: 5px;
   box-shadow: 0 4px 33px 0 rgba(30, 35, 53, 0.15);
+  text-align: center;
 `;
 
 const ErrorMessage = styled.div<{ align?: string }>`

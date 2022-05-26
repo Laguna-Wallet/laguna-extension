@@ -14,7 +14,7 @@ import styled from 'styled-components';
 import { encryptPassword, isObjectEmpty, objectToArray } from 'utils';
 import { saveToStorage } from 'utils/chrome';
 import { encryptKeyringPairs, encryptMetaData, validatePassword } from 'utils/polkadot';
-import { Messages, StorageKeys } from 'utils/types';
+import { Messages, SnackbarMessages, StorageKeys } from 'utils/types';
 
 // todo proper typing
 type Props = {
@@ -33,7 +33,7 @@ const validate = async (values: any) => {
   }
 
   if (values.currentPassword && !(await validatePassword(values.currentPassword))) {
-    errors.currentPassword = 'Please enter correct current password';
+    errors.currentPassword = 'Incorrect current password';
   }
 
   if (!values.newPassword) {
@@ -102,7 +102,11 @@ function ChangePassword({ handleSubmit }: Props) {
       }
     });
 
-    goTo(Wallet, { isMenuOpen: true });
+    // setIsSnackbarOpen(true);
+    // setSnackbarMessage(SnackbarMessages.AccessRevoked);
+    // goTo(AddressBook, { snackbar: { show: true, message: SnackbarMessages.AddressAdded } });
+
+    goTo(Wallet, { snackbar: { show: true, message: SnackbarMessages.PasswordChanged } });
   };
   return (
     <Container>
@@ -192,7 +196,9 @@ function ChangePassword({ handleSubmit }: Props) {
               margin="auto 0 0 0"
               bgColor="#fff"
               bgImage="#fff"
-              disabledBgColor="#ffffff7d"
+              disabledBorderColor="rgba(255, 255, 255, 0.5)"
+              disabledColor="#18191a"
+              disabledBgColor="rgba(255, 255, 255, 0.5)"
               disabled={
                 !formValues?.currentPassword ||
                 !formValues?.newPassword ||
