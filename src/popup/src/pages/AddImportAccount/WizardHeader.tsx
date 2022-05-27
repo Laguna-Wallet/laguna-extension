@@ -12,6 +12,7 @@ type Props = {
   isHidden?: boolean;
   isFinishSlider?: boolean;
   isMnemonics?: boolean;
+  isImportPhase?: boolean;
 };
 
 const calcProgressBarSize = (
@@ -31,12 +32,13 @@ export default function WizardHeader({
   isHidden = true,
   onBack,
   isFinishSlider = false,
-  isMnemonics = false
+  isMnemonics = false,
+  isImportPhase = false
 }: Props) {
   const { activeStep, previousStep, isFirstStep } = useWizard();
 
   const handleBack = () => {
-    if (isFirstStep) {
+    if (isFirstStep && !isImportPhase) {
       goTo(Wallet);
     }
     if (onBack) {

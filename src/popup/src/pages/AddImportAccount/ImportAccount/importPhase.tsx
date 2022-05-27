@@ -8,7 +8,6 @@ import HumbleInput from 'components/primitives/HumbleInput';
 import Snackbar from 'components/Snackbar/Snackbar';
 import WizardHeader from 'pages/AddImportAccount/WizardHeader';
 import SignUp from 'pages/SignUp/SignUp';
-import Wallet from 'pages/Wallet/Wallet';
 import { goTo } from 'react-chrome-extension-router';
 import { useDropzone } from 'react-dropzone';
 import { useDispatch, useSelector } from 'react-redux';
@@ -25,6 +24,7 @@ import { KeyringPair$Json } from '@polkadot/keyring/types';
 import { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
 import { isHex } from '@polkadot/util';
 import WelcomeBack from 'pages/WelcomeBack/WelcomeBack';
+import AddImportForBoardedUser from '../AddImportForBoardedUser';
 
 type Props = {
   onClose: () => void;
@@ -116,23 +116,29 @@ function ImportPhase({
     !isValidPolkadotAddress(seedPhase) &&
     !mnemonicValidate(seedPhase);
 
+  const onBack = () => {
+    if (redirectedFromSignUp) {
+      goTo(SignUp);
+    } else if (redirectedFromForgotPassword) {
+      goTo(WelcomeBack);
+    } else {
+      if (seedPhase || file) {
+        dispatch(reset('ImportPhase'));
+        setUploaded(false);
+      } else {
+        goTo(AddImportForBoardedUser);
+      }
+    }
+  };
+
   return (
     <Container>
       <WizardHeader
         title={'IMPORT ACCOUNT'}
         isFinishSlider={isFinishSlider}
+        isImportPhase
         onClose={onClose}
-        onBack={() => {
-          dispatch(reset('ImportPhase'));
-          if (redirectedFromSignUp) {
-            goTo(SignUp);
-          } else if (redirectedFromForgotPassword) {
-            goTo(WelcomeBack);
-          } else {
-            goTo(Wallet);
-          }
-          // previousStep();
-        }}
+        onBack={onBack}
       />
 
       <Form onSubmit={handleSubmit(submit)}>
@@ -234,10 +240,6 @@ function ImportPhase({
     </Container>
   );
 }
-
-// export default connect((state: State) => ({
-//   errors: getFormSyncErrors('ImportPhaze')(state)
-// }))();
 
 export default reduxForm<Record<string, unknown>, any>({
   form: 'ImportPhase',
