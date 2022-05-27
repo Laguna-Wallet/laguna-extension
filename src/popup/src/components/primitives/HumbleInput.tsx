@@ -86,6 +86,7 @@ function HumbleInput({
     return value;
   };
 
+  console.log('~ meta?.touched && meta?.error', meta?.touched && meta?.error);
   return (
     <Container marginBottom={marginBottom} marginTop={marginTop}>
       <InputContainer
