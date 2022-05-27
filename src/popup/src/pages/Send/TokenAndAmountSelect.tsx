@@ -2,7 +2,8 @@ import styled from 'styled-components';
 import { Field } from 'redux-form';
 import { parseNumeric } from 'utils/validations';
 import SelectSmallIcon from 'assets/svgComponents/SelectSmallIcon';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
+import useOnClickOutside from 'hooks/useOnClickOutside';
 
 type Props = {
   Icon: any;
@@ -11,7 +12,10 @@ type Props = {
 };
 
 export default function TokenAndAmountSelect({ tokens, Icon, value }: Props) {
+  const optionContainerRef = useRef<HTMLDivElement | null>(null);
   const [isOpen, setIsOpen] = useState<boolean>(false);
+
+  useOnClickOutside(optionContainerRef, () => setIsOpen(false));
 
   const renderSelect = () => {
     return (
@@ -23,10 +27,10 @@ export default function TokenAndAmountSelect({ tokens, Icon, value }: Props) {
           </IconContainer>
         </StyledOption>
         {tokens && isOpen && (
-          <OptionContainer>
+          <OptionContainer ref={optionContainerRef}>
             {tokens.map((symbol: string) => (
               <StyledOption key={symbol} onClick={() => setIsOpen(false)}>
-                {symbol.toUpperCase()}
+                {/* {symbol.toUpperCase()} */}
               </StyledOption>
             ))}
           </OptionContainer>
@@ -92,14 +96,13 @@ const OptionContainer = styled.div`
   align-items: center;
   flex-direction: column;
   padding: 8px;
-  border-radius: 8px;
+  border-radius: 4px;
   box-shadow: 0 4px 33px 0 rgba(30, 35, 53, 0.15);
   position: absolute;
-  min-width: 90px;
-  top: 48px;
-  right: -20px;
+  width: 40px;
+  top: 38px;
   z-index: 5;
-  background-color: #18191a;
+  background-color: rgba(30, 35, 53, 0.15);
   color: #fff;
 `;
 

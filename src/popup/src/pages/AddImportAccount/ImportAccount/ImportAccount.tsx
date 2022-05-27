@@ -25,9 +25,8 @@ import EncodeAccount from 'pages/AddImportAccount/EncodeAccount';
 import SetupComplete from 'pages/AddImportAccount/SetupComplete';
 import ImportPhase from 'pages/AddImportAccount/ImportAccount/importPhase';
 import Wallet from 'pages/Wallet/Wallet';
-import { saveToStorage, sendMessagePromise } from 'utils/chrome';
+import { saveToStorage } from 'utils/chrome';
 import WelcomeBack from 'pages/WelcomeBack/WelcomeBack';
-import keyring from '@polkadot/ui-keyring';
 import { clearAccountsFromStorage } from 'utils';
 import { toggleLoading } from 'redux/actions';
 
