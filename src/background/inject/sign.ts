@@ -4,6 +4,8 @@ import { sendMessage } from "../communication"
 import { v4 as uuidv4 } from "uuid"
 
 export async function signPayload(payload: SignerPayloadJSON): Promise<SignerResult> {
+  console.log("parseInt", payload)
+
   const id = uuidv4()
 
   const result: any = await sendMessage("SIGN_PAYLOAD", payload)

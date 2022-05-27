@@ -9,10 +9,10 @@ type Props = {
 export default function Checkbox({ value, onChange }: Props) {
   return (
     <Container>
-      {/* <Input value={value} onChange={() => onChange(!value)} type="checkbox" /> */}
-      <CheckboxContainer onClick={() => onChange(!value)}>
+      <Input value={value} onChange={() => onChange(!value)} type="checkbox" />
+      {/* <CheckboxContainer onClick={() => onChange(!value)}>
         {value && <CheckBoxCheckMarkIcon />}
-      </CheckboxContainer>
+      </CheckboxContainer> */}
     </Container>
   );
 }
@@ -43,6 +43,8 @@ const Input = styled.input`
   width: 15px; /* not needed */
   background-color: #111;
   color: #111;
+  cursor: pointer;
+  margin-top: 4px;
   &:checked:before {
     background-color: green;
   }
