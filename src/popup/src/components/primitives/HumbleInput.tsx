@@ -4,6 +4,7 @@ import { truncateString } from 'utils';
 import { AccountMeta } from 'utils/types';
 import CopyIcon from 'assets/svgComponents/CopyIcon';
 import TextareaAutosize from 'react-textarea-autosize';
+import WarningMark from 'assets/svgComponents/WarningMark';
 
 type InputProps = {
   id: string;
@@ -144,7 +145,8 @@ function HumbleInput({
       {(meta?.error || error) && showError && (
         <ErrorContainer>
           <ErrorMessage errorColor={errorColor}>
-            {error || (meta?.touched && meta?.error)}
+            {error || (meta?.touched && meta?.error && <WarningMark />)}
+            <ErrorText>{error || (meta?.touched && meta?.error)}</ErrorText>
           </ErrorMessage>
         </ErrorContainer>
       )}
@@ -320,7 +322,13 @@ const ErrorContainer = styled.div`
 `;
 
 const ErrorMessage = styled.div<{ errorColor?: string }>`
+  display: flex;
+  align-items: center;
   color: ${({ errorColor }) => errorColor || '#353945'};
   font-size: 12px;
-  margin-left: 16px;
+  margin-left: 2px;
+`;
+
+const ErrorText = styled.div`
+  margin-left: 4px;
 `;
