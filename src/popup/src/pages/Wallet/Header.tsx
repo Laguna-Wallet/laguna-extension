@@ -1,7 +1,7 @@
 import DownArrowIcon from 'assets/svgComponents/DownArrowIcon';
 import styled from 'styled-components/macro';
 import { Turn as Hamburger } from 'hamburger-react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Popup from 'components/Popup/Popup';
 import Accounts from 'components/popups/Accounts';
 import { useAccount } from 'context/AccountContext';
@@ -33,23 +33,31 @@ export default function Header({
   smallIcon = false
 }: Props) {
   const account = useAccount();
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
   const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false);
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(menuInitialOpenState || false);
   const [isHamburgerOpen, setOpen] = useState<boolean>(false);
+  const [userContainerWidth, setUserContainerWidth] = useState<number>(0);
 
   const name = account?.getActiveAccount()?.meta?.name;
   const accountImg = account?.getActiveAccount()?.meta?.img;
   const formattedName = name?.length > 15 ? truncateString(name) : name;
 
+  useEffect(() => {
+    if (containerRef?.current) {
+      setUserContainerWidth(containerRef?.current.offsetWidth);
+    }
+  }, [formattedName]);
+
   return (
     <Container bgColor={bgColor}>
       {isMenuOpen && <Menu onClose={() => setIsMenuOpen(false)} />}
       <Content>
-        <UserContainer>
+        <UserContainer ref={containerRef} onClick={() => setIsPopupOpen(true)}>
           <Avatar img={accountImg} />
           <UserName>{formattedName}</UserName>
-          <DownIconContainer onClick={() => setIsPopupOpen(true)}>
+          <DownIconContainer>
             <DownArrowIcon />
           </DownIconContainer>
           {/* <ButtonsIconContainer>
@@ -81,7 +89,7 @@ export default function Header({
 
       {isPopupOpen && (
         <Popup onClose={() => setIsPopupOpen(false)}>
-          <Accounts />
+          <Accounts userContainerWidth={userContainerWidth} />
         </Popup>
       )}
     </Container>
@@ -116,6 +124,7 @@ const Content = styled.div`
 const UserContainer = styled.div`
   display: flex;
   align-items: center;
+  cursor: pointer;
 `;
 
 const Avatar = styled.div<{ img: string }>`

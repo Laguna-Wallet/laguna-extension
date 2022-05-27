@@ -13,7 +13,11 @@ import { useDispatch } from 'react-redux';
 import { toggleLoading } from 'redux/actions';
 import keyring from '@polkadot/ui-keyring';
 
-export default function Accounts() {
+type Props = {
+  userContainerWidth: number;
+};
+
+export default function Accounts({ userContainerWidth }: Props) {
   const accountCtx = useAccount();
   const dispatch = useDispatch();
   // todo save in storage
@@ -32,7 +36,7 @@ export default function Accounts() {
 
   return (
     <Container>
-      <TriangleContainer>
+      <TriangleContainer userContainerWidth={userContainerWidth}>
         <TriangleIcon />
       </TriangleContainer>
 
@@ -111,10 +115,10 @@ const Container = styled.div`
   margin: 46px 24px 0;
 `;
 
-const TriangleContainer = styled.div`
+const TriangleContainer = styled.div<{ userContainerWidth: number }>`
   position: absolute;
   top: -8px;
-  left: 38%;
+  left: ${({ userContainerWidth }) => `${userContainerWidth - 13}px`};
   transform: translate(-50%);
 `;
 
