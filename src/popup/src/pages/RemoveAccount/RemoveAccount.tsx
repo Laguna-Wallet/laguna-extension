@@ -51,7 +51,7 @@ const RemoveAccount = ({ handleSubmit, pristine, submitting }: InjectedFormProps
         dispatch(toggleLoading(true));
         if (first) {
           account.saveActiveAccount(first);
-          goTo(Wallet, { snackbar: { show: true, message: SnackbarMessages.PasswordChanged } });
+          goTo(Wallet, { snackbar: { show: true, message: SnackbarMessages.WalletRemoved } });
         } else {
           account.saveActiveAccount({});
           clearFromStorage(StorageKeys.OnBoarding);

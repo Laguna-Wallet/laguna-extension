@@ -119,13 +119,13 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   background-color: #f9fafb;
-  /* padding: 30px 26px 43px; */
-  padding: 30px 16px 26px 16px;
+  padding: 22px 16px 43px;
   box-sizing: border-box;
 `;
 
 const MainContent = styled.div`
   margin-top: 30px;
+  padding: 0 10px;
 `;
 
 const Title = styled.span`

@@ -112,7 +112,7 @@ const Container = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   background-color: #fff;
-  padding: 30px 16px 11px 16px;
+  padding: 22px 16px 11px;
   box-sizing: border-box;
 `;
 
@@ -121,6 +121,7 @@ const Title = styled.span`
   font-size: 22px;
   font-weight: 500;
   margin-top: 30px;
+  padding: 0 10px;
   color: #18191a;
 `;
 
@@ -128,9 +129,9 @@ const IconContainer = styled.div`
   width: 153px;
   height: 153px;
   border-radius: 100%;
-  background-color: #efefef;
+  background-color: #f9fafb;
   display: flex;
-  margin: 24px auto 0 auto;
+  margin: 24px auto 0;
   position: relative;
 `;
 
@@ -147,6 +148,7 @@ const TextContainer = styled.div`
   text-align: left;
   color: #353945;
   line-height: 1.5;
+  padding: 0 10px;
 
   span {
     cursor: pointer;
@@ -160,6 +162,7 @@ const Buttons = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding: 0 10px;
 `;
 
 const SkipButton = styled.div`

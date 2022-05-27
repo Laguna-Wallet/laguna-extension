@@ -50,6 +50,7 @@ function ImportPhase({
   const [uploaded, setUploaded] = useState<boolean>(false);
   const [isFinishSlider, setIsFinishSlider] = useState(false);
   const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const formValues = useSelector((state: any) => state?.form?.ImportPhase?.values);
   const { seedPhase, file, password }: any = { ...formValues };
@@ -57,18 +58,23 @@ function ImportPhase({
 
   const onDrop = useCallback(async (acceptedFile: any) => {
     if (!acceptedFile.length) return;
-
+    setIsLoading(true);
     const json = await convertUploadedFileToJson(acceptedFile);
     // isKeyringPairs$Json(json) ||
     if (isKeyringJson(json)) {
+      setIsLoading(false);
       setUploaded(true);
       setIsFinishSlider(true);
       dispatch(change('ImportPhase', 'file', json));
     } else {
       setIsSnackbarOpen(true);
-      setSnackbarError('Invalid json file');
+      setSnackbarError('Not a valid JSON backup file (.json)');
     }
   }, []);
+
+  // useEffect(()=>{
+
+  // }, [json])
 
   const { getRootProps, getInputProps, open } = useDropzone({
     onDrop,
@@ -116,6 +122,22 @@ function ImportPhase({
     !isValidPolkadotAddress(seedPhase) &&
     !mnemonicValidate(seedPhase);
 
+  const renderFile = () =>
+    isLoading ? (
+      <>
+        <IconContainerBorder>
+          <UploadedIconContainer onClick={open}>
+            <FileUploadIcon fill="#777e90" />
+          </UploadedIconContainer>
+        </IconContainerBorder>
+        <LoadedText>Uploading file...</LoadedText>
+      </>
+    ) : (
+      <IconContainer onClick={open}>
+        <FileUploadIcon fill="#777e90" />
+      </IconContainer>
+    );
+
   return (
     <Container>
       <WizardHeader
@@ -141,21 +163,20 @@ function ImportPhase({
             <FileUploadContainer>
               <input {...getInputProps()} />
               {uploaded ? (
-                <IconContainerBorder>
-                  <UploadedIconContainer>
-                    <UploadFinishedIcon />
-                  </UploadedIconContainer>
-                </IconContainerBorder>
+                <>
+                  <IconContainerBorder>
+                    <UploadedIconContainer>
+                      <UploadFinishedIcon />
+                    </UploadedIconContainer>
+                  </IconContainerBorder>
+                  <Text>Upload Complete</Text>
+                </>
               ) : (
-                <IconContainer onClick={open}>
-                  {/* {isDragActive ? <ActiveImportIcon /> : <FileUploadIcon fill="#777e90" />} */}
-                  <FileUploadIcon fill="#777e90" />
-                </IconContainer>
+                renderFile()
               )}
-              {uploaded ? <Text>Upload Complete</Text> : ''}
             </FileUploadContainer>
           )}
-          {!uploaded && (
+          {!uploaded && !isLoading && (
             <InputContainer>
               <Field
                 id="seedPhase"
@@ -228,7 +249,7 @@ function ImportPhase({
           close={() => setIsSnackbarOpen(false)}
           type="error"
           align="left"
-          bottom={seedPhase ? '100px' : file ? '150px' : '100px'}
+          bottom={file ? '150px' : '92px'}
         />
       </Form>
     </Container>
@@ -252,8 +273,16 @@ const Container = styled.div`
   flex-direction: column;
   justify-content: flex-end;
   background-color: #fff;
-  padding: 30px 16px 38px 16px;
+  padding: 22px 16px 29px;
   box-sizing: border-box;
+`;
+
+const LoadedText = styled.p`
+  font-family: Inter;
+  font-size: 18px;
+  line-height: 1.35;
+  color: #b1b5c3;
+  margin-top: 35.5px;
 `;
 
 const IconContainerBorder = styled.div`
@@ -283,11 +312,12 @@ const IconContainerBorder = styled.div`
 `;
 
 const Form = styled.form`
-  width: 100%;
+  // width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding: 0 10px;
   justify-content: space-between;
 `;
 
