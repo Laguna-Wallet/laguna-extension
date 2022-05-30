@@ -100,10 +100,10 @@ export default function TokenDashboard({ asset }: Props) {
               <Card>
                 <Balance>
                   <NetworkIcons chain={chain} />
-                  <span>{new BigNumber(balance).toFormat(4) || 0}</span>
+                  <span>{new BigNumber(balance).toFormat(4, 1) || 0}</span>
                   <span>{symbol}</span>
                 </Balance>
-                <BalanceInUsd>${new BigNumber(balanceInUsd).toFormat(2)}</BalanceInUsd>
+                <BalanceInUsd>${new BigNumber(balanceInUsd).toFixed(2)}</BalanceInUsd>
                 <CardBottom>
                   <Tag>{handleChain(chain)}</Tag>
                   <Rate negativeValue={negativeValue}>

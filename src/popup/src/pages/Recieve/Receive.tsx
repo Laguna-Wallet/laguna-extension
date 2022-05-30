@@ -25,7 +25,7 @@ export default function Receive({ propsFromTokenDashboard }: Props) {
   const { prices, infos, disabledTokens } = useSelector((state: State) => state.wallet);
 
   const [networks, setNetworks] = useState<any>(getNetworks(prices, infos, disabledTokens));
-  const [selectedNetwork, setSelectedNetwork] = useState<Network>();
+  const [selectedNetwork, setSelectedNetwork] = useState<Network & Asset>();
 
   const [recoded, setRecoded] = useState<string>('');
 
@@ -36,7 +36,7 @@ export default function Receive({ propsFromTokenDashboard }: Props) {
       // const prefix = api.consts.system.ss58Prefix;
       const recoded = recodeAddress(
         activeAccount.address,
-        selectedNetwork.prefix,
+        selectedNetwork?.prefix,
         selectedNetwork?.encodeType
       );
       setRecoded(recoded);
@@ -57,7 +57,7 @@ export default function Receive({ propsFromTokenDashboard }: Props) {
     <Container>
       <Wizard>
         {!propsFromTokenDashboard?.fromTokenDashboard && (
-          <SelectNetwork networks={networks} setSelectedNetwork={setSelectedNetwork} />
+          <SelectNetwork setSelectedNetwork={setSelectedNetwork} />
         )}
 
         <ReceiveToken

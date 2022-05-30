@@ -9,25 +9,32 @@ type Props = {
   // Todo Appropriate typing
   asset: Asset;
   handleClick: () => void;
+  iconSize?: string;
 };
 
-export default function ChainItem({ asset, handleClick }: Props) {
-  const {chain, symbol, balance, calculatedPrice} = asset
+export default function ChainItem({ asset, handleClick, iconSize }: Props) {
+  const { chain, symbol, balance, calculatedPrice } = asset;
+  const iconCurrentSize = iconSize || '36px';
   return (
     // <StyledLink component={TokenDashboard} props={{ asset }}>
     <Container onClick={handleClick}>
-      <ListItemIcon>
-        <NetworkIcons width="36px" height="36px" chain={chain} />
+      <ListItemIcon iconSize={iconSize}>
+        <NetworkIcons
+          width={iconCurrentSize}
+          height={iconCurrentSize}
+          isSmallIcon={!!iconSize}
+          chain={chain}
+        />
       </ListItemIcon>
       <ListItemText>
-        <Title >{chain}</Title>
+        <Title>{chain}</Title>
         <Tag>{chain} Chain</Tag>
       </ListItemText>
       <ListItemText>
         <Symbol>
           {balance ? new BigNumber(balance).toFormat(4, 1) : 0} {symbol}
         </Symbol>
-        <Value>${(new BigNumber(calculatedPrice).toFixed(2)) || 0}</Value>
+        <Value>${calculatedPrice ? new BigNumber(calculatedPrice).toFixed(2) : 0}</Value>
       </ListItemText>
     </Container>
     // </StyledLink>
@@ -51,9 +58,9 @@ const Container = styled.div`
   cursor: pointer;
 `;
 
-const ListItemIcon = styled.div`
-  width: 36px;
-  height: 36px;
+const ListItemIcon = styled.div<{ iconSize?: string }>`
+  width: ${({ iconSize }) => iconSize || '36px'};
+  height: ${({ iconSize }) => iconSize || '36px'};
   background-color: #eeeeee;
   border-radius: 100%;
 `;
@@ -80,10 +87,10 @@ const Title = styled.div`
 `;
 
 const Symbol = styled.div`
-font-size: 14px;
-text-transform: uppercase;
-color: #000;
-`
+  font-size: 14px;
+  text-transform: uppercase;
+  color: #000;
+`;
 
 const Tag = styled.div`
   font-size: 10px;

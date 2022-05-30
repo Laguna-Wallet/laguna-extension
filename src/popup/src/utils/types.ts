@@ -47,7 +47,7 @@ export interface Network {
   price_change_percentage_24h?: number;
   marketCap?: number;
   encodeType?: string;
-  prefix: number;
+  prefix?: number;
 }
 
 export interface Asset {
@@ -55,7 +55,7 @@ export interface Asset {
   symbol: string;
   chain: string;
   balance?: number;
-  calculatedPrice: number;
+  calculatedPrice?: number;
   price?: number;
   encodeType?: string;
   assetsCount?: number;
