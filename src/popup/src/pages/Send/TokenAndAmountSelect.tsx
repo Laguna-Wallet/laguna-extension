@@ -78,16 +78,15 @@ const Container = styled.div`
 `;
 
 const IconContainer = styled.div`
-  margin-left: 9px;
-  width: 13px;
-  height: 8px;
-  position: relative;
-  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   svg {
-    position: absolute;
-    min-width: auto;
-    min-height: auto;
+    margin-left: 9px;
+
+    min-width: 13px;
+    min-height: 8px;
   }
 `;
 
@@ -107,7 +106,8 @@ const OptionContainer = styled.div`
 `;
 
 const StyledInput = styled.input<{ isValue: boolean }>`
-  flex: 1;
+  width: ${({ isValue }) => (isValue ? '100%' : 'calc(100% - 40px)')};
+  padding-right: 12px;
   height: 48px;
   margin-left: ${({ isValue }) => (isValue ? '2px' : '14px')};
   border: 0;

@@ -124,9 +124,11 @@ function ImportPhase({
     } else if (redirectedFromForgotPassword) {
       goTo(WelcomeBack);
     } else {
-      if (seedPhase || file) {
+      if (seedPhase || file || isLoading) {
         dispatch(reset('ImportPhase'));
         setUploaded(false);
+        setIsSnackbarOpen(false);
+        setIsLoading(false);
       } else {
         goTo(AddImportForBoardedUser);
       }
