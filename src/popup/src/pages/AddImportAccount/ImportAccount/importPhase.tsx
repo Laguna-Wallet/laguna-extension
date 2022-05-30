@@ -13,7 +13,7 @@ import { useDropzone } from 'react-dropzone';
 import { useDispatch, useSelector } from 'react-redux';
 import { useWizard } from 'react-use-wizard';
 import { reduxForm, change, reset, Field, InjectedFormProps } from 'redux-form';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import { convertUploadedFileToJson } from 'utils';
 import { isKeyringJson, isValidKeyringPassword, isValidPolkadotAddress } from 'utils/polkadot';
 import { mnemonicValidate } from '@polkadot/util-crypto';
@@ -50,6 +50,7 @@ function ImportPhase({
   const [uploaded, setUploaded] = useState<boolean>(false);
   const [isFinishSlider, setIsFinishSlider] = useState(false);
   const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const formValues = useSelector((state: any) => state?.form?.ImportPhase?.values);
   const { seedPhase, file, password }: any = { ...formValues };
@@ -57,16 +58,17 @@ function ImportPhase({
 
   const onDrop = useCallback(async (acceptedFile: any) => {
     if (!acceptedFile.length) return;
-
+    setIsLoading(true);
     const json = await convertUploadedFileToJson(acceptedFile);
     // isKeyringPairs$Json(json) ||
     if (isKeyringJson(json)) {
+      setIsLoading(false);
       setUploaded(true);
       setIsFinishSlider(true);
       dispatch(change('ImportPhase', 'file', json));
     } else {
       setIsSnackbarOpen(true);
-      setSnackbarError('Invalid json file');
+      setSnackbarError('Not a valid JSON backup file (.json)');
     }
   }, []);
 
@@ -122,14 +124,41 @@ function ImportPhase({
     } else if (redirectedFromForgotPassword) {
       goTo(WelcomeBack);
     } else {
-      if (seedPhase || file) {
+      if (seedPhase || file || isLoading) {
         dispatch(reset('ImportPhase'));
         setUploaded(false);
+        setIsSnackbarOpen(false);
+        setIsLoading(false);
       } else {
         goTo(AddImportForBoardedUser);
       }
     }
   };
+
+  const renderDots = () => (
+    <AnimationDots>
+      <DotFirst />
+      <DotSecond />
+      <DotThird />
+    </AnimationDots>
+  );
+
+  const renderFile = () =>
+    isLoading ? (
+      <>
+        <IconContainerBorder isLoading={isLoading}>
+          <AnimatedDiv />
+          <UploadedIconContainer onClick={open}>
+            <FileUploadIcon fill="#777e90" />
+          </UploadedIconContainer>
+        </IconContainerBorder>
+        <LoadedText>Uploading file {renderDots()}</LoadedText>
+      </>
+    ) : (
+      <UploadedIconContainer onClick={open}>
+        <FileUploadIcon fill="#777e90" />
+      </UploadedIconContainer>
+    );
 
   return (
     <Container>
@@ -147,28 +176,27 @@ function ImportPhase({
             <FileUploadContainer>
               <input {...getInputProps()} />
               {uploaded ? (
-                <IconContainerBorder>
-                  <UploadedIconContainer>
-                    <UploadFinishedIcon />
-                  </UploadedIconContainer>
-                </IconContainerBorder>
+                <>
+                  <IconContainerBorder isLoading={isLoading}>
+                    <UploadedIconContainer>
+                      <UploadFinishedIcon />
+                    </UploadedIconContainer>
+                  </IconContainerBorder>
+                  <Text>Upload Complete</Text>
+                </>
               ) : (
-                <IconContainer onClick={open}>
-                  {/* {isDragActive ? <ActiveImportIcon /> : <FileUploadIcon fill="#777e90" />} */}
-                  <FileUploadIcon fill="#777e90" />
-                </IconContainer>
+                renderFile()
               )}
-              {uploaded ? <Text>Upload Complete</Text> : ''}
             </FileUploadContainer>
           )}
-          {!uploaded && (
+          {!uploaded && !isLoading && (
             <InputContainer>
               <Field
                 id="seedPhase"
                 name="seedPhase"
                 type="textarea"
                 label="seedPhase"
-                placeholder="Enter your seed phrase, or drag and drop a JSON backup file."
+                placeholder="Enter your seed phrase, Polkadot address or drag and drop a JSON backup file"
                 component={HumbleInput}
                 props={{
                   type: 'textarea',
@@ -235,7 +263,7 @@ function ImportPhase({
           close={() => setIsSnackbarOpen(false)}
           type="error"
           align="left"
-          bottom={file ? '148px' : '100px'}
+          bottom={file ? '140px' : '80px'}
         />
       </Form>
     </Container>
@@ -255,11 +283,22 @@ const Container = styled.div`
   flex-direction: column;
   justify-content: flex-end;
   background-color: #fff;
-  padding: 30px 26px 38px;
+  padding: 22px 16px 29px;
   box-sizing: border-box;
 `;
 
-const IconContainerBorder = styled.div`
+const LoadedText = styled.p`
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  font-family: Inter;
+  font-size: 18px;
+  line-height: 1.35;
+  color: #b1b5c3;
+  margin-top: 35.5px;
+`;
+
+const IconContainerBorder = styled.div<{ isLoading: boolean }>`
   width: 212px;
   height: 212px;
   display: flex;
@@ -273,17 +312,123 @@ const IconContainerBorder = styled.div`
     #d7cce2 48.8%,
     #c7dfe4 73.7%,
     #edf1e1 96.23%,
-    #ffffff 115.8%
+    #ffffff 215.8%
   );
   border-radius: 100%;
+  position: relative;
+`;
+
+const rotateAnimation = keyframes`
+100% {
+  transform: rotate(360deg);
+}
+`;
+
+const AnimatedDiv = styled.div`
+  width: 110px;
+  height: 110px;
+  position: absolute;
+  z-index: 5;
+  top: 50%;
+  left: 50%;
+  background-color: #fff;
+  border-bottom-right-radius: 100% 100%;
+  animation: ${rotateAnimation};
+  animation-duration: 2.5s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+  transform-origin: top left;
+  transform-style: preserve-3D;
+`;
+
+const AnimationDots = styled.div`
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  height: 9px;
+  margin-left: 3px;
+`;
+
+const animationDotFirst = keyframes`
+19%{
+  transform: scale(0);
+}
+20%{
+  transform: scale(1);
+}
+100%{
+  transform: scale(1);
+}
+`;
+
+const animationDotSecond = keyframes`
+
+39%{
+  transform: scale(0);
+}
+40%{
+  transform: scale(1);
+}
+100%{
+  transform: scale(1);
+}
+`;
+
+const animationDotThird = keyframes`
+59%{
+  transform: scale(0);
+}
+60%{
+  transform: scale(1);
+}
+100%{
+  transform: scale(1);
+}
+`;
+
+const DotFirst = styled.span`
+  height: 2.4px;
+  width: 2.4px;
+  margin-right: 2.5px;
+  background-color: #b1b5c3;
+  border-radius: 100%;
+  animation-name: ${animationDotFirst};
+  animation-duration: 0.8s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+`;
+
+const DotSecond = styled.span`
+  height: 2.4px;
+  width: 2.4px;
+  margin-right: 2.5px;
+  background-color: #b1b5c3;
+  border-radius: 100%;
+  animation-name: ${animationDotSecond};
+  animation-duration: 0.8s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+`;
+
+const DotThird = styled.span`
+  height: 2.4px;
+  width: 2.4px;
+  margin-right: 2.5px;
+  background-color: #b1b5c3;
+  border-radius: 100%;
+  animation-name: ${animationDotThird};
+  animation-duration: 0.8s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
 `;
 
 const Form = styled.form`
-  width: 100%;
+  // width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding: 0 10px;
   justify-content: space-between;
 `;
 
@@ -322,6 +467,7 @@ const UploadedIconContainer = styled.div`
   align-items: center;
   border: 8px solid #fff;
   justify-content: center;
+  z-index: 6;
 `;
 
 const Text = styled.div`

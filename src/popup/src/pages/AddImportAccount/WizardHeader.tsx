@@ -151,12 +151,17 @@ const BottomSection = styled.div`
   height: 30px;
   justify-content: center;
   align-items: center;
-  margin-top: 10px;
+  margin-top: 15px;
 `;
 
 const LeftIconContainer = styled.div`
   margin-right: auto;
   cursor: pointer;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  aline-item: center;
+  justify-content: center;
 `;
 
 const StepNumber = styled.div`
@@ -167,12 +172,12 @@ const StepNumber = styled.div`
 `;
 
 const Title = styled.div`
-  line-height: 1.45;
-  letter-spacing: 0.85px;
   text-align: center;
-  color: #000;
+  color: #18191a;
   font-family: 'IBM Plex Sans';
   font-size: 17px;
   font-weight: 500;
   margin-right: auto;
+  line-height: 2.35;
+  letter-spacing: 1.7px;
 `;

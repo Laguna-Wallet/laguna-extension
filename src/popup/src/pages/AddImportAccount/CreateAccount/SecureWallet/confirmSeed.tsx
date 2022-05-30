@@ -163,7 +163,8 @@ export default function ConfirmSeed({
         bgColor={'#000000'}
         borderColor="#000000"
         justify="center"
-        margin="auto 0px 0px 0px"
+        margin="auto 10px 0px"
+        width="323px"
       />
     </Container>
   );
@@ -175,10 +176,12 @@ const Container = styled.div`
   width: 100%;
   height: 100%;
   display: flex;
-  padding: 30px 26px 29px;
+  padding: 22px 16px 29px;
   flex-direction: column;
 `;
-const MainContent = styled.div``;
+const MainContent = styled.div`
+  padding: 0 10px;
+`;
 
 const SelectWords = styled.div`
   width: 100%;
@@ -195,7 +198,7 @@ const Title = styled.div`
   font-size: 22px;
   font-weight: 500;
   color: #18191a;
-  margin-top: 30px;
+  margin-top: 16px;
 `;
 
 const Description = styled.div`
