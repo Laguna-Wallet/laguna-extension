@@ -15,23 +15,24 @@ import { goTo } from 'react-chrome-extension-router';
 import Wallet from 'pages/Wallet/Wallet';
 import { checkPasswordStrength } from 'utils/checkPasswordStrength';
 import SignUp from 'pages/SignUp/SignUp';
+import WarningMark from 'assets/svgComponents/WarningMark';
 
 const validate = (values: { password: string; confirmPassword: string }) => {
   const errors: { password?: string; confirmPassword?: string } = {};
   if (!values.password) {
     errors.password = 'Please fill out this field';
   } else if (values?.password?.length < 8) {
-    errors.password = 'Password should be minimum 8 characters length';
+    errors.password = 'Must be at least 8 characters';
   } else if (!values.confirmPassword) {
     errors.confirmPassword = 'Please fill out this field';
   } else if (values?.confirmPassword?.length < 8) {
-    errors.confirmPassword = 'Password should be minimum 8 characters length';
+    errors.confirmPassword = 'Must be at least 8 characters';
   } else if (
     values.confirmPassword &&
     values.password &&
     values.confirmPassword !== values.password
   ) {
-    errors.confirmPassword = "Passwords don't match";
+    errors.confirmPassword = 'Password do not match';
   }
 
   return errors;
@@ -89,7 +90,9 @@ function CreatePassword({
       <Form onSubmit={handleSubmit(submit)}>
         <MainContent>
           <Title>Create a Password</Title>
-          <Description>Please create a secure password to unlock your HydroX wallet:</Description>
+          <Description>
+            This password will unlock your wallet and encrypt all your accounts:
+          </Description>
           <Field
             id="password"
             name="password"
