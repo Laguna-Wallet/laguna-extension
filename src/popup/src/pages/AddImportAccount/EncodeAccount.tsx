@@ -48,7 +48,7 @@ function EncodeAccount({
       const isValid = await validatePassword(values?.password);
 
       if (isValid) {
-        await handleEncode(values?.password);
+        handleEncode(values?.password);
 
         if (hasBoarded) {
           goTo(Wallet);
