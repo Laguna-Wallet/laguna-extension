@@ -139,7 +139,7 @@ function ImportPhase({
   return (
     <Container>
       <WizardHeader
-        title={'IMPORT ACCOUNT'}
+        title={redirectedFromForgotPassword ? 'RESTORE WALLET' : 'IMPORT ACCOUNT'}
         isFinishSlider={isFinishSlider}
         isImportPhase
         onClose={onClose}
