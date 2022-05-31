@@ -25,23 +25,21 @@ import CongratsBackingUp from 'pages/AddImportAccount/CreateAccount/SecureWallet
 function App() {
   const account = useAccount();
   const dispatch = useDispatch();
-  const { idleTimeout, pendingDappAuthorization, pendingToSign, tokenReceived } = useSelector(
+
+  const { pendingDappAuthorization, pendingToSign, tokenReceived } = useSelector(
     (state: State) => state.wallet
   );
 
-  const { isLoggedIn } = useSelector((state: any) => state.wallet);
   const pendingDapps = pendingDappAuthorization?.pendingDappAuthorization;
 
   useEffect(() => {
-    chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
+    chrome.runtime.onMessage.addListener(async (msg) => {
       MessageListener(msg, dispatch);
-      sendResponse({});
     });
   }, []);
 
   return (
     <div className="App">
-      {/* <CongratsBackingUp /> */}
       {handlePage(pendingDapps, pendingToSign)}
       <Snackbar
         width="194.9px"

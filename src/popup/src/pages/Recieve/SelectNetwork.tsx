@@ -2,41 +2,49 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import Header from 'pages/Wallet/Header';
-import walletBG from 'assets/imgs/walletBG.jpg';
 import Wallet from 'pages/Wallet/Wallet';
 import HumbleInput from 'components/primitives/HumbleInput';
 // Todo Move ChainItem Into Shared
 import ChainItem from '../../pages/Wallet/ChainItem';
 import { useAccount } from 'context/AccountContext';
 import { goTo } from 'react-chrome-extension-router';
-import { Network } from 'utils/types';
+import { Asset, Network } from 'utils/types';
 import { useWizard } from 'react-use-wizard';
-import { useDispatch } from 'react-redux';
-import { selectAsset } from 'redux/actions';
-import NetworkItem from 'pages/Wallet/NetworkItem';
+import { useSelector } from 'react-redux';
 import LoopIcon from 'assets/svgComponents/loopIcon';
+import { State } from 'redux/store';
+import { getAssets } from 'utils/polkadot';
+import TokenDashboard from 'pages/TokenDashboard/TokenDashboard';
 
 type Props = {
-  networks: Network[];
-  setSelectedNetwork: (network: Network) => void;
+  setSelectedNetwork: (network: Network & Asset) => void;
 };
 
-export default function SelectNetwork({ networks, setSelectedNetwork }: Props) {
-  const { nextStep } = useWizard();
+export default function SelectNetwork({ setSelectedNetwork }: Props) {
   const account = useAccount();
-  const dispatch = useDispatch();
+  const { nextStep } = useWizard();
 
+  const [assets, setAssets] = useState<(Asset[] & Network[]) | undefined>(undefined);
   const [networksFilter, setNetworksFilter] = useState<string>('');
 
-  const handleClick = (network: Network) => {
-    setSelectedNetwork(network);
-    nextStep();
-  };
+  const { prices, infos, accountsBalances, disabledTokens } = useSelector(
+    (state: State) => state.wallet
+  );
 
-  const renderNetworks = (networks: Network[], networksFilter: string) => {
-    return networks.filter((network) =>
-      network.name.toLowerCase().includes(networksFilter.toLowerCase())
-    );
+  const balances = accountsBalances?.balances;
+
+  useEffect(() => {
+    async function go() {
+      const { assets }: any = await getAssets(prices, infos, balances, disabledTokens);
+      setAssets(assets);
+    }
+
+    go();
+  }, []);
+
+  const handleClick = (asset: Network & Asset) => {
+    setSelectedNetwork(asset);
+    nextStep();
   };
 
   return (
@@ -48,7 +56,7 @@ export default function SelectNetwork({ networks, setSelectedNetwork }: Props) {
           goTo(Wallet);
         }}
         backAction={() => goTo(Wallet)}
-        stroke= '#777E91'
+        stroke="#777E91"
       />
       <Content>
         <HumbleInput
@@ -65,19 +73,26 @@ export default function SelectNetwork({ networks, setSelectedNetwork }: Props) {
           placeholder="Search"
           height="45px"
           marginTop="0"
-          fontSize='14px'
-          fontWeight='500'
-          IconAlignment='left'
+          fontSize="14px"
+          fontWeight="500"
+          IconAlignment="left"
           Icon={<LoopIcon />}
         />
         <List>
-          {networks
-            ? networks.length === 0
+          {assets
+            ? assets.length === 0
               ? 'no assets'
-              : renderNetworks(networks, networksFilter).map((network: any) => {
+              : assets.map((asset: Asset & Network) => {
                   return (
-                    <ChainItemContainer onClick={() => handleClick(network)} key={network.symbol}>
-                      <NetworkItem network={network} isMarketCap />
+                    <ChainItemContainer onClick={() => handleClick(asset)} key={asset.chain}>
+                      <ChainItem
+                        asset={asset}
+                        iconSize="28px"
+                        accountAddress={account.getActiveAccount()?.address}
+                        handleClick={() => {
+                          goTo(TokenDashboard, { asset });
+                        }}
+                      />
                     </ChainItemContainer>
                   );
                 })

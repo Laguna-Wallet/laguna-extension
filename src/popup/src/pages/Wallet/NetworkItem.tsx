@@ -5,12 +5,12 @@ import { Asset } from 'utils/types';
 
 type Props = {
   isMarketCap?: boolean;
-  network: Asset
-}
+  network: Asset;
+};
 
-export default function NetworkItem({network, isMarketCap = false }: Props) {
-  const {chain, assetsCount, calculatedPrice, marketCap} = network;
-  
+export default function NetworkItem({ network, isMarketCap = false }: Props) {
+  const { chain, assetsCount, calculatedPrice, marketCap } = network;
+
   return (
     <Container>
       <ListItemIcon>
@@ -22,10 +22,16 @@ export default function NetworkItem({network, isMarketCap = false }: Props) {
       </ListItemText>
       <ListItemText>
         <Title>
-          $ {!isMarketCap ?  (new BigNumber(calculatedPrice).toFormat(2, 1) || 0) :  (marketCap &&
-            String(marketCap)
-              .replace(/,/g, '')
-              .replace(/\B(?=(\d{3})+(?!\d))/g, ',')) || 0}
+          ${' '}
+          {!isMarketCap
+            ? calculatedPrice
+              ? new BigNumber(calculatedPrice).toFormat(2, 1)
+              : 0
+            : (marketCap &&
+                String(marketCap)
+                  .replace(/,/g, '')
+                  .replace(/\B(?=(\d{3})+(?!\d))/g, ',')) ||
+              0}
         </Title>
       </ListItemText>
     </Container>

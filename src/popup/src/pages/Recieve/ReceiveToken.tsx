@@ -50,8 +50,11 @@ export default function ReceiveToken({ selectedNetwork, recoded, propsFromTokenD
         bgColor="#f2f2f2"
       />
       <Content>
-        {recoded &&
-        <QRCodeWrapper><QRCode value={recoded} size={180} /></QRCodeWrapper> }
+        {recoded && (
+          <QRCodeWrapper>
+            <QRCode value={recoded} size={180} />
+          </QRCodeWrapper>
+        )}
 
         <ContentItem>
           <Text>ADDRESS:</Text>
@@ -62,9 +65,9 @@ export default function ReceiveToken({ selectedNetwork, recoded, propsFromTokenD
             height="48px"
             bgColor="#F2F2F2"
             borderColor="#F2F2F2"
-            fontSize='16px'
-            padding='12px 16px'
-            color='#000'
+            fontSize="16px"
+            padding="12px 16px"
+            color="#000"
             truncate={true}
             copy={true}
             handleClickCopy={handleClickCopy}
@@ -82,7 +85,7 @@ export default function ReceiveToken({ selectedNetwork, recoded, propsFromTokenD
         </ContentItem>
 
         <BottomText>
-          This address can only be used to receive assets on the {' '}
+          This address can only be used to receive assets on the{' '}
           <span>{selectedNetwork?.chain}</span> chain.
         </BottomText>
         <Snackbar
@@ -109,7 +112,7 @@ const Container = styled.div<{ bg?: string }>`
   box-sizing: border-box;
   position: relative;
   background-size: cover;
-  background-color: #F2F2F2;
+  background-color: #f2f2f2;
 `;
 
 const Content = styled.div`
@@ -125,10 +128,10 @@ const Content = styled.div`
 `;
 
 const QRCodeWrapper = styled.div`
-  border: 1px solid #F2F2F2;
+  border: 1px solid #f2f2f2;
   padding: 21px 22px;
   margin-bottom: 5px;
-`
+`;
 
 const ContentItem = styled.div`
   width: 100%;
@@ -145,7 +148,7 @@ const Text = styled.div`
   align-items: center;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #777E91;
+  color: #777e91;
 `;
 
 const BottomText = styled.div`
@@ -157,7 +160,7 @@ const BottomText = styled.div`
   font-family: IBMPlexSans;
   font-size: 12px;
   text-align: center;
-  color: #18191A;
+  color: #18191a;
   line-height: 1.35;
   span {
     text-transform: capitalize;

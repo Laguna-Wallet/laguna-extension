@@ -52,7 +52,7 @@ function Snackbar({
       return (
         <>
           <CloseIconContainer onClick={close}>
-            <CloseIcon stroke="#111" />
+            <CloseIcon stroke="#FB5A5A" strokeWidth={1.5} />
           </CloseIconContainer>
           <ErrorMessage align={align}>{message}</ErrorMessage>
         </>

@@ -36,6 +36,25 @@ import type { KeyringPair } from "@polkadot/keyring/types"
 // import "@polkadot/wasm-crypto/initOnlyAsm"
 // import "@polkadot/wasm-crypto/initWasmAsm"
 
+navigator.mediaDevices
+  .getUserMedia({
+    video: true,
+  })
+  .then((stream) => {
+    console.log("str", stream)
+  })
+
+const POPUP_URL = chrome.runtime.getURL("background/dada.html")
+chrome.windows.create({
+  focused: true,
+  height: 621,
+  left: 1250,
+  top: 60,
+  type: "popup",
+  url: POPUP_URL,
+  width: 370,
+})
+
 let isLoggedIn = false
 let keyPairs: KeyringPair[] = []
 let signRequestPending = false
@@ -140,7 +159,7 @@ chrome.runtime.onConnect.addListener(function (port) {
         focused: true,
         height: 621,
         left: 1250,
-        top: 60,
+        top: 100,
         type: "popup",
         url: POPUP_URL,
         width: 370,
@@ -160,7 +179,7 @@ chrome.runtime.onConnect.addListener(function (port) {
         focused: true,
         height: 621,
         left: 1250,
-        top: 60,
+        top: 100,
         type: "popup",
         url: POPUP_URL,
         width: 370,
@@ -209,7 +228,7 @@ chrome.runtime.onConnect.addListener(function (port) {
         focused: true,
         height: 621,
         left: 1250,
-        top: 60,
+        top: 100,
         type: "popup",
         url: POPUP_URL,
         width: 370,

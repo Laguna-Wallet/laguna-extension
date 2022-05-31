@@ -53,6 +53,7 @@ export default function TokenAndAmountSelect({ tokens, Icon, value }: Props) {
 
 const Input = ({ input: { value, onChange } }: any) => (
   <StyledInput
+    type="number"
     isValue={!value}
     value={value}
     onChange={(e) => onChange(parseNumeric(e.target.value))}
@@ -118,6 +119,11 @@ const StyledInput = styled.input<{ isValue: boolean }>`
   font-family: Inter;
   font-size: 16px;
   color: #18191a;
+
+  &::-webkit-inner-spin-button,
+  &::-webkit-outer-spin-button {
+    appearance: none;
+  }
 
   &::placeholder {
     color: #b1b5c3;
