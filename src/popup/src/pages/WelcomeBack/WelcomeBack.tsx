@@ -49,7 +49,7 @@ function WelcomeBack({ handleSubmit, pristine, submitting }: InjectedFormProps<P
           goTo(Wallet);
         }
       } else {
-        setSnackbarError('Invalid Password');
+        setSnackbarError('Incorrect Password');
         setIsSnackbarOpen(true);
       }
     }
