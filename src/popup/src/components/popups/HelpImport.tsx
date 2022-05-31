@@ -64,7 +64,7 @@ const Indicator = styled.div`
 
 const MainContent = styled.div`
   width: 100%;
-  height: 342px;
+  height: 365px;
   display: flex;
   flex-direction: column;
   align-items: center;
