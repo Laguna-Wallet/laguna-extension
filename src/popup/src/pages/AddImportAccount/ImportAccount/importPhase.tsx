@@ -25,6 +25,7 @@ import { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
 import { isHex } from '@polkadot/util';
 import WelcomeBack from 'pages/WelcomeBack/WelcomeBack';
 import AddImportForBoardedUser from '../AddImportForBoardedUser';
+import { useEnterClickListener } from 'hooks/useEnterClickListener';
 
 type Props = {
   onClose: () => void;
@@ -78,7 +79,7 @@ function ImportPhase({
     accept: '.json'
   });
 
-  const submit = async (values: FormProps) => {
+  const submit = async (values?: FormProps) => {
     if (file) {
       const isValid = await isValidKeyringPassword(file, password);
       if (isValid) {
@@ -159,11 +160,14 @@ function ImportPhase({
         <FileUploadIcon fill="#777e90" />
       </UploadedIconContainer>
     );
+  useEnterClickListener(() => {
+    submit();
+  }, [file, isDisabled, password]);
 
   return (
     <Container>
       <WizardHeader
-        title={'IMPORT ACCOUNT'}
+        title={redirectedFromForgotPassword ? 'RESTORE WALLET' : 'IMPORT ACCOUNT'}
         isFinishSlider={isFinishSlider}
         isImportPhase
         onClose={onClose}
@@ -253,7 +257,8 @@ function ImportPhase({
           text="Import"
           margin="10px 0 0 0"
           justify="center"
-          styledDisabled={uploaded ? !(uploaded && password) : !seedPhase}
+          // styledDisabled={uploaded ? !(uploaded && password) : !seedPhase}
+          styledDisabled={isDisabled}
           Icon={<RightArrow width={23} fill="#fff" />}
         />
 
@@ -476,7 +481,6 @@ const Text = styled.div`
   margin-top: 35.5px;
   color: #18191a;
   line-height: 1.35;
-}
 `;
 
 const FileUploadContainer = styled.div``;
