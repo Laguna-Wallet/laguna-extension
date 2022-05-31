@@ -134,7 +134,7 @@ function ImportPhase({
 
   useEnterClickListener(() => {
     submit();
-  }, [file, isDisabled]);
+  }, [file, isDisabled, password]);
 
   return (
     <Container>
