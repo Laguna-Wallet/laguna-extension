@@ -69,7 +69,7 @@ function ImportPhase({
       dispatch(change('ImportPhase', 'file', json));
     } else {
       setIsSnackbarOpen(true);
-      setSnackbarError('Not a valid JSON backup file (.json)');
+      setSnackbarError('Not A Valid JSON Backup File (.Json)');
     }
   }, []);
 

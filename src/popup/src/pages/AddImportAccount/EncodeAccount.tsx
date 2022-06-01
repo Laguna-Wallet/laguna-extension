@@ -57,7 +57,7 @@ function EncodeAccount({
         }
       } else {
         setIsSnackbarOpen(true);
-        setSnackbarError('Invalid Password');
+        setSnackbarError('Incorrect Password');
         setIsChangeValue(true);
         return;
       }
