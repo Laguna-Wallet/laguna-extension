@@ -68,7 +68,7 @@ const MainContent = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 15px 16px 38px 16px;
+  padding: 8px 26px 29px 26px;
   box-sizing: border-box;
   background-color: #f8f8f9;
   border-top-left-radius: 5px;

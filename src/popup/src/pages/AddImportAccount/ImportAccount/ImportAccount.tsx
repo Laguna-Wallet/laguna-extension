@@ -76,20 +76,16 @@ function ImportAccount({ redirectedFromSignUp, redirectedFromForgotPassword }: P
   const handleEncode = async (password: string) => {
     if (seedPhase) {
       if (mnemonicValidate(seedPhase)) {
-        console.log(1);
         const pair = await importFromMnemonic(seedPhase, password);
-        console.log(2);
         if (redirectedFromForgotPassword) {
           clearAccountsFromStorage(pair.address);
           account.saveActiveAccount(pair);
           dispatch(toggleLoading(true));
         }
-        console.log(3);
 
         if (!account.getActiveAccount()) {
           account.saveActiveAccount(pair);
         }
-        console.log(4);
         if (redirectedFromForgotPassword) {
           chrome.runtime.sendMessage({
             type: Messages.ForgotPassword,
@@ -102,7 +98,6 @@ function ImportAccount({ redirectedFromSignUp, redirectedFromForgotPassword }: P
           });
         }
       }
-      console.log(5);
     } else if (file) {
       const pair: any = await importJson(
         file as KeyringPair$Json | KeyringPairs$Json | undefined,
@@ -133,11 +128,12 @@ function ImportAccount({ redirectedFromSignUp, redirectedFromForgotPassword }: P
         });
       }
     }
-    console.log(6);
+
     chrome.runtime.sendMessage({
       type: Messages.AuthUser,
       payload: { password }
     });
+
     saveToStorage({ key: StorageKeys.OnBoarding, value: true });
 
     dispatch(reset('ImportPhase'));

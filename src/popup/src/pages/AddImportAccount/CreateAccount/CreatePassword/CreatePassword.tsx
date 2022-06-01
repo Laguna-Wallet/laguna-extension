@@ -32,7 +32,7 @@ const validate = (values: { password: string; confirmPassword: string }) => {
     values.password &&
     values.confirmPassword !== values.password
   ) {
-    errors.confirmPassword = 'Password do not match';
+    errors.confirmPassword = 'Passwords do not match';
   }
 
   return errors;
@@ -87,7 +87,9 @@ function CreatePassword({
           }}
         />
       )}
-      <Form onSubmit={handleSubmit(submit)}>
+      <Form
+        redirectedFromForgotPassword={redirectedFromForgotPassword}
+        onSubmit={handleSubmit(submit)}>
         <MainContent>
           <Title>Create a Password</Title>
           <Description>
@@ -110,7 +112,6 @@ function CreatePassword({
               placeholderColor: '#b1b5c3',
               errorColor: '#FB5A5A',
               errorBorderColor: '#FB5A5A',
-              hideErrorMsg: false,
               showError: true,
               autoFocus: true
             }}
@@ -143,8 +144,7 @@ function CreatePassword({
               placeholderColor: '#b1b5c3',
               errorColor: '#FB5A5A',
               errorBorderColor: '#FB5A5A',
-              showError: true,
-              hideErrorMsg: false
+              showError: true
             }}
           />
         </MainContent>
@@ -160,7 +160,7 @@ function CreatePassword({
         <Button
           type="submit"
           Icon={<RightArrow width={23} />}
-          text={'Create a Password'}
+          text={'Create Password'}
           margin="auto 0px 0px 0px"
           justify="center"
           disabled={!isObjectEmpty(errors || {})}
@@ -189,9 +189,10 @@ const Container = styled.div`
   box-sizing: border-box;
 `;
 
-const Form = styled.form`
+const Form = styled.form<{ redirectedFromForgotPassword?: boolean }>`
   width: 100%;
-  height: calc(100% - 24px);
+  height: ${({ redirectedFromForgotPassword }) =>
+    redirectedFromForgotPassword ? '100%' : 'calc(100% - 24px)'};
   display: flex;
   flex-direction: column;
   justify-content: center;

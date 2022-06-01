@@ -9,10 +9,10 @@ type Props = {
 export default function Checkbox({ value, onChange }: Props) {
   return (
     <Container>
-      <Input value={value} onChange={() => onChange(!value)} type="checkbox" />
-      {/* <CheckboxContainer onClick={() => onChange(!value)}>
+      {/* <Input value={value} onChange={() => onChange(!value)} type="checkbox" /> */}
+      <CheckboxContainer onClick={() => onChange(!value)} checked={value}>
         {value && <CheckBoxCheckMarkIcon />}
-      </CheckboxContainer> */}
+      </CheckboxContainer>
     </Container>
   );
 }
@@ -23,10 +23,11 @@ const Container = styled.div`
   background-color: #111; */
 `;
 
-const CheckboxContainer = styled.div`
-  width: 15px;
-  height: 15px;
-  background-color: #111;
+const CheckboxContainer = styled.div<{ checked: boolean }>`
+  width: 14px;
+  height: 14px;
+  background-color: ${({ checked }) => (checked ? '#111' : '#fff')};
+  border: 1px solid #111;
   border-radius: 3px;
   margin-top: 4px;
   display: flex;

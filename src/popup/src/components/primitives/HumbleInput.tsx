@@ -29,7 +29,6 @@ type InputProps = {
   fontWeight?: string;
   textAlign?: string;
   bgColor?: string;
-  hideErrorMsg?: boolean;
   autoFocus?: boolean;
   input?: any;
   padding?: string;
@@ -87,7 +86,7 @@ function HumbleInput({
     return value;
   };
 
-  console.log('~ meta?.touched && meta?.error', meta?.touched && meta?.error);
+  console.log('~ meta?.touched && meta?.error', meta?.touched, meta?.error);
   return (
     <Container marginBottom={marginBottom} marginTop={marginTop}>
       <InputContainer

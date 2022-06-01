@@ -169,7 +169,7 @@ function BackupAccount({ handleSubmit, pristine, submitting }: InjectedFormProps
               color="#111"
               justify="center"
               margin="15px 0 0 0"
-              bgColor="#e4e4e4"
+              bgColor="#fff"
               onClick={() => {
                 mnemonicHasBeenCopied && copyToClipboard('');
                 goTo(Wallet, { isMenuOpen: true });

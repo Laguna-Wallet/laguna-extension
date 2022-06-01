@@ -242,7 +242,6 @@ function ImportPhase({
               errorBorderColor: '#fb5a5a',
               color: '#b1b5c3',
               placeholderColor: '#b1b5c3',
-              hideErrorMsg: false,
               autoFocus: true
             }}
           />

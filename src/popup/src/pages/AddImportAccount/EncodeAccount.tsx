@@ -89,7 +89,6 @@ function EncodeAccount({
               bgColor: '#f2f2f2',
               color: '#b1b5c3',
               placeholderColor: '#000',
-              hideErrorMsg: false,
               autoFocus: true,
               isChangeValue,
               setIsChangeValue,
