@@ -65,6 +65,7 @@ function Confirm({ fee, transfer, amountToSend, recoded, setBlockHash, flow }: P
     });
 
     setLoadingTransaction(true);
+    dispatch(reset('sendToken'));
   };
 
   useEffect(() => {
@@ -206,13 +207,14 @@ const Container = styled.div<{ bg?: string }>`
   position: relative;
   background-image: ${({ bg }) => `url(${bg})`};
   background-size: cover;
-  padding-bottom: 38px;
+  padding-bottom: 29px;
   padding-top: 110px;
   overflow: hidden;
 `;
+// padding: 0 26px 29px;
 
 const Content = styled.div`
-  padding: 0 15px;
+  padding: 0 26px;
   margin-top: 15px;
 `;
 
