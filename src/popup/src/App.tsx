@@ -13,7 +13,7 @@ import { minutesToMilliseconds } from 'date-fns/esm';
 import { injectExtension } from '@polkadot/extension-inject';
 import keyring from '@polkadot/ui-keyring';
 import { changeIsLoggedIn, changeTokenReceived } from 'redux/actions';
-import { goTo } from 'react-chrome-extension-router';
+import { goTo, Router } from 'react-chrome-extension-router';
 import RequestToConnect from 'pages/RequestToConnect/RequestToConnect';
 import RequestToSign from 'pages/RequestToSign';
 import Snackbar from 'components/Snackbar/Snackbar';
@@ -40,7 +40,10 @@ function App() {
 
   return (
     <div className="App">
-      {handlePage(pendingDapps, pendingToSign)}
+      <Router>
+        {handlePage(pendingDapps, pendingToSign)}
+        <></>
+      </Router>
       <Snackbar
         width="194.9px"
         isOpen={tokenReceived}
