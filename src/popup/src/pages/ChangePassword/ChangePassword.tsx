@@ -21,7 +21,7 @@ type Props = {
   handleSubmit: any;
 };
 
-const validate = async (values: any) => {
+const validate = (values: any) => {
   const errors: Record<string, string> = {};
 
   if (!values.currentPassword) {
@@ -30,10 +30,6 @@ const validate = async (values: any) => {
 
   if (values.currentPassword && values.currentPassword.length < 8) {
     errors.currentPassword = 'Password should be minimum 8 characters length';
-  }
-
-  if (values.currentPassword && !(await validatePassword(values.currentPassword))) {
-    errors.currentPassword = 'Incorrect current password';
   }
 
   if (!values.newPassword) {
@@ -73,6 +69,12 @@ function ChangePassword({ handleSubmit }: Props) {
 
   // todo proper typing
   const submit = async (values: any) => {
+    if (values.currentPassword && !(await validatePassword(values.currentPassword))) {
+      setSnackbarError('Incorrect current password');
+      setIsSnackbarOpen(true);
+      return;
+    }
+
     const errors = await validate(values);
 
     if (!isObjectEmpty(errors)) {
@@ -138,7 +140,9 @@ function ChangePassword({ handleSubmit }: Props) {
                 placeholderColor: '#b1b5c3',
                 height: '48px',
                 marginTop: '12px',
-                borderColor: '#303030'
+                borderColor: '#303030',
+                showError: true,
+                errorColor: '#FB5A5A'
               }}
             />
             <Field
@@ -155,7 +159,9 @@ function ChangePassword({ handleSubmit }: Props) {
                 placeholderColor: '#b1b5c3',
                 height: '48px',
                 marginTop: '12px',
-                borderColor: '#303030'
+                borderColor: '#303030',
+                showError: true,
+                errorColor: '#FB5A5A'
               }}
             />
             <Field
@@ -172,7 +178,9 @@ function ChangePassword({ handleSubmit }: Props) {
                 placeholderColor: '#b1b5c3',
                 height: '48px',
                 marginTop: '12px',
-                borderColor: '#303030'
+                borderColor: '#303030',
+                showError: true,
+                errorColor: '#FB5A5A'
               }}
             />
           </FieldsContainer>
@@ -228,9 +236,9 @@ export default connect((state: any) => ({
   //     token: state.sendToken.selectedAsset.symbol
   //   }
 }))(
-  reduxForm<Record<string, unknown>, any>({
-    form: 'changePassword'
-    // validate
+  reduxForm<Record<string, unknown>, Record<string, unknown>>({
+    form: 'changePassword',
+    validate
     // destroyOnUnmount: false,
     // enableReinitialize: true,
     // keepDirtyOnReinitialize: true,
@@ -279,7 +287,7 @@ const Form = styled.form`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  margin-top: 30px;
+  /* margin-top: 10px; */
 `;
 
 const FieldsContainer = styled.div`

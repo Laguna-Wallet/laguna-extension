@@ -56,7 +56,8 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
     infos,
     accountsBalances,
     loading: accountsChanging,
-    disabledTokens
+    disabledTokens,
+    tokenReceived
   } = useSelector((state: State) => state.wallet);
 
   const balances = accountsBalances?.balances;
