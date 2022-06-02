@@ -7,7 +7,8 @@ import {
   changeDappAuthorization,
   changePendingToSign,
   changeConnectedApps,
-  changeTokenReceived
+  changeTokenReceived,
+  changePendingToSignRaw
 } from 'redux/actions';
 import { accountHasChanged } from 'utils';
 import { saveToStorage } from './chrome';
@@ -41,6 +42,10 @@ export function MessageListener(message: Message, dispatch: any) {
     case Messages.CheckPendingSign:
       updatePendingToSign(message, dispatch);
       break;
+    case Messages.CheckPendingSignRaw:
+      updatePendingToSignRaw(message, dispatch);
+      break;
+
     case Messages.ConnectedApps:
       updateConnectedApps(message, dispatch);
       break;
@@ -85,6 +90,10 @@ function updateDappAuthorizationRequest(message: any, dispatch: any) {
 
 function updatePendingToSign(message: any, dispatch: any) {
   dispatch(changePendingToSign(message.payload));
+}
+
+function updatePendingToSignRaw(message: any, dispatch: any) {
+  dispatch(changePendingToSignRaw(message.payload));
 }
 
 function updateConnectedApps(message: any, dispatch: any) {

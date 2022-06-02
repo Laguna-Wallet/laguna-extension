@@ -184,7 +184,6 @@ export function encryptKeyringPair(pair: any, oldPassword: string, newPassword: 
 
 export function unlockKeyPairs(password: string) {
   const pairs = keyring.getPairs()
-  console.log("~ pairs", pairs)
 
   return pairs.map((pair) => {
     pair.unlock(password)

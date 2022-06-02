@@ -7,7 +7,7 @@ import CheckMarkIcon from 'assets/svgComponents/CheckMarkIcon';
 import { CheckIcon } from '@heroicons/react/outline';
 import { Messages } from 'utils/types';
 
-export default function RequestToSign() {
+export default function RequestToSignTransaction() {
   const { pendingToSign } = useSelector((state: any) => state.wallet);
   const dispatch = useDispatch();
 

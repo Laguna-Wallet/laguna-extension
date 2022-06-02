@@ -107,6 +107,13 @@ export function changePendingToSign(pendingToSign: Record<string, string>) {
   };
 }
 
+export function changePendingToSignRaw(pendingToSignRaw: Record<string, string>) {
+  return {
+    type: 'CHANGE_PENDING_TO_SIGN_RAW',
+    payload: { pendingToSignRaw }
+  };
+}
+
 export function changeConnectedApps(connectedApps: Record<string, string>) {
   return {
     type: 'CHANGE_CONNECTED_APPS',
