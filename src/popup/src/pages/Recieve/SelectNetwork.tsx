@@ -89,9 +89,6 @@ export default function SelectNetwork({ setSelectedNetwork }: Props) {
                         asset={asset}
                         iconSize="28px"
                         accountAddress={account.getActiveAccount()?.address}
-                        handleClick={() => {
-                          goTo(TokenDashboard, { asset });
-                        }}
                       />
                     </ChainItemContainer>
                   );
