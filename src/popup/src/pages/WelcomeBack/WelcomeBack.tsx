@@ -11,7 +11,7 @@ import { validatePassword } from 'utils/polkadot';
 import { useSelector } from 'react-redux';
 import RequestToConnect from 'pages/RequestToConnect/RequestToConnect';
 import ImportAccount from 'pages/AddImportAccount/ImportAccount/ImportAccount';
-import RequestToSign from 'pages/RequestToSign';
+import RequestToSign from 'pages/RequestToSignTransaction';
 import backgroundImage from 'assets/imgs/sign-up-bg.png';
 import mainLogoSvg from 'assets/imgs/main-logo-white.svg';
 import { Field, reduxForm, InjectedFormProps } from 'redux-form';
