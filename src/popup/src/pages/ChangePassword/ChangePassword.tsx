@@ -8,20 +8,20 @@ import { useAccount } from 'context/AccountContext';
 import Wallet from 'pages/Wallet/Wallet';
 import { useState } from 'react';
 import { goTo } from 'react-chrome-extension-router';
-import { connect, useSelector } from 'react-redux';
-import { Field, reduxForm } from 'redux-form';
+import { Field, InjectedFormProps, reduxForm } from 'redux-form';
 import styled from 'styled-components';
 import { encryptPassword, isObjectEmpty, objectToArray } from 'utils';
 import { saveToStorage } from 'utils/chrome';
 import { encryptKeyringPairs, encryptMetaData, validatePassword } from 'utils/polkadot';
 import { Messages, SnackbarMessages, StorageKeys } from 'utils/types';
 
-// todo proper typing
-type Props = {
-  handleSubmit: any;
+type Form = {
+  currentPassword: string;
+  newPassword: string;
+  confirmNewPassword: string;
 };
 
-const validate = (values: any) => {
+const validate = (values: Form) => {
   const errors: Record<string, string> = {};
 
   if (!values.currentPassword) {
@@ -59,22 +59,16 @@ const validate = (values: any) => {
   return errors;
 };
 
-function ChangePassword({ handleSubmit }: Props) {
-  const [isOpen, setOpen] = useState<boolean>(true);
-  const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
-  const [snackbarError, setSnackbarError] = useState<string>('');
+function ChangePassword({ handleSubmit, valid }: InjectedFormProps<Form>) {
   const account = useAccount();
   const activeAccount = account.getActiveAccount();
-  const formValues = useSelector((state: any) => state?.form?.changePassword?.values);
+
+  const [isOpen, setOpen] = useState<boolean>(true);
+  const [snackbarError, setSnackbarError] = useState<string>('');
+  const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
 
   // todo proper typing
-  const submit = async (values: any) => {
-    if (values.currentPassword && !(await validatePassword(values.currentPassword))) {
-      setSnackbarError('Incorrect current password');
-      setIsSnackbarOpen(true);
-      return;
-    }
-
+  const submit = async (values: Form) => {
     const errors = await validate(values);
 
     if (!isObjectEmpty(errors)) {
@@ -82,34 +76,34 @@ function ChangePassword({ handleSubmit }: Props) {
       const errArray = objectToArray(errors);
       setSnackbarError(errArray[0]);
       setIsSnackbarOpen(true);
-      return;
     }
 
-    encryptKeyringPairs(values?.currentPassword, values?.newPassword);
-    encryptMetaData(values?.currentPassword, values?.newPassword);
+    if (values.currentPassword && !(await validatePassword(values.currentPassword))) {
+      setSnackbarError('Incorrect current password');
+      setIsSnackbarOpen(true);
+    } else {
+      chrome.runtime.sendMessage({
+        type: Messages.ReEncryptPairs,
+        payload: {
+          oldPassword: values?.currentPassword,
+          newPassword: values?.newPassword,
+          metaData: keyring.getPairs().map((pair) => ({ address: pair.address, meta: pair.meta }))
+        }
+      });
+      encryptKeyringPairs(values?.currentPassword, values?.newPassword);
+      encryptMetaData(values?.currentPassword, values?.newPassword);
 
-    const newEncryptedPassword = encryptPassword({ password: values?.newPassword });
-    saveToStorage({ key: StorageKeys.Encoded, value: newEncryptedPassword });
+      const newEncryptedPassword = encryptPassword({ password: values?.newPassword });
+      saveToStorage({ key: StorageKeys.Encoded, value: newEncryptedPassword });
 
-    // this is needed to update data encryption for the active account in the storage
-    const newAccount = keyring.getPair(activeAccount?.address);
-    account.saveActiveAccount(newAccount);
+      // this is needed to update data encryption for the active account in the storage
+      const newAccount = keyring.getPair(activeAccount?.address);
+      account.saveActiveAccount(newAccount);
 
-    chrome.runtime.sendMessage({
-      type: Messages.ReEncryptPairs,
-      payload: {
-        oldPassword: values?.currentPassword,
-        newPassword: values?.newPassword,
-        metaData: keyring.getPairs().map((pair) => ({ address: pair.address, meta: pair.meta }))
-      }
-    });
-
-    // setIsSnackbarOpen(true);
-    // setSnackbarMessage(SnackbarMessages.AccessRevoked);
-    // goTo(AddressBook, { snackbar: { show: true, message: SnackbarMessages.AddressAdded } });
-
-    goTo(Wallet, { snackbar: { show: true, message: SnackbarMessages.PasswordChanged } });
+      goTo(Wallet, { snackbar: { show: true, message: SnackbarMessages.PasswordChanged } });
+    }
   };
+
   return (
     <Container>
       <MenuHeader
@@ -138,6 +132,7 @@ function ChangePassword({ handleSubmit }: Props) {
                 bgColor: '#303030',
                 color: '#b1b5c3',
                 placeholderColor: '#b1b5c3',
+                errorBorderColor: '#fb5a5a',
                 height: '48px',
                 marginTop: '12px',
                 borderColor: '#303030',
@@ -157,6 +152,7 @@ function ChangePassword({ handleSubmit }: Props) {
                 bgColor: '#303030',
                 color: '#9c9c9c',
                 placeholderColor: '#b1b5c3',
+                errorBorderColor: '#fb5a5a',
                 height: '48px',
                 marginTop: '12px',
                 borderColor: '#303030',
@@ -179,6 +175,7 @@ function ChangePassword({ handleSubmit }: Props) {
                 height: '48px',
                 marginTop: '12px',
                 borderColor: '#303030',
+                errorBorderColor: '#fb5a5a',
                 showError: true,
                 errorColor: '#FB5A5A'
               }}
@@ -187,6 +184,7 @@ function ChangePassword({ handleSubmit }: Props) {
 
           <ButtonsContainer>
             <Button
+              type="button"
               onClick={() => goTo(Wallet, { isMenuOpen: true })}
               text="Cancel"
               color="#fff"
@@ -207,11 +205,7 @@ function ChangePassword({ handleSubmit }: Props) {
               disabledBorderColor="rgba(255, 255, 255, 0.5)"
               disabledColor="#18191a"
               disabledBgColor="rgba(255, 255, 255, 0.5)"
-              disabled={
-                !formValues?.currentPassword ||
-                !formValues?.newPassword ||
-                !formValues?.confirmNewPassword
-              }
+              styledDisabled={!valid}
             />
           </ButtonsContainer>
         </Form>
@@ -222,29 +216,17 @@ function ChangePassword({ handleSubmit }: Props) {
         message={snackbarError}
         type="error"
         left="26px"
-        bottom="86px"
+        bottom="90px"
         transform="translateX(0)"
       />
     </Container>
   );
 }
 
-export default connect((state: any) => ({
-  //   errors: getFormSyncErrors('sendToken')(state),
-  //   amount: formValueSelector('sendToken')(state, 'amount'),
-  //   initialValues: {
-  //     token: state.sendToken.selectedAsset.symbol
-  //   }
-}))(
-  reduxForm<Record<string, unknown>, Record<string, unknown>>({
-    form: 'changePassword',
-    validate
-    // destroyOnUnmount: false,
-    // enableReinitialize: true,
-    // keepDirtyOnReinitialize: true,
-    // updateUnregisteredFields: true
-  })(ChangePassword)
-);
+export default reduxForm<Record<string, unknown>, any>({
+  form: 'changePassword',
+  validate
+})(ChangePassword);
 
 const Container = styled.div`
   width: 100%;
