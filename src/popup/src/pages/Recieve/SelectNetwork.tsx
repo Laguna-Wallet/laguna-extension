@@ -86,17 +86,12 @@ export default function SelectNetwork({ setSelectedNetwork }: Props) {
               ? 'no assets'
               : assets.map((asset: Asset & Network) => {
                   return (
-                    <ChainItemContainer
-                      // onClick={() => handleClick(asset)}
-                      key={asset.chain}>
+                    <ChainItemContainer key={asset.chain}>
                       <ChainItem
                         asset={asset}
                         iconSize="28px"
                         accountAddress={accountAddress}
                         handleClick={() => handleClick(asset)}
-                        // handleClick={() => {
-                        //   goTo(TokenDashboard, { asset });
-                        // }}
                       />
                     </ChainItemContainer>
                   );
