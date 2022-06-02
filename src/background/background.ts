@@ -1,5 +1,7 @@
 // import "@polkadot/wasm-crypto/initOnlyAsm"
 import { Messages, StorageKeys } from "./types"
+import { u8aToHex } from "@polkadot/util"
+import { wrapBytes } from "@polkadot/extension-dapp/wrapBytes"
 import {
   fetchAccountsBalances,
   // fetchAccountsTransactions,
@@ -29,6 +31,7 @@ import { AccountsStore } from "./stores"
 import { cryptoWaitReady } from "@polkadot/util-crypto"
 import type { KeyringPair } from "@polkadot/keyring/types"
 import assert = require("assert")
+import type { SignerPayloadJSON, SignerPayloadRaw } from "@polkadot/types/types"
 
 // import { getCurrentTab } from "./utils"
 
@@ -41,6 +44,8 @@ let isLoggedIn = false
 let keyPairs: KeyringPair[] = []
 let signRequestPending = false
 let signRequest = {}
+let signRawRequestPending = false
+let signRawRequest = {}
 const registry = new TypeRegistry()
 
 let authorizedDapps = []
@@ -55,91 +60,86 @@ cryptoWaitReady().then(() => {
   keyring.loadAll({ ss58Format: 42, type: "sr25519", store: new AccountsStore() })
 })
 
-// function onMessage(msg, port) {}
-
-// function forceReconnect(port) {
-//   deleteTimer(port)
-//   port.disconnect()
-// }
-
-// function deleteTimer(port) {
-//   if (port._timer) {
-//     clearTimeout(port._timer)
-//     delete port._timer
-//   }
-// }
-
-// chrome.runtime.onConnect.addListener((port: any) => {
-//   if (port.name !== "keep_alive") return
-
-//   port.onMessage.addListener(onMessage)
-
-//   port.onDisconnect.addListener(deleteTimer)
-//   port.timer = setTimeout(forceReconnect, 4500, port)
-// })
-
-// chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-//   if (changeInfo.status === "complete") {
-//     chrome.scripting
-//       .executeScript({
-//         target: { tabId },
-//         files: ["content.js"],
-//       })
-//       .then(() => {
-//       })
-//       .catch((err) => console.log("err", err))
-//   }
-// })
-
 chrome.runtime.onConnect.addListener(function (port) {
   assert([process.env.MESSAGING_PORT, process.env.PORT_EXTENSION].includes(port.name), `Unknown connection from ${port.name}`)
 
   chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
+    if (msg.type === Messages.RevokeDapp) {
+      authorizedDapps = authorizedDapps.filter((item) => item !== msg.payload.dappName)
+    }
+
     if (msg.type === Messages.DappAuthRequest) {
-      const dappName = msg.payload.pendingDapp[0].request.requestOrigin
-      // const dappName = window.location.host
+      try {
+        const dappName = msg.payload.pendingDapp[0].request.requestOrigin
+        // const dappName = window.location.host
 
-      if (authorizedDapps.includes(dappName) || declinedDapps.includes(dappName)) return
-      if (msg.payload.approved) {
-        pendingRequests = []
-        authorizedDapps.push(dappName)
+        if (authorizedDapps.includes(dappName) || declinedDapps.includes(dappName)) return
 
-        port.postMessage({ ...msg.payload.pendingDapp[0], payload: { id: msg.payload.pendingDapp[0].id, approved: true } })
-        return true
-      } else {
-        pendingRequests = []
-        declinedDapps.push(dappName)
-        port.postMessage({ ...msg.payload.pendingDapp[0], payload: { id: msg.payload.pendingDapp[0].id, approved: false } })
-        return true
+        if (msg.payload.approved) {
+          pendingRequests = []
+          authorizedDapps.push(dappName)
+          port.postMessage({ ...msg.payload.pendingDapp[0], payload: { id: msg.payload.pendingDapp[0].id, approved: true } })
+          return true
+        } else {
+          pendingRequests = []
+          declinedDapps.push(dappName)
+          port.postMessage({ ...msg.payload.pendingDapp[0], payload: { id: msg.payload.pendingDapp[0].id, approved: false } })
+          return true
+        }
+      } catch (err) {
+        console.log("err", err)
       }
     }
 
     if (msg.type === Messages.SignRequest) {
-      const data = msg?.payload?.data?.data
+      try {
+        const data = msg?.payload?.data?.data
+        if (msg.payload.approved) {
+          const pair = keyPairs.find((pair) => {
+            return recodeToPolkadotAddress(pair.address) === recodeToPolkadotAddress(data.request.address)
+          })
+          if (data.message === "SIGN_PAYLOAD") {
+            await cryptoWaitReady()
+            registry.setSignedExtensions(data.request.signedExtensions)
+            const result = registry.createType("ExtrinsicPayload", data.request, { version: data.request.version }).sign(pair)
+            port.postMessage({ ...data, payload: { id: data.id, approved: true, ...result } })
+          }
+        } else {
+          port.postMessage({ ...data, payload: { id: data.id, approved: false } })
+        }
+        signRequestPending = false
+        signRequest = {}
+      } catch (err) {
+        console.log("err", err)
+      }
+    }
+
+    if (msg.type === Messages.SignRawRequest) {
+      const data = msg?.payload?.pendingDapp?.data
       if (msg.payload.approved) {
         const pair = keyPairs.find((pair) => {
           return recodeToPolkadotAddress(pair.address) === recodeToPolkadotAddress(data.request.address)
         })
-        if (data.message === "SIGN_PAYLOAD") {
+        if (data.message === "SIGN_RAW") {
           await cryptoWaitReady()
-          registry.setSignedExtensions(data.request.signedExtensions)
-          const result = registry.createType("ExtrinsicPayload", data.request, { version: data.request.version }).sign(pair)
-          port.postMessage({ ...data, payload: { id: data.id, approved: true, ...result } })
+          const signature = u8aToHex(pair.sign(wrapBytes(data.request)))
+          port.postMessage({ ...data, payload: { id: data.id, approved: true, ...data.request, signature } })
         }
       } else {
         port.postMessage({ ...data, payload: { id: data.id, approved: false } })
       }
-      signRequestPending = false
-      signRequest = {}
+      signRawRequestPending = false
+      signRawRequest = {}
     }
   })
 
   port.onMessage.addListener(async (data) => {
-    const dappName = data?.payload?.pendingDapp[0]?.request?.requestOrigin
+    const dappName = data?.request?.requestOrigin
 
     if (data.message === "GET_ACCOUNTS") {
       port.postMessage({ ...data, payload: keyring.getPairs() })
     }
+
     if (data.message === "SIGN_PAYLOAD") {
       const POPUP_URL = chrome.runtime.getURL("popup/index.html")
       chrome.windows.create({
@@ -165,9 +165,11 @@ chrome.runtime.onConnect.addListener(function (port) {
         url: POPUP_URL,
         width: 370,
       })
-      signRequestPending = true
-      signRequest = data
+
+      signRawRequestPending = true
+      signRawRequest = data
     }
+
     if (data.message === "AUTHORIZE_TAB") {
       // const host = new URL((await getCurrentTab()).url).host
 
@@ -234,6 +236,10 @@ chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
     case Messages.CheckPendingSign:
       chrome.runtime.sendMessage({ type: Messages.CheckPendingSign, payload: { pending: signRequestPending, data: signRequest } })
       sendResponse({ type: Messages.CheckPendingSign, payload: { pending: signRequestPending, data: signRequest } })
+      break
+    case Messages.CheckPendingSignRaw:
+      chrome.runtime.sendMessage({ type: Messages.CheckPendingSignRaw, payload: { pending: signRawRequestPending, data: signRawRequest } })
+      sendResponse({ type: Messages.CheckPendingSignRaw, payload: { pending: signRawRequestPending, data: signRawRequest } })
       break
     case Messages.RemoveFromKeyring:
       isLoggedIn = false

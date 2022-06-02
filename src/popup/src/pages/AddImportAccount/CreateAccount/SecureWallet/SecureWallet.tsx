@@ -27,7 +27,6 @@ export default function SecureWallet({
   const account = useAccount();
   const encoded = account.encryptedPassword;
 
-  console.log('~ redirectedFromDashboard', redirectedFromDashboard);
   // todo refactor
   // pass onClose function instead of redirectedFromSignUp prop
   // const onClose = () => redirectedFromSignUp ? goTo(Signup) : goTo(Wallet)

@@ -9,6 +9,7 @@ export interface State {
     tokenDecimals: Record<string, string>;
     loading: boolean;
     pendingToSign: Record<string, string>;
+    pendingToSignRaw: Record<string, string>;
     connectedApps: [];
     pendingDappAuthorization: any;
     isLoggedIn: boolean | undefined;
@@ -32,6 +33,7 @@ async function handleInitialState(): Promise<State> {
   const tokenDecimals = await getFromStorage(StorageKeys.TokenDecimals);
   const pendingDappAuthorization: [] = [];
   const pendingToSign = {};
+  const pendingToSignRaw = {};
   const connectedApps: [] = [];
   const disabledTokens = await getFromStorage(StorageKeys.DisabledTokens);
   const onboarding = await getFromStorage(StorageKeys.OnBoarding);
@@ -42,6 +44,7 @@ async function handleInitialState(): Promise<State> {
       tokenDecimals: tokenDecimals ? JSON.parse(tokenDecimals) : {},
       loading: false,
       pendingToSign,
+      pendingToSignRaw,
       connectedApps,
       pendingDappAuthorization,
       isLoggedIn: undefined,

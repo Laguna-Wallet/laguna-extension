@@ -91,8 +91,6 @@ export default function ChooseSecurityLevel({
           justify="center"
         />
 
-        {console.log('redirectedFromDashboard', redirectedFromDashboard)}
-
         {!redirectedFromDashboard && (
           <SkipButton onClick={() => setConfirmSkipOpen(true)}>Skip Security</SkipButton>
         )}
