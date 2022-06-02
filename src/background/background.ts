@@ -28,6 +28,7 @@ import { TypeRegistry } from "@polkadot/types"
 import { AccountsStore } from "./stores"
 import { cryptoWaitReady } from "@polkadot/util-crypto"
 import type { KeyringPair } from "@polkadot/keyring/types"
+import assert = require("assert")
 
 // import { getCurrentTab } from "./utils"
 
@@ -54,28 +55,28 @@ cryptoWaitReady().then(() => {
   keyring.loadAll({ ss58Format: 42, type: "sr25519", store: new AccountsStore() })
 })
 
-function onMessage(msg, port) {}
+// function onMessage(msg, port) {}
 
-function forceReconnect(port) {
-  deleteTimer(port)
-  port.disconnect()
-}
+// function forceReconnect(port) {
+//   deleteTimer(port)
+//   port.disconnect()
+// }
 
-function deleteTimer(port) {
-  if (port._timer) {
-    clearTimeout(port._timer)
-    delete port._timer
-  }
-}
+// function deleteTimer(port) {
+//   if (port._timer) {
+//     clearTimeout(port._timer)
+//     delete port._timer
+//   }
+// }
 
-chrome.runtime.onConnect.addListener((port: any) => {
-  if (port.name !== "keep_alive") return
+// chrome.runtime.onConnect.addListener((port: any) => {
+//   if (port.name !== "keep_alive") return
 
-  port.onMessage.addListener(onMessage)
+//   port.onMessage.addListener(onMessage)
 
-  port.onDisconnect.addListener(deleteTimer)
-  port.timer = setTimeout(forceReconnect, 4500, port)
-})
+//   port.onDisconnect.addListener(deleteTimer)
+//   port.timer = setTimeout(forceReconnect, 4500, port)
+// })
 
 // chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 //   if (changeInfo.status === "complete") {
@@ -91,10 +92,12 @@ chrome.runtime.onConnect.addListener((port: any) => {
 // })
 
 chrome.runtime.onConnect.addListener(function (port) {
+  assert([process.env.MESSAGING_PORT, process.env.PORT_EXTENSION].includes(port.name), `Unknown connection from ${port.name}`)
+
   chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
     if (msg.type === Messages.DappAuthRequest) {
-      // const dappName = msg.payload.pendingDapp[0].request.requestOrigin
-      const dappName = window.location.host
+      const dappName = msg.payload.pendingDapp[0].request.requestOrigin
+      // const dappName = window.location.host
 
       if (authorizedDapps.includes(dappName) || declinedDapps.includes(dappName)) return
       if (msg.payload.approved) {
@@ -110,6 +113,7 @@ chrome.runtime.onConnect.addListener(function (port) {
         return true
       }
     }
+
     if (msg.type === Messages.SignRequest) {
       const data = msg?.payload?.data?.data
       if (msg.payload.approved) {
@@ -131,6 +135,8 @@ chrome.runtime.onConnect.addListener(function (port) {
   })
 
   port.onMessage.addListener(async (data) => {
+    const dappName = data?.payload?.pendingDapp[0]?.request?.requestOrigin
+
     if (data.message === "GET_ACCOUNTS") {
       port.postMessage({ ...data, payload: keyring.getPairs() })
     }
@@ -147,12 +153,6 @@ chrome.runtime.onConnect.addListener(function (port) {
       })
       signRequestPending = true
       signRequest = data
-      // const pair = keyring.getPair(data.request.address)
-      // registry.setSignedExtensions(data.request.signedExtensions)
-      // check for signing
-      // pair.unlock("123123123")
-      // const result = registry.createType("ExtrinsicPayload", data.request, { version: data.request.version }).sign(pair)
-      // port.postMessage({ ...data, payload: { id: data.id, ...result } })
     }
     if (data.message === "SIGN_RAW") {
       const POPUP_URL = chrome.runtime.getURL("popup/index.html")
@@ -167,12 +167,6 @@ chrome.runtime.onConnect.addListener(function (port) {
       })
       signRequestPending = true
       signRequest = data
-      // const pair = keyring.getPair(data.request.address)
-      // registry.setSignedExtensions(data.request.signedExtensions)
-      // pair.unlock("123123123")
-      // const result = u8aToHex(pair.sign(wrapBytes(data.request)))
-      // registry.createType("ExtrinsicPayload", data.request, { version: data.request.version }).sign(pair)
-      // port.postMessage({ ...data, payload: { id: data.id, result } })
     }
     if (data.message === "AUTHORIZE_TAB") {
       // const host = new URL((await getCurrentTab()).url).host
@@ -184,19 +178,20 @@ chrome.runtime.onConnect.addListener(function (port) {
         port.postMessage({ ...data, payload: { id: data.id, approved: false } })
       }
 
-      isInPhishingList(window.location.host).then((isDenied) => {
+      // todo check tab name differently
+      isInPhishingList(dappName).then((isDenied) => {
         if (isDenied) {
           port.postMessage({ ...data, payload: { id: data.id, approved: false } })
           return
         }
       })
 
-      if (authorizedDapps.includes(window.location.host)) {
+      if (authorizedDapps.includes(dappName)) {
         port.postMessage({ ...data, payload: { id: data.id, approved: true } })
         return true
       }
 
-      if (declinedDapps.includes(window.location.host)) {
+      if (declinedDapps.includes(dappName)) {
         port.postMessage({ ...data, payload: { id: data.id, approved: false } })
         return false
       }
