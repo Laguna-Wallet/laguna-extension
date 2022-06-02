@@ -23,7 +23,7 @@ type Props = {
   password: string;
 };
 
-const RemoveAccount = ({ handleSubmit, pristine, submitting }: InjectedFormProps<Props>) => {
+const RemoveAccount = ({ handleSubmit, valid }: InjectedFormProps<Props>) => {
   const dispatch = useDispatch();
   const account = useAccount();
   const activeAccount = account.getActiveAccount();
@@ -37,7 +37,7 @@ const RemoveAccount = ({ handleSubmit, pristine, submitting }: InjectedFormProps
 
   const submit = async (values: Props) => {
     const { password } = values;
-    const errors = validPassword(password);
+    const errors = validPassword(values);
 
     if (!address) return;
 
@@ -133,7 +133,7 @@ const RemoveAccount = ({ handleSubmit, pristine, submitting }: InjectedFormProps
               justify="center"
               margin="0 0 0 15px"
               disabledBgColor="rgba(255,255,255,0.6)"
-              styledDisabled={pristine || submitting}
+              styledDisabled={!valid}
             />
           </ButtonContainer>
         </Form>
@@ -152,7 +152,8 @@ const RemoveAccount = ({ handleSubmit, pristine, submitting }: InjectedFormProps
 };
 
 export default reduxForm<Record<string, unknown>, any>({
-  form: 'removeAccount'
+  form: 'removeAccount',
+  validate: validPassword
 })(RemoveAccount);
 
 const Container = styled.div`

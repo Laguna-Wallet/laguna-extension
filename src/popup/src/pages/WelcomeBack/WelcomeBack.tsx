@@ -15,13 +15,13 @@ import RequestToSign from 'pages/RequestToSign';
 import backgroundImage from 'assets/imgs/sign-up-bg.png';
 import mainLogoSvg from 'assets/imgs/main-logo-white.svg';
 import { Field, reduxForm, InjectedFormProps } from 'redux-form';
-import { isObjectEmpty, objectToArray, validPassword } from 'utils';
+import { isObjectEmpty, validPassword } from 'utils';
 
 type Props = {
   password: string;
 };
 
-function WelcomeBack({ handleSubmit, pristine, submitting }: InjectedFormProps<Props>) {
+function WelcomeBack({ handleSubmit, valid }: InjectedFormProps<Props>) {
   const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
   const [snackbarError, setSnackbarError] = useState<string | undefined>();
   const { pendingDappAuthorization, pendingToSign } = useSelector((state: any) => state.wallet);
@@ -30,7 +30,7 @@ function WelcomeBack({ handleSubmit, pristine, submitting }: InjectedFormProps<P
 
   const submit = async (values: Props) => {
     const { password } = values;
-    const errors = validPassword(password);
+    const errors = validPassword(values);
 
     if (isObjectEmpty(errors)) {
       const isValid = await validatePassword(password);
@@ -90,7 +90,7 @@ function WelcomeBack({ handleSubmit, pristine, submitting }: InjectedFormProps<P
             borderColor="#111"
             margin="12px 0 0 0"
             justify="center"
-            styledDisabled={pristine || submitting}
+            styledDisabled={!valid}
           />
         </Form>
         <BottomContainer>
@@ -115,7 +115,8 @@ function WelcomeBack({ handleSubmit, pristine, submitting }: InjectedFormProps<P
 }
 
 export default reduxForm<Record<string, unknown>, any>({
-  form: 'welcomeBack'
+  form: 'welcomeBack',
+  validate: validPassword
 })(WelcomeBack);
 
 const IconSection = styled.div`
