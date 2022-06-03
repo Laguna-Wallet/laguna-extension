@@ -18,12 +18,14 @@ type Props = {
   setLevel: (level: SecurityLevelEnum.Secured | SecurityLevelEnum.Skipped) => void;
   nextStepFromParent: () => void;
   redirectedFromSignUp?: boolean;
+  redirectedFromDashboard?: boolean;
 };
 
 export default function ChooseSecurityLevel({
   setLevel,
   nextStepFromParent,
-  redirectedFromSignUp
+  redirectedFromSignUp,
+  redirectedFromDashboard
 }: Props) {
   const { nextStep, previousStep } = useWizard();
 
@@ -31,7 +33,7 @@ export default function ChooseSecurityLevel({
   const [isConfirmSkipOpen, setConfirmSkipOpen] = useState<boolean>();
 
   return (
-    <Container>
+    <Container redirectedFromDashboard={redirectedFromDashboard}>
       <WizardHeader
         // title={'SECURE YOUR WALLET'}
         onClose={() => {
@@ -89,7 +91,9 @@ export default function ChooseSecurityLevel({
           justify="center"
         />
 
-        <SkipButton onClick={() => setConfirmSkipOpen(true)}>Skip Security</SkipButton>
+        {!redirectedFromDashboard && (
+          <SkipButton onClick={() => setConfirmSkipOpen(true)}>Skip Security</SkipButton>
+        )}
 
         {/* <Button
           type="button"
@@ -105,14 +109,15 @@ export default function ChooseSecurityLevel({
   );
 }
 
-const Container = styled.div`
+const Container = styled.div<{ redirectedFromDashboard?: boolean }>`
   width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   background-color: #fff;
-  padding: 22px 16px 11px;
+  padding: ${({ redirectedFromDashboard }) =>
+    redirectedFromDashboard ? '22px 16px 43px; ' : '22px 16px 11px'};
   box-sizing: border-box;
 `;
 

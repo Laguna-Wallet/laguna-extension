@@ -9,18 +9,18 @@ import { Messages, StorageKeys } from 'utils/types';
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { MessageListener } from 'utils/messageListener';
 import { useDispatch, useSelector } from 'react-redux';
+import RequestToSignRaw from 'pages/RequestToSignRaw/RequestToSignRaw';
 import { minutesToMilliseconds } from 'date-fns/esm';
 import { injectExtension } from '@polkadot/extension-inject';
 import keyring from '@polkadot/ui-keyring';
 import { changeIsLoggedIn, changeTokenReceived } from 'redux/actions';
-import { goTo } from 'react-chrome-extension-router';
+import { goTo, Router } from 'react-chrome-extension-router';
 import RequestToConnect from 'pages/RequestToConnect/RequestToConnect';
-import RequestToSign from 'pages/RequestToSign';
+import RequestToSign from 'pages/RequestToSignTransaction';
 import Snackbar from 'components/Snackbar/Snackbar';
 import { State } from 'redux/store';
 // import '@polkadot/extension-inject/crossenv';
 import '@polkadot/wasm-crypto/initOnlyAsm';
-import CongratsBackingUp from 'pages/AddImportAccount/CreateAccount/SecureWallet/CongratsBackingUp';
 
 function App() {
   const account = useAccount();
@@ -40,12 +40,15 @@ function App() {
 
   return (
     <div className="App">
-      {handlePage(pendingDapps, pendingToSign)}
+      <Router>
+        {handlePage(pendingDapps, pendingToSign)}
+        <></>
+      </Router>
       <Snackbar
         width="194.9px"
         isOpen={tokenReceived}
         close={() => dispatch(changeTokenReceived({ tokenReceived: false }))}
-        message={'Token Received'}
+        message={'New Deposit Received'}
         type="success"
         // left="110px"
         bottom="70px"
@@ -72,6 +75,9 @@ const handlePage = (pendingDapps: any[], pendingToSign: any) => {
         type: Messages.CheckPendingSign
       });
 
+      const CheckPendingDappSignRaw = await sendMessagePromise({
+        type: Messages.CheckPendingSignRaw
+      });
       // If user is not logged in redirect to WelcomeBack or SignUp
       if (!AuthResponse?.payload?.isLoggedIn) {
         const hasBoarded = Boolean(await getFromStorage(StorageKeys.OnBoarding));
@@ -99,15 +105,20 @@ const handlePage = (pendingDapps: any[], pendingToSign: any) => {
         return;
       }
 
+      if (AuthResponse?.payload?.isLoggedIn && CheckPendingDappSignRaw?.payload?.pending) {
+        goTo(RequestToSignRaw);
+        return;
+      }
+
       // in case no pending requests from dapp and user is loggedIn go to Wallet
       if (AuthResponse?.payload?.isLoggedIn) {
         goTo(Wallet);
         return;
       }
-
       setIsLoading(false);
       return;
     }
+
     go();
   }, []);
 

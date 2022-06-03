@@ -326,7 +326,8 @@ export async function getAssets(
   prices: Prices,
   tokenInfos: Network[],
   balances: any,
-  disabledTokens: Token[]
+  disabledTokens: Token[],
+  showZeroBalanceAssets?: boolean
 ): Promise<
   | {
       overallBalance: number;
@@ -345,12 +346,16 @@ export async function getAssets(
 
   for (let i = 0; i < networks.length; i++) {
     try {
-      const { name, symbol, chain, node, encodeType, price_change_percentage_24h } = networks[i];
+      const { name, symbol, chain, node, encodeType, prefix, price_change_percentage_24h } =
+        networks[i];
 
-      const balance = balances[chain];
+      let balance = balances[chain];
 
-      if (!balance) continue;
+      if (!balance && !showZeroBalanceAssets) continue;
 
+      if (showZeroBalanceAssets) {
+        balance = !balance ? 0 : balance;
+      }
       const price = prices[chain]?.usd;
 
       // todo rename calculatedBalance
@@ -368,6 +373,7 @@ export async function getAssets(
         chain,
         calculatedPrice: calculatedPrice.toNumber(),
         price,
+        prefix,
         encodeType
       });
     } catch (err) {

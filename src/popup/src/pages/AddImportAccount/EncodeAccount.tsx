@@ -28,8 +28,7 @@ function EncodeAccount({
   handleEncode,
   handleSubmit,
   title,
-  pristine,
-  submitting,
+  valid,
   descriptionText
 }: InjectedFormProps<Form> & Props) {
   const { nextStep } = useWizard();
@@ -41,8 +40,7 @@ function EncodeAccount({
   const hasBoarded = useSelector((state: State) => state?.wallet?.onboarding);
 
   const submit = async (values: Form) => {
-    const { password } = values;
-    const errors = validPassword(password);
+    const errors = validPassword(values);
 
     if (isObjectEmpty(errors)) {
       const isValid = await validatePassword(values?.password);
@@ -57,7 +55,7 @@ function EncodeAccount({
         }
       } else {
         setIsSnackbarOpen(true);
-        setSnackbarError('Invalid Password');
+        setSnackbarError('Incorrect Password');
         setIsChangeValue(true);
         return;
       }
@@ -89,7 +87,6 @@ function EncodeAccount({
               bgColor: '#f2f2f2',
               color: '#b1b5c3',
               placeholderColor: '#000',
-              hideErrorMsg: false,
               autoFocus: true,
               isChangeValue,
               setIsChangeValue,
@@ -103,7 +100,7 @@ function EncodeAccount({
             text="Finish"
             justify="center"
             height="48px"
-            styledDisabled={pristine || submitting}
+            styledDisabled={!valid}
           />
         </Form>
         <Snackbar
@@ -121,7 +118,8 @@ function EncodeAccount({
 }
 
 export default reduxForm<Record<string, unknown>, any>({
-  form: 'EncodeAccount'
+  form: 'EncodeAccount',
+  validate: validPassword
 })(EncodeAccount);
 
 const Container = styled.div<{ bg?: string }>`

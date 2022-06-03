@@ -58,6 +58,7 @@ export interface Asset {
   calculatedPrice?: number;
   price?: number;
   encodeType?: string;
+  prefix?: number;
   assetsCount?: number;
   marketCap?: number;
 }
@@ -90,6 +91,7 @@ export enum Messages {
   ChangeInterval = 'CHANGE_INTERVAL',
   SendTransaction = 'SEND_TRANSACTION',
   TransactionSuccess = 'TRANSACTION_SUCCESS',
+  SignRawRequest = 'SIGN_RAW_REQUEST',
   ForgotPassword = 'FORGOT_PASSWORD',
   ReopenKeyPairs = 'REOPEN_KEYPAIRS',
   AddToKeyring = 'ADD_TO_KEYRING',
@@ -98,6 +100,7 @@ export enum Messages {
   DappAuthorization = 'DAPP_AUTHORIZATION',
   CheckPendingDappAuth = 'CHECK_PENDING_DAPP_AUTH',
   CheckPendingSign = 'CHECK_PENDING_SIGN',
+  CheckPendingSignRaw = 'CHECK_PENDING_SIGN_RAW',
   SignRequest = 'SIGN_REQUEST',
   DappAuthRequest = 'DAPP_AUTH_REQUEST',
   ConnectedApps = 'CONNECTED_APPS',

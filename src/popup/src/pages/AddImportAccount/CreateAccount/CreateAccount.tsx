@@ -146,7 +146,7 @@ export default function CreateAccount({
         />
       )}
 
-      {redirectedFromDashboard && <CongratsBackingUp />}
+      {redirectedFromDashboard && <SetupComplete />}
 
       {!hasBoarded && <SetupComplete />}
     </Wizard>

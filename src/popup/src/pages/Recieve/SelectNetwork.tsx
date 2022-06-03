@@ -24,6 +24,7 @@ export default function SelectNetwork({ setSelectedNetwork }: Props) {
   const account = useAccount();
   const { nextStep } = useWizard();
 
+  const accountAddress = account.getActiveAccount()?.address;
   const [assets, setAssets] = useState<(Asset[] & Network[]) | undefined>(undefined);
   const [networksFilter, setNetworksFilter] = useState<string>('');
 
@@ -35,7 +36,7 @@ export default function SelectNetwork({ setSelectedNetwork }: Props) {
 
   useEffect(() => {
     async function go() {
-      const { assets }: any = await getAssets(prices, infos, balances, disabledTokens);
+      const { assets }: any = await getAssets(prices, infos, balances, disabledTokens, true);
       setAssets(assets);
     }
 
@@ -78,20 +79,19 @@ export default function SelectNetwork({ setSelectedNetwork }: Props) {
           IconAlignment="left"
           Icon={<LoopIcon />}
         />
+
         <List>
           {assets
             ? assets.length === 0
               ? 'no assets'
               : assets.map((asset: Asset & Network) => {
                   return (
-                    <ChainItemContainer onClick={() => handleClick(asset)} key={asset.chain}>
+                    <ChainItemContainer key={asset.chain}>
                       <ChainItem
                         asset={asset}
                         iconSize="28px"
-                        accountAddress={account.getActiveAccount()?.address}
-                        handleClick={() => {
-                          goTo(TokenDashboard, { asset });
-                        }}
+                        accountAddress={accountAddress}
+                        handleClick={() => handleClick(asset)}
                       />
                     </ChainItemContainer>
                   );

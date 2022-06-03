@@ -69,7 +69,7 @@ function ImportPhase({
       dispatch(change('ImportPhase', 'file', json));
     } else {
       setIsSnackbarOpen(true);
-      setSnackbarError('Not a valid JSON backup file (.json)');
+      setSnackbarError('Not A Valid JSON Backup File (.Json)');
     }
   }, []);
 
@@ -160,6 +160,7 @@ function ImportPhase({
         <FileUploadIcon fill="#777e90" />
       </UploadedIconContainer>
     );
+
   useEnterClickListener(() => {
     submit();
   }, [file, isDisabled, password]);
@@ -242,7 +243,6 @@ function ImportPhase({
               errorBorderColor: '#fb5a5a',
               color: '#b1b5c3',
               placeholderColor: '#b1b5c3',
-              hideErrorMsg: false,
               autoFocus: true
             }}
           />

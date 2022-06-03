@@ -29,7 +29,6 @@ type InputProps = {
   fontWeight?: string;
   textAlign?: string;
   bgColor?: string;
-  hideErrorMsg?: boolean;
   autoFocus?: boolean;
   input?: any;
   padding?: string;
@@ -90,7 +89,6 @@ function HumbleInput({
   return (
     <Container marginBottom={marginBottom} marginTop={marginTop}>
       <InputContainer
-        // isChangeValue={touched || (meta?.touched && !meta?.submitting)}
         error={(!touched && !!error) || (meta?.touched && meta?.error)}
         errorBorderColor={errorBorderColor}
         borderColor={borderColor}
@@ -170,7 +168,6 @@ const InputContainer = styled.div<{
   bgColor?: string;
   padding?: string;
   errorBorderColor?: string;
-  isChangeValue?: boolean;
 }>`
   width: 100%;
   height: ${({ height }) => (height ? height : 'auto')};
@@ -181,7 +178,7 @@ const InputContainer = styled.div<{
   padding: ${({ padding }) => padding || '8px 8px 5px 16px'};
   box-sizing: border-box;
   border: 1px solid;
-  border-color: ${({ error, borderColor, errorBorderColor, isChangeValue }) =>
+  border-color: ${({ error, borderColor, errorBorderColor }) =>
     error && errorBorderColor ? errorBorderColor : borderColor};
   border-radius: 5px;
   background-color: ${({ bgColor }) => bgColor || '#fff'};

@@ -10,18 +10,20 @@ type Props = {
   selectedNetwork: Network | undefined;
 };
 
-export default function Select({
-  options,
-  selectedToken,
-  selectedNetwork
-}: Props) {
+export default function Select({ options, selectedToken, selectedNetwork }: Props) {
   const handleChange = async (e: any) => {
     // todo implement
   };
 
   return (
     <Container>
-      <NetworkIcons   width='28px' height='28px' fill='#18191A' isSmallIcon chain={selectedNetwork?.chain as string} />
+      <NetworkIcons
+        width="28px"
+        height="28px"
+        fill="#18191A"
+        isSmallIcon
+        chain={selectedNetwork?.chain as string}
+      />
       <StyledSelect
         defaultValue={selectedToken}
         onChange={(e) => handleChange(e)}
@@ -36,7 +38,7 @@ export default function Select({
           ))}
       </StyledSelect>
       <IconContainer>
-        <SelectArrowIcon/>
+        <SelectArrowIcon />
       </IconContainer>
     </Container>
   );
@@ -54,10 +56,10 @@ const Container = styled.div`
 `;
 
 const IconContainer = styled.div`
-position: absolute;
-right: 18px;
-top: 20px;
-`
+  position: absolute;
+  right: 18px;
+  top: 20px;
+`;
 
 const StyledSelect = styled.select`
   flex: 1;
@@ -70,7 +72,7 @@ const StyledSelect = styled.select`
   font-weight: 400;
   display: flex;
   align-items: center;
-  color: #18191A;
+  color: #18191a;
   margin-left: 8px;
   text-transform: capitalize;
   &:focus {

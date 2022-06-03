@@ -37,6 +37,7 @@ export default function SecureWallet({
 
       <ChooseSecurityLevel
         redirectedFromSignUp={redirectedFromSignUp}
+        redirectedFromDashboard={redirectedFromDashboard}
         nextStepFromParent={redirectedFromDashboard ? () => goTo(Wallet) : nextStep}
         setLevel={setLevel}
       />

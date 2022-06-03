@@ -8,7 +8,7 @@ type Props = {
   accountAddress: string;
   // Todo Appropriate typing
   asset: Asset;
-  handleClick: () => void;
+  handleClick?: () => void;
   iconSize?: string;
 };
 

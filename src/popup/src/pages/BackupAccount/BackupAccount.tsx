@@ -15,7 +15,7 @@ import Button from 'components/primitives/Button';
 import Snackbar from 'components/Snackbar/Snackbar';
 import { Field, reduxForm, InjectedFormProps } from 'redux-form';
 import { useSelector } from 'react-redux';
-import { isObjectEmpty, objectToArray } from 'utils';
+import { isObjectEmpty } from 'utils';
 import { copyToClipboard, exportJson, validPassword } from 'utils';
 import ButtonsIcon from 'assets/svgComponents/ButtonsIcon';
 
@@ -23,7 +23,7 @@ type Props = {
   password: string;
 };
 
-function BackupAccount({ handleSubmit, pristine, submitting }: InjectedFormProps<Props>) {
+function BackupAccount({ handleSubmit, valid }: InjectedFormProps<Props>) {
   const account = useAccount();
   const address = account?.getActiveAccount()?.address;
 
@@ -40,7 +40,7 @@ function BackupAccount({ handleSubmit, pristine, submitting }: InjectedFormProps
 
   const submit = async (values: Props) => {
     const { password } = values;
-    const errors = validPassword(password);
+    const errors = validPassword(values);
 
     if (isObjectEmpty(errors)) {
       const isValid = await validatePassword(password);
@@ -149,8 +149,8 @@ function BackupAccount({ handleSubmit, pristine, submitting }: InjectedFormProps
                 borderColor="#111"
                 justify="center"
                 margin="15px 0 0 0"
-                bgColor="#e4e4e4"
-                styledDisabled={pristine || submitting}
+                bgColor="#fff"
+                styledDisabled={!valid}
               />
             </Form>
           </>
@@ -169,7 +169,7 @@ function BackupAccount({ handleSubmit, pristine, submitting }: InjectedFormProps
               color="#111"
               justify="center"
               margin="15px 0 0 0"
-              bgColor="#e4e4e4"
+              bgColor="#fff"
               onClick={() => {
                 mnemonicHasBeenCopied && copyToClipboard('');
                 goTo(Wallet, { isMenuOpen: true });
@@ -193,7 +193,8 @@ function BackupAccount({ handleSubmit, pristine, submitting }: InjectedFormProps
 }
 
 export default reduxForm<Record<string, unknown>, any>({
-  form: 'backupAccount'
+  form: 'backupAccount',
+  validate: validPassword
 })(BackupAccount);
 
 const Container = styled.div<{ opened: boolean }>`

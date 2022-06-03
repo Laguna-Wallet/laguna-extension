@@ -216,10 +216,14 @@ export const enhancePasswordStrength = (string: string): string => {
   return '';
 };
 
-export const validPassword = (password: string) => {
+export const validPassword = (values: {password: string}) => {
+  const {password} = values;
   const errors: Record<string, string> = {};
   if (!password) {
     errors.password = 'Required';
+  }
+  if(password?.length < 8){
+    errors.password = 'Must be at least 8 characters'
   }
 
   return errors;

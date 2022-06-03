@@ -16,22 +16,19 @@ import generateStore from 'redux/store';
 import { IdleTimerProvider, useIdleTimerContext } from 'react-idle-timer';
 import IdleTimeoutWrapper from 'pages/IdleTimeoutWrapper/IdleTimeoutWrapper';
 
-cryptoWaitReady().then(async () => {
-  // const store = await generateStore();
+generateStore().then((store) => {
   // load all available addresses and accounts
-  generateStore().then((store) => {
+  cryptoWaitReady().then(async () => {
     keyring.loadAll({ ss58Format: 42, type: 'sr25519', store: new AccountsStore() });
-    // generateStore.then((store: any) => {
+
     ReactDOM.render(
       <React.StrictMode>
         <React.StrictMode>
           <Provider store={store}>
             <IdleTimeoutWrapper>
               <AccountProvider>
-                <Router>
-                  <GlobalStyles />
-                  <App />
-                </Router>
+                <GlobalStyles />
+                <App />
               </AccountProvider>
             </IdleTimeoutWrapper>
           </Provider>
@@ -43,4 +40,3 @@ cryptoWaitReady().then(async () => {
     reportWebVitals();
   });
 });
-// });

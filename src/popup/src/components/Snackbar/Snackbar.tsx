@@ -121,6 +121,7 @@ const Container = styled.div<{
   left: ${({ left }) => left || '50%'};
   transform: ${({ transform }) => transform || 'translateX(-50%)'};
   right: ${({ right }) => right && right};
+  z-index: 99999;
 `;
 
 const Content = styled.div<{
