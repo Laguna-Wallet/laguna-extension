@@ -101,13 +101,13 @@ function ImportPhase({
     /* eslint-disable */
     if (seedPhase && /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(seedPhase)) {
       setIsSnackbarOpen(true);
-      setSnackbarError('Please remove special characters (!,#:*)');
+      setSnackbarError('Please Remove Special Characters (!,#:*)');
     } else if ((seedLength === 12 || seedLength === 24) && !mnemonicValidate(seedPhase)) {
       setIsSnackbarOpen(true);
-      setSnackbarError('Not a valid blockchain address');
+      setSnackbarError('Not A Valid Blockchain Address');
     } else if (seedLength > 12 && !mnemonicValidate(seedPhase)) {
       setIsSnackbarOpen(true);
-      setSnackbarError('Please enter 12 or 24 words');
+      setSnackbarError('Please Enter 12 Or 24 Words');
     } else if ((seedLength === 12 || seedLength === 24) && mnemonicValidate(seedPhase)) {
       setIsFinishSlider(true);
     }
