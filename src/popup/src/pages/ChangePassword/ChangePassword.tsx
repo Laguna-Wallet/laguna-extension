@@ -21,27 +21,23 @@ type Props = {
   handleSubmit: any;
 };
 
-const validate = async (values: any) => {
+const validate = (values: any) => {
   const errors: Record<string, string> = {};
 
-  if (!values.currentPassword) {
-    errors.currentPassword = 'Please enter current password';
-  }
+  // if (!values.currentPassword) {
+  //   errors.currentPassword = 'Please enter current password';
+  // }
 
-  if (values.currentPassword && values.currentPassword.length < 8) {
-    errors.currentPassword = 'Password should be minimum 8 characters length';
-  }
-
-  if (values.currentPassword && !(await validatePassword(values.currentPassword))) {
-    errors.currentPassword = 'Incorrect current password';
-  }
+  // if (values.currentPassword && values.currentPassword.length < 8) {
+  //   errors.currentPassword = 'Password Must be at least 8 characters';
+  // }
 
   if (!values.newPassword) {
     errors.newPassword = 'Please enter new password';
   }
 
   if (values.newPassword && values.newPassword.length < 8) {
-    errors.newPassword = 'New Password should be minimum 8 characters length';
+    errors.newPassword = 'New Password Must be at least 8 characters';
   }
 
   if (!values.confirmNewPassword) {
@@ -49,7 +45,7 @@ const validate = async (values: any) => {
   }
 
   if (values.confirmNewPassword && values.confirmNewPassword.length < 8) {
-    errors.confirmNewPassword = 'New Password should be minimum 8 characters length';
+    errors.confirmNewPassword = 'New Password Must be at least 8 characters';
   }
 
   if (
@@ -57,7 +53,7 @@ const validate = async (values: any) => {
     values.confirmNewPassword &&
     values.newPassword !== values.confirmNewPassword
   ) {
-    errors.newPassword = 'New Passwords do not match';
+    errors.confirmNewPassword = 'New Passwords do not match';
   }
 
   return errors;
@@ -73,6 +69,12 @@ function ChangePassword({ handleSubmit }: Props) {
 
   // todo proper typing
   const submit = async (values: any) => {
+    if (values.currentPassword && !(await validatePassword(values.currentPassword))) {
+      setSnackbarError('Incorrect current password');
+      setIsSnackbarOpen(true);
+      return;
+    }
+
     const errors = await validate(values);
 
     if (!isObjectEmpty(errors)) {
@@ -155,7 +157,8 @@ function ChangePassword({ handleSubmit }: Props) {
                 placeholderColor: '#b1b5c3',
                 height: '48px',
                 marginTop: '12px',
-                borderColor: '#303030'
+                borderColor: '#303030',
+                showError: true
               }}
             />
             <Field
@@ -172,7 +175,8 @@ function ChangePassword({ handleSubmit }: Props) {
                 placeholderColor: '#b1b5c3',
                 height: '48px',
                 marginTop: '12px',
-                borderColor: '#303030'
+                borderColor: '#303030',
+                showError: true
               }}
             />
           </FieldsContainer>
@@ -229,8 +233,8 @@ export default connect((state: any) => ({
   //   }
 }))(
   reduxForm<Record<string, unknown>, any>({
-    form: 'changePassword'
-    // validate
+    form: 'changePassword',
+    validate
     // destroyOnUnmount: false,
     // enableReinitialize: true,
     // keepDirtyOnReinitialize: true,
