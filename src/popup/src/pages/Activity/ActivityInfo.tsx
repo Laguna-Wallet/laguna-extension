@@ -197,7 +197,7 @@ const RowLeft = styled.span`
 `;
 
 const BoldText = styled.div<{ fontSize?: string }>`
-  font-family: 'IBM Plex Sans';
+  font-family: Inter;
   font-size: ${({ fontSize }) => fontSize || '16px'};
   font-weight: 500;
   color: #18191a;
@@ -214,6 +214,7 @@ const TotalValue = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+  height: 38px;
   span {
     :nth-child(1) {
       font-weight: 600;
@@ -258,7 +259,6 @@ const ExportButton = styled.div`
   font-family: 'IBM Plex Sans';
   font-size: 12px;
   margin-top: 17px;
-  padding: 4px 0;
   line-height: 1.35 span {
     margin-left: 5px;
   }

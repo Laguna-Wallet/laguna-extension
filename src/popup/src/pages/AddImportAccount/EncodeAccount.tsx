@@ -109,7 +109,7 @@ function EncodeAccount({
           close={() => setIsSnackbarOpen(false)}
           type="error"
           left="26px"
-          bottom={'145px'}
+          bottom={'138px'}
           transform="translateX(0)"
         />
       </Content>
