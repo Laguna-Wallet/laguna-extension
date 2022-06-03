@@ -58,6 +58,7 @@ export interface Asset {
   calculatedPrice?: number;
   price?: number;
   encodeType?: string;
+  prefix?: number;
   assetsCount?: number;
   marketCap?: number;
 }

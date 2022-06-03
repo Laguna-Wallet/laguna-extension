@@ -160,6 +160,7 @@ function ImportPhase({
         <FileUploadIcon fill="#777e90" />
       </UploadedIconContainer>
     );
+
   useEnterClickListener(() => {
     submit();
   }, [file, isDisabled, password]);
