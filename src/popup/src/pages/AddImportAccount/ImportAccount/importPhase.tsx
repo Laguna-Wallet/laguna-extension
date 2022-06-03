@@ -38,11 +38,22 @@ type FormProps = {
   password: string;
 };
 
+const validate = (values: { password: string }) => {
+  const { password } = values;
+  const errors: Record<string, string> = {};
+  if (!password) {
+    errors.password = 'Required';
+  }
+
+  return errors;
+};
+
 function ImportPhase({
   handleSubmit,
   redirectedFromSignUp,
   redirectedFromForgotPassword,
-  onClose
+  onClose,
+  valid
 }: InjectedFormProps<FormProps> & Props) {
   const { nextStep } = useWizard();
 
@@ -256,8 +267,7 @@ function ImportPhase({
           text="Import"
           margin="10px 0 0 0"
           justify="center"
-          // styledDisabled={uploaded ? !(uploaded && password) : !seedPhase}
-          styledDisabled={isDisabled}
+          styledDisabled={uploaded ? !valid : isDisabled}
           Icon={<RightArrow width={23} fill="#fff" />}
         />
 
@@ -276,6 +286,7 @@ function ImportPhase({
 
 export default reduxForm<Record<string, unknown>, any>({
   form: 'ImportPhase',
+  validate,
   destroyOnUnmount: false
 })(ImportPhase);
 
