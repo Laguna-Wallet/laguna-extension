@@ -2,7 +2,6 @@ import { useState } from 'react';
 import styled from 'styled-components';
 
 import Header from 'pages/Wallet/Header';
-import walletBG from 'assets/imgs/walletBG.jpg';
 import Wallet from 'pages/Wallet/Wallet';
 import HumbleInput from 'components/primitives/HumbleInput';
 // Todo Move ChainItem Into Shared
@@ -65,7 +64,6 @@ export default function SelectAsset({ assets }: Props) {
           placeholderColor="#777e90"
           placeholder="Search"
           height="45px"
-          marginTop="20px"
           IconAlignment="left"
           Icon={<LoopIcon />}
         />
@@ -77,6 +75,7 @@ export default function SelectAsset({ assets }: Props) {
                   return (
                     <ChainItemContainer key={asset.symbol}>
                       <ChainItem
+                        iconSize="28px"
                         asset={asset}
                         accountAddress={account.getActiveAccount()?.address}
                         handleClick={() => handleClick(asset)}
@@ -101,20 +100,18 @@ const Container = styled.div`
   position: relative;
   position: relative;
   background-size: cover;
-  padding-top: 110px;
+  padding-top: 92px;
 `;
 
 const Content = styled.div`
   height: 100%;
-  padding: 15px;
-  border-top-right-radius: 15px;
-  border-top-left-radius: 15px;
+  padding: 20px 26px;
+  border-radius: 10px 10px 0px 0px;
   background-color: #fff;
 `;
 
 const List = styled.div`
-  margin-top: 24px;
-  padding-bottom: 20px;
+  margin-top: 12px;
   box-sizing: border-box;
 `;
 

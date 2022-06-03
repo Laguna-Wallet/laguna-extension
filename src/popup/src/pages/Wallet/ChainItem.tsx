@@ -52,7 +52,7 @@ const Container = styled.div`
   align-items: center;
   background-color: #ffffff;
   margin-bottom: 12px;
-  padding: 14px 12px;
+  padding: 14px 14px 14px 12px;
   box-sizing: border-box;
   border-radius: 4px;
   cursor: pointer;
