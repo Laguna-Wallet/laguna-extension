@@ -3,23 +3,14 @@ import { useAccount } from 'context/AccountContext';
 import activityBg from 'assets/imgs/activity-bg.png';
 import Header from 'pages/Wallet/Header';
 import Footer from 'pages/Wallet/Footer';
-import { goTo, Link } from 'react-chrome-extension-router';
-import Wallet from 'pages/Wallet/Wallet';
-import { getApiInstance, getLatestTransactionsForSingleChain } from 'utils/polkadot';
+import { goTo } from 'react-chrome-extension-router';
+import { getLatestTransactionsForSingleChain } from 'utils/polkadot';
 import { useEffect, useState } from 'react';
-import ThreeDotsIcon from 'assets/svgComponents/ThreeDotsIcon';
 import ActivityInfo from './ActivityInfo';
 import { useSelector } from 'react-redux';
-import { FixedSizeList as List } from 'react-window';
-import { truncateString } from 'utils';
-import { format, compareAsc } from 'date-fns';
-import RightArrow from 'assets/svgComponents/RightArrow';
-import { PlusIcon } from '@heroicons/react/outline';
 import PolkadotLogoIcon from 'assets/svgComponents/PolkadotLogoIcon';
 import KusamaLogoIcon from 'assets/svgComponents/KusamaLogoIcon';
-import KusamaIcon from 'assets/svgComponents/KusamaIcon';
-import { Asset, TokenSymbols, Transaction } from 'utils/types';
-import { fetchAccountsTransactions } from 'utils/fetchTransactions';
+import { Asset, Transaction } from 'utils/types';
 import Popup from 'components/Popup/Popup';
 import { ActivityItem } from './Activity';
 import TokenDashboard from 'pages/TokenDashboard/TokenDashboard';
@@ -109,12 +100,7 @@ export default function ChainActivity({ chain, asset }: Props) {
             hasMore={count !== transactions.length}
             style={{ display: 'flex', flexDirection: 'column' }}
             scrollableTarget="scrollableDiv"
-            loader={<h4>Loading...</h4>}
-            endMessage={
-              <p style={{ marginTop: '5px', textAlign: 'center' }}>
-                {!loading && <b>No more items</b>}
-              </p>
-            }>
+            loader={<h4>Loading...</h4>}>
             {transactions &&
               transactions.map((transaction: any) => {
                 return (
