@@ -33,7 +33,7 @@ export function ConfirmSecuritySkip({ nextStep, nextStepFromParent, setLevel }: 
 
         <Description>
           <Checkbox value={checked} onChange={setChecked} />
-          <span> I understand that without a seed phrase I cannot restore my wallet.</span>
+          <span> I understand that without a seed phrase I cannot restore my account.</span>
         </Description>
 
         <ButtonContainer>

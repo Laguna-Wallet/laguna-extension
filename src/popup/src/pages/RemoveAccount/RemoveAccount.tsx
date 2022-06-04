@@ -90,7 +90,7 @@ const RemoveAccount = ({ handleSubmit, valid }: InjectedFormProps<Props>) => {
             {name?.length > 12 ? truncateString(name) : name} ({address && truncateString(address)}){' '}
           </span>
           {`${
-            accounts.length === 1 ? 'and log you out of the wallet' : 'from your account'
+            accounts.length === 1 ? 'and log you out of the wallet' : 'from your wallet'
           }. Please confirm below.`}
         </Text>
         <Form onSubmit={handleSubmit(submit)}>

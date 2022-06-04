@@ -118,7 +118,7 @@ function BackupAccount({ handleSubmit, valid }: InjectedFormProps<Props>) {
           <>
             <WarningContainer>
               {seedExists
-                ? `Warning: Do not share your seed phrase. This phrase grants full control of your wallet.`
+                ? `Warning: Do not share your seed phrase. This phrase grants full control of your account.`
                 : 'Account has not been secured, only Json file can be exported'}
             </WarningContainer>
             <Form onSubmit={handleSubmit(submit)}>

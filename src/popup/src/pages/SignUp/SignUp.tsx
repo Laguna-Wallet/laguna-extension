@@ -22,7 +22,7 @@ export default function SignUp() {
         <StyledLink component={CreateAccount} props={{ redirectedFromSignUp: true }}>
           <Button
             width="226px"
-            text="Create New Wallet"
+            text="Create New Account"
             borderColor="#111"
             margin="26px 0 0 0"
             justify="center"
@@ -32,7 +32,7 @@ export default function SignUp() {
         <StyledLink component={ImportAccount} props={{ redirectedFromSignUp: true }}>
           <Button
             width="226px"
-            text="Import Wallet"
+            text="Import Account"
             bgColor="#fff"
             color="#111"
             borderColor="#fff"

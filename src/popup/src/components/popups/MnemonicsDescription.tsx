@@ -22,7 +22,7 @@ export function MnemonicsDescription({ onClose }: Props) {
           <Description>
             <p>
               A seed phrase is a set of twelve words that contains all the information about your
-              wallet, including your funds. It&apos;s like a secret code used to access your entire
+              account, including your funds. It&apos;s like a secret code used to access your entire
               wallet.
             </p>
             <p>
