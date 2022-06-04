@@ -131,14 +131,16 @@ function BackupAccount({ handleSubmit, valid }: InjectedFormProps<Props>) {
                 component={HumbleInput}
                 props={{
                   type: 'password',
-                  color: '#b1b5c3',
+                  padding: '15px 11px 15px 16px',
+                  color: '#fff',
                   placeholderColor: '#b1b5c3',
                   bgColor: '#303030',
                   borderColor: '#303030',
                   height: '48px',
                   marginTop: '12px',
                   errorBorderColor: '#fb5a5a',
-                  autoFocus: true
+                  autoFocus: true,
+                  isPassword: true
                 }}
               />
               <Button

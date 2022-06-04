@@ -1,4 +1,4 @@
-import { memo, ReactElement } from 'react';
+import { memo, ReactElement, useEffect, useState } from 'react';
 import styled from 'styled-components/macro';
 import { truncateString } from 'utils';
 import { AccountMeta } from 'utils/types';
@@ -42,6 +42,7 @@ type InputProps = {
   accountMeta?: AccountMeta;
   readOnly?: boolean;
   meta?: any;
+  isPassword?: boolean;
 };
 
 function HumbleInput({
@@ -76,8 +77,16 @@ function HumbleInput({
   IconAlignment,
   accountMeta,
   readOnly,
-  meta
+  meta,
+  isPassword
 }: InputProps) {
+  const [dummyText, setDummyText] = useState<string>('');
+
+  useEffect(() => {
+    const changeDummyText = Array(input?.value?.length).fill('*').join('');
+    setDummyText(changeDummyText);
+  }, [input?.value]);
+
   const handleValue = (value: string) => {
     if (!value) return '';
     if (truncate) {
@@ -113,6 +122,7 @@ function HumbleInput({
           <>
             {IconAlignment === 'left' && accountMeta && <AccountAvatar img={accountMeta.img} />}
             <StyledInput
+              isPassword={isPassword}
               {...input}
               id={id}
               value={handleValue(value || input?.value)}
@@ -127,6 +137,7 @@ function HumbleInput({
               color={color}
               disabled={readOnly}
             />
+            {isPassword && <DummyElement>{dummyText}</DummyElement>}
             {IconAlignment === 'right' && Icon && <IconContainer>{Icon}</IconContainer>}
             {copy && handleClickCopy && (
               <Copy onClick={() => handleClickCopy(value || input?.value)}>
@@ -191,12 +202,29 @@ const IconContainer = styled.div`
   align-items: center;
 `;
 
+const DummyElement = styled.span`
+  position: absolute;
+  display: flex;
+  align-items: center;
+  top: 15px;
+  left: 15px;
+  max-width: 295px;
+  background: transparent;
+  font-family: Inter;
+  font-size: 16.82px;
+  line-height: 1.35;
+  color: #fff;
+  overflow: hidden;
+  z-index: 4;
+`;
+
 const StyledInput = styled.input<{
   fontSize?: string;
   bgColor?: string;
   color?: string;
   placeholderColor?: string;
   fontWeight?: string;
+  isPassword?: boolean;
 }>`
   flex: 1;
   height: 100%;
@@ -205,10 +233,13 @@ const StyledInput = styled.input<{
   padding: 0;
   appearance: none;
   outline: none;
-  background-color: ${({ bgColor }) => (bgColor ? bgColor : '#fff')};
-  color: ${({ color }) => (color ? color : '#111')};
+  background-color: ${({ bgColor, isPassword }) =>
+    isPassword ? 'transparent' : bgColor || '#fff'};
+  color: ${({ color, isPassword }) => (isPassword ? 'transparent' : color || '#111')};
   font-family: Inter;
   font-weight: ${({ fontWeight }) => fontWeight || 400};
+  caret-color: ${({ color }) => color || '#111'};
+  z-index: 5;
   :-webkit-autofill,
   :-webkit-autofill:hover,
   :-webkit-autofill:focus,
