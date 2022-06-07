@@ -32,6 +32,7 @@ import { cryptoWaitReady } from "@polkadot/util-crypto"
 import type { KeyringPair } from "@polkadot/keyring/types"
 import assert = require("assert")
 import type { SignerPayloadJSON, SignerPayloadRaw } from "@polkadot/types/types"
+import { hexToString } from "@polkadot/util"
 
 // import { getCurrentTab } from "./utils"
 
@@ -120,9 +121,11 @@ chrome.runtime.onConnect.addListener(function (port) {
         const pair = keyPairs.find((pair) => {
           return recodeToPolkadotAddress(pair.address) === recodeToPolkadotAddress(data.request.address)
         })
+
         if (data.message === "SIGN_RAW") {
           await cryptoWaitReady()
-          const signature = u8aToHex(pair.sign(wrapBytes(data.request)))
+          const signature = u8aToHex(pair.sign(wrapBytes(data.request.data)))
+          console.log("~ signature", signature)
           port.postMessage({ ...data, payload: { id: data.id, approved: true, ...data.request, signature } })
         }
       } else {

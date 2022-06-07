@@ -14,8 +14,6 @@ export default function RequestToSignRaw() {
   const pendingDapp = pendingToSignRaw;
 
   const handleApprove = () => {
-    alert(JSON.stringify(pendingDapp));
-
     chrome.runtime.sendMessage({
       type: Messages.SignRawRequest,
       payload: { approved: true, pendingDapp }

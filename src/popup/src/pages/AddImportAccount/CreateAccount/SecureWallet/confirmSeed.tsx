@@ -176,7 +176,7 @@ const Container = styled.div`
   width: 100%;
   height: 100%;
   display: flex;
-  padding: 22px 16px 29px;
+  padding: 22px 16px 38px;
   flex-direction: column;
 `;
 const MainContent = styled.div`

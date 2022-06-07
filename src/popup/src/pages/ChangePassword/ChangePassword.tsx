@@ -28,9 +28,9 @@ const validate = (values: Form) => {
   //   errors.currentPassword = 'Please enter current password';
   // }
 
-  if (values.currentPassword && values.currentPassword.length < 8) {
-    errors.currentPassword = 'Password should be minimum 8 characters length';
-  }
+  // if (values.currentPassword && values.currentPassword.length < 8) {
+  //   errors.currentPassword = 'Password should be minimum 8 characters length';
+  // }
 
   if (!values.newPassword) {
     errors.newPassword = 'Please enter new password';
@@ -138,12 +138,12 @@ function ChangePassword({ handleSubmit, valid }: InjectedFormProps<Form>) {
                 bgColor: '#303030',
                 color: '#b1b5c3',
                 placeholderColor: '#b1b5c3',
-                errorBorderColor: '#fb5a5a',
+                // errorBorderColor: '#fb5a5a',
                 height: '48px',
                 marginTop: '12px',
-                borderColor: '#303030',
-                showError: true,
-                errorColor: '#FB5A5A'
+                borderColor: '#303030'
+                // showError: true,
+                // errorColor: '#FB5A5A'
               }}
             />
             <Field
@@ -156,7 +156,7 @@ function ChangePassword({ handleSubmit, valid }: InjectedFormProps<Form>) {
               props={{
                 type: 'password',
                 bgColor: '#303030',
-                color: '#9c9c9c',
+                color: '#b1b5c3',
                 placeholderColor: '#b1b5c3',
                 errorBorderColor: '#fb5a5a',
                 height: '48px',
@@ -176,7 +176,7 @@ function ChangePassword({ handleSubmit, valid }: InjectedFormProps<Form>) {
               props={{
                 type: 'password',
                 bgColor: '#303030',
-                color: '#9c9c9c',
+                color: '#b1b5c3',
                 placeholderColor: '#b1b5c3',
                 height: '48px',
                 marginTop: '12px',
