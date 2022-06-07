@@ -76,7 +76,7 @@ const DecodeToViewSeed = ({ handleSubmit, valid }: InjectedFormProps<Form>) => {
             }}
           />
           <Button
-            type="button"
+            type="submit"
             margin="10px 0 0 0"
             text={'Next'}
             justify="center"
