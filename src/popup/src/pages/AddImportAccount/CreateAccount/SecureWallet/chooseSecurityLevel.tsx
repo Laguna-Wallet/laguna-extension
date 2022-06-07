@@ -3,6 +3,7 @@ import SecureWalletLogo from 'assets/svgComponents/SecureWalletLogo';
 import { ConfirmSecuritySkip } from 'components/popups/ConfirmSecuritySkip';
 import { MnemonicsDescription } from 'components/popups/MnemonicsDescription';
 import Button from 'components/primitives/Button';
+import { useEnterClickListener } from 'hooks/useEnterClickListener';
 import WizardHeader from 'pages/AddImportAccount/WizardHeader';
 import SignUp from 'pages/SignUp/SignUp';
 import Wallet from 'pages/Wallet/Wallet';
@@ -31,6 +32,8 @@ export default function ChooseSecurityLevel({
 
   const [isMnemonicDescriptionOpen, setIsMnemonicDescriptionOpen] = useState<boolean>();
   const [isConfirmSkipOpen, setConfirmSkipOpen] = useState<boolean>();
+
+  useEnterClickListener(() => nextStep(), []);
 
   return (
     <Container redirectedFromDashboard={redirectedFromDashboard}>
@@ -117,7 +120,7 @@ const Container = styled.div<{ redirectedFromDashboard?: boolean }>`
   justify-content: flex-start;
   background-color: #fff;
   padding: ${({ redirectedFromDashboard }) =>
-    redirectedFromDashboard ? '22px 16px 43px; ' : '22px 16px 11px'};
+    redirectedFromDashboard ? '22px 16px 38px; ' : '22px 16px 11px'};
   box-sizing: border-box;
 `;
 

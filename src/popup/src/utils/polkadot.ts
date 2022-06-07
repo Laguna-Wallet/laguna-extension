@@ -346,7 +346,8 @@ export async function getAssets(
 
   for (let i = 0; i < networks.length; i++) {
     try {
-      const { name, symbol, chain, node, encodeType, price_change_percentage_24h } = networks[i];
+      const { name, symbol, chain, node, encodeType, prefix, price_change_percentage_24h } =
+        networks[i];
 
       let balance = balances[chain];
 
@@ -372,6 +373,7 @@ export async function getAssets(
         chain,
         calculatedPrice: calculatedPrice.toNumber(),
         price,
+        prefix,
         encodeType
       });
     } catch (err) {

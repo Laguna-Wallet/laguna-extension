@@ -24,20 +24,20 @@ type Form = {
 const validate = (values: Form) => {
   const errors: Record<string, string> = {};
 
-  if (!values.currentPassword) {
-    errors.currentPassword = 'Please enter current password';
-  }
+  // if (!values.currentPassword) {
+  //   errors.currentPassword = 'Please enter current password';
+  // }
 
-  if (values.currentPassword && values.currentPassword.length < 8) {
-    errors.currentPassword = 'Password should be minimum 8 characters length';
-  }
+  // if (values.currentPassword && values.currentPassword.length < 8) {
+  //   errors.currentPassword = 'Password should be minimum 8 characters length';
+  // }
 
   if (!values.newPassword) {
     errors.newPassword = 'Please enter new password';
   }
 
   if (values.newPassword && values.newPassword.length < 8) {
-    errors.newPassword = 'New Password should be minimum 8 characters length';
+    errors.newPassword = 'New Password Must be at least 8 characters';
   }
 
   if (!values.confirmNewPassword) {
@@ -45,7 +45,7 @@ const validate = (values: Form) => {
   }
 
   if (values.confirmNewPassword && values.confirmNewPassword.length < 8) {
-    errors.confirmNewPassword = 'New Password should be minimum 8 characters length';
+    errors.confirmNewPassword = 'New Password Must be at least 8 characters';
   }
 
   if (
@@ -53,7 +53,7 @@ const validate = (values: Form) => {
     values.confirmNewPassword &&
     values.newPassword !== values.confirmNewPassword
   ) {
-    errors.newPassword = 'New Passwords do not match';
+    errors.confirmNewPassword = 'New Passwords do not match';
   }
 
   return errors;
@@ -68,7 +68,13 @@ function ChangePassword({ handleSubmit, valid }: InjectedFormProps<Form>) {
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
 
   // todo proper typing
-  const submit = async (values: Form) => {
+  const submit = async (values: any) => {
+    if (values.currentPassword && !(await validatePassword(values.currentPassword))) {
+      setSnackbarError('Incorrect current password');
+      setIsSnackbarOpen(true);
+      return;
+    }
+
     const errors = await validate(values);
 
     if (!isObjectEmpty(errors)) {
@@ -133,13 +139,12 @@ function ChangePassword({ handleSubmit, valid }: InjectedFormProps<Form>) {
                 padding: '15px 11px 15px 16px',
                 color: '#fff',
                 placeholderColor: '#b1b5c3',
-                errorBorderColor: '#fb5a5a',
+                // errorBorderColor: '#fb5a5a',
                 height: '48px',
                 marginTop: '12px',
-                borderColor: '#303030',
-                showError: true,
-                errorColor: '#FB5A5A',
-                isPassword: true
+                borderColor: '#303030'
+                // showError: true,
+                // errorColor: '#FB5A5A'
               }}
             />
             <Field
@@ -152,8 +157,7 @@ function ChangePassword({ handleSubmit, valid }: InjectedFormProps<Form>) {
               props={{
                 type: 'password',
                 bgColor: '#303030',
-                padding: '15px 11px 15px 16px',
-                color: '#fff',
+                color: '#b1b5c3',
                 placeholderColor: '#b1b5c3',
                 errorBorderColor: '#fb5a5a',
                 height: '48px',
@@ -174,8 +178,7 @@ function ChangePassword({ handleSubmit, valid }: InjectedFormProps<Form>) {
               props={{
                 type: 'password',
                 bgColor: '#303030',
-                padding: '15px 11px 15px 16px',
-                color: '#fff',
+                color: '#b1b5c3',
                 placeholderColor: '#b1b5c3',
                 height: '48px',
                 marginTop: '12px',

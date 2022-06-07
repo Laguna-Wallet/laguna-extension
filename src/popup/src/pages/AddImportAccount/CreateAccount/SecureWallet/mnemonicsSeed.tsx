@@ -101,14 +101,14 @@ export default function MnemonicsSeed({ redirectedFromSignUp, redirectedFromDash
           bottom="30px"
         />
       </MainContent>
-
-      <Button
-        onClick={nextStep}
-        text={'Continue'}
-        justify="center"
-        // Icon={<RightArrow width={23} />}
-        margin="auto 0px 0px 0px"
-      />
+      <ButtonContainer>
+        <Button
+          onClick={nextStep}
+          text={'Continue'}
+          justify="center"
+          // Icon={<RightArrow width={23} />}
+        />
+      </ButtonContainer>
     </Container>
   );
 }
@@ -119,7 +119,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   background-color: #f9fafb;
-  padding: 22px 16px 43px;
+  padding: 22px 16px 38px;
   box-sizing: border-box;
 `;
 
@@ -207,4 +207,11 @@ const CopyBtn = styled.div`
   span {
     margin-left: 5px;
   }
+`;
+
+const ButtonContainer = styled.div`
+  width: 100%;
+  padding: 0 10px;
+  box-sizing: border-box;
+  margin-top: auto;
 `;
