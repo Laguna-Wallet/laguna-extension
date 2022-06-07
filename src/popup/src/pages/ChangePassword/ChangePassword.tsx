@@ -130,14 +130,16 @@ function ChangePassword({ handleSubmit, valid }: InjectedFormProps<Form>) {
               props={{
                 type: 'password',
                 bgColor: '#303030',
-                color: '#b1b5c3',
+                padding: '15px 11px 15px 16px',
+                color: '#fff',
                 placeholderColor: '#b1b5c3',
                 errorBorderColor: '#fb5a5a',
                 height: '48px',
                 marginTop: '12px',
                 borderColor: '#303030',
                 showError: true,
-                errorColor: '#FB5A5A'
+                errorColor: '#FB5A5A',
+                isPassword: true
               }}
             />
             <Field
@@ -150,14 +152,16 @@ function ChangePassword({ handleSubmit, valid }: InjectedFormProps<Form>) {
               props={{
                 type: 'password',
                 bgColor: '#303030',
-                color: '#9c9c9c',
+                padding: '15px 11px 15px 16px',
+                color: '#fff',
                 placeholderColor: '#b1b5c3',
                 errorBorderColor: '#fb5a5a',
                 height: '48px',
                 marginTop: '12px',
                 borderColor: '#303030',
                 showError: true,
-                errorColor: '#FB5A5A'
+                errorColor: '#FB5A5A',
+                isPassword: true
               }}
             />
             <Field
@@ -170,14 +174,16 @@ function ChangePassword({ handleSubmit, valid }: InjectedFormProps<Form>) {
               props={{
                 type: 'password',
                 bgColor: '#303030',
-                color: '#9c9c9c',
+                padding: '15px 11px 15px 16px',
+                color: '#fff',
                 placeholderColor: '#b1b5c3',
                 height: '48px',
                 marginTop: '12px',
                 borderColor: '#303030',
                 errorBorderColor: '#fb5a5a',
                 showError: true,
-                errorColor: '#FB5A5A'
+                errorColor: '#FB5A5A',
+                isPassword: true
               }}
             />
           </FieldsContainer>

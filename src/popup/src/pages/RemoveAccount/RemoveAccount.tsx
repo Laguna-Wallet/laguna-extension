@@ -103,14 +103,16 @@ const RemoveAccount = ({ handleSubmit, valid }: InjectedFormProps<Props>) => {
             component={HumbleInput}
             props={{
               type: 'password',
-              color: '#9c9c9c',
+              color: '#fff',
+              padding: '15px 11px 15px 16px',
               placeholderColor: '#9c9c9c',
               height: '48px',
               marginTop: '0',
               borderColor: '#color',
               errorBorderColor: '#fb5a5a',
               bgColor: '#303030',
-              autoFocus: true
+              autoFocus: true,
+              isPassword: true
             }}
           />
           <ButtonContainer>
