@@ -77,7 +77,7 @@ const Container = styled.div<{ bg: string }>`
   align-items: center;
   background-image: ${({ bg }) => `url(${bg})`};
   background-size: cover;
-  padding: 40px 16px 38px 16px;
+  padding: 57px 26px 29px;
   box-sizing: border-box;
 `;
 
@@ -92,7 +92,7 @@ const Content = styled.div`
 
 const Heading = styled.div`
   width: 100%;
-  line-height: 1.45;
+  line-height: 1.82;
   letter-spacing: 0.85px;
   text-align: center;
   font-family: 'IBM Plex Sans';
@@ -100,7 +100,7 @@ const Heading = styled.div`
   font-weight: 500;
   color: #18191a;
   margin-right: auto;
-  margin-top: 35px;
+  margin-top: 35.7px;
 `;
 
 const IconContainer = styled.div`
@@ -111,8 +111,8 @@ const IconContainer = styled.div`
 `;
 
 const Circle = styled.div`
-  width: 180px;
-  height: 180px;
+  width: 167px;
+  height: 167px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -123,10 +123,10 @@ const Circle = styled.div`
 const CheckMarkContainer = styled.div``;
 
 const Title = styled.div`
-  width: 80%;
   text-align: center;
-  font-size: 17px;
-  margin-top: 15px;
+  max-width: 287px;
+  width: 100%;
+  margin-top: 10px;
   font-family: Inter;
   font-size: 14px;
   line-height: 1.35;
@@ -143,29 +143,32 @@ const LinksContainer = styled.div`
   font-family: 'SFCompactDisplayRegular';
   font-size: 14px;
   font-weight: 600;
-  margin-top: auto;
+  margin-top: 21px;
 `;
 
 const LinkContainer = styled.div`
-  width: 190px;
-  height: 41px;
+  width: 199px;
+  height: 39px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #ececec;
-  border-radius: 25px;
-  padding: 10px 16px;
+  background-color: #e6e8ec;
   box-sizing: border-box;
   border-radius: 25px;
-  margin-top: 10px;
+  margin-top: 13px;
   cursor: pointer;
+
   span {
-    margin-right: auto;
+    font-family: Inter;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.71;
+    color: #000;
   }
 `;
 
 const LinkIconContainer = styled.div`
-  margin-right: auto;
+  margin-right: 12px;
 `;
 
 const BottomSection = styled.div`
