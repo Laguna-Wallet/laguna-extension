@@ -65,7 +65,7 @@ export default function ChooseSecurityLevel({
         />
       )}
 
-      <Title>Secure Your Wallet</Title>
+      <Title>Secure Your Account</Title>
 
       <IconContainer>
         <Icon>
@@ -75,7 +75,7 @@ export default function ChooseSecurityLevel({
       <TextContainer>
         To secure your wallet you&apos;ll be given a{' '}
         <span onClick={() => setIsMnemonicDescriptionOpen(true)}>seed phrase.</span> Store this in a
-        safe place. It&apos;s the only way to recover your wallet if you get locked out of the app
+        safe place. It&apos;s the only way to recover your account if you get locked out of the app
         or get a new device.
       </TextContainer>
       <Buttons>

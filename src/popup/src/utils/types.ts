@@ -147,7 +147,7 @@ export interface Transaction {
 }
 
 export enum SnackbarMessages {
-  WalletCreated = 'New Wallet Created',
+  WalletCreated = 'New Account Created',
   AddressCopied = 'Address Copied',
   TransactionSent = 'Transaction Sent',
   AddressAdded = 'New Address Added',

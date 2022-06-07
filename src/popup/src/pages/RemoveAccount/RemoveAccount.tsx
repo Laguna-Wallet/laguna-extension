@@ -90,7 +90,7 @@ const RemoveAccount = ({ handleSubmit, valid }: InjectedFormProps<Props>) => {
             {name?.length > 12 ? truncateString(name) : name} ({address && truncateString(address)}){' '}
           </span>
           {`${
-            accounts.length === 1 ? 'and log you out of the wallet' : 'from your account'
+            accounts.length === 1 ? 'and log you out of the wallet' : 'from your wallet'
           }. Please confirm below.`}
         </Text>
         <Form onSubmit={handleSubmit(submit)}>
@@ -103,14 +103,16 @@ const RemoveAccount = ({ handleSubmit, valid }: InjectedFormProps<Props>) => {
             component={HumbleInput}
             props={{
               type: 'password',
-              color: '#9c9c9c',
+              color: '#fff',
+              padding: '15px 11px 15px 16px',
               placeholderColor: '#9c9c9c',
               height: '48px',
               marginTop: '0',
               borderColor: '#color',
               errorBorderColor: '#fb5a5a',
               bgColor: '#303030',
-              autoFocus: true
+              autoFocus: true,
+              isPassword: true
             }}
           />
           <ButtonContainer>

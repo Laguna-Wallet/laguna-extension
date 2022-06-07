@@ -283,7 +283,7 @@ function SendToken({
                   <IconContainer>
                     <WalletIcon stroke="#18191A" />
                   </IconContainer>
-                  <Text>Wallets</Text>
+                  <Text>Accounts</Text>
                 </SendTypeItem>
 
                 <SendTypeItem onClick={handleClickContacts}>

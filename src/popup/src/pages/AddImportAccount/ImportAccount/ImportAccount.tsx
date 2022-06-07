@@ -170,7 +170,7 @@ function ImportAccount({ redirectedFromSignUp, redirectedFromForgotPassword }: P
         {!redirectedFromForgotPassword && (
           <EncodeAccount
             title="Import Complete!"
-            descriptionText="To encrypt your new wallet please enter your password below:"
+            descriptionText="To encrypt your new account please enter your password below:"
             handleEncode={handleEncode}
           />
         )}
