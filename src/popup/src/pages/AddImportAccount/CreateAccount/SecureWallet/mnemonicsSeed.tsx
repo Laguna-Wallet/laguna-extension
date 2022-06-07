@@ -66,9 +66,9 @@ export default function MnemonicsSeed({ redirectedFromSignUp, redirectedFromDash
       <MainContent>
         <Title>Backup Seed Phrase</Title>
         <Description>
-          To secure your wallets please write down this 12 word{' '}
+          To secure your accounts please write down this 12 word{' '}
           <span onClick={() => setIsMnemonicDescriptionOpen(true)}> mnemonic seed phrase.</span>{' '}
-          Store this in a safe place. It&apos;s the only way to recover your wallet if you get
+          Store this in a safe place. It&apos;s the only way to recover your account if you get
           locked out or get a new device.
         </Description>
         <MnemonicsContainer>
