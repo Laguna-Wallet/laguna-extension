@@ -320,6 +320,7 @@ const Copy = styled.div`
   padding: 4.5px 12px;
   background-color: #18191a;
   border-radius: 20px;
+  z-index: 444;
 `;
 
 const Text = styled.p`
