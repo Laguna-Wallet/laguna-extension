@@ -156,7 +156,7 @@ export enum SnackbarMessages {
   WalletRemoved = 'Account Removed',
   AccessRevoked = 'Access Revoked',
   DepositReceived = 'New Deposit Received',
-  PasswordChanged = 'Password Has Changed'
+  PasswordChanged = 'Password Changed'
 }
 
 //==============================================================================

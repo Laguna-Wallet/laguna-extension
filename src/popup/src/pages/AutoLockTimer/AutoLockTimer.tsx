@@ -14,6 +14,7 @@ import { Messages, SnackbarMessages } from 'utils/types';
 function AutoLockTimer() {
   const [isOpen, setOpen] = useState<boolean>(true);
   const [timeout, changeTimeout] = useState<string>('');
+  const [isChangeTime, setIsChangeTime] = useState<boolean>(false);
 
   const [snackbarError, setSnackbarError] = useState<string>('');
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
@@ -22,13 +23,17 @@ function AutoLockTimer() {
     if (new RegExp(/[^0-9]+/g).test(e.target.value)) return;
 
     changeTimeout(e.target.value);
+
+    if (e.target.value) {
+      setIsChangeTime(true);
+    }
   };
 
   const handleSave = () => {
     if (!Number(timeout)) {
       setIsSnackbarOpen(true);
       setSnackbarError("Timer can't be empty");
-      return;
+      setIsChangeTime(false);
     }
 
     if (Number(timeout) > 1440) {
@@ -71,7 +76,7 @@ function AutoLockTimer() {
           onChange={handleSetTimeout}
           bgColor="#221d1d"
           borderColor="#303030"
-          color={!timeout ? '#fff' : '#777E91'}
+          color={isChangeTime ? '#fff' : '#777E91'}
           height="48px"
           marginTop="22px"
           rightLabel="minutes"

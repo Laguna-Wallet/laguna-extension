@@ -48,13 +48,13 @@ const validate = (values: { password: string }) => {
   return errors;
 };
 
-function ImportPhase({
+const ImportPhase = ({
   handleSubmit,
   redirectedFromSignUp,
   redirectedFromForgotPassword,
   onClose,
   valid
-}: InjectedFormProps<FormProps> & Props) {
+}: InjectedFormProps<FormProps> & Props) => {
   const { nextStep } = useWizard();
 
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
@@ -90,7 +90,9 @@ function ImportPhase({
     accept: '.json'
   });
 
-  const submit = async (values?: FormProps) => {
+  const submit = async (values: FormProps) => {
+    const { password, file } = values;
+
     if (file) {
       const isValid = await isValidKeyringPassword(file, password);
       if (isValid) {
@@ -173,7 +175,7 @@ function ImportPhase({
     );
 
   useEnterClickListener(() => {
-    submit();
+    submit(formValues);
   }, [file, isDisabled, password]);
 
   return (
@@ -283,7 +285,7 @@ function ImportPhase({
       </Form>
     </Container>
   );
-}
+};
 
 export default reduxForm<Record<string, unknown>, any>({
   form: 'ImportPhase',

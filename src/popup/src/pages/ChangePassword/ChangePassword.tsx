@@ -139,12 +139,13 @@ function ChangePassword({ handleSubmit, valid }: InjectedFormProps<Form>) {
                 padding: '15px 11px 15px 16px',
                 color: '#fff',
                 placeholderColor: '#b1b5c3',
-                // errorBorderColor: '#fb5a5a',
+                errorBorderColor: '#fb5a5a',
                 height: '48px',
                 marginTop: '12px',
-                borderColor: '#303030'
+                borderColor: '#303030',
                 // showError: true,
                 // errorColor: '#FB5A5A'
+                isPassword: true
               }}
             />
             <Field
