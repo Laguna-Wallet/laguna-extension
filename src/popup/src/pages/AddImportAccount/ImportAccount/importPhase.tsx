@@ -25,7 +25,6 @@ import { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
 import { isHex } from '@polkadot/util';
 import WelcomeBack from 'pages/WelcomeBack/WelcomeBack';
 import AddImportForBoardedUser from '../AddImportForBoardedUser';
-import { useEnterClickListener } from 'hooks/useEnterClickListener';
 
 type Props = {
   onClose: () => void;
@@ -91,14 +90,12 @@ const ImportPhase = ({
   });
 
   const submit = async (values: FormProps) => {
-    const { password, file } = values;
-
     if (file) {
-      const isValid = await isValidKeyringPassword(file, password);
+      const isValid = await isValidKeyringPassword(file, values?.password);
       if (isValid) {
         nextStep();
       } else {
-        if (password) {
+        if (values?.password) {
           setIsSnackbarOpen(true);
           setSnackbarError('Incorrect password');
         }
@@ -174,9 +171,20 @@ const ImportPhase = ({
       </UploadedIconContainer>
     );
 
-  useEnterClickListener(() => {
-    submit(formValues);
-  }, [file, isDisabled, password]);
+  useEffect(() => {
+    if (seedPhase) {
+      const listener = (event: KeyboardEvent) => {
+        if (event.key === 'Enter') {
+          event.preventDefault();
+          submit(formValues);
+        }
+      };
+      document.addEventListener('keydown', listener);
+      return () => {
+        document.removeEventListener('keydown', listener);
+      };
+    }
+  }, [seedPhase]);
 
   return (
     <Container>
