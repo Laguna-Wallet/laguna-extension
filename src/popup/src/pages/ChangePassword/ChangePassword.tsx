@@ -24,13 +24,13 @@ type Form = {
 const validate = (values: Form) => {
   const errors: Record<string, string> = {};
 
-  // if (!values.currentPassword) {
-  //   errors.currentPassword = 'Please enter current password';
-  // }
+  if (!values.currentPassword) {
+    errors.currentPassword = 'Please enter current password';
+  }
 
-  // if (values.currentPassword && values.currentPassword.length < 8) {
-  //   errors.currentPassword = 'Password should be minimum 8 characters length';
-  // }
+  if (values.currentPassword && values.currentPassword.length < 8) {
+    errors.currentPassword = 'Password should be minimum 8 characters length';
+  }
 
   if (!values.newPassword) {
     errors.newPassword = 'Please enter new password';
