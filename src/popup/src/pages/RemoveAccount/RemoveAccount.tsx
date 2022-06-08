@@ -105,7 +105,7 @@ const RemoveAccount = ({ handleSubmit, valid }: InjectedFormProps<Props>) => {
               type: 'password',
               color: '#fff',
               padding: '15px 11px 15px 16px',
-              placeholderColor: '#9c9c9c',
+              placeholderColor: '#b1b5c3',
               height: '48px',
               marginTop: '0',
               borderColor: '#color',

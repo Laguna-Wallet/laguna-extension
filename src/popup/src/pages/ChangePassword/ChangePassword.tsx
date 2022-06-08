@@ -24,13 +24,13 @@ type Form = {
 const validate = (values: Form) => {
   const errors: Record<string, string> = {};
 
-  // if (!values.currentPassword) {
-  //   errors.currentPassword = 'Please enter current password';
-  // }
+  if (!values.currentPassword) {
+    errors.currentPassword = 'Please enter current password';
+  }
 
-  // if (values.currentPassword && values.currentPassword.length < 8) {
-  //   errors.currentPassword = 'Password should be minimum 8 characters length';
-  // }
+  if (values.currentPassword && values.currentPassword.length < 8) {
+    errors.currentPassword = 'Password should be minimum 8 characters length';
+  }
 
   if (!values.newPassword) {
     errors.newPassword = 'Please enter new password';
@@ -139,12 +139,13 @@ function ChangePassword({ handleSubmit, valid }: InjectedFormProps<Form>) {
                 padding: '15px 11px 15px 16px',
                 color: '#fff',
                 placeholderColor: '#b1b5c3',
-                // errorBorderColor: '#fb5a5a',
+                errorBorderColor: '#fb5a5a',
                 height: '48px',
                 marginTop: '12px',
-                borderColor: '#303030'
+                borderColor: '#303030',
                 // showError: true,
                 // errorColor: '#FB5A5A'
+                isPassword: true
               }}
             />
             <Field

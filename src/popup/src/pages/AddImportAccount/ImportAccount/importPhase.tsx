@@ -25,7 +25,6 @@ import { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
 import { isHex } from '@polkadot/util';
 import WelcomeBack from 'pages/WelcomeBack/WelcomeBack';
 import AddImportForBoardedUser from '../AddImportForBoardedUser';
-import { useEnterClickListener } from 'hooks/useEnterClickListener';
 
 type Props = {
   onClose: () => void;
@@ -48,13 +47,13 @@ const validate = (values: { password: string }) => {
   return errors;
 };
 
-function ImportPhase({
+const ImportPhase = ({
   handleSubmit,
   redirectedFromSignUp,
   redirectedFromForgotPassword,
   onClose,
   valid
-}: InjectedFormProps<FormProps> & Props) {
+}: InjectedFormProps<FormProps> & Props) => {
   const { nextStep } = useWizard();
 
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
@@ -90,13 +89,13 @@ function ImportPhase({
     accept: '.json'
   });
 
-  const submit = async (values?: FormProps) => {
+  const submit = async (values: FormProps) => {
     if (file) {
-      const isValid = await isValidKeyringPassword(file, password);
+      const isValid = await isValidKeyringPassword(file, values?.password);
       if (isValid) {
         nextStep();
       } else {
-        if (password) {
+        if (values?.password) {
           setIsSnackbarOpen(true);
           setSnackbarError('Incorrect password');
         }
@@ -172,9 +171,20 @@ function ImportPhase({
       </UploadedIconContainer>
     );
 
-  useEnterClickListener(() => {
-    submit();
-  }, [file, isDisabled, password]);
+  useEffect(() => {
+    if (seedPhase) {
+      const listener = (event: KeyboardEvent) => {
+        if (event.key === 'Enter') {
+          event.preventDefault();
+          submit(formValues);
+        }
+      };
+      document.addEventListener('keydown', listener);
+      return () => {
+        document.removeEventListener('keydown', listener);
+      };
+    }
+  }, [seedPhase]);
 
   return (
     <Container>
@@ -283,7 +293,7 @@ function ImportPhase({
       </Form>
     </Container>
   );
-}
+};
 
 export default reduxForm<Record<string, unknown>, any>({
   form: 'ImportPhase',

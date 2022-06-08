@@ -311,6 +311,7 @@ const Paste = styled.div``;
 const Copy = styled.div`
   position: absolute;
   right: 16px;
+  z-index: 5;
   border-radius: 5px;
   color: #fff;
   display: flex;
@@ -336,6 +337,7 @@ const Text = styled.p`
 const RightLabel = styled.span`
   position: absolute;
   right: 10px;
+  z-index: 5;
   top: 12px;
   color: #777e90;
   font-size: 16px;
