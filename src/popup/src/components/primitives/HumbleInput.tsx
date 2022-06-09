@@ -283,7 +283,7 @@ const StyledTextarea = styled(TextareaAutosize)<{
   &::placeholder {
     color: ${({ placeholderColor }) => placeholderColor || '#111'};
   }
-
+  
   &:after {
     border: 1px solid black;
     padding: 0.5rem;

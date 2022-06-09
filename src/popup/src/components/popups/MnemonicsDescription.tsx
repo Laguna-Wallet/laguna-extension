@@ -54,12 +54,12 @@ const Container = styled.div`
 
 const MainContent = styled.div`
   width: 100%;
-  height: 395px;
+  height: 424px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 16px 38px 16px;
+  padding: 8px 26px 38px 26px;
   box-sizing: border-box;
   background-color: #f8f8f9;
   border-top-left-radius: 5px;
