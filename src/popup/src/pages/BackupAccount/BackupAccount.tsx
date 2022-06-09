@@ -116,7 +116,7 @@ function BackupAccount({ handleSubmit, valid }: InjectedFormProps<Props>) {
 
         {!seed.length ? (
           <>
-            <WarningContainer>
+            <WarningContainer seedExists={!seedExists}>
               {seedExists
                 ? `Warning: Do not share your seed phrase. This phrase grants full control of your account.`
                 : 'Account has not been secured, only Json file can be exported'}
@@ -267,12 +267,12 @@ const Circle = styled.div`
   border-radius: 100%;
 `;
 
-const WarningContainer = styled.div`
+const WarningContainer = styled.div<{ seedExists?: boolean }>`
   width: 100%;
   height: 60px;
   border: 1px solid #fffa7d;
   border-radius: 5px;
-  padding: 11px 5px 11px 10px;
+  padding: ${({ seedExists }) => (seedExists ? '11px 5px 11px 10px' : '11px 5px')};
   box-sizing: border-box;
   display: flex;
   justify-content: center;

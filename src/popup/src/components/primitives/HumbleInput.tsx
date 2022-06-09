@@ -336,7 +336,7 @@ const Text = styled.p`
 
 const RightLabel = styled.span`
   position: absolute;
-  right: 10px;
+  right: 22px;
   z-index: 3;
   top: 12px;
   color: #777e90;

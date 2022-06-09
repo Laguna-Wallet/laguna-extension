@@ -79,6 +79,7 @@ function AutoLockTimer() {
           color={isChangeTime ? '#fff' : '#777E91'}
           height="48px"
           marginTop="22px"
+          padding="8px 22px 5px 16px"
           rightLabel="minutes"
           fontSize="16px"
         />
