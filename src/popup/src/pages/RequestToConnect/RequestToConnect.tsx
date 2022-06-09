@@ -12,6 +12,7 @@ export default function RequestToConnect() {
   const dispatch = useDispatch();
 
   const pendingDapp = pendingDappAuthorization?.pendingDappAuthorization;
+  const dappName = pendingDappAuthorization?.pendingDappAuthorization[0]?.request?.requestOrigin;
 
   const handleApprove = () => {
     chrome.runtime.sendMessage({
@@ -34,16 +35,25 @@ export default function RequestToConnect() {
   };
 
   return (
-    <Container bg={walletBG}>
+    <Container>
       <Title>REQUEST TO CONNECT</Title>
-      <Icons>
+      {/* <Icons>
         <IconContainer></IconContainer>
         <IconContainer></IconContainer>
-      </Icons>
+      </Icons> */}
+
+      <MainContent>
+        <Text spacing="0.1em;" fWeight="600">
+          Connect With
+        </Text>
+        <Text fSize="12px" marginTop="6px" color="#484848">
+          {dappName}
+        </Text>
+      </MainContent>
 
       <Content>
-        <Text>This app would like to:</Text>
-        <Text>
+        <Text fSize="14px">This app would like to:</Text>
+        <Text fSize="14px" marginTop="10px">
           <CheckContainer>
             <CheckIcon stroke="#62c660" width={25} height={25} />
           </CheckContainer>{' '}
@@ -66,7 +76,7 @@ export default function RequestToConnect() {
 
         <Button
           onClick={handleApprove}
-          text="Save"
+          text="Connect"
           color="#fff"
           bgColor="#111"
           borderColor="#111"
@@ -78,16 +88,15 @@ export default function RequestToConnect() {
   );
 }
 
-const Container = styled.div<{ bg: string }>`
+const Container = styled.div`
   width: 100%;
   height: 100%;
   display: flex;
   padding: 15px 15px 40px 15px;
   flex-direction: column;
-  background-color: #f1f1f1;
+  background-color: #fff;
   box-sizing: border-box;
   position: relative;
-  background-image: ${({ bg }) => `url(${bg})`};
   background-size: cover;
   padding-top: 50px;
   overflow: hidden;
@@ -97,9 +106,9 @@ const Container = styled.div<{ bg: string }>`
 const Title = styled.div`
   width: 100%;
   height: 40px;
-  font-family: 'SFCompactDisplayRegular';
+  font-family: 'IBMPlexSans';
   font-size: 17px;
-  font-weight: 500;
+  font-weight: 600;
   line-height: 2.35;
   letter-spacing: 1.7px;
   text-align: center;
@@ -109,7 +118,7 @@ const Title = styled.div`
 const Icons = styled.div`
   display: flex;
   justify-content: center;
-  margin-top: 15px;
+  margin-top: 100px;
 `;
 
 const IconContainer = styled.div`
@@ -126,30 +135,52 @@ const CheckContainer = styled.div`
   margin-right: 5px;
 `;
 
+const MainContent = styled.div`
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  margin-top: 102px;
+  font-family: 'IBMPlexSans';
+`;
+
 const Content = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 25px 0;
+  padding: 26px 0;
   box-sizing: border-box;
   border-top: 1px solid #b1b5c3;
   border-bottom: 1px solid #b1b5c3;
   margin-top: auto;
-  font-family: 'SFCompactDisplayRegular';
+  font-family: 'IBMPlexSans';
 `;
 
-const Text = styled.div`
+const Text = styled.div<{
+  fWeight?: string;
+  marginTop?: string;
+  spacing?: string;
+  fSize?: string;
+  color?: string;
+}>`
   display: flex;
+  align-items: center;
   font-size: 16px;
-  margin-bottom: 10px;
+  margin-top: ${({ marginTop }) => marginTop};
+  font-weight: ${({ fWeight }) => fWeight || '400'};
+  letter-spacing: ${({ spacing }) => spacing};
+  font-size: ${({ fSize }) => fSize || '16px'};
+  font-size: ${({ color }) => color || '#18191A'};
 `;
 
 const Warning = styled.div`
-  font-size: 14px;
+  text-align: center;
+  font-size: 12px;
   margin-top: 32px;
+  font-family: 'IBMPlexSans';
 `;
 
 const ButtonContainer = styled.div`
   width: 100%;
   display: flex;
-  margin-top: auto;
+  margin-top: 32px;
+  /* margin-top: auto; */
 `;

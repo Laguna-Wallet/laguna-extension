@@ -41,6 +41,7 @@ function App() {
   return (
     <div className="App">
       <Router>
+        {/* <RequestToConnect /> */}
         {handlePage(pendingDapps, pendingToSign)}
         <></>
       </Router>
