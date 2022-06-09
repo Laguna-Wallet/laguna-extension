@@ -21,6 +21,7 @@ import Snackbar from 'components/Snackbar/Snackbar';
 import { State } from 'redux/store';
 // import '@polkadot/extension-inject/crossenv';
 import '@polkadot/wasm-crypto/initOnlyAsm';
+import RequestToSignTransaction from 'pages/RequestToSignTransaction';
 
 function App() {
   const account = useAccount();
@@ -41,7 +42,7 @@ function App() {
   return (
     <div className="App">
       <Router>
-        {/* <RequestToConnect /> */}
+        {/* <RequestToSignTransaction /> */}
         {handlePage(pendingDapps, pendingToSign)}
         <></>
       </Router>

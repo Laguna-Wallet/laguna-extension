@@ -10,6 +10,7 @@ import { Messages } from 'utils/types';
 export default function RequestToSignTransaction() {
   const { pendingToSign } = useSelector((state: any) => state.wallet);
   const dispatch = useDispatch();
+  const dappName = pendingToSign?.data?.url;
 
   const handleApprove = () => {
     chrome.runtime.sendMessage({
@@ -34,23 +35,19 @@ export default function RequestToSignTransaction() {
   };
 
   return (
-    <Container bg={walletBG}>
+    <Container>
       <Title>APPROVE TRANSACTION</Title>
-      <Icons>
-        <IconContainer></IconContainer>
-      </Icons>
 
       <Content>
-        <Text>This app would like to:</Text>
-        <Text>
-          <CheckContainer>
-            <CheckIcon stroke="#62c660" width={25} height={25} />
-          </CheckContainer>{' '}
-          View your wallet balance & activity
+        <Text spacing="2px" fWeight="600" fSize="17px">
+          Give permission to access your asset on
+        </Text>
+        <Text fSize="12px" marginTop="6px" color="#484848">
+          {new URL(dappName).origin}
         </Text>
       </Content>
 
-      <Warning>Warning: Only connect with trusted applications.</Warning>
+      <Warning>Warning: Only approve transaction on trusted applications.</Warning>
 
       <ButtonContainer>
         <Button
@@ -77,16 +74,15 @@ export default function RequestToSignTransaction() {
   );
 }
 
-const Container = styled.div<{ bg: string }>`
+const Container = styled.div`
   width: 100%;
   height: 100%;
   display: flex;
   padding: 15px 15px 40px 15px;
   flex-direction: column;
-  background-color: #f1f1f1;
+  background-color: #fff;
   box-sizing: border-box;
   position: relative;
-  background-image: ${({ bg }) => `url(${bg})`};
   background-size: cover;
   padding-top: 50px;
   overflow: hidden;
@@ -96,9 +92,9 @@ const Container = styled.div<{ bg: string }>`
 const Title = styled.div`
   width: 100%;
   height: 40px;
-  font-family: 'SFCompactDisplayRegular';
+  font-family: 'IBMPlexSans';
   font-size: 17px;
-  font-weight: 500;
+  font-weight: 600;
   line-height: 2.35;
   letter-spacing: 1.7px;
   text-align: center;
@@ -127,28 +123,40 @@ const CheckContainer = styled.div`
 
 const Content = styled.div`
   display: flex;
+  align-items: center;
   flex-direction: column;
   padding: 25px 0;
   box-sizing: border-box;
-  border-top: 1px solid #b1b5c3;
-  border-bottom: 1px solid #b1b5c3;
   margin-top: auto;
-  font-family: 'SFCompactDisplayRegular';
+  font-family: 'IBMPlexSans';
+  text-align: center;
 `;
 
-const Text = styled.div`
+const Text = styled.div<{
+  fWeight?: string;
+  marginTop?: string;
+  spacing?: string;
+  fSize?: string;
+  color?: string;
+}>`
   display: flex;
+  align-items: center;
   font-size: 16px;
-  margin-bottom: 10px;
+  margin-top: ${({ marginTop }) => marginTop};
+  font-weight: ${({ fWeight }) => fWeight || '400'};
+  letter-spacing: ${({ spacing }) => spacing};
+  font-size: ${({ fSize }) => fSize || '16px'};
+  font-size: ${({ color }) => color || '#18191A'};
 `;
-
 const Warning = styled.div`
-  font-size: 14px;
-  margin-top: 32px;
+  font-size: 12px;
+  margin-top: auto;
+  font-family: 'IBMPlexSans';
+  text-align: center;
 `;
 
 const ButtonContainer = styled.div`
   width: 100%;
   display: flex;
-  margin-top: auto;
+  margin-top: 32px;
 `;
