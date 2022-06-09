@@ -1,16 +1,13 @@
 import { PlusIcon } from '@heroicons/react/outline';
 import keyring from '@polkadot/ui-keyring';
 import AddressBookIcon from 'assets/svgComponents/AdressBookIcon';
-import AlternateEmail from 'assets/svgComponents/AlternateEmailIcon';
 import ContactsIcon from 'assets/svgComponents/ContactsIcon';
 import LoopIcon from 'assets/svgComponents/loopIcon';
 import Button from 'components/primitives/Button';
 import HumbleInput from 'components/primitives/HumbleInput';
 import AddAddress from 'pages/AddressBook/AddAddress';
 import Header from 'pages/Wallet/Header';
-import Wallet from 'pages/Wallet/Wallet';
 import { useEffect, useState } from 'react';
-import { Link } from 'react-chrome-extension-router';
 import styled from 'styled-components';
 import { truncateString } from 'utils';
 
@@ -121,29 +118,30 @@ export default function ContactsPopup({ handleCloseContacts, onBack, closeAction
 }
 
 const Container = styled.div<{ bg?: string }>`
-  width: 100%;
-  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   background-color: #f2f2f2;
   /* background-image: ${({ bg }) => `url(${bg})`}; */
   background-size: cover;
-  padding: 110px 0px 38px 0px;
+  padding-top: 92px;
   position: absolute;
+  overflow: hidden;
   top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
   z-index: 100;
 `;
 
 const InnerContainer = styled.div`
   width: 100%;
-  height: 82%;
+  height: 100%;
   position: relative;
-  padding: 20px 15px;
+  padding: 20px 26px 38px;
   box-sizing: border-box;
   background-color: #fff;
-  border-top-left-radius: 15px;
-  border-top-right-radius: 15px;
+  border-radius: 10px 10px 0px 0px;
 `;
 
 const Content = styled.div`
@@ -165,11 +163,18 @@ const AddressBookContainer = styled.div`
   border-radius: 100%;
   background-color: #000;
   margin-top: auto;
+  margin-bottom: 16px;
 `;
 
 const AddressesContainer = styled.div`
   width: 100%;
-  margin-top: 12px;
+  max-height: 336px;
+  overflow-y: scroll;
+  margin: 12px 0;
+
+  ::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const AddressComponent = styled.div`

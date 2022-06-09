@@ -1,22 +1,17 @@
 import styled from 'styled-components/macro';
-import { PlusIcon } from '@heroicons/react/outline';
 import keyring from '@polkadot/ui-keyring';
 import AddressBookIcon from 'assets/svgComponents/AdressBookIcon';
-import AlternateEmail from 'assets/svgComponents/AlternateEmailIcon';
-import Button from 'components/primitives/Button';
 import HumbleInput from 'components/primitives/HumbleInput';
 import { useAccount } from 'context/AccountContext';
-import AddAddress from 'pages/AddressBook/AddAddress';
 import Header from 'pages/Wallet/Header';
 import Wallet from 'pages/Wallet/Wallet';
 import { useEffect, useState } from 'react';
-import { goTo, Link } from 'react-chrome-extension-router';
+import { goTo } from 'react-chrome-extension-router';
 import { useSelector } from 'react-redux';
 import { truncateString } from 'utils';
 import { recodeAddress } from 'utils/polkadot';
 import { Prefixes } from 'utils/types';
 import LoopIcon from 'assets/svgComponents/loopIcon';
-import { url } from 'inspector';
 
 type Props = {
   handleClickAccount: (address: string) => void;
@@ -155,7 +150,8 @@ const AddressBookContainer = styled.div`
   align-items: center;
   border-radius: 100%;
   background-color: #000;
-  margin-top: auto;
+  margin-top: 129px;
+  margin-bottom: 16px;
 `;
 
 const AddressesContainer = styled.div`
