@@ -42,7 +42,7 @@ function App() {
   return (
     <div className="App">
       <Router>
-        {/* <RequestToSignTransaction /> */}
+        {/* <RequestToSignRaw /> */}
         {handlePage(pendingDapps, pendingToSign)}
         <></>
       </Router>

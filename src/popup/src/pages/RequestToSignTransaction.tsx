@@ -148,6 +148,7 @@ const Text = styled.div<{
   font-size: ${({ fSize }) => fSize || '16px'};
   font-size: ${({ color }) => color || '#18191A'};
 `;
+
 const Warning = styled.div`
   font-size: 12px;
   margin-top: auto;
