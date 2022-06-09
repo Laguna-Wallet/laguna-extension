@@ -69,12 +69,6 @@ function ChangePassword({ handleSubmit, valid }: InjectedFormProps<Form>) {
 
   // todo proper typing
   const submit = async (values: any) => {
-    if (values.currentPassword && !(await validatePassword(values.currentPassword))) {
-      setSnackbarError('Incorrect current password');
-      setIsSnackbarOpen(true);
-      return;
-    }
-
     const errors = await validate(values);
 
     if (!isObjectEmpty(errors)) {
@@ -82,12 +76,23 @@ function ChangePassword({ handleSubmit, valid }: InjectedFormProps<Form>) {
       const errArray = objectToArray(errors);
       setSnackbarError(errArray[0]);
       setIsSnackbarOpen(true);
+      return;
     }
 
     if (values.currentPassword && !(await validatePassword(values.currentPassword))) {
       setSnackbarError('Incorrect current password');
       setIsSnackbarOpen(true);
     } else {
+      // encryptKeyringPairs(values?.currentPassword, values?.newPassword);
+      // encryptMetaData(values?.currentPassword, values?.newPassword);
+
+      const newEncryptedPassword = encryptPassword({ password: values?.newPassword });
+      saveToStorage({ key: StorageKeys.Encoded, value: newEncryptedPassword });
+
+      // this is needed to update data encryption for the active account in the storage
+      const newAccount = keyring.getPair(activeAccount?.address);
+      account.saveActiveAccount(newAccount);
+
       chrome.runtime.sendMessage({
         type: Messages.ReEncryptPairs,
         payload: {
@@ -96,15 +101,6 @@ function ChangePassword({ handleSubmit, valid }: InjectedFormProps<Form>) {
           metaData: keyring.getPairs().map((pair) => ({ address: pair.address, meta: pair.meta }))
         }
       });
-      encryptKeyringPairs(values?.currentPassword, values?.newPassword);
-      encryptMetaData(values?.currentPassword, values?.newPassword);
-
-      const newEncryptedPassword = encryptPassword({ password: values?.newPassword });
-      saveToStorage({ key: StorageKeys.Encoded, value: newEncryptedPassword });
-
-      // this is needed to update data encryption for the active account in the storage
-      const newAccount = keyring.getPair(activeAccount?.address);
-      account.saveActiveAccount(newAccount);
 
       goTo(Wallet, { snackbar: { show: true, message: SnackbarMessages.PasswordChanged } });
     }
