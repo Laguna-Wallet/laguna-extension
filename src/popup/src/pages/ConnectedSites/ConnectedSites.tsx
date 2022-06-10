@@ -1,24 +1,14 @@
+import { useEffect, useState } from 'react';
 import { CheckIcon } from '@heroicons/react/outline';
-import keyring from '@polkadot/ui-keyring';
-import LockIcon from 'assets/svgComponents/LockIcon';
-import LockLogoIcon from 'assets/svgComponents/LockLogoIcon';
-import RemoveAccountIcon from 'assets/svgComponents/RemoveAccountIcon';
 import ShareIcon from 'assets/svgComponents/ShareIcon';
 import MenuHeader from 'components/MenuHeader/MenuHeader';
-import Button from 'components/primitives/Button';
-import HumbleInput from 'components/primitives/HumbleInput';
 import Snackbar from 'components/Snackbar/Snackbar';
 import { useAccount } from 'context/AccountContext';
 import Wallet from 'pages/Wallet/Wallet';
-import React, { useEffect, useState } from 'react';
-import { goTo, Link } from 'react-chrome-extension-router';
-import { connect, useSelector } from 'react-redux';
-import { Field, reduxForm } from 'redux-form';
+import { goTo } from 'react-chrome-extension-router';
+import { useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { encryptPassword, isObjectEmpty, objectToArray, truncateString } from 'utils';
-import { saveToStorage } from 'utils/chrome';
-import { encryptKeyringPairs, encryptMetaData, validatePassword } from 'utils/polkadot';
-import { Messages, StorageKeys } from 'utils/types';
+import { Messages, SnackbarMessages } from 'utils/types';
 
 // todo proper typing
 type Props = {
@@ -27,8 +17,10 @@ type Props = {
 
 function ConnectedSites({ handleSubmit }: Props) {
   const [isOpen, setOpen] = useState<boolean>(true);
+
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
-  const [snackbarError, setSnackbarError] = useState<string>('');
+  const [snackbarMessage, setSnackbarMessage] = useState<string>('');
+
   const account = useAccount();
   const activeAccount = account.getActiveAccount();
 
@@ -42,6 +34,8 @@ function ConnectedSites({ handleSubmit }: Props) {
 
   const handleRevoke = (dappName: string) => {
     chrome.runtime.sendMessage({ type: Messages.RevokeDapp, payload: { dappName } });
+    setIsSnackbarOpen(true);
+    setSnackbarMessage(SnackbarMessages.AccessRevoked);
   };
 
   return (
@@ -56,8 +50,8 @@ function ConnectedSites({ handleSubmit }: Props) {
 
       <Content>
         {connectedApps?.connectedApps?.length ? (
-          connectedApps?.connectedApps.map((item: string) => (
-            <ConnectedAppItem key={item}>
+          connectedApps?.connectedApps.map((item: string, index: number) => (
+            <ConnectedAppItem key={`${item}-${index}`}>
               <CheckIcon width={25} height={25} stroke="#68dd65" />
               <AppName>{item}</AppName>
               <RevokeBtn onClick={() => handleRevoke(item)}>Revoke</RevokeBtn>
@@ -73,12 +67,13 @@ function ConnectedSites({ handleSubmit }: Props) {
         )}
       </Content>
       <Snackbar
+        width="194.9px"
         isOpen={isSnackbarOpen}
         close={() => setIsSnackbarOpen(false)}
-        message={snackbarError}
-        type="error"
-        left="0px"
-        bottom="94px"
+        message={snackbarMessage}
+        type="success"
+        // left="110px"
+        bottom="50px"
       />
     </Container>
   );
@@ -95,7 +90,7 @@ const Container = styled.div`
   top: 0;
   left: 0;
   z-index: 999;
-  padding: 15px 15px 40px 15px;
+  padding: 0px 17.5px 40px;
   box-sizing: border-box;
   background-color: #111111;
   z-index: 99999;
@@ -143,19 +138,20 @@ const RevokeBtn = styled.div`
 `;
 
 const IconContainer = styled.div`
-  width: 129px;
-  height: 129px;
+  width: 167px;
+  height: 167px;
   display: flex;
   justify-content: center;
   align-items: center;
   border-radius: 100%;
   background-color: #000;
-  margin-top: 30px;
+  margin-top: 64px;
 `;
 
 const Text = styled.div`
   font-size: 18px;
   line-height: 1.35;
-  color: #656565;
-  margin-top: 10px;
+  margin-top: 11.7px;
+  font-family: Inter;
+  color: #fff;
 `;

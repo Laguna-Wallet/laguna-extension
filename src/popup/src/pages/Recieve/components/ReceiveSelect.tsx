@@ -1,7 +1,7 @@
-import { FormikProps } from 'formik/dist/types';
+import NetworkIcons from 'components/primitives/NetworkIcons';
 import styled from 'styled-components';
-import { getApiInstance } from 'utils/polkadot';
-import { Asset, Network } from 'utils/types';
+import { Network } from 'utils/types';
+import SelectArrowIcon from 'assets/svgComponents/SelectArrowIcon';
 
 type Props = {
   options: string[] | undefined;
@@ -10,18 +10,20 @@ type Props = {
   selectedNetwork: Network | undefined;
 };
 
-export default function Select({
-  options,
-  selectedToken,
-  setSelectedToken,
-  selectedNetwork
-}: Props) {
+export default function Select({ options, selectedToken, selectedNetwork }: Props) {
   const handleChange = async (e: any) => {
     // todo implement
   };
 
   return (
     <Container>
+      <NetworkIcons
+        width="28px"
+        height="28px"
+        fill="#18191A"
+        isSmallIcon
+        chain={selectedNetwork?.chain as string}
+      />
       <StyledSelect
         defaultValue={selectedToken}
         onChange={(e) => handleChange(e)}
@@ -35,6 +37,9 @@ export default function Select({
             </StyledOption>
           ))}
       </StyledSelect>
+      <IconContainer>
+        <SelectArrowIcon />
+      </IconContainer>
     </Container>
   );
 }
@@ -42,24 +47,34 @@ export default function Select({
 const Container = styled.div`
   width: 100%;
   display: flex;
-  margin-top: 5px;
+  align-items: center;
   padding: 0 10px;
   background-color: #f3f3f3;
   box-sizing: border-box;
+  border-radius: 4px;
+  position: relative;
+`;
+
+const IconContainer = styled.div`
+  position: absolute;
+  right: 18px;
+  top: 20px;
 `;
 
 const StyledSelect = styled.select`
-  width: 100%;
-  height: 53px;
+  flex: 1;
+  height: 48px;
   border: 0;
-  border-top-right-radius: 5px;
-  border-bottom-right-radius: 5px;
   background-color: #f3f3f3;
   font-size: 16px;
-  font-weight: 600;
-  color: #141414;
-  font-family: 'SFCompactDisplayRegular';
-
+  appearance: none;
+  font-family: 'Inter';
+  font-weight: 400;
+  display: flex;
+  align-items: center;
+  color: #18191a;
+  margin-left: 8px;
+  text-transform: capitalize;
   &:focus {
     outline: none;
   }

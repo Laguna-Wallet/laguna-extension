@@ -3,17 +3,65 @@
 import { StorageKeys } from './types';
 
 // todo refactor localStorage api to chrome.storage
-export function saveToStorage({ key, value }: { key: string; value: string }) {
-  localStorage.setItem(key, value);
+// export function saveToStorage({ key, value }: { key: string; value: string }) {
+//   localStorage.setItem(key, value);
+// }
+
+// export function getFromStorage(key: string) {
+//   return localStorage.getItem(key);
+// }
+
+// export function clearFromStorage(key: string) {
+//   return localStorage.removeItem(key);
+// }
+
+export const getFromStorage = async function (key: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    try {
+      chrome.storage.local.get(key, function (value) {
+        resolve(value[key]);
+      });
+    } catch (ex) {
+      reject(ex);
+    }
+  });
+};
+
+export const saveToStorage = async function ({ key, value }: { key: string; value: any }) {
+  return new Promise((resolve, reject) => {
+    try {
+      chrome.storage.local.set({ [key]: value }, function () {
+        resolve('');
+      });
+    } catch (ex) {
+      reject(ex);
+    }
+  });
+};
+
+export function sendMessagePromise(obj: Record<string, unknown>): Promise<Record<string, any>> {
+  return new Promise((resolve, reject) => {
+    chrome.runtime.sendMessage(obj, (response) => {
+      if (response) {
+        resolve(response);
+      } else {
+        reject('Something wrong');
+      }
+    });
+  });
 }
 
-export function getFromStorage(key: string) {
-  return localStorage.getItem(key);
-}
-
-export function clearFromStorage(key: string) {
-  return localStorage.removeItem(key);
-}
+export const clearFromStorage = async function (keys: string) {
+  return new Promise((resolve, reject) => {
+    try {
+      chrome.storage.local.remove(keys, function () {
+        resolve('');
+      });
+    } catch (ex) {
+      reject(ex);
+    }
+  });
+};
 
 export function getFromChromeStorage(key: string) {
   return new Promise(function (resolve) {
@@ -24,7 +72,5 @@ export function getFromChromeStorage(key: string) {
 }
 
 export async function saveToChromeStorage({ key, value }: { key: string; value: string }) {
-  await chrome.storage.local.set({ [key]: value }, function () {
-    console.log('Value is set to ' + value);
-  });
+  await chrome.storage.local.set({ [key]: value });
 }

@@ -1,45 +1,51 @@
 import keyring from '@polkadot/ui-keyring';
-import LockIcon from 'assets/svgComponents/LockIcon';
 import LockLogoIcon from 'assets/svgComponents/LockLogoIcon';
-import RemoveAccountIcon from 'assets/svgComponents/RemoveAccountIcon';
 import MenuHeader from 'components/MenuHeader/MenuHeader';
 import Button from 'components/primitives/Button';
 import HumbleInput from 'components/primitives/HumbleInput';
 import Snackbar from 'components/Snackbar/Snackbar';
 import { useAccount } from 'context/AccountContext';
 import Wallet from 'pages/Wallet/Wallet';
-import React, { useState } from 'react';
-import { goTo, Link } from 'react-chrome-extension-router';
-import { connect } from 'react-redux';
-import { Field, reduxForm } from 'redux-form';
+import { useState } from 'react';
+import { goTo } from 'react-chrome-extension-router';
+import { Field, InjectedFormProps, reduxForm } from 'redux-form';
 import styled from 'styled-components';
-import { encryptPassword, isObjectEmpty, objectToArray, truncateString } from 'utils';
+import { encryptPassword, isObjectEmpty, objectToArray } from 'utils';
 import { saveToStorage } from 'utils/chrome';
 import { encryptKeyringPairs, encryptMetaData, validatePassword } from 'utils/polkadot';
-import { Messages, StorageKeys } from 'utils/types';
+import { Messages, SnackbarMessages, StorageKeys } from 'utils/types';
 
-// todo proper typing
-type Props = {
-  handleSubmit: any;
+type Form = {
+  currentPassword: string;
+  newPassword: string;
+  confirmNewPassword: string;
 };
 
-const validate = (values: any) => {
+const validate = (values: Form) => {
   const errors: Record<string, string> = {};
 
   if (!values.currentPassword) {
     errors.currentPassword = 'Please enter current password';
   }
 
-  if (values.currentPassword && !validatePassword(values.currentPassword)) {
-    errors.currentPassword = 'Please enter correct current password';
+  if (values.currentPassword && values.currentPassword.length < 8) {
+    errors.currentPassword = 'Password should be minimum 8 characters length';
   }
 
   if (!values.newPassword) {
     errors.newPassword = 'Please enter new password';
   }
 
+  if (values.newPassword && values.newPassword.length < 8) {
+    errors.newPassword = 'New Password Must be at least 8 characters';
+  }
+
   if (!values.confirmNewPassword) {
     errors.confirmNewPassword = 'Please confirm new password';
+  }
+
+  if (values.confirmNewPassword && values.confirmNewPassword.length < 8) {
+    errors.confirmNewPassword = 'New Password Must be at least 8 characters';
   }
 
   if (
@@ -47,22 +53,23 @@ const validate = (values: any) => {
     values.confirmNewPassword &&
     values.newPassword !== values.confirmNewPassword
   ) {
-    errors.newPassword = 'Passwords should match';
+    errors.confirmNewPassword = 'New Passwords do not match';
   }
 
   return errors;
 };
 
-function ChangePassword({ handleSubmit }: Props) {
-  const [isOpen, setOpen] = useState<boolean>(true);
-  const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
-  const [snackbarError, setSnackbarError] = useState<string>('');
+function ChangePassword({ handleSubmit, valid }: InjectedFormProps<Form>) {
   const account = useAccount();
   const activeAccount = account.getActiveAccount();
 
+  const [isOpen, setOpen] = useState<boolean>(true);
+  const [snackbarError, setSnackbarError] = useState<string>('');
+  const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
+
   // todo proper typing
-  const submit = (values: any) => {
-    const errors = validate(values);
+  const submit = async (values: any) => {
+    const errors = await validate(values);
 
     if (!isObjectEmpty(errors)) {
       if (isSnackbarOpen) return;
@@ -72,19 +79,33 @@ function ChangePassword({ handleSubmit }: Props) {
       return;
     }
 
-    encryptKeyringPairs(values?.currentPassword, values?.newPassword);
-    encryptMetaData(values?.currentPassword, values?.newPassword);
+    if (values.currentPassword && !(await validatePassword(values.currentPassword))) {
+      setSnackbarError('Incorrect current password');
+      setIsSnackbarOpen(true);
+    } else {
+      // encryptKeyringPairs(values?.currentPassword, values?.newPassword);
+      // encryptMetaData(values?.currentPassword, values?.newPassword);
 
-    const newEncryptedPassword = encryptPassword({ password: values?.newPassword });
-    saveToStorage({ key: StorageKeys.Encoded, value: newEncryptedPassword });
+      const newEncryptedPassword = encryptPassword({ password: values?.newPassword });
+      saveToStorage({ key: StorageKeys.Encoded, value: newEncryptedPassword });
 
-    chrome.runtime.sendMessage({
-      type: Messages.ReEncryptPairs,
-      payload: { oldPassword: values?.currentPassword, newPassword: values?.newPassword }
-    });
+      // this is needed to update data encryption for the active account in the storage
+      const newAccount = keyring.getPair(activeAccount?.address);
+      account.saveActiveAccount(newAccount);
 
-    goTo(Wallet, { isMenuOpen: true });
+      chrome.runtime.sendMessage({
+        type: Messages.ReEncryptPairs,
+        payload: {
+          oldPassword: values?.currentPassword,
+          newPassword: values?.newPassword,
+          metaData: keyring.getPairs().map((pair) => ({ address: pair.address, meta: pair.meta }))
+        }
+      });
+
+      goTo(Wallet, { snackbar: { show: true, message: SnackbarMessages.PasswordChanged } });
+    }
   };
+
   return (
     <Container>
       <MenuHeader
@@ -97,7 +118,7 @@ function ChangePassword({ handleSubmit }: Props) {
 
       <Content>
         <IconContainer>
-          <LockLogoIcon />
+          <LockLogoIcon fill="#fff" />
         </IconContainer>
         <Form onSubmit={handleSubmit(submit)}>
           <FieldsContainer>
@@ -111,10 +132,16 @@ function ChangePassword({ handleSubmit }: Props) {
               props={{
                 type: 'password',
                 bgColor: '#303030',
-                color: '#9c9c9c',
+                padding: '15px 11px 15px 16px',
+                color: '#fff',
+                placeholderColor: '#b1b5c3',
+                errorBorderColor: '#fb5a5a',
                 height: '48px',
                 marginTop: '12px',
-                borderColor: '#303030'
+                borderColor: '#303030',
+                // showError: true,
+                // errorColor: '#FB5A5A'
+                isPassword: true
               }}
             />
             <Field
@@ -127,10 +154,15 @@ function ChangePassword({ handleSubmit }: Props) {
               props={{
                 type: 'password',
                 bgColor: '#303030',
-                color: '#9c9c9c',
+                color: '#fff',
+                placeholderColor: '#b1b5c3',
+                errorBorderColor: '#fb5a5a',
                 height: '48px',
                 marginTop: '12px',
-                borderColor: '#303030'
+                borderColor: '#303030',
+                showError: true,
+                errorColor: '#FB5A5A',
+                isPassword: true
               }}
             />
             <Field
@@ -143,21 +175,27 @@ function ChangePassword({ handleSubmit }: Props) {
               props={{
                 type: 'password',
                 bgColor: '#303030',
-                color: '#9c9c9c',
+                color: '#fff',
+                placeholderColor: '#b1b5c3',
                 height: '48px',
                 marginTop: '12px',
-                borderColor: '#303030'
+                borderColor: '#303030',
+                errorBorderColor: '#fb5a5a',
+                showError: true,
+                errorColor: '#FB5A5A',
+                isPassword: true
               }}
             />
           </FieldsContainer>
 
           <ButtonsContainer>
             <Button
+              type="button"
               onClick={() => goTo(Wallet, { isMenuOpen: true })}
               text="Cancel"
-              color="#111"
-              bgColor="#fb5a5a"
-              borderColor="#fb5a5a"
+              color="#fff"
+              bgColor="#414141"
+              borderColor="#414141"
               justify="center"
               margin="auto 10px 0 0"
             />
@@ -168,8 +206,12 @@ function ChangePassword({ handleSubmit }: Props) {
               color="#111"
               justify="center"
               margin="auto 0 0 0"
-              bgColor="#1a1a1a"
-              bgImage="linear-gradient(to right, #1cc3ce, #b9e260)"
+              bgColor="#fff"
+              bgImage="#fff"
+              disabledBorderColor="rgba(255, 255, 255, 0.5)"
+              disabledColor="#18191a"
+              disabledBgColor="rgba(255, 255, 255, 0.5)"
+              styledDisabled={!valid}
             />
           </ButtonsContainer>
         </Form>
@@ -179,29 +221,18 @@ function ChangePassword({ handleSubmit }: Props) {
         close={() => setIsSnackbarOpen(false)}
         message={snackbarError}
         type="error"
-        left="0px"
-        bottom="94px"
+        left="26px"
+        bottom="90px"
+        transform="translateX(0)"
       />
     </Container>
   );
 }
 
-export default connect((state: any) => ({
-  //   errors: getFormSyncErrors('sendToken')(state),
-  //   amount: formValueSelector('sendToken')(state, 'amount'),
-  //   initialValues: {
-  //     token: state.sendToken.selectedAsset.symbol
-  //   }
-}))(
-  reduxForm<Record<string, unknown>, any>({
-    form: 'changePassword'
-    // validate
-    // destroyOnUnmount: false,
-    // enableReinitialize: true,
-    // keepDirtyOnReinitialize: true,
-    // updateUnregisteredFields: true
-  })(ChangePassword)
-);
+export default reduxForm<Record<string, unknown>, any>({
+  form: 'changePassword',
+  validate
+})(ChangePassword);
 
 const Container = styled.div`
   width: 100%;
@@ -212,16 +243,16 @@ const Container = styled.div`
   top: 0;
   left: 0;
   z-index: 999;
-  padding: 15px 15px 40px 15px;
+  padding: 0 17.5px 44px;
   box-sizing: border-box;
   background-color: #111111;
   z-index: 99999;
 `;
 
 const Content = styled.div`
-  width: 100%;
   height: 100%;
   display: flex;
+  padding: 0 8.5px;
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -244,7 +275,7 @@ const Form = styled.form`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  margin-top: 30px;
+  /* margin-top: 10px; */
 `;
 
 const FieldsContainer = styled.div`

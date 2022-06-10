@@ -1,4 +1,4 @@
-import { Asset } from 'utils/types';
+import { Asset, Token } from 'utils/types';
 
 // send token
 export function changeAddress(address: string) {
@@ -107,9 +107,30 @@ export function changePendingToSign(pendingToSign: Record<string, string>) {
   };
 }
 
+export function changePendingToSignRaw(pendingToSignRaw: Record<string, string>) {
+  return {
+    type: 'CHANGE_PENDING_TO_SIGN_RAW',
+    payload: { pendingToSignRaw }
+  };
+}
+
 export function changeConnectedApps(connectedApps: Record<string, string>) {
   return {
     type: 'CHANGE_CONNECTED_APPS',
     payload: { connectedApps }
+  };
+}
+
+export function changeTokenReceived({ tokenReceived }: { tokenReceived: boolean }) {
+  return {
+    type: 'TOKEN_RECEIVED',
+    payload: { tokenReceived }
+  };
+}
+
+export function changeDisabledTokens(disabledTokens: Token[]) {
+  return {
+    type: 'CHANGE_DISABLED_TOKENS',
+    payload: { disabledTokens }
   };
 }

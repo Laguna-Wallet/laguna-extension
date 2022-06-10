@@ -4,12 +4,20 @@ import {
   mnemonicValidate,
   randomAsHex,
   mnemonicToMiniSecret,
-  base64Decode,
   encodeAddress as toSS58,
   ethereumEncode
 } from '@polkadot/util-crypto';
 
-import { Asset, Network, Prices, SEED_LENGTHS, StorageKeys } from './types';
+import {
+  Asset,
+  Network,
+  Prices,
+  SEED_LENGTHS,
+  StorageKeys,
+  Token,
+  TokenSymbols,
+  Transaction
+} from './types';
 import { KeyringPair$Json } from '@polkadot/keyring/types';
 import { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
 import keyring from '@polkadot/ui-keyring';
@@ -18,10 +26,10 @@ import bcrypt from 'bcryptjs';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { decodeAddress, encodeAddress } from '@polkadot/keyring';
 import BigNumber from 'bignumber.js';
-import AES from 'crypto-js/aes';
+import * as AES from 'crypto-js/aes';
 import Utf8 from 'crypto-js/enc-utf8';
-import { decodePair } from '@polkadot/keyring/pair/decode';
-import { createPair } from '@polkadot/keyring/pair';
+import { fetchTransactions, transformTransfers } from './fetchTransactions';
+import { generateRandomBase64Avatar } from 'utils';
 
 // TODO appropriate typing
 
@@ -40,8 +48,8 @@ export function generateKeyPair(
   return keyring.addUri(randomAsHex(32), password, { name: 'mnemonic acc' });
 }
 
-export function validatePassword(password: string) {
-  const hashed = getFromStorage(StorageKeys.Encoded);
+export async function validatePassword(password: string) {
+  const hashed = await getFromStorage(StorageKeys.Encoded);
 
   if (!hashed) return false;
   return bcrypt.compareSync(password, hashed as string);
@@ -71,8 +79,7 @@ export function validateSeed(suri: string) {
 
     return true;
   } catch (err) {
-    console.log('err', err);
-    return false;
+    console.log(err);
   }
 }
 
@@ -96,13 +103,23 @@ export function importViaSeed(suri: string, password: string) {
 }
 
 // Imports
-export function importFromMnemonic(seed: string, password: string) {
+export async function importFromMnemonic(seed: string, password: string) {
   const key = mnemonicToMiniSecret(seed);
   const encodedKey = AES.encrypt(u8aToHex(key), password).toString();
   const encodedSeed = AES.encrypt(seed, password).toString();
   const { pair } = keyring.addUri(seed, password);
 
-  keyring.saveAccountMeta(pair, { encodedKey, encodedSeed, name: pair.address });
+  const img = await generateRandomBase64Avatar();
+  const newPair = addAccountMeta(pair.address, {
+    encodedKey,
+    encodedSeed,
+    name: pair.address,
+    img
+  });
+
+  newPair.setMeta({ encodedKey, encodedSeed, name: pair.address, img });
+
+  return newPair;
 }
 
 export function importFromPrivateKey(secretKey: string, password: string) {
@@ -172,35 +189,51 @@ export function accountsTie({ address, genesisHash }: any): any {
   return keyring.getPair(address);
 }
 
-export function addAccountMeta(address: string, obj: Record<string, any>): any {
+export function changeAccountPicture(address: string, obj: Record<string, any>): any {
   const pair = keyring.getPair(address);
-  keyring.saveAccountMeta(pair, { ...pair.meta, ...obj });
+  const { img, ...oldMeta } = pair.meta;
+  keyring.saveAccountMeta(pair, { ...oldMeta, ...obj });
   const newPair = keyring.getPair(address);
   return newPair;
 }
 
+export function addAccountMeta(address: string, obj: Record<string, any>): any {
+  const pair = keyring.getPair(address);
+  keyring.saveAccountMeta(pair, { ...pair.meta, ...obj });
+  const newPair = keyring.getPair(address);
+  newPair.setMeta({ ...pair.meta, ...obj });
+  return newPair;
+}
+
 // todo proper typing
-export function getNetworks(prices: Prices, tokenInfos: Network[]): Network[] {
+export function getNetworks(
+  prices: Prices,
+  tokenInfos: Network[],
+  disabledTokens?: Token[]
+): Network[] {
   if (!prices || !tokenInfos) return [];
 
   const networks: Network[] = [
     {
       name: 'Polkadot',
-      symbol: 'wnd',
+      symbol: TokenSymbols.westend,
       chain: 'westend',
-      node: 'wss://westend-rpc.polkadot.io'
+      node: 'wss://westend-rpc.polkadot.io',
+      prefix: 42
     },
     {
       name: 'Polkadot',
-      symbol: 'dot',
+      symbol: TokenSymbols.polkadot,
       chain: 'polkadot',
-      node: 'wss://rpc.polkadot.io'
+      node: 'wss://rpc.polkadot.io',
+      prefix: 0
     },
     {
       name: 'Kusama',
-      symbol: 'ksm',
+      symbol: TokenSymbols.kusama,
       chain: 'kusama',
-      node: 'wss://kusama-rpc.polkadot.io'
+      node: 'wss://kusama-rpc.polkadot.io',
+      prefix: 2
     },
     // {
     //   name: 'Moonriver',
@@ -225,9 +258,10 @@ export function getNetworks(prices: Prices, tokenInfos: Network[]): Network[] {
     // },
     {
       name: 'Astar',
-      symbol: 'astr',
+      symbol: TokenSymbols.astar,
       chain: 'astar',
-      node: 'wss://astar.api.onfinality.io/public-ws'
+      node: 'wss://astar.api.onfinality.io/public-ws',
+      prefix: 5
     }
 
     // wss://rpc.astar.network
@@ -266,7 +300,12 @@ export function getNetworks(prices: Prices, tokenInfos: Network[]): Network[] {
   }, {});
 
   // todo typing
-  const enhancedNetworks: Network[] = networks.map((network) => {
+
+  const filteredNetworks = disabledTokens
+    ? networks.filter((network) => !disabledTokens.includes(network.symbol))
+    : networks;
+
+  const enhancedNetworks: Network[] = filteredNetworks.map((network) => {
     if (!ht[network.symbol]) {
       return network;
     }
@@ -286,29 +325,37 @@ export function getNetworks(prices: Prices, tokenInfos: Network[]): Network[] {
 export async function getAssets(
   prices: Prices,
   tokenInfos: Network[],
-  balances: any
+  balances: any,
+  disabledTokens: Token[],
+  showZeroBalanceAssets?: boolean
 ): Promise<
   | {
       overallBalance: number;
+      overallPriceChange: number;
       assets: Asset[];
     }
   | []
 > {
   if (!balances) return [];
+  const networks: Network[] = getNetworks(prices, tokenInfos, disabledTokens);
 
-  const networks = getNetworks(prices, tokenInfos);
-
-  let overallBalance = 0;
   const assets: Asset[] = [];
+
+  let overallPriceChange = 0;
+  let overallBalance = 0;
 
   for (let i = 0; i < networks.length; i++) {
     try {
-      const { name, symbol, chain, node, encodeType } = networks[i];
+      const { name, symbol, chain, node, encodeType, prefix, price_change_percentage_24h } =
+        networks[i];
 
-      const balance = balances[chain];
+      let balance = balances[chain];
 
-      if (!balance) continue;
+      if (!balance && !showZeroBalanceAssets) continue;
 
+      if (showZeroBalanceAssets) {
+        balance = !balance ? 0 : balance;
+      }
       const price = prices[chain]?.usd;
 
       // todo rename calculatedBalance
@@ -316,6 +363,7 @@ export async function getAssets(
 
       if (price) {
         overallBalance += calculatedPrice.toNumber();
+        overallPriceChange += Number(price_change_percentage_24h);
       }
 
       assets.push({
@@ -325,14 +373,15 @@ export async function getAssets(
         chain,
         calculatedPrice: calculatedPrice.toNumber(),
         price,
+        prefix,
         encodeType
       });
     } catch (err) {
-      console.log('err', err);
+      console.log(err);
     }
   }
 
-  return { overallBalance, assets };
+  return { overallBalance, assets, overallPriceChange };
 }
 
 // todo proper typing
@@ -354,9 +403,6 @@ export function recodeAddressForTransaction(address: string, prefix: any) {
 
 // todo typing node is an enum
 export async function getApiInstance(node: string) {
-  // API_KEY = 0dcf3660-e510-4df3-b9d2-bba6b16e3ae9
-  //CHAIN.api.onfinality.io/ws?apikey=API_KEY
-
   // todo put this into env
   const wsProvider = new WsProvider(
     `wss://${node}.api.onfinality.io/ws?apikey=${process.env.REACT_APP_ONFINALITY_KEY}`
@@ -368,7 +414,7 @@ export async function getApiInstance(node: string) {
 export function isKeyringPairs$Json(
   json: KeyringPair$Json | KeyringPairs$Json
 ): json is KeyringPairs$Json {
-  return json.encoding.content.includes('batch-pkcs8');
+  return json?.encoding?.content?.includes('batch-pkcs8');
 }
 
 export function isKeyringJson(
@@ -377,11 +423,7 @@ export function isKeyringJson(
   try {
     if (isKeyringPairs$Json(json)) return false;
 
-    const {
-      address,
-      meta: { genesisHash, name },
-      type
-    } = keyring.createFromJson(json);
+    const { address } = keyring.createFromJson(json);
 
     return !!address;
   } catch (e) {
@@ -408,11 +450,15 @@ export async function isValidKeyringPassword(
     } else {
       const newPair = keyring.createFromJson(json);
       newPair.unlock(password);
-      if (!newPair.isLocked) return true;
+      if (!newPair.isLocked) {
+        keyring.forgetAccount(newPair.address);
+        return true;
+      }
     }
 
     return false;
   } catch (err) {
+    console.log(err);
     return false;
   }
 }
@@ -424,15 +470,21 @@ export function encryptKeyringPairs(oldPassword: string, newPassword: string) {
     const pair = pairs[i];
     pair.unlock(oldPassword);
 
+    keyring.forgetAccount(pair.address);
     const { pair: newPair } = keyring.addPair(pair, newPassword);
+
+    newPair.setMeta(pair.meta);
     keyring.saveAccountMeta(newPair, { ...pair.meta });
   }
 }
+
 // todo typing keyringPair
-export function encryptKeyringPair(pair: any, oldPassword: string, newPassword: string) {
+export async function encryptKeyringPair(pair: any, oldPassword: string, newPassword: string) {
   pair.unlock(oldPassword);
   const { pair: newPair } = keyring.addPair(pair, newPassword);
-  keyring.saveAccountMeta(newPair, { ...pair.meta });
+  const img = await generateRandomBase64Avatar();
+  const enhancedPair = addAccountMeta(newPair.address, { img, ...pair.meta });
+  return enhancedPair;
 }
 
 export function encryptMetaData(oldPassword: string, newPassword: string) {
@@ -440,17 +492,18 @@ export function encryptMetaData(oldPassword: string, newPassword: string) {
 
   for (let i = 0; i < pairs.length; i++) {
     const pair = pairs[i];
-    console.log(1);
     const meta = pair.meta;
 
     // decode key and encode with new password
-    if (meta?.encodedKey) {
-      const decodedKeyBytes = AES.decrypt(meta?.encodedKey as string, oldPassword);
-      const decodedKey = decodedKeyBytes.toString(Utf8);
+    // if (meta?.encodedKey) {
+    //   const decodedKeyBytes = AES.decrypt(meta?.encodedKey as string, oldPassword);
+    //   const decodedKey = decodedKeyBytes.toString(Utf8);
 
-      const reEncodedKey = AES.encrypt(decodedKey, newPassword).toString();
-      keyring.saveAccountMeta(pair, { ...pair.meta, encodedKey: reEncodedKey });
-    }
+    //   const reEncodedKey = AES.encrypt(decodedKey, newPassword).toString();
+
+    //   pair.setMeta({ ...pair.meta, encodedKey: reEncodedKey });
+    //   keyring.saveAccountMeta(pair, { ...pair.meta, encodedKey: reEncodedKey });
+    // }
 
     // decode seed and encode with new password
     if (meta?.encodedSeed) {
@@ -458,7 +511,9 @@ export function encryptMetaData(oldPassword: string, newPassword: string) {
       const decodedSeed = decodedSeedBytes.toString(Utf8);
 
       const reEncodedSeed = AES.encrypt(decodedSeed, newPassword).toString();
+
       keyring.saveAccountMeta(pair, { ...pair.meta, encodedSeed: reEncodedSeed });
+      pair.setMeta({ ...pair.meta, encodedSeed: reEncodedSeed });
     }
   }
 }
@@ -472,6 +527,19 @@ export function accountsChangePassword(address: string, oldPass: string, newPass
   return pair;
 }
 
+export async function getLatestTransactionsForSingleChain(
+  address: string,
+  chain: string,
+  page: number,
+  row: number
+): Promise<{ count: number; transactions: Transaction[] }> {
+  const data = await fetchTransactions(address, chain, row, page);
+  return {
+    count: data?.data?.count,
+    transactions: data?.data?.transfers ? transformTransfers(data?.data?.transfers, chain) : []
+  };
+}
+
 // todo pair proper typing
 // export function unlockAndSavePair(pair: any, password: string) {
 //   try {
@@ -480,7 +548,6 @@ export function accountsChangePassword(address: string, oldPass: string, newPass
 //     let newPairs = [];
 
 //     const unlockedPairs = getFromStorage(StorageKeys.UnlockedPairs);
-//     console.log('~ unlockedPairs', unlockedPairs);
 
 //     if (unlockedPairs) {
 //       const parsed = JSON.parse(unlockedPairs);

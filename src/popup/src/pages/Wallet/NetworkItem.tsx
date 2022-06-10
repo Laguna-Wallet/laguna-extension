@@ -1,46 +1,51 @@
+import BigNumber from 'bignumber.js';
 import NetworkIcons from 'components/primitives/NetworkIcons';
 import styled from 'styled-components';
+import { Asset } from 'utils/types';
 
 type Props = {
-  network: any;
+  isMarketCap?: boolean;
+  network: Asset;
 };
 
-export default function NetworkItem({ network }: Props) {
+export default function NetworkItem({ network, isMarketCap = false }: Props) {
+  const { chain, assetsCount, calculatedPrice, marketCap } = network;
+
   return (
     <Container>
       <ListItemIcon>
-        <NetworkIcons chain={network.chain} />
+        <NetworkIcons chain={chain} />
       </ListItemIcon>
       <ListItemText>
-        <Title>{network.chain}</Title>
-        <Tag>1 Asset</Tag>
+        <Title>{chain}</Title>
+        <Tag>{assetsCount || 1} Asset</Tag>
       </ListItemText>
       <ListItemText>
         <Title>
-          $
-          {network?.marketCap &&
-            String(network.marketCap)
-              .replace(/,/g, '')
-              .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+          ${' '}
+          {!isMarketCap
+            ? calculatedPrice
+              ? new BigNumber(calculatedPrice).toFormat(2, 1)
+              : 0
+            : (marketCap &&
+                String(marketCap)
+                  .replace(/,/g, '')
+                  .replace(/\B(?=(\d{3})+(?!\d))/g, ',')) ||
+              0}
         </Title>
-        <Value>
-          {' '}
-          {network?.price_change_percentage_24h &&
-            `${Number(network?.price_change_percentage_24h).toFixed(2)}%`}
-        </Value>
       </ListItemText>
     </Container>
   );
 }
 
 const Container = styled.div`
-  width: 99%;
-  height: 65px;
+  width: 100%;
+  height: 59px;
   display: flex;
   align-items: center;
   background-color: #ffffff;
-  margin-bottom: 10px;
-  padding: 14px 12px;
+  margin-bottom: 12px;
+  padding: 14px 14px 14px 12px;
   box-sizing: border-box;
   border-radius: 4px;
   font-family: 'Sequel100Wide55Wide';
@@ -66,22 +71,21 @@ const ListItemText = styled.div`
 `;
 
 const Title = styled.div`
+  font-family: 'IBM Plex Sans';
   font-size: 14px;
+  font-weight: 500;
+  text-transform: capitalize;
 `;
 
 const Tag = styled.div`
   font-size: 10px;
-  background-color: #eeeeee;
-  padding: 2px 5px;
-  box-sizing: border-box;
-  border-radius: 50px;
-  color: #757575;
-  font-family: 'SFCompactDisplayRegular';
+  color: #777e90;
+  font-family: 'IBM Plex Sans';
   margin-top: 3px;
 `;
 
 const Value = styled.div`
-  font-size: 12px;
-  font-family: 'SFCompactDisplayRegular';
-  color: #62c660;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: 'IBM Plex Sans';
 `;

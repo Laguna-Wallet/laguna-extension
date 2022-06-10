@@ -13,17 +13,25 @@ type Props = {
   direction?: string;
   type?: 'button' | 'submit' | 'reset' | undefined;
   disabled?: boolean;
+  styledDisabled?: boolean;
   color?: string;
   borderColor?: string;
   margin?: string;
+  marginText?: string;
   fontFamily?: string;
   fontSize?: string;
+  boxShadow?: string;
+  disabledColor?: string;
+  disabledBgColor?: string;
+  disabledBorderColor?: string;
+  fontWeight?: string;
+  height?: string;
 };
 
-export default function Button({ Icon, text, bgColor = '#111', ...rest }: Props) {
+export default function Button({ Icon, text, marginText, bgColor = '#111', ...rest }: Props) {
   return (
-    <StyledButton {...rest} bgColor={bgColor}>
-      <Text>{text}</Text>
+    <StyledButton bgColor={bgColor} {...rest}>
+      <Text marginText={marginText}>{text}</Text>
       {Icon && Icon}
     </StyledButton>
   );
@@ -35,34 +43,48 @@ const StyledButton = styled.button<{
   bgColor?: string;
   bgImage?: string;
   disabled?: boolean;
+  styledDisabled?: boolean;
   borderColor?: string;
   margin?: string;
   fontFamily?: string;
   fontSize?: string;
   width?: string;
+  boxShadow?: string;
+  disabledBgColor?: string;
+  disabledColor?: string;
+  disabledBorderColor?: string;
+  fontWeight?: string;
+  height?: string;
 }>`
   width: ${({ width }) => width || '100%'};
   display: flex;
   flex-direction: ${({ direction }) => direction || 'row'};
   justify-content: ${({ justify }) => justify || 'space-between'};
   align-items: center;
-  height: 46px;
+  font-family: ${({ fontFamily }) => fontFamily || 'Inter'};
+  font-size: ${({ fontSize }) => fontSize || '14px'};
+  font-weight: 500;
+  height: ${({ height }) => height || '45px'};
   margin-top: 20px;
   padding: 0 14px;
+  box-sizing: border-box;
   border-radius: 4px;
-  font-family: ${({ fontFamily }) => fontFamily || 'SFCompactDisplayRegular'};
-  font-size: ${({ fontSize }) => fontSize || '14px'};
   background-image: ${({ bgImage }) => bgImage};
-  background-color: ${({ disabled, bgColor }) => (disabled ? '#adadad' : bgColor)};
-  /* pointer-events: ${({ disabled }) => (disabled ? 'none' : 'initial')}; */
-  color: ${({ color }) => (color ? color : '#fff')};
+  background-color: ${({ disabled, styledDisabled, bgColor, disabledBgColor }) =>
+    disabled || styledDisabled ? disabledBgColor || 'rgba(24, 25, 26, 0.25)' : bgColor};
+  box-shadow: ${({ boxShadow }) => boxShadow || 'none'};
+  color: ${({ color, disabled, disabledColor }) =>
+    disabled && disabledColor ? disabledColor : color ? color : '#fff'};
   border: 1px solid;
-  border-color: ${({ disabled, borderColor }) => (disabled ? '#adadad' : borderColor)};
+  border-color: ${({ disabled, styledDisabled, borderColor }) =>
+    disabled || styledDisabled ? 'transparent' : borderColor};
   margin: ${({ margin }) => margin};
-  cursor: pointer;
-  font-weight: 500;
+  cursor: ${({ disabled, styledDisabled }) => (disabled || styledDisabled ? 'default' : 'pointer')};
+  font-weight: ${({ fontWeight }) => fontWeight || '500'};
 `;
 
-const Text = styled.div`
-  margin: 0 5px;
+const Text = styled.span<{
+  marginText?: string;
+}>`
+  margin: ${({ marginText }) => marginText || '0 5px'};
 `;

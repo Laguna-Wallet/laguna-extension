@@ -1,54 +1,82 @@
 import { decodeAddress, encodeAddress } from "@polkadot/keyring"
 import { hexToU8a, isHex } from "@polkadot/util"
-import { StorageKeys } from "./types"
+import { AccountMeta, StorageKeys } from "./types"
 import * as bcrypt from "bcryptjs"
 import keyring from "@polkadot/ui-keyring"
-import AES from "crypto-js/aes"
+import * as AES from "crypto-js/aes"
 import Utf8 from "crypto-js/enc-utf8"
 import { ethereumEncode } from "@polkadot/util-crypto"
 import { checkIfDenied } from "@polkadot/phishing"
+import type { KeyringPair } from "@polkadot/keyring/types"
 
-// const importFresh = require("import-fresh")
+export const getFromStorage = async function (key: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    try {
+      chrome.storage.local.get(key, function (value) {
+        resolve(value[key])
+      })
+    } catch (ex) {
+      reject(ex)
+    }
+  })
+}
 
-// Note: this utility functions will be needed for manifest V3
-// export const getFromStorage = async function (key) {
-//   return new Promise((resolve, reject) => {
-//     try {
-//       chrome.storage.local.get(key, function (value) {
-//         resolve(value[key])
-//       })
-//     } catch (ex) {
-//       reject(ex)
-//     }
-//   })
+export const saveToStorage = async function ({ key, value }: { key: string; value: string }) {
+  return new Promise((resolve, reject) => {
+    try {
+      chrome.storage.local.set({ [key]: value }, function () {
+        resolve("")
+      })
+    } catch (ex) {
+      reject(ex)
+    }
+  })
+}
+
+export const clearFromStorage = async function (keys: string) {
+  return new Promise((resolve, reject) => {
+    try {
+      chrome.storage.local.remove(keys, function () {
+        resolve("")
+      })
+    } catch (ex) {
+      reject(ex)
+    }
+  })
+}
+
+export function getFromChromeStorage(key: string) {
+  return new Promise(function (resolve) {
+    chrome.storage.local.get([key], function (result) {
+      resolve(result)
+    })
+  })
+}
+
+export async function saveToChromeStorage({ key, value }: { key: string; value: string }) {
+  await chrome.storage.local.set({ [key]: value }, function () {})
+}
+
+// export async function getCurrentTab() {
+//   let queryOptions = { active: true, currentWindow: true }
+//   let [tab] = await chrome.tabs.query(queryOptions)
+//   return tab
 // }
 
-// export const saveToStorage = async function ({ key, value }) {
-//   return new Promise((resolve, reject) => {
-//     try {
-//       chrome.storage.local.set({ [key]: value }, function () {
-//         resolve("")
-//       })
-//     } catch (ex) {
-//       reject(ex)
-//     }
-//   })
+// export function saveToStorage({ key, value }: { key: string; value: string }) {
+//   localStorage.setItem(key, value)
 // }
 
-export function saveToStorage({ key, value }: { key: string; value: string }) {
-  localStorage.setItem(key, value)
-}
+// export function getFromStorage(key: string) {
+//   return localStorage.getItem(key)
+// }
 
-export function getFromStorage(key: string) {
-  return localStorage.getItem(key)
-}
+// export function clearFromStorage(key: string) {
+//   return localStorage.removeItem(key)
+// }
 
-export function clearFromStorage(key: string) {
-  return localStorage.removeItem(key)
-}
-
-export function validatePassword(password: string) {
-  const hashed = getFromStorage(StorageKeys.Encoded)
+export async function validatePassword(password: string) {
+  const hashed = await getFromStorage(StorageKeys.Encoded)
 
   if (!hashed) return false
   return bcrypt.compareSync(password, hashed)
@@ -67,10 +95,12 @@ export function handleInitialIdleTimeout() {
 
 export function getAccountAddresses() {
   try {
+    chrome.storage.local.get(null, function (items) {})
+
     const local = localStorage
     const accountAddresses: string[] = []
 
-    for (var key in local) {
+    for (const key in local) {
       if (key.startsWith("account")) {
         const account = localStorage.getItem(key)
         const parsed = JSON.parse(account)
@@ -83,7 +113,7 @@ export function getAccountAddresses() {
 
     return accountAddresses
   } catch (err) {
-    console.warn(err)
+    return err
   }
 }
 
@@ -92,7 +122,7 @@ export function isValidPolkadotAddress(address: string): boolean {
     encodeAddress(isHex(address) ? hexToU8a(address) : decodeAddress(address))
     return true
   } catch (error) {
-    return false
+    console.log(error)
   }
 }
 
@@ -132,12 +162,15 @@ export function handleUnlockPair(payload) {
   if (payload?.json) {
     const pair = keyring.restoreAccount(payload.json, payload.jsonPassword)
     const newPair = encryptKeyringPair(pair, payload.jsonPassword, payload.password)
+    keyring.saveAccountMeta(newPair, { ...payload.meta })
+    newPair.setMeta({ ...payload.meta })
     return newPair
   }
 
   if (payload.seed) {
     const { pair } = keyring.addUri(payload.seed, payload.password)
-    keyring.saveAccountMeta(pair, { name: pair.address })
+    keyring.saveAccountMeta(pair, { ...payload.meta })
+    pair.setMeta({ ...payload.meta })
     return pair
   }
 }
@@ -163,26 +196,58 @@ export function removeFromKeypair(pairs, address) {
   return pairs.filter((item) => recodeToPolkadotAddress(item.address) !== recodeToPolkadotAddress(address))
 }
 
+export async function clearAccountsFromStorage(address?: string) {
+  const pairs = keyring.getPairs()
+
+  for (let i = 0; i < pairs.length; i++) {
+    const pair = pairs[i]
+    if (address && recodeToPolkadotAddress(address) !== recodeToPolkadotAddress(pair.address)) {
+      keyring.forgetAccount(pair.address)
+    }
+  }
+}
+
 export function recodeToPolkadotAddress(address: string): string {
   const publicKey = decodeAddress(address)
   return encodeAddress(publicKey, 0)
 }
-
-export function reEncryptKeyringPairs(oldPassword: string, newPassword: string) {
-  encryptKeyringPairs(oldPassword, newPassword)
-  encryptMetaData(oldPassword, newPassword)
+// todo proper typing
+export function renewMetaToKeyPairs(pairs: KeyringPair[], metaData: { address: string; meta: AccountMeta }[]): KeyringPair[] {
+  return pairs.map((pair) => {
+    const foundPair = metaData.find((item) => recodeToPolkadotAddress(item.address) === recodeToPolkadotAddress(pair.address))
+    if (foundPair) {
+      pair.setMeta({ ...pair.meta, ...foundPair.meta })
+    }
+    return pair
+  })
 }
 
-export function encryptKeyringPairs(oldPassword: string, newPassword: string) {
-  const pairs = keyring.getPairs()
+// todo proper typing
+export function reEncryptKeyringPairs(pairs: any, oldPassword: string, newPassword: string): KeyringPair[] {
+  const encryptedPairs = encryptKeyringPairs(pairs, oldPassword, newPassword)
+  // const newPairs = encryptMetaData(encryptedPairs, oldPassword, newPassword)
+  return encryptedPairs
+}
+
+export function encryptKeyringPairs(pairs, oldPassword: string, newPassword: string) {
+  // const pairs = keyring.getPairs()
+
+  const newPairs = []
 
   for (let i = 0; i < pairs.length; i++) {
     const pair = pairs[i]
     pair.unlock(oldPassword)
 
+    keyring.forgetAccount(pair.address)
     const { pair: newPair } = keyring.addPair(pair, newPassword)
+
+    newPair.setMeta({ ...pair.meta })
     keyring.saveAccountMeta(newPair, { ...pair.meta })
+
+    newPairs.push(newPair)
   }
+
+  return newPairs
 }
 
 export function recodeAddress(address: string, prefix: any, type?: string): string {
@@ -195,30 +260,32 @@ export function recodeAddress(address: string, prefix: any, type?: string): stri
   return encodeAddress(raw, prefix)
 }
 
-export function encryptMetaData(oldPassword: string, newPassword: string) {
-  const pairs = keyring.getPairs()
+export function encryptMetaData(pairs, oldPassword: string, newPassword: string) {
+  // const pairs = keyring.getPairs()
 
   for (let i = 0; i < pairs.length; i++) {
     const pair = pairs[i]
     const meta = pair.meta
-
     // decode key and encode with new password
-    if (meta?.encodedKey) {
-      const decodedKeyBytes = AES.decrypt(meta?.encodedKey as string, oldPassword)
-      const decodedKey = decodedKeyBytes.toString(Utf8)
+    // if (meta?.encodedKey) {
+    //   const decodedKeyBytes = AES.decrypt(meta?.encodedKey as string, oldPassword)
+    //   const decodedKey = decodedKeyBytes.toString(Utf8)
 
-      const reEncodedKey = AES.encrypt(decodedKey, newPassword).toString()
-      keyring.saveAccountMeta(pair, { ...pair.meta, encodedKey: reEncodedKey })
-    }
+    //   const reEncodedKey = AES.encrypt(decodedKey, newPassword).toString()
+    //   pair.setMeta({ ...pair.meta, encodedKey: reEncodedKey })
+    //   keyring.saveAccountMeta(pair, { ...pair.meta, encodedKey: reEncodedKey })
+    // }
 
     // decode seed and encode with new password
     if (meta?.encodedSeed) {
       const decodedSeedBytes = AES.decrypt(meta?.encodedSeed as string, oldPassword)
       const decodedSeed = decodedSeedBytes.toString(Utf8)
-
       const reEncodedSeed = AES.encrypt(decodedSeed, newPassword).toString()
+
+      pair.setMeta({ ...pair.meta, encodedSeed: reEncodedSeed })
       keyring.saveAccountMeta(pair, { ...pair.meta, encodedSeed: reEncodedSeed })
     }
+    return pair
   }
 }
 
@@ -227,6 +294,24 @@ export async function isInPhishingList(url: string): Promise<boolean> {
 
   if (isInDenyList) {
     return true
+  }
+
+  return false
+}
+
+export async function checkBalanceChange(newBalance: Record<string, string>, newAddress: string): Promise<boolean> {
+  const oldBalance = await getFromStorage(StorageKeys.AccountBalances)
+  if (!oldBalance) return false
+
+  const oldAddress = JSON.parse(oldBalance)?.address
+  if (newAddress !== oldAddress) return false
+
+  const parsedOldBallance = JSON.parse(oldBalance)?.balances
+
+  for (const [key, balance] of Object.entries(newBalance)) {
+    if (balance > parsedOldBallance[key]) {
+      return true
+    }
   }
 
   return false

@@ -17,6 +17,9 @@ module.exports = {
     content: join(__dirname, "src/background/content.ts"),
     page: join(__dirname, "src/background/page.ts"),
   },
+  // alias: {
+  //   "@polkadot/wasm-crypto": require.resolve("@polkadot/wasm-crypto/empty"),
+  // },
   output: {
     path: join(__dirname, "dist"),
     filename: "[name].js",

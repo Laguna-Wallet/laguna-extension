@@ -2,8 +2,12 @@ import { MnemonicsTriple, StorageKeys } from './types';
 import { saveAs } from 'file-saver';
 import { KeyringPair$Json } from '@polkadot/keyring/types';
 import { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
+import type { KeyringPair } from '@polkadot/keyring/types';
 import bcrypt from 'bcryptjs';
 import { getFromStorage } from './chrome';
+import keyring from '@polkadot/ui-keyring';
+import Resizer from 'react-image-file-resizer';
+import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 //==============================================================================
 // Mnemonics
@@ -57,6 +61,22 @@ export function mnemonicsAreChecked(ht: Record<string, boolean>): boolean {
 // Shared
 //==============================================================================
 
+export function getAccountNameByAddress(address: string): string | undefined {
+  const pair: KeyringPair = keyring.getPair(address);
+  return (pair?.meta?.name as string) || undefined;
+}
+
+export function getContactNameByAddress(address: string): string | undefined {
+  const pair = keyring.getAddress(address);
+  return (pair?.meta?.name as string) || undefined;
+}
+
+export async function generateRandomBase64Avatar() {
+  const random = Math.floor(Math.random() * 10);
+  const image = (await import(`../assets/imgs/avatars/avatar-${random}.png`)).default;
+  return image;
+}
+
 export function isFormikErrorEmpty(errors: Record<string, string>): boolean {
   return !Object.keys(errors).length;
 }
@@ -66,11 +86,11 @@ export function copyToClipboard(text: string): void {
 }
 
 export function calculatePasswordCheckerColor(passwordLength: string) {
-  if (passwordLength === 'Too weak') return 'red';
-  if (passwordLength === 'Weak') return 'orange';
-  if (passwordLength === 'Medium') return 'yellow';
-  if (passwordLength === 'Strong') return 'green';
-  return 'red';
+  if (passwordLength === 'Poor') return '#FB5A5A';
+  if (passwordLength === 'Fair') return '#FFC44C';
+  if (passwordLength === 'Good') return '#458FFF';
+  if (passwordLength === 'Excellent') return '#00A47C';
+  return '#FB5A5A';
 }
 
 export function exportJson(json: any) {
@@ -97,13 +117,31 @@ export async function convertUploadedFileToJson(
   }
 }
 
+export async function clearAccountsFromStorage(address?: string) {
+  const pairs = keyring.getPairs();
+
+  for (let i = 0; i < pairs.length; i++) {
+    const pair = pairs[i];
+    if (address && recodeToPolkadotAddress(address) !== recodeToPolkadotAddress(pair.address)) {
+      keyring.forgetAccount(pair.address);
+    }
+  }
+}
+
+export function recodeToPolkadotAddress(address: string): string {
+  const publicKey = decodeAddress(address);
+  return encodeAddress(publicKey, 0);
+}
+
 export function encryptPassword({ password }: { password: string }) {
   return bcrypt.hashSync(password, bcrypt.genSaltSync());
 }
 
-export function truncateString(string: string, length?: number) {
+export function truncateString(string: string, length?: number): string {
+  if (!string) return string;
+  if (string.length <= (length || 4 * 2)) return string;
   const part1 = string.slice(0, length || 4).concat('...');
-  const part2 = string.substring(string.length - (length || 4), string.length);
+  const part2 = string.substring(string.length - ((length && length + 2) || 4), string.length);
   return `${part1}${part2}`;
 }
 
@@ -111,7 +149,8 @@ export function objectValuesToArray(obj: Record<string, string>): string[] {
   return Object.values(obj).map((item) => item);
 }
 
-export function isObjectEmpty(obj: Record<string, string>): boolean {
+export function isObjectEmpty(obj: Record<string, string> | undefined): boolean {
+  if (!obj) return false;
   return obj && Object.keys(obj).length === 0 && Object.getPrototypeOf(obj) === Object.prototype;
 }
 
@@ -123,8 +162,9 @@ export function transformAmount(obj: Record<string, unknown>): any[] {
   return Object.keys(obj).map((key) => [obj[key]]);
 }
 
-export function accountHasChanged(balances: Record<string, string>) {
-  const account = getFromStorage(StorageKeys.ActiveAccount);
+export async function accountHasChanged(balances: Record<string, string>) {
+  const account = await getFromStorage(StorageKeys.ActiveAccount);
+  if (!account) return false;
   const address = JSON.parse(account as string).address;
   if (balances.address === address) return true;
   return false;
@@ -133,3 +173,58 @@ export function accountHasChanged(balances: Record<string, string>) {
 export function timer(ms: number) {
   return new Promise((res) => setTimeout(res, ms));
 }
+
+export function getBase64(file: File) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = function () {
+      resolve(reader.result);
+    };
+    reader.onerror = function (error) {
+      reject(error);
+    };
+  });
+}
+
+export function getAccountImage(address: string): string {
+  const pair = keyring.getPair(address);
+  return pair?.meta?.img as string;
+}
+
+export const resizeFile = (file: File) =>
+  new Promise((resolve) => {
+    Resizer.imageFileResizer(
+      file,
+      300,
+      300,
+      'JPEG',
+      100,
+      0,
+      (uri) => {
+        resolve(uri);
+      },
+      'base64'
+    );
+  });
+
+export const enhancePasswordStrength = (string: string): string => {
+  if (string === 'Too weak') return 'Poor';
+  if (string === 'Weak') return 'Fair';
+  if (string === 'Medium') return 'Good';
+  if (string === 'Strong') return 'Excellent';
+  return '';
+};
+
+export const validPassword = (values: {password: string}) => {
+  const {password} = values;
+  const errors: Record<string, string> = {};
+  if (!password) {
+    errors.password = 'Required';
+  }
+  if(password?.length < 8){
+    errors.password = 'Must be at least 8 characters'
+  }
+
+  return errors;
+};

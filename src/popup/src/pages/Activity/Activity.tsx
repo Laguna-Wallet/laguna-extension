@@ -1,73 +1,78 @@
 import styled from 'styled-components';
 import { useAccount } from 'context/AccountContext';
-import walletBG from 'assets/imgs/walletBG.jpg';
+import activityBg from 'assets/imgs/activity-bg.png';
 import Header from 'pages/Wallet/Header';
 import Footer from 'pages/Wallet/Footer';
-import { goTo, Link } from 'react-chrome-extension-router';
+import { goTo } from 'react-chrome-extension-router';
 import Wallet from 'pages/Wallet/Wallet';
-import { getApiInstance } from 'utils/polkadot';
+import { recodeAddress } from 'utils/polkadot';
 import { useEffect, useState } from 'react';
 import ThreeDotsIcon from 'assets/svgComponents/ThreeDotsIcon';
 import ActivityInfo from './ActivityInfo';
 import { useSelector } from 'react-redux';
-import { FixedSizeList as List } from 'react-window';
 import { truncateString } from 'utils';
-import { format, compareAsc } from 'date-fns';
+import { format } from 'date-fns';
 import RightArrow from 'assets/svgComponents/RightArrow';
 import { PlusIcon } from '@heroicons/react/outline';
 import PolkadotLogoIcon from 'assets/svgComponents/PolkadotLogoIcon';
 import KusamaLogoIcon from 'assets/svgComponents/KusamaLogoIcon';
-import KusamaIcon from 'assets/svgComponents/KusamaIcon';
 import { TokenSymbols, Transaction } from 'utils/types';
 import { fetchAccountsTransactions } from 'utils/fetchTransactions';
+import Popup from 'components/Popup/Popup';
+import Loader from 'components/Loader/Loader';
+import InactiveField from 'components/InactiveField/InactiveField';
 
 type Props = {
   isMenuOpen?: boolean;
   transaction: Transaction;
+  onClick?: () => void;
+  bgColor?: string;
 };
 
-const Row = ({ transaction }: Props) => {
+export const ActivityItem = ({ transaction, onClick, bgColor }: Props) => {
   const account = useAccount();
 
   const handleIsSent = (accountAddress: string, from: string) => {
-    if (accountAddress === from) return true;
+    if (recodeAddress(accountAddress, 0) === recodeAddress(from, 0)) return true;
     return false;
   };
 
   const currAccountAddress = account?.getActiveAccount()?.address;
 
   const isSent = handleIsSent(currAccountAddress, transaction.from);
+
   return (
-    <ActivityItem>
-      <StyledLink component={ActivityInfo} props={{ transaction }}>
-        <Icon>
-          {handleIcons(transaction.chain)}
-          {isSent ? (
-            <IconContainer bgColor="#0324ff">
-              <RightArrow width={15} stroke="#fff" />
-            </IconContainer>
-          ) : (
-            <IconContainer bgColor="#b9e260">
-              <PlusIcon width={15} stroke="#fff" />
-            </IconContainer>
-          )}
-        </Icon>
-        <Info>
-          <InfoTop>
-            {transaction.amount} <span>{TokenSymbols[transaction?.chain]} </span>{' '}
-          </InfoTop>
-          <InfoBottom>
-            {isSent
-              ? 'to ' + truncateString(transaction.to)
-              : 'from ' + truncateString(transaction.from)}
-            {'  '} {format(new Date(transaction.timestamp), 'dd MMM yyyy')}
-          </InfoBottom>
-        </Info>
-        <Actions>
-          <ThreeDotsIcon />
-        </Actions>
-      </StyledLink>
-    </ActivityItem>
+    <ActivityItemContainer bgColor={bgColor} onClick={onClick}>
+      {/* <StyledLink component={ActivityInfo} props={{ transaction }}> */}
+      <Icon>
+        {/* <NetworkIcons chain={transaction.chain} /> */}
+        {handleIcons(transaction.chain)}
+        {isSent ? (
+          <IconContainer bgColor="#0324ff">
+            <RightArrow width={15} stroke="#fff" />
+          </IconContainer>
+        ) : (
+          <IconContainer bgColor="#b9e260">
+            <PlusIcon width={15} stroke="#fff" />
+          </IconContainer>
+        )}
+      </Icon>
+      <Info>
+        <InfoTop>
+          {transaction.amount} <span>{TokenSymbols[transaction?.chain]} </span>{' '}
+        </InfoTop>
+        <InfoBottom>
+          {isSent
+            ? 'to ' + truncateString(transaction.to)
+            : 'from ' + truncateString(transaction.from)}
+          {'  '} {format(Number(transaction.timestamp) * 1000, 'dd MMM yyyy')}
+        </InfoBottom>
+      </Info>
+      <Actions>
+        <ThreeDotsIcon />
+      </Actions>
+      {/* </StyledLink> */}
+    </ActivityItemContainer>
   );
 };
 
@@ -77,7 +82,9 @@ export default function Activity() {
   const wallet = useSelector((state: any) => state.wallet);
   // const transactions = wallet?.transactions[account.getActiveAccount().address];
   const [transactions, setTransactions] = useState<Transaction[] | []>([]);
+  const [transaction, setTransaction] = useState<Transaction>();
   const [loading, setLoading] = useState<boolean>(false);
+  const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false);
 
   const address = account.getActiveAccount().address;
 
@@ -90,7 +97,7 @@ export default function Activity() {
   useEffect(() => {
     async function go() {
       setLoading(true);
-      const transactions: Transaction[] = await fetchAccountsTransactions(address);
+      const transactions = (await fetchAccountsTransactions(address)) as Transaction[];
       setTransactions(transactions);
       setLoading(false);
     }
@@ -98,24 +105,44 @@ export default function Activity() {
     go();
   }, [address]);
 
+  const handleClick = (transaction: Transaction) => {
+    setIsPopupOpen(true);
+    setTransaction(transaction);
+  };
+
   return (
-    <Container bg={walletBG}>
-      <Header title="Activity" />
-
-      <Content>
-        {!loading ? (
-          <ActivityItemsContainer>
-            {sortedTransactions &&
-              sortedTransactions.map((transaction: any) => {
-                return <Row key={transaction.hex} transaction={transaction} />;
-              })}
-          </ActivityItemsContainer>
-        ) : (
-          <Loading>Loading...</Loading>
-        )}
-      </Content>
-
+    <Container bg={activityBg} isEmpty={!transactions.length}>
+      <Header backAction={() => goTo(Wallet)} title="Activity" />
+      {transactions.length ? (
+        <>
+          <Content>
+            <ListContentParent>
+              <ListContentChild>
+                {sortedTransactions.map((transaction: any) => {
+                  return (
+                    <ActivityItem
+                      key={transaction.hex}
+                      onClick={() => handleClick(transaction)}
+                      transaction={transaction}
+                    />
+                  );
+                })}
+              </ListContentChild>
+            </ListContentParent>
+          </Content>
+          {isPopupOpen && transaction && (
+            <Popup justify="center" align="center" onClose={() => setIsPopupOpen(false)}>
+              <ActivityContainer>
+                <ActivityInfo transaction={transaction} />
+              </ActivityContainer>
+            </Popup>
+          )}
+        </>
+      ) : (
+        <InactiveField />
+      )}
       <Footer activeItem="activity" />
+      {loading && <Loader />}
     </Container>
   );
 }
@@ -123,19 +150,27 @@ export default function Activity() {
 function handleIcons(chain: any) {
   switch (chain) {
     case 'westend':
-      return <PolkadotLogoIcon width={20} height={20} />;
-      break;
+      return (
+        <PolkadotLogoIcon
+        // width={20} height={20}
+        />
+      );
+    // break;
     case 'polkadot':
-      return <PolkadotLogoIcon width={20} height={20} />;
-      break;
+      return (
+        <PolkadotLogoIcon
+        //  width={20} height={20}
+        />
+      );
+    // break;
     case 'kusama':
       return <KusamaLogoIcon fill="#111" stroke="#111" />;
-      break;
+    // break;
     default:
   }
 }
 
-const Container = styled.div<{ bg: string }>`
+const Container = styled.div<{ bg: string, isEmpty: boolean }>`
   width: 100%;
   height: 100%;
   display: flex;
@@ -145,7 +180,7 @@ const Container = styled.div<{ bg: string }>`
   position: relative;
   background-image: ${({ bg }) => `url(${bg})`};
   background-size: cover;
-  padding-top: 50px;
+  padding-top: ${({isEmpty}) => (isEmpty ? '88px' : '50px')};
   padding-bottom: 50px;
   overflow: hidden;
 `;
@@ -159,38 +194,54 @@ const Content = styled.div`
   box-sizing: border-box;
 `;
 
-const ActivityItemsContainer = styled.div`
+const ListContentParent = styled.div`
   width: 100%;
-  height: 100%;
-  overflow: scroll;
-  height: auto;
+  height: 570px;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  margin-top: 75px;
-  padding-bottom: 20px;
+  margin-top: 45px;
+  overflow-y: hidden;
+  position: relative;
 `;
 
-const Loading = styled.div`
-  margin-top: 90px;
-`;
-
-const ActivityItem = styled.div`
+const ListContentChild = styled.div`
   width: 100%;
+  overflow-y: scroll;
+  position: absolute;
+  top: 0;
+  left: 0px;
+  bottom: -20px;
+  right: -20px;
+  overflow: scroll;
+  padding-bottom: 15px;
+  /* padding-right: 20px; */
+`;
+
+// const ActivityItemsContainer = styled.div`
+//   width: 100%;
+//   height: 100%;
+//   overflow-y: scroll;
+//   height: auto;
+//   display: flex;
+//   flex-direction: column;
+//   margin-top: 75px;
+//   padding-bottom: 20px;
+// `;
+
+const ActivityItemContainer = styled.div<{ bgColor?: string }>`
+  /* width: 345px; */
+  width: 325px;
   height: 60px;
-  background-color: #fff;
-  border-radius: 4px;
-  cursor: pointer;
   margin-top: 10px;
-`;
-
-const StyledLink = styled(Link)`
-  width: 100%;
   display: flex;
   align-items: center;
   padding: 14px;
   box-sizing: border-box;
-  cursor: pointer;
   text-decoration: none;
+  background-color: ${({ bgColor }) => bgColor || '#fff'};
+  border-radius: 4px;
+  cursor: pointer;
 `;
 
 const Icon = styled.div`
@@ -224,21 +275,28 @@ const Info = styled.span`
 `;
 
 const InfoTop = styled.span`
+  font-family: 'IBM Plex Sans';
   font-size: 14px;
-  color: #000000;
-  font-family: 'Sequel100Wide55Wide';
+  font-weight: 500;
+  color: #18191a;
+
   span {
     text-transform: capitalize;
   }
 `;
 
 const InfoBottom = styled.div`
-  font-weight: 500;
+  font-family: 'IBM Plex Sans';
   font-size: 12px;
-  color: #757575;
+  color: #777e90;
 `;
 
 const Actions = styled.div`
   cursor: pointer;
   margin-left: auto;
+`;
+
+const ActivityContainer = styled.div`
+  width: 323px;
+  height: 429px;
 `;

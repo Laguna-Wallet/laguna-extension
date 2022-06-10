@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import styled from 'styled-components';
-import { FormikProps, useFormik } from 'formik';
+import { useFormik } from 'formik';
 import { goTo } from 'react-chrome-extension-router';
 
 import MenuHeader from 'components/MenuHeader/MenuHeader';
@@ -19,7 +19,7 @@ import keyring from '@polkadot/ui-keyring';
 import AddressBook from './AddressBook';
 
 type AddAddressFormikValues = {
-  addressName: string;
+  name: string;
   address: string;
   memo: string;
 };
@@ -31,13 +31,13 @@ export default function AddAddress() {
 
   const formik = useFormik<AddAddressFormikValues>({
     initialValues: {
-      addressName: '',
+      name: '',
       address: '',
       memo: ''
     },
     validationSchema: addAddressSchema,
-    onSubmit: ({ address, addressName, memo }) => {
-      keyring.saveAddress(address, { addressName, memo });
+    onSubmit: ({ address, name, memo }) => {
+      keyring.saveAddress(address, { name, memo });
       goTo(AddressBook);
     }
   });
@@ -64,18 +64,17 @@ export default function AddAddress() {
           <PlusIconContainer>
             <PlusIcon width={46} stroke="#999999" />
           </PlusIconContainer>
-          {/* addressName address memo */}
           <HumbleInput
-            id={'addressName'}
+            id={'name'}
             height="48px"
             marginTop="12px"
             placeholder="Name of Address"
             type="text"
-            value={formik.values.addressName}
-            error={formik.errors.addressName}
+            value={formik.values.name}
+            error={formik.errors.name}
             onChange={formik.handleChange}
             bgColor="#303030"
-            color="#adadad"
+            color="#fff"
             borderColor="#303030"
           />
           <HumbleInput
@@ -88,7 +87,7 @@ export default function AddAddress() {
             onChange={formik.handleChange}
             error={formik.errors.address}
             bgColor="#303030"
-            color="#adadad"
+            color="#fff"
             borderColor="#303030"
           />
           <HumbleInput
@@ -100,7 +99,7 @@ export default function AddAddress() {
             value={formik.values.memo}
             onChange={formik.handleChange}
             bgColor="#303030"
-            color="#adadad"
+            color="#fff"
             borderColor="#303030"
           />
 
@@ -147,17 +146,17 @@ const Container = styled.div`
   top: 0;
   left: 0;
   z-index: 999;
-  padding: 15px 15px 40px 15px;
+  padding: 0 17.5px 44px;
   box-sizing: border-box;
   background-color: #111111;
   z-index: 99999;
 `;
 
 const Content = styled.div`
-  width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
+  padding: 0 8.5px;
   align-items: center;
   justify-content: center;
   position: relative;

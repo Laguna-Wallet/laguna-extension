@@ -1,7 +1,7 @@
 import Slider, { Settings } from 'react-slick';
 
 interface Props {
-  children: React.ReactNode[];
+  children: any;
   settings?: Settings;
 }
 

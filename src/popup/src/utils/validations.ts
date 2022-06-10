@@ -1,24 +1,19 @@
 /* eslint-disable */
 
 import * as yup from 'yup';
-import { isHex } from '@polkadot/util';
 import { SEED_LENGTHS } from './types';
 import { mnemonicValidate } from '@polkadot/util-crypto';
-import { isKeyringPairs$Json } from './polkadot';
-import { KeyringPair$Json } from '@polkadot/keyring/types';
-import { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
-import { convertUploadedFileToJson } from 'utils';
 
 export const createPasswordSchema = yup.object({
   password: yup
     .string()
-    .min(8, 'Password should be of minimum 8 characters length')
+    .min(8, 'Must be at least 8 characters')
     .required('Please fill out this field')
     .oneOf([yup.ref('confirmPassword'), null], 'Passwords do not match'),
 
   confirmPassword: yup
     .string()
-    .min(8, 'Password should be of minimum 8 characters length')
+    .min(8, 'Must be at least 8 characters')
     .required('Please fill out this field')
     .oneOf([yup.ref('password'), null], 'Passwords do not match')
 });
@@ -27,21 +22,21 @@ export const createPasswordSchema = yup.object({
 export const welcomeBackSchema = yup.object({
   password: yup
     .string()
-    .min(8, 'Password should be of minimum 8 characters length')
+    .min(8, 'Must be at least 8 characters')
     .required('Please fill out this field')
 });
 
 export const exportAllSchema = yup.object({
   password: yup
     .string()
-    .min(8, 'Password should be of minimum 8 characters length')
+    .min(8, 'Must be at least 8 characters')
     .required('Please fill out this field')
 });
 
 export const exportAccountSchema = yup.object({
   password: yup
     .string()
-    .min(8, 'Password should be of minimum 8 characters length')
+    .min(8, 'Must be at least 8 characters')
     .required('Please fill out this field')
 });
 
@@ -53,7 +48,7 @@ export const sendTokenSchema = yup.object().shape({
 });
 
 export const addAddressSchema = yup.object({
-  addressName: yup.string().required('Please fill out this field'),
+  name: yup.string().required('Please fill out this field'),
   address: yup.string().required('Please fill out this field')
 });
 
@@ -82,5 +77,11 @@ export function isNumeric(str: string | number) {
 }
 
 export function parseNumeric(str: string) {
-  return str.replace(/[^0-9\.]+/g, '');
+  return str.replace(/[^.\d]/g, '').replace(/^(\d*\.?)|(\d*)\.?/g, '$1$2');
 }
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const asyncValidate = (values: Record<string, unknown>) => {
+  return sleep(1000).then(() => {});
+};

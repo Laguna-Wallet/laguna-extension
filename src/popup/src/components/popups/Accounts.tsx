@@ -1,87 +1,80 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { PlusIcon } from '@heroicons/react/outline';
 import CheckedIcon from 'assets/svgComponents/CheckedIcon';
-import DownArrowIcon from 'assets/svgComponents/DownArrowIcon';
-import ExportIcon from 'assets/svgComponents/ExportIcon';
 import TriangleIcon from 'assets/svgComponents/TriangleIcon';
 import Button from 'components/primitives/Button';
 import { useAccount } from 'context/AccountContext';
-import CreateAccount from 'pages/CreateAccount/CreateAccount';
-import ExportAccount from 'pages/ExportAccount/ExportAccount';
+import type { KeyringPair } from '@polkadot/keyring/types';
 import { Link } from 'react-chrome-extension-router';
 import styled from 'styled-components';
-import { getAccounts } from 'utils/polkadot';
-import SignUp from 'pages/SignUp/SignUp';
-import AddImportForExistingUsers from 'pages/AddImportForExistingUsers/AddImportForExistingUsers';
-import { truncateString } from 'utils';
+import AddImportForBoardedUser from 'pages/AddImportAccount/AddImportForBoardedUser';
+import { getAccountImage, truncateString } from 'utils';
 import { useDispatch } from 'react-redux';
-import { changeAccountsBalances, toggleLoading } from 'redux/actions';
+import { toggleLoading } from 'redux/actions';
+import keyring from '@polkadot/ui-keyring';
 
 type Props = {
-  // todo find out proper account typing
-  setActiveAccount: (account: any) => void;
+  userContainerWidth: number;
 };
 
-export default function Accounts({ setActiveAccount }: Props) {
+export default function Accounts({ userContainerWidth }: Props) {
   const accountCtx = useAccount();
-  // todo save in storage
-  const [accounts, setAccounts] = useState(getAccounts());
-  const [activeAccountIndex, setActiveAccountIndex] = useState(0);
   const dispatch = useDispatch();
+  // todo save in storage
+  const [accounts, setAccounts] = useState<KeyringPair[]>(keyring.getPairs());
+  const [isConnected, setIsConnected] = useState<boolean>(true);
 
   const formatName = (name: string) => {
     return name.length > 12 ? truncateString(name) : name;
   };
 
-  const handleSetActiveAccount = (
-    e: React.MouseEvent<HTMLDivElement>,
-    account: unknown,
-    index: number
-  ) => {
+  const handleSetActiveAccount = (e: React.MouseEvent<HTMLDivElement>, account: unknown) => {
     e.stopPropagation();
-    setActiveAccountIndex(index);
-    setActiveAccount(account);
+    accountCtx.saveActiveAccount(account);
     dispatch(toggleLoading(true));
   };
 
   return (
     <Container>
-      <TriangleContainer>
+      <TriangleContainer userContainerWidth={userContainerWidth}>
         <TriangleIcon />
       </TriangleContainer>
 
       <Header>
         <HeaderItem>ACCOUNTS</HeaderItem>
-        <HeaderItem>
-          <Connected>
-            <ConnectedRibbon />
-            <span>CONNECTED</span>
-          </Connected>
-        </HeaderItem>
-        {/* <Tab active={false}>
-          <span>all networks</span>
-          <DownArrowIcon fill="#fff" />
-        </Tab> */}
+        <Connected>
+          <ConnectedRibbon isConnected={isConnected} />
+          {isConnected ? (
+            <>
+              <HeaderItem>CONNECTED</HeaderItem>
+              <MouseOverText>You are connected to app.uniswap.org</MouseOverText>
+            </>
+          ) : (
+            <>
+              <HeaderItem>NOT CONNECTED</HeaderItem>
+              <MouseOverText width="188px">You are not connected to app.uniswap.org</MouseOverText>
+            </>
+          )}
+        </Connected>
       </Header>
 
       <AccountsContainer>
         {accounts &&
-          accounts.map((account, index) => {
+          accounts.map((account) => {
             return (
               <Account
                 onClick={(e) => {
-                  handleSetActiveAccount(e, account, index);
+                  handleSetActiveAccount(e, account);
                 }}
                 key={account.address}>
-                <AccountIcon />
-                <span>{account?.meta?.name && formatName(account?.meta?.name)}</span>
+                <Avatar img={getAccountImage(account.address)} />
+                <span>
+                  {(account?.meta?.name as string) && formatName(account?.meta?.name as string)}
+                </span>
 
                 <Icons>
-                  {/* <Link component={ExportAccount} props={{ address: account.address }}>
-                    <ExportIcon width={13} />
-                  </Link> */}
                   <CheckedIconContainer>
-                    {account.address === accountCtx.getActiveAccount().address && (
+                    {account.address === accountCtx?.getActiveAccount()?.address && (
                       <CheckedIcon width={18} />
                     )}
                   </CheckedIconContainer>
@@ -90,18 +83,20 @@ export default function Accounts({ setActiveAccount }: Props) {
             );
           })}
       </AccountsContainer>
-      <StyledLink component={AddImportForExistingUsers}>
+      <StyledLink component={AddImportForBoardedUser}>
         <Button
-          width="260px"
+          width="100%"
           type="button"
-          text="Add / Import Wallet"
-          bgColor="#fff"
-          color="#111"
+          text="Add / Import Account"
+          bgColor="#18191a"
+          color="#fff"
           justify={'center'}
           direction={'row-reverse'}
-          fontFamily="Sequel100Wide55Wide"
-          fontSize="11px"
-          Icon={<PlusIcon width={16} />}
+          fontFamily="Inter"
+          fontSize="12px"
+          height="37px"
+          margin="18px 0 0"
+          Icon={<PlusIcon width={21} />}
         />
       </StyledLink>
     </Container>
@@ -109,52 +104,62 @@ export default function Accounts({ setActiveAccount }: Props) {
 }
 
 const Container = styled.div`
-  width: 323px;
-  min-height: 206px;
-  padding: 18px 5px 32px 32px;
+  max-width: 100%;
+  width: 100%;
+  min-height: 163px;
+  padding: 17px 24px 20px;
   box-sizing: border-box;
-  background: #000000;
+  background: #fff;
   border-radius: 5px;
   position: relative;
-  margin: auto;
-  margin-top: 60px;
+  margin: 46px 24px 0;
 `;
 
-const TriangleContainer = styled.div`
+const TriangleContainer = styled.div<{ userContainerWidth: number }>`
   position: absolute;
-  top: -10px;
-  left: 50%;
+  top: -8px;
+  left: ${({ userContainerWidth }) => `${userContainerWidth - 13}px`};
   transform: translate(-50%);
 `;
 
 const Header = styled.div`
   display: flex;
   justify-content: space-between;
-  border-bottom: 1px solid #6d6d6d;
-  padding-bottom: 14px;
+  border-bottom: 1px solid #e6e8ec;
+  padding-bottom: 10px;
 `;
 
 const HeaderItem = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #ffffff;
+  color: #18191a;
+  font-size: 11px;
+  font-family: Inter;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: 0.88px;
+  use-select: none;
+  cursor: default;
+`;
+
+const MouseOverText = styled.p<{ width?: string }>`
+  justify-content: center;
+  align-items: center;
+  padding: 3px 12px;
+  border-radius: 5px;
+  background-color: #f2f2f2;
+  color: #18191a;
+  font-family: IBM Plex Sans;
   font-size: 10px;
-  font-family: 'Sequel100Wide55Wide';
+  display: none;
+  position: absolute;
+  min-width: ${({ width }) => width || '171px'};
+  top: 24px;
+  right: 0;
 
-  /* border-radius: 40px;
-  color: #fff;
-  font-size: 14px;
-  padding: 0 10px;
-  cursor: pointer;
-  text-transform: capitalize;
-
-  :nth-child(2) {
-    width: 152px;
-  } */
-
-  span {
-    margin-right: 7px;
+  ${HeaderItem}: hover ~& {
+    display: flex;
   }
 `;
 
@@ -162,27 +167,38 @@ const Connected = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 6px 8px;
+  padding: 3px 8px;
   border-radius: 50px;
-  background-color: #2c2c2c;
-  padding: 5px 20px;
+  background-color: #f2f2f2;
+  hight: 22px;
+  position: relative;
 `;
 
-const ConnectedRibbon = styled.div`
-  width: 5px;
-  height: 5px;
-  background-color: #68dd65;
+const Avatar = styled.div<{ img: string }>`
+  width: 24px;
+  height: 24px;
   border-radius: 100%;
-  margin-right: 5px;
+  background-color: #ccc;
+  background-image: ${({ img }) => `url(${img})`};
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+`;
+
+const ConnectedRibbon = styled.div<{ isConnected?: boolean }>`
+  width: 7.5px;
+  height: 7.5px;
+  background-color: ${({ isConnected }) => (!isConnected ? '#e6e8ec' : '#68dd65')};
+  border-radius: 100%;
+  margin-right: 6px;
 `;
 
 const AccountsContainer = styled.div`
   display: flex;
   flex-direction: column;
-  margin-top: 10px;
   max-height: 300px;
   overflow-y: auto;
-  padding-right: 25px;
+
   ::-webkit-scrollbar {
     width: 5px;
   }
@@ -201,13 +217,15 @@ const AccountsContainer = styled.div`
 const Account = styled.div`
   display: flex;
   align-items: center;
-  margin-top: 10px;
+  margin: 14px 0 0;
   cursor: pointer;
   span {
-    font-size: 18px;
-    color: #fff;
+    font-family: IBM Plex Sans;
+    font-size: 17px;
+    font-weight: 500;
+    line-height: 23px;
     margin-left: 10px;
-    font-family: 'Sequel100Wide55Wide';
+    color: #18191a;
   }
 `;
 
@@ -230,6 +248,10 @@ const Icons = styled.div`
 const StyledLink = styled(Link)`
   width: 260px;
   text-decoration: none;
+
+  span {
+    margin: 0 0 0 12px;
+  }
 `;
 
 const CheckedIconContainer = styled.div`

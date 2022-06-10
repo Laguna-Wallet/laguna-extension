@@ -20,7 +20,7 @@ import {
   recodeAddressForTransaction
 } from 'utils/polkadot';
 import { useEffect, useReducer, useState } from 'react';
-import { Asset, Network, SelectType } from 'utils/types';
+import { AccountMeta, Asset, Network, SelectType } from 'utils/types';
 import { useWizard, Wizard } from 'react-use-wizard';
 import TransactionSent from './TransactionSent';
 import SendToken from './SendToken';
@@ -28,26 +28,47 @@ import { useAccount } from 'context/AccountContext';
 import { useFormik } from 'formik';
 import { isNumeric, sendTokenSchema } from 'utils/validations';
 import BigNumber from 'bignumber.js';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { PropsFromTokenDashboard } from 'pages/Recieve/Receive';
+import { selectAsset } from 'redux/actions';
+import { State } from 'redux/store';
+
+export enum SendAccountFlowEnum {
+  SendToTrustedContact = 'SendToTrustedContact',
+  SendToAddress = 'SendToAddress',
+  SendToAccount = 'SendToAccount',
+  ScanQR = 'ScanQR'
+}
+
+export type FlowValue =
+  | SendAccountFlowEnum.ScanQR
+  | SendAccountFlowEnum.SendToAccount
+  | SendAccountFlowEnum.SendToAddress
+  | SendAccountFlowEnum.SendToTrustedContact;
 
 type Props = {
   initialIsContactsPopupOpen?: boolean;
+  propsFromTokenDashboard: PropsFromTokenDashboard;
 };
 
-export default function Send({ initialIsContactsPopupOpen }: Props) {
+export default function Send({ initialIsContactsPopupOpen, propsFromTokenDashboard }: Props) {
   const account = useAccount();
-  const [flow, setFlow] = useState<string | undefined>(undefined);
-  const [assets, setAssets] = useState<Asset[] | undefined>(undefined);
-  const { prices, infos } = useSelector((state: any) => state.wallet);
+  const dispatch = useDispatch();
 
-  const { accountsBalances } = useSelector((state: any) => state.wallet);
+  const [flow, setFlow] = useState<FlowValue | undefined>(undefined);
+  const [assets, setAssets] = useState<Asset[] | undefined>(undefined);
+  const [accountMeta, setAccountMeta] = useState<AccountMeta>();
+
+  const { prices, infos, accountsBalances, disabledTokens } = useSelector(
+    (state: State) => state.wallet
+  );
 
   const balances = accountsBalances?.balances;
 
   // TODO REFETCH NETWORKS FROM STORAGE
   useEffect(() => {
     async function go() {
-      const { assets }: any = await getAssets(prices, infos, balances);
+      const { assets }: any = await getAssets(prices, infos, balances, disabledTokens);
       setAssets(assets);
     }
 
@@ -96,13 +117,14 @@ export default function Send({ initialIsContactsPopupOpen }: Props) {
 
       const { partialFee, weight } = await transfer.paymentInfo(recoded);
 
-      const fees = new BigNumber(`{partialFee}`).multipliedBy(110).dividedBy(100);
+      const fees = new BigNumber(`${partialFee}`).multipliedBy(110).dividedBy(100);
 
-      const total = amount.plus(fees).plus(api.consts.balances.existentialDeposit.toNumber());
+      // todo check this
+      const total = amount.plus(fees).plus(api.consts.balances.existentialDeposit.toString());
 
       api.disconnect();
+
       if (total.gt(new BigNumber(available))) {
-        console.error(`Cannot transfer ${total} with ${available}`);
         setAbilityToTransfer(false);
       } else {
         setAbilityToTransfer(true);
@@ -110,7 +132,6 @@ export default function Send({ initialIsContactsPopupOpen }: Props) {
       }
 
       setFee(`${new BigNumber(partialFee.toString()).div(factor)}`);
-      console.log(2);
       setTransfer(transfer);
       setLoading(false);
     }
@@ -118,23 +139,34 @@ export default function Send({ initialIsContactsPopupOpen }: Props) {
     go();
   }, [reduxSendTokenState.selectedAsset, form?.address, form?.amount]);
 
+  useEffect(() => {
+    setLoading(true);
+    setAbilityToTransfer(false);
+  }, [form?.amount]);
+
   return (
     <Container>
       <Wizard>
-        <SelectAsset assets={assets} />
+        {!propsFromTokenDashboard?.fromTokenDashboard && <SelectAsset assets={assets} />}
+
         <SendToken
           flow={flow}
           setFlow={setFlow}
           fee={fee}
           loading={loading}
           abilityToTransfer={abilityToTransfer}
+          propsFromTokenDashboard={propsFromTokenDashboard}
+          accountMeta={accountMeta}
+          setAccountMeta={setAccountMeta}
         />
+
         <Confirm
           setBlockHash={setBlockHash}
           amountToSend={amountToSend}
           recoded={recoded}
           fee={fee}
           transfer={transfer}
+          flow={flow}
         />
         <TransactionSent blockHash={blockHash} />
       </Wizard>

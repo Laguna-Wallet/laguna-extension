@@ -5,6 +5,7 @@ import {
   ReactNode,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState
 } from 'react';
@@ -13,6 +14,7 @@ import { getFromStorage, saveToStorage } from 'utils/chrome';
 import { StorageKeys } from 'utils/types';
 import keyring from '@polkadot/ui-keyring';
 import { encryptPassword } from 'utils';
+import type { KeyringPair } from '@polkadot/keyring/types';
 
 // todoProperTyping
 interface IAccountCtx {
@@ -54,19 +56,32 @@ const useAccount = () => {
   return context;
 };
 
-const AccountProvider: FunctionComponent = ({ children }: { children?: ReactNode }) => {
+const AccountProvider = ({ children }: { children?: ReactNode }) => {
   const [json, setJson] = useState<any>('');
 
-  const accountFromStorage = getFromStorage(StorageKeys.ActiveAccount);
-  const [activeAccount, setActiveAccount] = useState<any>(
-    accountFromStorage && JSON.parse(accountFromStorage)
-  );
-
-  const [encryptedPassword, setEncryptedPassword] = useState<string | null>(
-    getFromStorage(StorageKeys.Encoded)
-  );
-
+  // todo typing
+  const [activeAccount, setActiveAccount] = useState<KeyringPair>();
+  const [encryptedPassword, setEncryptedPassword] = useState<string | null>(null);
   const [mnemonics, setMnemonics] = useState<string[]>([]);
+
+  useEffect(() => {
+    getFromStorage(StorageKeys.ActiveAccount).then((data) => {
+      if (!data) {
+        const accounts = keyring.getPairs();
+        if (!accounts.length) return undefined;
+
+        saveToStorage({ key: StorageKeys.ActiveAccount, value: JSON.stringify(accounts[0]) });
+        setActiveAccount(accounts[0]);
+        return accounts[0];
+      }
+
+      setActiveAccount(JSON.parse(data));
+    });
+
+    getFromStorage(StorageKeys.Encoded).then((data) => {
+      setEncryptedPassword(data);
+    });
+  }, []);
 
   const generateMnemonics = useCallback(() => {
     const mnemonics = mnemonicGenerate().split(' ');
@@ -74,21 +89,12 @@ const AccountProvider: FunctionComponent = ({ children }: { children?: ReactNode
     return mnemonics;
   }, []);
 
-  const getActiveAccount = useCallback(() => {
-    // if no account in the storage than insert first one from keyring
-    if (!activeAccount) {
-      const accounts = keyring.getAccounts();
-      if (!accounts.length) return undefined;
-
-      saveToStorage({ key: StorageKeys.ActiveAccount, value: JSON.stringify(accounts[0]) });
-      return accounts[0];
-    }
-
+  const getActiveAccount = () => {
     return activeAccount;
-  }, [activeAccount]);
+  };
 
-  const saveActiveAccount = (account: any) => {
-    saveToStorage({ key: StorageKeys.ActiveAccount, value: JSON.stringify(account) });
+  const saveActiveAccount = async (account: any) => {
+    await saveToStorage({ key: StorageKeys.ActiveAccount, value: JSON.stringify(account) });
     setActiveAccount(account);
   };
 

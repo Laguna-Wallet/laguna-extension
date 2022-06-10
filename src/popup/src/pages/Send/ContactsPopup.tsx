@@ -1,63 +1,74 @@
 import { PlusIcon } from '@heroicons/react/outline';
 import keyring from '@polkadot/ui-keyring';
 import AddressBookIcon from 'assets/svgComponents/AdressBookIcon';
-import AlternateEmail from 'assets/svgComponents/AlternateEmailIcon';
+import ContactsIcon from 'assets/svgComponents/ContactsIcon';
+import LoopIcon from 'assets/svgComponents/loopIcon';
 import Button from 'components/primitives/Button';
 import HumbleInput from 'components/primitives/HumbleInput';
 import AddAddress from 'pages/AddressBook/AddAddress';
 import Header from 'pages/Wallet/Header';
-import Wallet from 'pages/Wallet/Wallet';
 import { useEffect, useState } from 'react';
-import { Link } from 'react-chrome-extension-router';
 import styled from 'styled-components';
 import { truncateString } from 'utils';
-import Send from './Send';
-import SendToken from './SendToken';
 
 type Props = {
   handleCloseContacts: (address: string) => void;
   onBack: () => void;
+  closeAction: () => void;
 };
 
-export default function ContactsPopup({ handleCloseContacts, onBack }: Props) {
-  const [addresses, setAddresses] = useState<any[] | undefined>(undefined);
+export default function ContactsPopup({ handleCloseContacts, onBack, closeAction }: Props) {
+  const [accounts, setAccounts] = useState<any[] | undefined>(undefined);
   const [filter, setFilter] = useState<string>('');
   const [isAddAddressOpen, setIsAddAddressOpen] = useState<boolean>(false);
 
   useEffect(() => {
     // todo proper typing
-    const addresses: any[] = [];
-    keyring.getAddresses().forEach((address) => {
-      const { addressName, memo } = address.meta;
-      addresses.push({ address: address.address, addressName, memo });
+    const accounts: any[] = [];
+    keyring.getAddresses().forEach((account) => {
+      const { name, memo } = account.meta;
+      accounts.push({ address: account.address, name, memo });
     });
 
-    setAddresses(addresses);
+    setAccounts(accounts);
   }, [isAddAddressOpen]);
 
   // todo proper typing
-  const handleRenderAssets = (addresses: any[], filterWord: string) => {
-    return addresses.filter((address) =>
-      address.addressName.toLowerCase().includes(filterWord.toLowerCase())
+  const handleRenderAccounts = (accounts: any[], filterWord: string) => {
+    return accounts.filter(
+      (account) =>
+        account.name.toLowerCase().includes(filterWord.toLowerCase()) ||
+        account.address.toLowerCase().includes(filterWord.toLowerCase())
     );
   };
 
   return (
     <Container>
-      <Header title="Choose Contact" iconStyle="LeftArrow" backAction={onBack} />
+      <Header
+        title="SELECT CONTACT"
+        bgColor="#f2f2f2"
+        closeAction={closeAction}
+        iconStyle="LeftArrow"
+        backAction={onBack}
+      />
       <InnerContainer>
         <Content>
-          <HumbleInput
-            type="text"
-            placeholder="search"
-            id="search"
-            height="40px"
-            bgColor="#f3f3f3"
-            color="#111"
-            value={filter}
-            onChange={(e: any) => setFilter(e.target.value)}
-          />
-          {addresses?.length === 0 ? (
+          {accounts && accounts?.length > 0 && (
+            <HumbleInput
+              id="search"
+              height="45px"
+              placeholder="Search"
+              type="text"
+              bgColor="#f2f2f2"
+              placeholderColor="#777e90"
+              color="#111"
+              value={filter}
+              onChange={(e: any) => setFilter(e.target.value)}
+              IconAlignment={'left'}
+              Icon={<LoopIcon />}
+            />
+          )}
+          {accounts?.length === 0 ? (
             <>
               <AddressBookContainer>
                 <AddressBookIcon />
@@ -66,25 +77,26 @@ export default function ContactsPopup({ handleCloseContacts, onBack }: Props) {
             </>
           ) : (
             <AddressesContainer>
-              {addresses &&
-                handleRenderAssets(addresses, filter).map((address) => (
+              {accounts &&
+                handleRenderAccounts(accounts, filter).map((address) => (
                   <AddressComponent
                     key={address.address}
                     onClick={() => handleCloseContacts(address.address)}>
                     <Text>
-                      {address.addressName}({truncateString(address.address)}){' '}
+                      {address.name}({truncateString(address.address)}){' '}
                     </Text>
-                    <AlternateEmail stroke="#111" />
+                    <ContactsIcon stroke="#111" />
                   </AddressComponent>
                 ))}
             </AddressesContainer>
           )}
 
           <Button
-            text="Add Address"
+            text="Add Contact"
             Icon={<PlusIcon width={17} />}
-            bgColor="#e8e8e8"
-            borderColor="#e8e8e8"
+            bgColor="#F2F2F2"
+            borderColor="#F2F2F2"
+            direction="row-reverse"
             color="#111"
             justify="center"
             margin="auto 0 0 0"
@@ -106,17 +118,19 @@ export default function ContactsPopup({ handleCloseContacts, onBack }: Props) {
 }
 
 const Container = styled.div<{ bg?: string }>`
-  width: 100%;
-  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  background-color: #fff;
-  background-image: ${({ bg }) => `url(${bg})`};
+  background-color: #f2f2f2;
+  /* background-image: ${({ bg }) => `url(${bg})`}; */
   background-size: cover;
-  padding-bottom: 38px;
+  padding-top: 92px;
   position: absolute;
+  overflow: hidden;
   top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
   z-index: 100;
 `;
 
@@ -124,12 +138,15 @@ const InnerContainer = styled.div`
   width: 100%;
   height: 100%;
   position: relative;
+  padding: 20px 26px 38px;
+  box-sizing: border-box;
+  background-color: #fff;
+  border-radius: 10px 10px 0px 0px;
 `;
 
 const Content = styled.div`
   width: 100%;
   height: 100%;
-  padding: 180px 15px 38px 15px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -146,11 +163,18 @@ const AddressBookContainer = styled.div`
   border-radius: 100%;
   background-color: #000;
   margin-top: auto;
+  margin-bottom: 16px;
 `;
 
 const AddressesContainer = styled.div`
   width: 100%;
-  margin-top: 30px;
+  max-height: 336px;
+  overflow-y: scroll;
+  margin: 12px 0;
+
+  ::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const AddressComponent = styled.div`
@@ -172,7 +196,8 @@ const AddAddressPopupContainer = styled.div`
   width: 100%;
   height: 100%;
   position: absolute;
-  top: 0;
+  top: -110px;
+  left: 0;
 `;
 
 const Text = styled.div`

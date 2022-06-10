@@ -15,6 +15,7 @@ export enum ImportTypeEnum {
   SEED = 'Seed',
   JSON = 'Json'
 }
+
 export type ImportType = ImportTypeEnum.SEED | ImportTypeEnum.JSON;
 
 export const DEFAULT_TYPE: KeypairType = 'ed25519';
@@ -23,7 +24,6 @@ export const SEED_LENGTHS = [12, 24];
 export enum StorageKeys {
   SignedIn = 'signed-in',
   Encoded = 'encoded',
-  LoggedOut = 'logged-out',
   ActiveAccount = 'active-account',
   TokenPrices = 'token-prices',
   TokenInfos = 'token-infos',
@@ -31,7 +31,9 @@ export enum StorageKeys {
   Transactions = 'transactions',
   IdleTimeout = 'idle-timeout',
   UnlockedPairs = 'unlocked-pairs',
-  TokenDecimals = 'token-decimals'
+  TokenDecimals = 'token-decimals',
+  DisabledTokens = 'disabled-tokens',
+  OnBoarding = 'onboarding'
 }
 
 //==============================================================================
@@ -39,25 +41,39 @@ export enum StorageKeys {
 //==============================================================================
 export interface Network {
   name: string;
-  symbol: string;
+  symbol: Token;
   chain: string;
   node: string;
   price_change_percentage_24h?: number;
   marketCap?: number;
   encodeType?: string;
+  prefix?: number;
 }
 
 export interface Asset {
   name: string;
   symbol: string;
   chain: string;
-  balance: string;
-  calculatedPrice: number;
-  price: number;
+  balance?: number;
+  calculatedPrice?: number;
+  price?: number;
   encodeType?: string;
+  prefix?: number;
+  assetsCount?: number;
+  marketCap?: number;
 }
 
 export type Prices = Record<string, Record<string, number>>;
+
+export enum Prefixes {
+  westend = 42,
+  polkadot = 0,
+  kusama = 2,
+  moonriver = 1285,
+  moonbeam = 1284,
+  shiden = 5,
+  astar = 5
+}
 
 //==============================================================================
 // Messaging
@@ -75,6 +91,8 @@ export enum Messages {
   ChangeInterval = 'CHANGE_INTERVAL',
   SendTransaction = 'SEND_TRANSACTION',
   TransactionSuccess = 'TRANSACTION_SUCCESS',
+  SignRawRequest = 'SIGN_RAW_REQUEST',
+  ForgotPassword = 'FORGOT_PASSWORD',
   ReopenKeyPairs = 'REOPEN_KEYPAIRS',
   AddToKeyring = 'ADD_TO_KEYRING',
   RemoveFromKeyring = 'REMOVE_FROM_KEYRING',
@@ -82,10 +100,14 @@ export enum Messages {
   DappAuthorization = 'DAPP_AUTHORIZATION',
   CheckPendingDappAuth = 'CHECK_PENDING_DAPP_AUTH',
   CheckPendingSign = 'CHECK_PENDING_SIGN',
+  CheckPendingSignRaw = 'CHECK_PENDING_SIGN_RAW',
   SignRequest = 'SIGN_REQUEST',
   DappAuthRequest = 'DAPP_AUTH_REQUEST',
   ConnectedApps = 'CONNECTED_APPS',
-  RevokeDapp = 'REVOKE_DAPP'
+  RevokeDapp = 'REVOKE_DAPP',
+  TokenReceived = 'TOKEN_RECEIVED',
+  Timeout = 'TIMEOUT',
+  ResetTimeout = 'RESET_TIMEOUT'
 }
 
 //==============================================================================
@@ -106,6 +128,12 @@ export enum TokenSymbols {
   astar = 'astr'
 }
 
+export type Token =
+  | TokenSymbols.westend
+  | TokenSymbols.polkadot
+  | TokenSymbols.kusama
+  | TokenSymbols.astar;
+
 // todo move chain names to enum
 export interface Transaction {
   chain: 'westend' | 'polkadot' | 'kusama' | 'moonriver' | 'moonbeam' | 'shiden' | 'astar';
@@ -116,6 +144,19 @@ export interface Transaction {
   nonce: string;
   hash: string;
   timestamp: string;
+}
+
+export enum SnackbarMessages {
+  WalletCreated = 'New Account Created',
+  AddressCopied = 'Address Copied',
+  TransactionSent = 'Transaction Sent',
+  AddressAdded = 'New Address Added',
+  AddressRemoved = 'Address Removed',
+  AutoLockUpdated = 'Auto-Lock Updated',
+  WalletRemoved = 'Account Removed',
+  AccessRevoked = 'Access Revoked',
+  DepositReceived = 'New Deposit Received',
+  PasswordChanged = 'Password Changed'
 }
 
 //==============================================================================
@@ -189,4 +230,43 @@ export interface Injected {
   signer: InjectedSigner;
 }
 
-export const chains = ['westend', 'polkadot', 'kusama', 'moonriver', 'moonbeam', 'shiden', 'astar'];
+export const chains = [
+  'westend',
+  'polkadot',
+  'kusama',
+  // 'moonriver',
+  //  'moonbeam',
+  // 'shiden',
+  'astar'
+];
+
+export interface TokenInfo {
+  id: string;
+  current_price: number;
+  market_cap: number;
+  market_cap_change_24h: number;
+  market_cap_change_percentage_24h: number;
+  price_change_percentage_24h: number;
+  name: string;
+  symbol: string;
+}
+
+//==============================================================================
+// Polkadot
+//==============================================================================
+
+//==============================================================================
+// Inject
+//==============================================================================
+
+//==============================================================================
+// Account
+//==============================================================================
+
+export interface AccountMeta {
+  img: string;
+  name: string;
+  whenCreated?: number;
+  notSecured?: boolean;
+  encodedSeed?: string;
+}

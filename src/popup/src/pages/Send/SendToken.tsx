@@ -1,58 +1,37 @@
 import styled from 'styled-components';
 import { goTo, Link } from 'react-chrome-extension-router';
-import { getAccounts, getApiInstance, isValidPolkadotAddress } from 'utils/polkadot';
-import { Dispatch, useEffect, useState } from 'react';
+import { isValidPolkadotAddress } from 'utils/polkadot';
+import { useEffect, useState } from 'react';
 import TokenAndAmountSelect from 'pages/Send/TokenAndAmountSelect';
 import ContactsIcon from 'assets/svgComponents/ContactsIcon';
 import WalletIcon from 'assets/svgComponents/WalletIcon';
-import BarcodeIcon from 'assets/svgComponents/BarcodeIcon';
-import SharpIcon from 'assets/svgComponents/SharpIcon';
 import HumbleInput from 'components/primitives/HumbleInput';
 import Button from 'components/primitives/Button';
 import RightArrow from 'assets/svgComponents/RightArrow';
-import Confirm from './Confirm';
 
 import ExchangeIcon from 'assets/svgComponents/ExchangeIcon';
-import { FormikProps } from 'formik';
 import { useWizard } from 'react-use-wizard';
-import { useAccount } from 'context/AccountContext';
-import CloseIcon from 'assets/svgComponents/CloseIcon';
 import QRPopup from './QRPopup';
 import Header from 'pages/Wallet/Header';
 import BigNumber from 'bignumber.js';
 import ContactsPopup from './ContactsPopup';
-import { isNumeric, sendTokenSchema } from 'utils/validations';
-import { validator } from 'utils/validator';
-import { changeAddress, changeAmount, selectAssetToken } from 'redux/actions';
+import { isNumeric } from 'utils/validations';
 import { useDispatch, useSelector, connect } from 'react-redux';
-import {
-  Field,
-  change,
-  reset,
-  getFormError,
-  getFormValues,
-  reduxForm,
-  getFormSyncErrors,
-  formValueSelector
-} from 'redux-form';
+import { Field, change, reset, reduxForm, getFormSyncErrors, formValueSelector } from 'redux-form';
 import Snackbar from 'components/Snackbar/Snackbar';
-import { isObjectEmpty, objectToArray } from 'utils';
+import { isObjectEmpty, objectToArray, truncateString } from 'utils';
+import Wallet from 'pages/Wallet/Wallet';
+import NetworkIcons from 'components/primitives/NetworkIcons';
+import AccountsPopup from './AccountsPopup';
+import BarcodeSendIcon from 'assets/svgComponents/BarcodeSendIcon';
+import { PropsFromTokenDashboard } from 'pages/Recieve/Receive';
+import TokenDashboard from 'pages/TokenDashboard/TokenDashboard';
+import keyring from '@polkadot/ui-keyring';
+import { AccountMeta } from 'utils/types';
+import { FlowValue, SendAccountFlowEnum } from './Send';
+import HashtagIcon from 'assets/svgComponents/HashtagIcon';
 
-// const renderInputElement = ({ input, label, type, meta: { touched, error, warning } }: any) => (
-//   <SelectContainer>
-//     <StyledInput placeholder="Enter Amount" type {...input} />
-
-//     {/* <StyledSelect defaultValue={defaultValue} onChange={handleChange} name="dots" id="dots">
-//       {options.map((symbol) => (
-//         <StyledOption key={symbol} value={symbol}>
-//           {symbol.toUpperCase()}
-//         </StyledOption>
-//       ))}
-//     </StyledSelect> */}
-//   </SelectContainer>
-// );
-
-const validate = (values: any) => {
+const validate = (values: { address: string; amount: number }) => {
   const errors: any = {};
   if (!values.address) {
     errors.address = 'Please enter address';
@@ -68,23 +47,19 @@ const validate = (values: any) => {
   return errors;
 };
 
-enum SendAccountFlowEnum {
-  SendToTrustedContact = 'SendToTrustedContact',
-  SendToAddress = 'SendToAddress',
-  SendToAccount = 'SendToAccount',
-  ScanQR = 'ScanQR'
-}
-
 // todo handleSubmit Typing
 type Props = {
-  flow: string | undefined;
-  setFlow: (flow: string | undefined) => void;
+  flow: FlowValue | undefined;
+  setFlow: (flow: FlowValue | undefined) => void;
   fee: string;
   loading: boolean;
   handleSubmit?: any;
   errors?: any;
   abilityToTransfer: boolean;
   amount: string;
+  propsFromTokenDashboard: PropsFromTokenDashboard;
+  accountMeta: AccountMeta | undefined;
+  setAccountMeta: (accountMeta: AccountMeta) => void;
 };
 
 const handleShowAccountInput = (flow: string | undefined, address: string | undefined): boolean => {
@@ -106,10 +81,14 @@ function SendToken({
   handleSubmit,
   errors,
   abilityToTransfer,
-  amount
+  amount,
+  propsFromTokenDashboard,
+  accountMeta,
+  setAccountMeta
 }: Props) {
   const dispatch = useDispatch();
   const { nextStep, previousStep } = useWizard();
+
   const [isAccountsPopupOpen, setIsAccountsPopupOpen] = useState<boolean>(false);
   const [isQRPopupOpen, setIsQRPopupOpen] = useState<boolean>(false);
   const [isContactsPopupOpen, setIsContactsPopupOpen] = useState<boolean>(false);
@@ -123,29 +102,30 @@ function SendToken({
 
   const price = selectedAsset?.chain && prices[selectedAsset.chain]?.usd;
 
-  const handleClick = (isValid: boolean) => {
-    if (!isValid) return;
-    nextStep();
-    // todo show error message
-  };
+  // const handleClick = (isValid: boolean) => {
+  //   if (!isValid) return;
+  //   nextStep();
+  //   // todo show error message
+  // };
 
   // Todo revise if this can be refactored into single function
   const handleClickAccounts = () => {
     setIsAccountsPopupOpen(true);
-    setFlow(SendAccountFlowEnum.SendToAddress);
+    setFlow(SendAccountFlowEnum.SendToAccount);
   };
 
   const handleClickAccount = (address: string) => {
     dispatch(change('sendToken', 'address', address));
     setIsAccountsPopupOpen(false);
 
-    // change
+    const pair = keyring.getPair(address);
+    setAccountMeta({ name: pair?.meta?.name as string, img: pair?.meta?.img as string });
   };
 
-  const handleCloseAccount = () => {
-    setIsAccountsPopupOpen(false);
-    setFlow(undefined);
-  };
+  // const handleCloseAccount = () => {
+  //   setIsAccountsPopupOpen(false);
+  //   setFlow(undefined);
+  // };
 
   const handleClickQR = () => {
     setFlow(SendAccountFlowEnum.ScanQR);
@@ -165,6 +145,9 @@ function SendToken({
   const handleCloseContacts = (address: string) => {
     dispatch(change('sendToken', 'address', address));
     setIsContactsPopupOpen(false);
+
+    const pair = keyring.getAddress(address);
+    setAccountMeta({ name: pair?.meta?.name as string, img: pair?.meta?.img as string });
   };
 
   const submit = (values: any) => {
@@ -181,17 +164,21 @@ function SendToken({
   };
 
   const handleBack = () => {
-    previousStep();
-    dispatch(reset('sendToken'));
-    setFlow(undefined);
+    if (propsFromTokenDashboard?.fromTokenDashboard) {
+      goTo(TokenDashboard, { asset: propsFromTokenDashboard.asset });
+    } else {
+      previousStep();
+      dispatch(reset('sendToken'));
+      setFlow(undefined);
+    }
   };
 
   useEffect(() => {
-    if (!abilityToTransfer) {
+    if (!abilityToTransfer && !loading) {
       setSnackbarError('No enough founds to make transfer');
       setIsSnackbarOpen(true);
     }
-  }, [abilityToTransfer]);
+  }, [loading]);
 
   const isDisabled = (
     errors: Record<string, string>,
@@ -204,18 +191,47 @@ function SendToken({
     return false;
   };
 
+  const formatAddressValue = (value: string, flow: FlowValue | undefined) => {
+    if (
+      value &&
+      (flow === SendAccountFlowEnum.SendToTrustedContact ||
+        flow === SendAccountFlowEnum.SendToAccount)
+    ) {
+      return `${truncateString(accountMeta?.name as string)} (${truncateString(value)})`;
+    }
+
+    return value;
+  };
+
   return (
     <Container>
-      <Header title={`SEND ${selectedAsset?.chain}`} backAction={handleBack} />
+      <Header
+        title={`SEND ${selectedAsset?.symbol} (${selectedAsset?.chain})`}
+        closeAction={() => {
+          dispatch(reset('sendToken'));
+          goTo(Wallet);
+        }}
+        backAction={handleBack}
+        smallIcon
+        bgColor="#f2f2f2"
+      />
+
       <Form onSubmit={handleSubmit(submit)}>
         <Content>
           <ContentItem>
             <ContentItemTitle>Amount</ContentItemTitle>
-
-            <TokenAndAmountSelect tokens={[selectedAsset.symbol]} />
+            <TokenAndAmountSelect
+              Icon={
+                <NetworkIcons isSmallIcon width="28px" height="28px" chain={selectedAsset?.chain} />
+              }
+              tokens={[selectedAsset.symbol]}
+              value={amount}
+            />
 
             <Price>
-              <span>{amount && price && '$' + new BigNumber(amount).times(price).toFormat(2)}</span>
+              <span>
+                ${amount && price ? new BigNumber(amount).times(price).toFormat(2) : '0.00'} USD
+              </span>
               <ExchangeIconContainer>
                 <ExchangeIcon />
               </ExchangeIconContainer>
@@ -223,7 +239,7 @@ function SendToken({
           </ContentItem>
           {handleShowAccountInput(flow, 'address') ? (
             <ContentItem>
-              <AddressContainer>To</AddressContainer>
+              <AddressContainer>Send to</AddressContainer>
               <Field
                 id="address"
                 name="address"
@@ -231,43 +247,56 @@ function SendToken({
                 label="address"
                 placeholder="address"
                 component={HumbleInput}
+                format={(value: string) => formatAddressValue(value, flow)}
                 props={{
                   type: 'text',
                   bgColor: '#f3f3f3',
-                  color: '#111',
-                  height: '53px',
-                  marginTop: '5px'
+                  color: '#18191a',
+                  placeholderColor: '#b1b5c3',
+                  fontSize: '16px',
+                  height: '48px',
+                  marginTop: '5px',
+                  accountMeta,
+                  readOnly:
+                    flow === SendAccountFlowEnum.SendToTrustedContact ||
+                    flow === SendAccountFlowEnum.SendToAccount,
+
+                  Icon: flow === SendAccountFlowEnum.SendToTrustedContact && (
+                    <ContactsIcon stroke="#111" />
+                  ),
+                  IconAlignment:
+                    flow === SendAccountFlowEnum.SendToTrustedContact ? 'right' : 'left'
                 }}
               />
             </ContentItem>
           ) : (
             <ContentItem>
-              <ContentItemTitle>To</ContentItemTitle>
+              <ContentItemTitle>Send to</ContentItemTitle>
               <SendTypes>
-                <SendTypeItem onClick={handleClickContacts}>
-                  <IconContainer>
-                    <ContactsIcon stroke="#111" />
-                  </IconContainer>
-                  <Text>Contacts</Text>
-                </SendTypeItem>
-
                 <SendTypeItem onClick={() => setFlow(SendAccountFlowEnum.SendToAddress)}>
                   <IconContainer>
-                    <SharpIcon />
+                    <HashtagIcon />
                   </IconContainer>
                   <Text>Address</Text>
                 </SendTypeItem>
 
                 <SendTypeItem onClick={handleClickAccounts}>
                   <IconContainer>
-                    <WalletIcon stroke="#111" />
+                    <WalletIcon stroke="#18191A" />
                   </IconContainer>
                   <Text>Accounts</Text>
                 </SendTypeItem>
 
+                <SendTypeItem onClick={handleClickContacts}>
+                  <IconContainer>
+                    <ContactsIcon />
+                  </IconContainer>
+                  <Text>Contacts</Text>
+                </SendTypeItem>
+
                 <SendTypeItem onClick={handleClickQR}>
                   <IconContainer>
-                    <BarcodeIcon stroke="#111" />
+                    <BarcodeSendIcon stroke="#111" />
                   </IconContainer>
                   <Text>Scan QR</Text>
                 </SendTypeItem>
@@ -276,18 +305,21 @@ function SendToken({
           )}
 
           <ContentItem>
-            <ContentItemTitle>Add Note</ContentItemTitle>
-            <HumbleInput
+            <ContentItemTitle>Add Note (optional)</ContentItemTitle>
+            <Field
               id="note"
-              placeholder="Enter note here"
+              name="note"
               type="text"
-              value=""
-              onChange={() => undefined}
-              // value={formik.values.note}
-              // onChange={formik.handleChange}
-              bgColor="#f3f3f3"
-              height="53px"
-              marginTop="5px"
+              placeholder="Enter note"
+              component={HumbleInput}
+              props={{
+                type: 'text',
+                bgColor: '#f2f2f2',
+                color: '#18191a',
+                placeholderColor: '#b1b5c3',
+                height: '45px',
+                fontSize: '14px'
+              }}
             />
           </ContentItem>
 
@@ -296,7 +328,7 @@ function SendToken({
             close={() => setIsSnackbarOpen(false)}
             message={snackbarError}
             type="error"
-            left="0px"
+            left="50%"
             bottom="138px"
           />
         </Content>
@@ -314,8 +346,9 @@ function SendToken({
           </Info>
           <Button
             type="submit"
-            text={loading ? 'Calculating ability to transfer...' : 'Preview'}
+            text={loading ? 'Calculating ability to transfer...' : 'Preview Send'}
             justify="center"
+            margin="13px 0 0"
             Icon={<RightArrow width={23} fill="#fff" />}
             disabled={isDisabled(errors, loading, abilityToTransfer)}
           />
@@ -323,31 +356,24 @@ function SendToken({
       </Form>
 
       {isAccountsPopupOpen && (
-        <AccountsSection>
-          <AccountsSectionContent>
-            <AccountsSectionContentHeader>
-              <span>Select Receiving Account</span>
-              <CloseIconContainer onClick={handleCloseAccount}>
-                <CloseIcon stroke="#111" />
-              </CloseIconContainer>
-            </AccountsSectionContentHeader>
-            <AccountsSectionList>
-              {getAccounts().map(({ address }) => (
-                <AccountsSectionItem onClick={() => handleClickAccount(address)} key={address}>
-                  {address}
-                </AccountsSectionItem>
-              ))}
-            </AccountsSectionList>
-          </AccountsSectionContent>
-        </AccountsSection>
+        <AccountsPopup
+          onBack={() => {
+            setIsAccountsPopupOpen(false);
+            setFlow(undefined);
+          }}
+          handleClickAccount={handleClickAccount}
+        />
       )}
-
       {isQRPopupOpen && <QRPopup handleCloseQR={handleCloseQR} />}
       {isContactsPopupOpen && (
         <ContactsPopup
           onBack={() => {
             setIsContactsPopupOpen(false);
             setFlow(undefined);
+          }}
+          closeAction={() => {
+            dispatch(reset('sendToken'));
+            goTo(Wallet);
           }}
           handleCloseContacts={handleCloseContacts}
         />
@@ -373,89 +399,74 @@ export default connect((state: any) => ({
   })(SendToken)
 );
 
-const Container = styled.div<{ bg?: string }>`
+const Container = styled.div`
   width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  background-color: #fff;
+  background-color: #f2f2f2;
   box-sizing: border-box;
   position: relative;
-  background-image: ${({ bg }) => `url(${bg})`};
   background-size: cover;
-  padding-bottom: 38px;
-  padding-top: 110px;
+  padding-top: 92px;
 `;
 
 const Content = styled.div`
-  padding: 0 15px;
+  padding: 0 26px;
+  border-top-right-radius: 15px;
 `;
 
 const ContentItem = styled.div`
-  margin-top: 15px;
+  margin-top: 17px;
+
+  :nth-child(2) {
+    margin-top: 7px;
+  }
+
+  :nth-child(3) {
+    margin-top: 28px;
+  }
 `;
 
 const Form = styled.form`
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   height: 100%;
+  background-color: #fff;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
 `;
-
-const StyledInput = styled.input`
-  width: 100%;
-  height: 53px;
-  border: 0;
-  border-top-left-radius: 5px;
-  border-bottom-left-radius: 5px;
-  background-color: #f3f3f3;
-  color: #898989;
-  font-family: 'SFCompactDisplayRegular';
-  font-size: 16px;
-
-  &:focus {
-    outline: none;
-  }
-`;
-
-const StyledSelect = styled.select`
-  width: 70px;
-  height: 53px;
-  border: 0;
-  border-top-right-radius: 5px;
-  border-bottom-right-radius: 5px;
-  background-color: #f3f3f3;
-  font-size: 16px;
-  font-weight: 600;
-  color: #141414;
-  font-family: 'SFCompactDisplayRegular';
-
-  &:focus {
-    outline: none;
-  }
-`;
-
-const StyledOption = styled.option``;
 
 const Price = styled.div`
   width: 100%;
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  margin-top: 5px;
+  margin-top: 6px;
   color: #111;
-  font-family: SFCompactDisplayRegular;
+  font-family: 'IBM Plex Sans';
+  font-size: 12px;
+  line-height: 14px;
+  text-align: right;
+  color: #18191a;
+  overflow: hidden;
 `;
 
 const ExchangeIconContainer = styled.div`
-  margin-left: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 8px 0 6px;
   cursor: pointer;
 `;
 
-const ContentItemTitle = styled.span`
-  font-family: 'SFCompactDisplayRegular';
-  font-size: 16px;
-  color: #141414;
+const ContentItemTitle = styled.p`
+  font-size: 12px;
+  color: #18191a;
+  font-family: 'IBM Plex Sans';
+  margin-bottom: 8px;
 `;
 
 const SendTypes = styled.div`
@@ -472,9 +483,9 @@ const SendTypeItem = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: flex-end;
-  padding: 10px 0;
+  padding: 0 0 4px;
   box-sizing: border-box;
-  background-color: #f3f3f3;
+  background-color: #f2f2f2;
   border-radius: 5.8px;
   cursor: pointer;
 `;
@@ -482,33 +493,32 @@ const SendTypeItem = styled.div`
 const AddressContainer = styled.div``;
 
 const IconContainer = styled.div`
-  /* width: 35px;
-  height: 35px; */
+  width: 30px;
+  height: 30px;
 `;
 
 const Text = styled.span`
-  font-family: 'SFCompactDisplayRegular';
-  font-size: 12px;
-  color: #898989;
-  margin-top: 3px;
-  font-weight: 500;
+  font-family: 'IBM Plex Sans';
+  color: #353945;
+  font-weight: 400;
+  font-size: 10px;
+  line-height: 20px;
 `;
 
 const BottomSection = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
-  padding: 0 15px;
+  padding: 0 26px 29px;
   box-sizing: border-box;
-  margin-top: auto;
 `;
 
 const Info = styled.div`
   display: flex;
   justify-content: space-between;
   span {
-    font-family: SFCompactDisplayRegular;
-    font-size: 13.4px;
+    font-family: 'IBM Plex Sans';
+    font-size: 12px;
   }
 `;
 

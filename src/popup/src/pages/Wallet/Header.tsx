@@ -1,46 +1,68 @@
 import DownArrowIcon from 'assets/svgComponents/DownArrowIcon';
 import styled from 'styled-components/macro';
-import ButtonsIcon from 'assets/svgComponents/ButtonsIcon';
-import { Turn as Hamburger, Turn } from 'hamburger-react';
-import { ReactNode, useState } from 'react';
+import { Turn as Hamburger } from 'hamburger-react';
+import { useEffect, useRef, useState } from 'react';
 import Popup from 'components/Popup/Popup';
 import Accounts from 'components/popups/Accounts';
 import { useAccount } from 'context/AccountContext';
 import Menu from 'components/Menu/Menu';
-import LeftArrowIcon from 'assets/svgComponents/LeftArrowIcon';
-import CloseIcon from 'assets/svgComponents/CloseIcon';
+import BackIcon from 'assets/svgComponents/BackIcon';
+import CloseArrowIcon from 'assets/svgComponents/CloseArrowIcon';
 import { truncateString } from 'utils';
+import CloseSmallIcon from 'assets/svgComponents/CloseSmallIcon';
 
 type Props = {
   title?: string;
   backAction?: () => void;
+  closeAction?: () => void;
   iconStyle?: 'Close' | 'LeftArrow';
   menuInitialOpenState?: boolean;
+  bgColor?: string;
+  stroke?: string;
+  smallIcon?: boolean;
 };
 
-export default function Header({ title, backAction, iconStyle, menuInitialOpenState }: Props) {
+export default function Header({
+  title,
+  backAction,
+  iconStyle,
+  closeAction,
+  menuInitialOpenState,
+  bgColor,
+  stroke,
+  smallIcon = false
+}: Props) {
   const account = useAccount();
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
   const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false);
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(menuInitialOpenState || false);
   const [isHamburgerOpen, setOpen] = useState<boolean>(false);
+  const [userContainerWidth, setUserContainerWidth] = useState<number>(0);
 
   const name = account?.getActiveAccount()?.meta?.name;
+  const accountImg = account?.getActiveAccount()?.meta?.img;
   const formattedName = name?.length > 15 ? truncateString(name) : name;
 
+  useEffect(() => {
+    if (containerRef?.current) {
+      setUserContainerWidth(containerRef?.current.offsetWidth);
+    }
+  }, [formattedName]);
+
   return (
-    <Container>
+    <Container bgColor={bgColor}>
       {isMenuOpen && <Menu onClose={() => setIsMenuOpen(false)} />}
       <Content>
-        <UserContainer>
-          <Avatar />
+        <UserContainer ref={containerRef} onClick={() => setIsPopupOpen(true)}>
+          <Avatar img={accountImg} />
           <UserName>{formattedName}</UserName>
-          <DownIconContainer onClick={() => setIsPopupOpen(true)}>
+          <DownIconContainer>
             <DownArrowIcon />
           </DownIconContainer>
-          <ButtonsIconContainer>
+          {/* <ButtonsIconContainer>
             <ButtonsIcon />
-          </ButtonsIconContainer>
+          </ButtonsIconContainer> */}
         </UserContainer>
         <BurgerMenu onClick={() => setIsMenuOpen(true)}>
           <Hamburger toggled={isHamburgerOpen} size={20} />
@@ -50,39 +72,49 @@ export default function Header({ title, backAction, iconStyle, menuInitialOpenSt
       {title && (
         <TitleContainer>
           {backAction && (
-            <LeftArrowContainer onClick={backAction}>
-              {iconStyle === 'Close' ? <CloseIcon stroke="#111" /> : <LeftArrowIcon />}
-            </LeftArrowContainer>
+            <TopIconContainer onClick={backAction}>
+              <BackIcon stroke={stroke} />
+            </TopIconContainer>
           )}
+
           <Title>{title}</Title>
+
+          {closeAction && (
+            <CloseIconContainer smallIcon={smallIcon} onClick={closeAction}>
+              {smallIcon ? <CloseSmallIcon /> : <CloseArrowIcon />}
+            </CloseIconContainer>
+          )}
         </TitleContainer>
       )}
 
       {isPopupOpen && (
         <Popup onClose={() => setIsPopupOpen(false)}>
-          <Accounts setActiveAccount={account.saveActiveAccount} />
+          <Accounts userContainerWidth={userContainerWidth} />
         </Popup>
       )}
     </Container>
   );
 }
 
-const Container = styled.div`
+const Container = styled.div<{ bgColor?: string }>`
   width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
-  background-color: #f1f1f1;
-  padding: 15px;
+  padding: 0 15px;
   box-sizing: border-box;
   position: absolute;
   top: 0;
   z-index: 5;
+  background-color: ${({ bgColor }) => bgColor || 'transparent'};
 `;
 
 const Content = styled.div`
+  height: 100%;
   width: 100%;
+  padding-top: 5px;
+  height: 40px;
   box-sizing: border-box;
   display: flex;
   align-items: center;
@@ -90,22 +122,28 @@ const Content = styled.div`
 `;
 
 const UserContainer = styled.div`
-  height: 100%;
   display: flex;
   align-items: center;
+  cursor: pointer;
 `;
 
-const Avatar = styled.div`
+const Avatar = styled.div<{ img: string }>`
   width: 24px;
   height: 24px;
   border-radius: 100%;
   background-color: #ccc;
+  background-image: ${({ img }) => `url(${img})`};
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
 `;
 
 const UserName = styled.span`
-  font-size: 14px;
   margin-left: 8px;
-  font-family: 'Sequel100Wide55Wide';
+  font-family: 'IBM Plex Sans';
+  font-size: 14px;
+  font-weight: 500;
+  color: #18191a;
   letter-spacing: 0.28px;
 `;
 
@@ -130,17 +168,25 @@ const TitleContainer = styled.div`
   justify-content: center;
   align-items: center;
   text-transform: uppercase;
+  margin-top: 7px;
 `;
 
-const LeftArrowContainer = styled.div`
+const TopIconContainer = styled.div`
+  cursor: pointer;
+`;
+
+const CloseIconContainer = styled.div<{ smallIcon: boolean }>`
+  margin-right: ${({ smallIcon }) => (smallIcon ? '6px' : '0')};
   cursor: pointer;
 `;
 
 const Title = styled.span`
   margin-left: auto;
   margin-right: auto;
-  font-family: 'Sequel100Wide55Wide';
+  font-family: 'IBM Plex Sans';
+  color: #18191a;
+  font-weight: 500;
   font-size: 17px;
-  line-height: 2.35;
-  letter-spacing: 0.85px;
+  line-height: 40px;
+  letter-spacing: 0.1em;
 `;

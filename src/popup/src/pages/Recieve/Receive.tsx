@@ -1,49 +1,70 @@
 import styled from 'styled-components';
 import { useAccount } from 'context/AccountContext';
-import { Network } from 'utils/types';
+import { Asset, Network } from 'utils/types';
 import { Wizard } from 'react-use-wizard';
 import { useEffect, useState } from 'react';
 import ReceiveToken from './ReceiveToken';
-import { accountsTie, getApiInstance, getAssets, getNetworks, recodeAddress } from 'utils/polkadot';
+import { getNetworks, recodeAddress } from 'utils/polkadot';
 import { useSelector } from 'react-redux';
 import SelectNetwork from './SelectNetwork';
+import { State } from 'redux/store';
 
-export default function Receive() {
+export interface PropsFromTokenDashboard {
+  fromTokenDashboard?: boolean;
+  asset: Asset;
+  chain?: string;
+}
+
+type Props = {
+  propsFromTokenDashboard?: PropsFromTokenDashboard;
+};
+
+export default function Receive({ propsFromTokenDashboard }: Props) {
   const account = useAccount();
   const activeAccount = account.getActiveAccount();
-  const [networks, setNetworks] = useState<Network[]>([]);
+  const { prices, infos, disabledTokens } = useSelector((state: State) => state.wallet);
 
-  const { prices, infos } = useSelector((state: any) => state.wallet);
+  const [networks, setNetworks] = useState<any>(getNetworks(prices, infos, disabledTokens));
+  const [selectedNetwork, setSelectedNetwork] = useState<Network & Asset>();
 
-  useEffect(() => {
-    async function go() {
-      const networks: Network[] = await getNetworks(prices, infos);
-
-      setNetworks(networks);
-    }
-
-    go();
-  }, []);
-
-  const [selectedNetwork, setSelectedNetwork] = useState<Network>();
   const [recoded, setRecoded] = useState<string>('');
+
   useEffect(() => {
     async function go() {
       if (!selectedNetwork) return;
-      const api = await getApiInstance(selectedNetwork.chain);
-      const prefix = api.consts.system.ss58Prefix;
-
-      const recoded = recodeAddress(activeAccount.address, prefix, selectedNetwork?.encodeType);
+      // const api = await getApiInstance(selectedNetwork.chain);
+      // const prefix = api.consts.system.ss58Prefix;
+      const recoded = recodeAddress(
+        activeAccount.address,
+        selectedNetwork?.prefix,
+        selectedNetwork?.encodeType
+      );
       setRecoded(recoded);
     }
     go();
   }, [selectedNetwork]);
 
+  useEffect(() => {
+    if (propsFromTokenDashboard?.fromTokenDashboard) {
+      const network = networks.find(
+        (network: any) => network.chain === propsFromTokenDashboard.chain
+      );
+      setSelectedNetwork(network);
+    }
+  }, []);
+
   return (
     <Container>
       <Wizard>
-        <SelectNetwork setSelectedNetwork={setSelectedNetwork} networks={networks} />
-        <ReceiveToken recoded={recoded} selectedNetwork={selectedNetwork} />
+        {!propsFromTokenDashboard?.fromTokenDashboard && (
+          <SelectNetwork setSelectedNetwork={setSelectedNetwork} />
+        )}
+
+        <ReceiveToken
+          propsFromTokenDashboard={propsFromTokenDashboard}
+          recoded={recoded}
+          selectedNetwork={selectedNetwork}
+        />
       </Wizard>
     </Container>
   );

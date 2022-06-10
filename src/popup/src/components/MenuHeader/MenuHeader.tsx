@@ -1,17 +1,19 @@
+import React, { useRef, useState } from 'react';
 import styled from 'styled-components';
-import { Turn as Hamburger } from 'hamburger-react';
-import LeftArrowIcon from 'assets/svgComponents/LeftArrowIcon';
-import Wallet from 'pages/Wallet/Wallet';
-import { goTo } from 'react-chrome-extension-router';
+import BackIcon from 'assets/svgComponents/BackIcon';
+import MenuCloseIcon from 'assets/svgComponents/MenuIcons/MenuCloseIcon';
 import { useAccount } from 'context/AccountContext';
-import { truncateString } from 'utils';
-import { useRef, useState } from 'react';
-import { PencilAltIcon, PencilIcon } from '@heroicons/react/outline';
+import { resizeFile, truncateString } from 'utils';
 import useOutsideClick from 'hooks/useOutsideClick';
-import { addAccountMeta } from 'utils/polkadot';
+import { addAccountMeta, changeAccountPicture } from 'utils/polkadot';
+import PencilIcon from 'assets/svgComponents/PencilIcon';
+import MenuLockIcon from 'assets/svgComponents/MenuIcons/MenuLockIcon';
+import { Messages, StorageKeys } from 'utils/types';
 import { saveToStorage } from 'utils/chrome';
-import { StorageKeys } from 'utils/types';
-import AddressBook from 'pages/AddressBook/AddressBook';
+import { goTo } from 'react-chrome-extension-router';
+import WelcomeBack from 'pages/WelcomeBack/WelcomeBack';
+import MenuMainLogo from 'assets/svgComponents/MenuIcons/MenuMainLogo';
+import AvatarEditIcon from 'assets/svgComponents/AvatarEditIcon';
 
 type Props = {
   isOpen: boolean;
@@ -22,19 +24,14 @@ type Props = {
   backAction?: () => void;
 };
 
-export default function MenuHeader({
-  isOpen,
-  setOpen,
-  showUser,
-  onClose,
-  title,
-  backAction
-}: Props) {
+export default function MenuHeader({ showUser, onClose, title, backAction }: Props) {
   const account = useAccount();
   const [name, setName] = useState(account?.getActiveAccount()?.meta?.name);
   const [editMode, setEditMode] = useState<boolean>(false);
+  const inputFile = useRef<HTMLInputElement>(null);
 
   const address = account?.getActiveAccount()?.address;
+  const accountImg = account?.getActiveAccount()?.meta?.img;
 
   const editAccount = () => {
     const val = name ? name : address;
@@ -50,7 +47,7 @@ export default function MenuHeader({
     }
   });
 
-  const handleKeyPress = (e: any) => {
+  const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' || e.keyCode === 14) {
       editAccount();
     }
@@ -60,25 +57,69 @@ export default function MenuHeader({
     return name && name?.length > 12 ? truncateString(name) : name;
   };
 
+  const onButtonClick = () => {
+    // `current` points to the mounted file input element
+    if (inputFile.current) {
+      inputFile.current.click();
+    }
+  };
+
+  const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!event.target.files) {
+      return;
+    }
+
+    const base64 = await resizeFile(event.target.files[0]);
+    const newAccount = changeAccountPicture(address, { img: base64 });
+    account.saveActiveAccount(newAccount);
+  };
+
+  const handleLogout = () => {
+    chrome.runtime.sendMessage({
+      type: Messages.LogOutUser
+    });
+    goTo(WelcomeBack);
+  };
+
   return (
     <Container>
       <Header>
-        <span>HYDROX</span>
-        <BurgerMenu>
-          <Hamburger toggled={isOpen} toggle={onClose} size={20} color="#fff" />
-        </BurgerMenu>
+        <LogoContainer>
+          <MenuMainLogo />
+          <span>Laguna</span>
+        </LogoContainer>
+        <HeaderLeft>
+          <LockContainer onClick={handleLogout}>
+            <MenuLockIcon />
+          </LockContainer>
+          <BurgerMenu onClick={onClose}>
+            <MenuCloseIcon />
+          </BurgerMenu>
+        </HeaderLeft>
       </Header>
       {title && (
         <Title>
           <LeftArrowContainer onClick={backAction}>
-            <LeftArrowIcon width={30} stroke="#fff" />
+            <BackIcon stroke="white" />
           </LeftArrowContainer>
           <TitleText>{title}</TitleText>
         </Title>
       )}
       {showUser && (
         <User>
-          <IconContainer></IconContainer>
+          <IconContainer img={accountImg} onClick={onButtonClick}>
+            <ImageContainerOverlay>
+              <AvatarEditIcon />
+            </ImageContainerOverlay>
+          </IconContainer>
+          <input
+            type="file"
+            id="file"
+            ref={inputFile}
+            onChange={handleUpload}
+            style={{ display: 'none' }}
+            accept="image/png, image/jpeg, image/svg+xml"
+          />
           <Text>
             <Name>
               <NameInput
@@ -95,10 +136,10 @@ export default function MenuHeader({
                   setEditMode(true);
                   inputRef && inputRef?.current?.focus();
                 }}>
-                <PencilIcon width={15} />
+                <PencilIcon width={14} height={14} fill="#777E91" />
               </PencilIconContainer>
             </Name>
-            <Address>{address && truncateString(address)}</Address>
+            {/* <Address>{address && truncateString(address)}</Address> */}
           </Text>
         </User>
       )}
@@ -117,14 +158,39 @@ const Header = styled.div`
   justify-content: space-between;
   align-items: center;
   color: #fff;
-  font-size: 13px;
-  font-family: 'Sequel100Wide55Wide';
+  font-size: 17px;
+  font-family: 'Work Sans';
+  font-weight: 500;
+  height: 58px;
+`;
+
+const LogoContainer = styled.div`
+  display: flex;
+  align-items: center;
+  span {
+    margin-left: 9px;
+  }
+`;
+
+const HeaderLeft = styled.div`
+  display: flex;
+  align-items: center;
+  height: 24px;
+  width: 54px;
+`;
+
+const LockContainer = styled.div`
+  cursor: pointer;
+  z-index: 9999;
+  height: 24px;
+  width: 24px;
 `;
 
 const BurgerMenu = styled.div`
-  .hamburger-react {
-    width: 33px !important;
-  }
+  margin-left: 6px;
+  cursor: pointer;
+  height: 24px;
+  width: 24px;
 `;
 
 const User = styled.div`
@@ -132,30 +198,34 @@ const User = styled.div`
   border-bottom: 1px solid #bbbbbb;
   padding-bottom: 20px;
   align-items: center;
+  margin-top: 4px;
 `;
 
 const Text = styled.div`
   display: flex;
   flex-direction: column;
   text-align: left;
-  margin-left: 20px;
-  color: #fff;
-  font-family: 'Sequel100Wide55Wide';
   flex: 1;
+  margin-left: 18px;
+  color: #fff;
+  font-family: 'IBM Plex Sans';
+  font-size: 23px;
+  font-weight: 500;
 `;
 
 const Name = styled.div`
   display: flex;
-  justify-content: space-between;
   align-items: center;
 `;
 
 const NameInput = styled.input`
-  width: 200px;
+  max-width: 146px;
+  width: 100%;
   background-color: transparent;
   color: #fff;
   font-size: 23px;
-  font-family: 'Sequel100Wide55Wide';
+  font-family: 'IBM Plex Sans';
+  font-weight: 500;
   border: 0;
   outline: 0;
 `;
@@ -164,34 +234,53 @@ const PencilIconContainer = styled.div`
   cursor: pointer;
 `;
 
-const Address = styled.div`
-  color: #8f8f8f;
-  font-size: 12px;
-`;
-
-const IconContainer = styled.div`
-  width: 67px;
-  height: 67px;
-  border-radius: 100%;
-  background-color: #ccc;
-`;
-
-const Title = styled.span`
+const ImageContainerOverlay = styled.div`
+  display: none;
   width: 100%;
-  font-family: 'Sequel100Wide55Wide';
-  font-size: 17px;
-  letter-spacing: 0.85px;
-  color: #fff;
-  display: flex;
+  height: 100%;
+  background-color: #1111118c;
+  cursor: pointer;
+  align-items: center;
   justify-content: center;
 `;
 
-const TitleText = styled.div`
-  /* margin-left: auto; */
-  margin-right: auto;
+const IconContainer = styled.div<{ img: string }>`
+  width: 64px;
+  height: 64px;
+  border-radius: 100%;
+  background-color: #ccc;
+  cursor: pointer;
+  background-image: ${({ img }) => `url(${img})`};
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  &:hover ${ImageContainerOverlay} {
+    display: flex;
+  }
+`;
+
+const Title = styled.div`
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const TitleText = styled.p`
+  font-family: 'IBM Plex Sans';
+  font-weight: 500;
+  font-size: 17px;
+  line-height: 40px;
+  text-align: center;
+  letter-spacing: 0.1em;
+  color: #ffffff;
 `;
 
 const LeftArrowContainer = styled.div`
+  position: absolute;
+  left: 0;
+  top: 8px;
+  height: 24px;
   margin-right: auto;
   cursor: pointer;
 `;

@@ -2,7 +2,6 @@ import { useState } from 'react';
 import styled from 'styled-components';
 
 import Header from 'pages/Wallet/Header';
-import walletBG from 'assets/imgs/walletBG.jpg';
 import Wallet from 'pages/Wallet/Wallet';
 import HumbleInput from 'components/primitives/HumbleInput';
 // Todo Move ChainItem Into Shared
@@ -13,6 +12,8 @@ import { Asset } from 'utils/types';
 import { useWizard } from 'react-use-wizard';
 import { useDispatch } from 'react-redux';
 import { selectAsset } from 'redux/actions';
+import { reset } from 'redux-form';
+import LoopIcon from 'assets/svgComponents/loopIcon';
 
 type Props = {
   assets: undefined | Asset[];
@@ -35,8 +36,20 @@ export default function SelectAsset({ assets }: Props) {
   };
 
   return (
-    <Container bg={walletBG}>
-      <Header title="SELECT ASSET" backAction={() => goTo(Wallet)} />
+    <Container>
+      <Header
+        title="SELECT ASSET"
+        closeAction={() => {
+          dispatch(reset('sendToken'));
+          goTo(Wallet);
+        }}
+        backAction={() => {
+          goTo(Wallet);
+          dispatch(reset('sendToken'));
+        }}
+        bgColor="#f2f2f2"
+      />
+
       <Content>
         <HumbleInput
           id="id"
@@ -45,11 +58,14 @@ export default function SelectAsset({ assets }: Props) {
           onChange={(e: any) => {
             setAssetsFilter(e.target.value);
           }}
-          bgColor={'#ececec'}
-          borderColor={'#ececec'}
-          placeholder="search"
-          height="38.9px"
-          marginTop="20px"
+          bgColor={'#f2f2f2'}
+          borderColor={'#f2f2f2'}
+          color="#777e90"
+          placeholderColor="#777e90"
+          placeholder="Search"
+          height="45px"
+          IconAlignment="left"
+          Icon={<LoopIcon />}
         />
         <List>
           {assets
@@ -57,10 +73,12 @@ export default function SelectAsset({ assets }: Props) {
               ? 'no assets'
               : renderAssets(assets, assetsFilter).map((asset: Asset) => {
                   return (
-                    <ChainItemContainer onClick={() => handleClick(asset)} key={asset.symbol}>
+                    <ChainItemContainer key={asset.symbol}>
                       <ChainItem
+                        iconSize="28px"
                         asset={asset}
                         accountAddress={account.getActiveAccount()?.address}
+                        handleClick={() => handleClick(asset)}
                       />
                     </ChainItemContainer>
                   );
@@ -72,29 +90,28 @@ export default function SelectAsset({ assets }: Props) {
   );
 }
 
-const Container = styled.div<{ bg: string }>`
+const Container = styled.div`
   width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
-  background-color: #f1f1f1;
+  background-color: #f2f2f2;
   box-sizing: border-box;
   position: relative;
   position: relative;
-  background-image: ${({ bg }) => `url(${bg})`};
   background-size: cover;
-  padding-top: 110px;
+  padding-top: 92px;
 `;
 
 const Content = styled.div`
-  padding: 15px;
+  height: 100%;
+  padding: 20px 26px;
+  border-radius: 10px 10px 0px 0px;
+  background-color: #fff;
 `;
 
 const List = styled.div`
-  margin-top: 24px;
-  height: 400px;
-  overflow: scroll;
-  padding-bottom: 20px;
+  margin-top: 12px;
   box-sizing: border-box;
 `;
 

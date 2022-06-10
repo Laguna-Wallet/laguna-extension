@@ -1,54 +1,66 @@
 import BigNumber from 'bignumber.js';
 import NetworkIcons from 'components/primitives/NetworkIcons';
-import { useEffect, useState } from 'react';
+import { Link } from 'react-chrome-extension-router';
 import styled from 'styled-components';
-import { Account_Search, Price_Converter } from 'utils/Api';
-import { getApiInstance } from 'utils/polkadot';
 import { Asset } from 'utils/types';
-import { isNumeric } from 'utils/validations';
 
 type Props = {
   accountAddress: string;
   // Todo Appropriate typing
   asset: Asset;
+  handleClick?: () => void;
+  iconSize?: string;
 };
 
-export default function ChainItem({ asset, accountAddress }: Props) {
+export default function ChainItem({ asset, handleClick, iconSize }: Props) {
+  const { chain, symbol, balance, calculatedPrice } = asset;
+  const iconCurrentSize = iconSize || '36px';
   return (
-    <Container>
-      <ListItemIcon>
-        <NetworkIcons chain={asset.chain} />
+    // <StyledLink component={TokenDashboard} props={{ asset }}>
+    <Container onClick={handleClick}>
+      <ListItemIcon iconSize={iconSize}>
+        <NetworkIcons
+          width={iconCurrentSize}
+          height={iconCurrentSize}
+          isSmallIcon={!!iconSize}
+          chain={chain}
+        />
       </ListItemIcon>
       <ListItemText>
-        <Title>{asset.chain}</Title>
-        <Tag>{asset.chain}</Tag>
+        <Title>{chain}</Title>
+        <Tag>{chain} Chain</Tag>
       </ListItemText>
       <ListItemText>
-        <Title>
-          {new BigNumber(asset?.balance).toFormat(4, 1) || 0} {asset.symbol}
-        </Title>
-        <Value>${new BigNumber(asset.calculatedPrice).toFixed(2)}</Value>
+        <Symbol>
+          {balance ? new BigNumber(balance).toFormat(4, 1) : 0} {symbol}
+        </Symbol>
+        <Value>${calculatedPrice ? new BigNumber(calculatedPrice).toFixed(2) : 0}</Value>
       </ListItemText>
     </Container>
+    // </StyledLink>
   );
 }
 
+const StyledLink = styled(Link)`
+  text-decoration: none;
+`;
+
 const Container = styled.div`
-  width: 99%;
-  height: 65px;
+  width: 323px;
+  height: 59px;
   display: flex;
   align-items: center;
   background-color: #ffffff;
-  margin-bottom: 10px;
-  padding: 14px 12px;
+  margin-bottom: 12px;
+  padding: 14px 14px 14px 12px;
   box-sizing: border-box;
   border-radius: 4px;
-  font-family: 'Sequel100Wide55Wide';
+  cursor: pointer;
 `;
 
-const ListItemIcon = styled.div`
-  width: 36px;
-  height: 36px;
+const ListItemIcon = styled.div<{ iconSize?: string }>`
+  width: ${({ iconSize }) => iconSize || '36px'};
+  height: ${({ iconSize }) => iconSize || '36px'};
   background-color: #eeeeee;
   border-radius: 100%;
 `;
@@ -58,6 +70,9 @@ const ListItemText = styled.div`
   flex-direction: column;
   margin-left: 15px;
   text-align: left;
+  font-family: 'IBM Plex Sans';
+  font-size: 17px;
+  font-weight: 500;
 
   :nth-child(3) {
     text-align: right;
@@ -66,22 +81,28 @@ const ListItemText = styled.div`
 `;
 
 const Title = styled.div`
+  font-size: 17px;
+  text-transform: capitalize;
+  color: #000;
+`;
+
+const Symbol = styled.div`
   font-size: 14px;
+  text-transform: uppercase;
+  color: #000;
 `;
 
 const Tag = styled.div`
   font-size: 10px;
-  background-color: #eeeeee;
-  text-align: center;
-  padding: 2px 5px;
+  font-family: 'IBM Plex Sans';
   box-sizing: border-box;
-  border-radius: 50px;
-  color: #757575;
-  font-family: 'SFCompactDisplayRegular';
-  margin-top: 3px;
+  color: #777e90 !important;
+  text-transform: capitalize;
 `;
 
 const Value = styled.div`
-  font-size: 12px;
-  font-family: 'SFCompactDisplayRegular';
+  font-size: 10px;
+  font-family: 'IBM Plex Sans';
+  color: #23262f;
+  margin-top: 3px;
 `;

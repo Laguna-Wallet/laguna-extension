@@ -19,7 +19,7 @@ export async function signPayload(payload: SignerPayloadJSON): Promise<SignerRes
 export async function signRaw(payload: SignerPayloadRaw): Promise<SignerResult> {
   const id = uuidv4()
 
-  const signature: any = await sendMessage("SIGN_RAW", payload)
+  const { signature }: any = await sendMessage("SIGN_RAW", payload)
 
   if (!signature) return Promise.reject(new Error("Auth Declined"))
 

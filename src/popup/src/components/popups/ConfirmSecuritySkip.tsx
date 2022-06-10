@@ -1,7 +1,7 @@
 import ArrowSmRightIcon from '@heroicons/react/outline/ArrowSmRightIcon';
 import Button from 'components/primitives/Button';
 import Checkbox from 'components/primitives/Checkbox';
-import { SecurityLevelEnum } from 'pages/CreateAccount/CreateAccount';
+import { SecurityLevelEnum } from 'pages/AddImportAccount/CreateAccount/CreateAccount';
 import { useState } from 'react';
 import styled from 'styled-components';
 
@@ -33,22 +33,34 @@ export function ConfirmSecuritySkip({ nextStep, nextStepFromParent, setLevel }: 
 
         <Description>
           <Checkbox value={checked} onChange={setChecked} />
-          <span> I understand that without a seed phrase I cannot restore my wallet</span>
+          <span> I understand that without a seed phrase I cannot restore my account.</span>
         </Description>
 
         <ButtonContainer>
           <Button
-            onClick={handleSecure}
-            Icon={<ArrowSmRightIcon width={23} />}
-            text={'Secure Now'}
+            type="button"
+            onClick={handleSkip}
+            bgColor="#f2f2f2"
+            borderColor="#f2f2f2"
+            color="#18191a"
+            // Icon={<ArrowSmRightIcon width={23} />}
+            justify="center"
+            disabledBgColor="transparent"
+            disabledBorderColor="#ECEFF2"
+            disabledColor="#cbced1"
+            disabled={!checked}
+            text={'Skip'}
+            fontWeight="600"
           />
           <Gap />
           <Button
-            onClick={handleSkip}
-            bgColor="transparent"
-            color="#111"
-            Icon={<ArrowSmRightIcon width={23} />}
-            text={'Skip'}
+            type="button"
+            bgColor="#18191a"
+            color="#ffffff"
+            onClick={handleSecure}
+            // Icon={<ArrowSmRightIcon width={23} />}
+            text={'Secure Now'}
+            justify="center"
           />
         </ButtonContainer>
       </MainContent>
@@ -66,6 +78,15 @@ const Container = styled.div`
   position: absolute;
   top: 0;
   left: 0;
+  z-index: 9999;
+`;
+
+const Indicator = styled.div`
+  width: 48px;
+  height: 6px;
+  flex-grow: 0;
+  border-radius: 100px;
+  background-color: #e6e8ec;
 `;
 
 const MainContent = styled.div`
@@ -83,9 +104,10 @@ const MainContent = styled.div`
 
 const Title = styled.h3`
   width: 100%;
-  font-size: 18px;
+  font-family: 'IBM Plex Sans';
+  font-size: 22px;
   font-weight: 600;
-  line-height: 1.35;
+  line-height: 1.82;
   text-align: left;
   color: #090a0b;
   margin: 0;
@@ -93,10 +115,11 @@ const Title = styled.h3`
 
 const Description = styled.div`
   display: flex;
-  color: #767e93;
-  line-height: 1.45;
+  color: #353945;
+  font-family: Inter;
   font-size: 16px;
   margin-top: 20px;
+  line-height: 1.45;
   span {
     margin-left: 11px;
   }

@@ -6,7 +6,9 @@ import {
   toggleLoading,
   changeDappAuthorization,
   changePendingToSign,
-  changeConnectedApps
+  changeConnectedApps,
+  changeTokenReceived,
+  changePendingToSignRaw
 } from 'redux/actions';
 import { accountHasChanged } from 'utils';
 import { saveToStorage } from './chrome';
@@ -40,10 +42,16 @@ export function MessageListener(message: Message, dispatch: any) {
     case Messages.CheckPendingSign:
       updatePendingToSign(message, dispatch);
       break;
+    case Messages.CheckPendingSignRaw:
+      updatePendingToSignRaw(message, dispatch);
+      break;
+
     case Messages.ConnectedApps:
       updateConnectedApps(message, dispatch);
       break;
-
+    case Messages.TokenReceived:
+      updateTokenReceived(message, dispatch);
+      break;
     default:
       return;
   }
@@ -60,13 +68,13 @@ function updateCoinInfo(message: any, dispatch: any) {
   saveToStorage({ key: StorageKeys.TokenInfos, value: message.payload });
 }
 
-function updateAccountsBalances(message: any, dispatch: any) {
+async function updateAccountsBalances(message: any, dispatch: any) {
   dispatch(changeAccountsBalances(JSON.parse(message.payload)));
   saveToStorage({ key: StorageKeys.AccountBalances, value: message.payload });
 
   // if account address has changed, background has fetched
   // new balances and loading is finished
-  if (accountHasChanged(JSON.parse(message.payload))) {
+  if (await accountHasChanged(JSON.parse(message.payload))) {
     dispatch(toggleLoading(false));
   }
 }
@@ -84,6 +92,14 @@ function updatePendingToSign(message: any, dispatch: any) {
   dispatch(changePendingToSign(message.payload));
 }
 
+function updatePendingToSignRaw(message: any, dispatch: any) {
+  dispatch(changePendingToSignRaw(message.payload));
+}
+
 function updateConnectedApps(message: any, dispatch: any) {
   dispatch(changeConnectedApps(message.payload));
+}
+
+function updateTokenReceived(message: any, dispatch: any) {
+  dispatch(changeTokenReceived(JSON.parse(message.payload)));
 }

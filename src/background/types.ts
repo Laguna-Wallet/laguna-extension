@@ -1,4 +1,5 @@
 export enum StorageKeys {
+  OnBoarding = "onboarding",
   SignedIn = "signed-in",
   Encoded = "encoded",
   LoggedOut = "logged-out",
@@ -23,6 +24,8 @@ export enum Messages {
   ChangeInterval = "CHANGE_INTERVAL",
   SendTransaction = "SEND_TRANSACTION",
   TransactionSuccess = "TRANSACTION_SUCCESS",
+  ClearKeyRing = "CLEAR_KEYRING",
+  ForgotPassword = "FORGOT_PASSWORD",
   ReopenKeyPairs = "REOPEN_KEYPAIRS",
   AddToKeyring = "ADD_TO_KEYRING",
   RemoveFromKeyring = "REMOVE_FROM_KEYRING",
@@ -31,9 +34,14 @@ export enum Messages {
   CheckPendingDappAuth = "CHECK_PENDING_DAPP_AUTH",
   DappAuthRequest = "DAPP_AUTH_REQUEST",
   CheckPendingSign = "CHECK_PENDING_SIGN",
+  CheckPendingSignRaw = "CHECK_PENDING_SIGN_RAW",
   SignRequest = "SIGN_REQUEST",
+  SignRawRequest = "SIGN_RAW_REQUEST",
   ConnectedApps = "CONNECTED_APPS",
   RevokeDapp = "REVOKE_DAPP",
+  TokenReceived = "TOKEN_RECEIVED",
+  Timeout = "TIMEOUT",
+  ResetTimeout = "RESET_TIMEOUT",
 }
 
 export const chains = ["westend", "polkadot", "kusama", "moonriver", "moonbeam", "shiden", "astar"]
@@ -47,6 +55,16 @@ export interface Network {
   marketCap?: number
   encodeType?: string
   prefix: number
+}
+
+export interface TokenInfo {
+  current_price: number
+  id: string
+  market_cap: number
+  market_cap_change_24h: number
+  market_cap_change_percentage_24h: number
+  name: string
+  symbol: string
 }
 
 export const networks: Network[] = [
@@ -103,3 +121,10 @@ export const networks: Network[] = [
     prefix: 5,
   },
 ]
+export interface AccountMeta {
+  img: string
+  name: string
+  whenCreated?: number
+  notSecured?: boolean
+  encodedSeed?: string
+}

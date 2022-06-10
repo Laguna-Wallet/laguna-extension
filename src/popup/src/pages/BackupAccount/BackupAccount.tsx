@@ -2,8 +2,6 @@ import keyring from '@polkadot/ui-keyring';
 import { useAccount } from 'context/AccountContext';
 import Wallet from 'pages/Wallet/Wallet';
 import { useEffect, useState } from 'react';
-import { connect } from 'react-redux';
-import { reduxForm } from 'redux-form';
 import styled from 'styled-components';
 import AES from 'crypto-js/aes';
 import Utf8 from 'crypto-js/enc-utf8';
@@ -15,44 +13,68 @@ import LockIcon from 'assets/svgComponents/LockIcon';
 import HumbleInput from 'components/primitives/HumbleInput';
 import Button from 'components/primitives/Button';
 import Snackbar from 'components/Snackbar/Snackbar';
-import { exportJson } from 'utils';
+import { Field, reduxForm, InjectedFormProps } from 'redux-form';
+import { useSelector } from 'react-redux';
+import { isObjectEmpty } from 'utils';
+import { copyToClipboard, exportJson, validPassword } from 'utils';
+import ButtonsIcon from 'assets/svgComponents/ButtonsIcon';
 
-function BackupAccount() {
-  const [isOpen, setOpen] = useState<boolean>(true);
-  const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
-  const [snackbarError, setSnackbarError] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [seed, setSeed] = useState<string>('');
-  const [opened, setOpened] = useState<boolean>(false);
-  const [seedExists, setSeedExists] = useState<boolean>(false);
+type Props = {
+  password: string;
+};
+
+function BackupAccount({ handleSubmit, valid }: InjectedFormProps<Props>) {
   const account = useAccount();
   const address = account?.getActiveAccount()?.address;
 
-  const onClick = (password: string) => {
-    const isValid = validatePassword(password);
+  const formValues = useSelector((state: any) => state?.form?.backupAccount?.values);
 
-    if (!isValid) {
-      setIsSnackbarOpen(true);
-      setSnackbarError('Incorrect Password');
-      return;
-    }
+  const [seed, setSeed] = useState<string>('');
+  const [isOpen, setOpen] = useState<boolean>(true);
+  const [opened, setOpened] = useState<boolean>(false);
+  const [seedExists, setSeedExists] = useState<boolean>(false);
+  const [snackbarType, setSnackbarType] = useState<'error' | 'success' | 'warning'>('error');
+  const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
+  const [snackbarMessage, setSnackbarMessage] = useState<string>('');
+  const [mnemonicHasBeenCopied, setMnemonicHasBeenCopied] = useState<boolean>(false);
 
-    setOpened(true);
+  const submit = async (values: Props) => {
+    const { password } = values;
+    const errors = validPassword(values);
 
-    const pair = keyring.getPair(address);
-    const encodedSeed = pair?.meta?.encodedSeed;
+    if (isObjectEmpty(errors)) {
+      const isValid = await validatePassword(password);
 
-    if (encodedSeed) {
-      const bytes = AES.decrypt(encodedSeed as string, password);
-      const decodedSeed = bytes.toString(Utf8);
+      if (isValid) {
+        setOpened(true);
 
-      setSeed(decodedSeed);
+        const pair = keyring.getPair(address);
+        const encodedSeed = pair?.meta?.encodedSeed;
+
+        if (encodedSeed) {
+          const bytes = AES.decrypt(encodedSeed as string, password);
+          const decodedSeed = bytes.toString(Utf8);
+
+          setSeed(decodedSeed);
+        }
+      } else {
+        setIsSnackbarOpen(true);
+        setSnackbarMessage('Incorrect Password');
+      }
     }
   };
 
   const backupJson = async () => {
-    const json = await exportAccount(address, password);
+    const json = await exportAccount(address, formValues.password);
     await exportJson(json);
+  };
+
+  const handleCopy = () => {
+    copyToClipboard(seed);
+    setIsSnackbarOpen(true);
+    setSnackbarMessage('Mnemonics Copied');
+    setSnackbarType('success');
+    setMnemonicHasBeenCopied(true);
   };
 
   useEffect(() => {
@@ -66,13 +88,19 @@ function BackupAccount() {
   });
 
   return (
-    <Container>
+    <Container opened={opened}>
       <MenuHeader
         isOpen={isOpen}
         setOpen={setOpen}
         title="BACKUP ACCOUNT"
-        onClose={() => goTo(Wallet)}
-        backAction={() => goTo(Wallet, { isMenuOpen: true })}
+        onClose={() => {
+          mnemonicHasBeenCopied && copyToClipboard('');
+          goTo(Wallet);
+        }}
+        backAction={() => {
+          mnemonicHasBeenCopied && copyToClipboard('');
+          goTo(Wallet, { isMenuOpen: true });
+        }}
       />
 
       <Content>
@@ -87,70 +115,91 @@ function BackupAccount() {
         </IconContainer>
 
         {!seed.length ? (
-          <WarningContainer>
-            {seedExists
-              ? `Warning: Do not share your seed phrase. This phrase grants full control of your wallet.`
-              : 'Account has not been secured, only Json file can be exported'}
-          </WarningContainer>
+          <>
+            <WarningContainer seedExists={!seedExists}>
+              {seedExists
+                ? `Warning: Do not share your seed phrase. This phrase grants full control of your account.`
+                : 'Account has not been secured, only Json file can be exported'}
+            </WarningContainer>
+            <Form onSubmit={handleSubmit(submit)}>
+              <Field
+                id="password"
+                name="password"
+                type="password"
+                label="password"
+                placeholder="Enter your password"
+                component={HumbleInput}
+                props={{
+                  type: 'password',
+                  padding: '15px 11px 15px 16px',
+                  color: '#fff',
+                  placeholderColor: '#b1b5c3',
+                  bgColor: '#303030',
+                  borderColor: '#303030',
+                  height: '48px',
+                  marginTop: '12px',
+                  errorBorderColor: '#fb5a5a',
+                  autoFocus: true,
+                  isPassword: true
+                }}
+              />
+              <Button
+                type="submit"
+                text={`Reveal ${seedExists ? 'Seed Phrase' : 'Json export'}`}
+                color="#111"
+                disabledBgColor="rgba(255,255,255,0.6)"
+                borderColor="#111"
+                justify="center"
+                margin="15px 0 0 0"
+                bgColor="#fff"
+                styledDisabled={!valid}
+              />
+            </Form>
+          </>
         ) : (
-          <SeedContainer>{seed}</SeedContainer>
-        )}
-
-        {!seed.length && (
-          <FieldsContainer>
-            <HumbleInput
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
-              label="password"
-              placeholder="password"
-              bgColor="#303030"
-              color="#9c9c9c"
-              height="48px"
-              marginTop="12px"
-              borderColor="#303030"
+          <>
+            {opened && seed.length && (
+              <CopyBtn onClick={handleCopy}>
+                <span>Copy</span>
+                <ButtonsIcon fill="#fff" />
+              </CopyBtn>
+            )}
+            <SeedContainer>{seed}</SeedContainer>
+            <Button
+              type="button"
+              text="I’ve Backed my Seed Phrase"
+              color="#111"
+              justify="center"
+              margin="15px 0 0 0"
+              bgColor="#fff"
+              onClick={() => {
+                mnemonicHasBeenCopied && copyToClipboard('');
+                goTo(Wallet, { isMenuOpen: true });
+              }}
             />
-          </FieldsContainer>
+          </>
         )}
-        {!seed.length ? (
-          <Button
-            type="button"
-            text={`Reveal ${seedExists ? 'Seed Phrase' : 'Json export'}`}
-            color="#111"
-            justify="center"
-            margin="15px 0 0 0"
-            bgColor="#e4e4e4"
-            onClick={() => onClick(password)}
-          />
-        ) : (
-          <Button
-            type="button"
-            text="I’ve Backed my Seed Phrase"
-            color="#111"
-            justify="center"
-            margin="15px 0 0 0"
-            bgColor="#e4e4e4"
-            onClick={() => goTo(Wallet, { isMenuOpen: true })}
-          />
-        )}
-        {opened && <ExportJson onClick={backupJson}>Export Json file</ExportJson>}
+        {opened && <ExportJson onClick={backupJson}>Export JSON file</ExportJson>}
       </Content>
       <Snackbar
         isOpen={isSnackbarOpen}
         close={() => setIsSnackbarOpen(false)}
-        message={snackbarError}
-        type="error"
-        left="0px"
-        bottom="100px"
+        message={snackbarMessage}
+        type={snackbarType}
+        left="26px"
+        bottom="150px"
+        transform="translateX(0)"
       />
     </Container>
   );
 }
 
-export default BackupAccount;
+export default reduxForm<Record<string, unknown>, any>({
+  form: 'backupAccount',
+  validate: validPassword
+})(BackupAccount);
 
-const Container = styled.div`
+const Container = styled.div<{ opened: boolean }>`
   width: 100%;
   height: 600px;
   display: flex;
@@ -159,19 +208,24 @@ const Container = styled.div`
   top: 0;
   left: 0;
   z-index: 999;
-  padding: 15px 15px 40px 15px;
+  padding: ${({ opened }) => (opened ? '0 17.5px 24px' : '0 17.5px 32px')};
+  padding: 0 17.5px 28px;
   box-sizing: border-box;
-  background-color: #111111;
+  background-color: #18191a;
   z-index: 99999;
 `;
 
 const Content = styled.div`
-  width: 100%;
   height: 100%;
   display: flex;
+  padding: 0 8.5px;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+`;
+
+const Form = styled.form`
+  width: 100%;
 `;
 
 const IconContainer = styled.div`
@@ -201,16 +255,24 @@ const Circle = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(265.71deg, #1cc3ce -32.28%, #b9e260 104.04%);
+  background: linear-gradient(
+    243.63deg,
+    #f5decc -78.21%,
+    #f2d2db -39.06%,
+    #d7cce2 5.39%,
+    #c7dfe4 49.83%,
+    #edf1e1 90.04%,
+    #ffffff 124.96%
+  );
   border-radius: 100%;
 `;
 
-const WarningContainer = styled.div`
+const WarningContainer = styled.div<{ seedExists?: boolean }>`
   width: 100%;
   height: 60px;
   border: 1px solid #fffa7d;
   border-radius: 5px;
-  padding: 11px 5px 11px 10px;
+  padding: ${({ seedExists }) => (seedExists ? '11px 5px 11px 10px' : '11px 5px')};
   box-sizing: border-box;
   display: flex;
   justify-content: center;
@@ -224,37 +286,51 @@ const WarningContainer = styled.div`
 
 const SeedContainer = styled.div`
   width: 100%;
-  height: 60px;
+  height: 80px;
   font-size: 16px;
   background-color: #303030;
   color: #fff;
-  margin-top: auto;
   border-radius: 5px;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
+  padding: 10px;
+  box-sizing: border-box;
+  margin-top: 10px;
 `;
 
+const CopyBtn = styled.div`
+  width: 70px;
+  height: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: auto;
+  margin-top: 5px;
+  border-radius: 20px;
+  background-color: #303030;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: 'IBM Plex Sans';
+  margin-top: auto;
+
+  span {
+    margin-left: 5px;
+  }
+`;
 const ExportJson = styled.div`
   color: #fff;
   margin-top: 10px;
-  font-size: 16px;
+  font-size: 14px;
   cursor: pointer;
+  border-bottom: 1px solid #fff;
+  padding-bottom: 3px;
 `;
 
 const LockContainer = styled.div`
   position: absolute;
   top: 70px;
-`;
-
-const FieldsContainer = styled.div`
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-`;
-
-const ButtonsContainer = styled.div`
-  display: flex;
-  width: 100%;
 `;

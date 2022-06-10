@@ -12,22 +12,22 @@ export async function fetchAccountsTransactions(address: string) {
     for (let i = 0; i < chains.length; i++) {
       await timer(1000);
 
-      const res = await fetchTransactions(address, chains[i], page);
+      const res = await fetchTransactions(address, chains[i], 30, page);
 
       if (!res?.data?.transfers) continue;
 
-      results = [...res?.data?.transfers];
+      results = [...res.data.transfers];
       retrieved_count = res?.data?.count;
       page++;
 
       while (results.length < retrieved_count) {
         try {
           await timer(1000);
-          const data = await fetchTransactions(address, chains[i], page);
-          results = [...results, ...data?.data?.transfers];
+          const data = await fetchTransactions(address, chains[i], 30, page);
+          results = [...results, ...data.data.transfers];
           page++;
         } catch (err) {
-          console.log('err', err);
+          console.log(err);
         }
       }
 
@@ -39,12 +39,11 @@ export async function fetchAccountsTransactions(address: string) {
 
     return result_arr;
   } catch (err) {
-    console.log('err', err);
-    return [];
+    console.log(err);
   }
 }
 
-export async function fetchTransactions(address: string, chain: string, page: number) {
+export async function fetchTransactions(address: string, chain: string, row: number, page: number) {
   const res = await fetch(`https://${chain}.api.subscan.io/api/scan/transfers`, {
     method: 'POST',
     mode: 'cors',
