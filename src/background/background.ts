@@ -75,7 +75,7 @@ chrome.runtime.onConnect.addListener(function (port) {
         // const dappName = window.location.host
 
         if (authorizedDapps.includes(dappName) || declinedDapps.includes(dappName)) return
-
+        // POPUP_CONTENT popup content will assure that request is coming from popup
         if (msg.payload.approved && msg?.payload?.POPUP_CONTENT === process.env.POPUP_CONTENT) {
           pendingRequests = []
           authorizedDapps.push(dappName)
@@ -95,6 +95,7 @@ chrome.runtime.onConnect.addListener(function (port) {
     if (msg.type === Messages.SignRequest) {
       try {
         const data = msg?.payload?.data?.data
+        // POPUP_CONTENT popup content will assure that request is coming from popup
         if (msg.payload.approved && msg?.payload?.POPUP_CONTENT === process.env.POPUP_CONTENT) {
           const pair = keyPairs.find((pair) => {
             return recodeToPolkadotAddress(pair.address) === recodeToPolkadotAddress(data.request.address)
@@ -118,6 +119,7 @@ chrome.runtime.onConnect.addListener(function (port) {
 
     if (msg.type === Messages.SignRawRequest) {
       const data = msg?.payload?.pendingDapp?.data
+      // POPUP_CONTENT popup content will assure that request is coming from popup
       if (msg.payload.approved && msg?.payload?.POPUP_CONTENT === process.env.POPUP_CONTENT) {
         const pair = keyPairs.find((pair) => {
           return recodeToPolkadotAddress(pair.address) === recodeToPolkadotAddress(data.request.address)
