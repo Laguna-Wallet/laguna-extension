@@ -40,6 +40,7 @@ export default function CreateAccount({
   redirectedFromDashboard,
   encodePhase
 }: Props) {
+  console.log('~ redirectedFromSignUp', redirectedFromSignUp);
   const account = useAccount();
   const encoded = account.encryptedPassword;
 

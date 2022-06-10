@@ -16,6 +16,7 @@ import Wallet from 'pages/Wallet/Wallet';
 import { checkPasswordStrength } from 'utils/checkPasswordStrength';
 import SignUp from 'pages/SignUp/SignUp';
 import WarningMark from 'assets/svgComponents/WarningMark';
+import WelcomeBack from 'pages/WelcomeBack/WelcomeBack';
 
 const validate = (values: { password: string; confirmPassword: string }) => {
   const errors: { password?: string; confirmPassword?: string } = {};
@@ -49,6 +50,7 @@ function CreatePassword({
   handleSubmit,
   errors,
   handleEncode,
+  redirectedFromSignUp,
   redirectedFromForgotPassword
 }: InjectedFormProps & Props) {
   const account = useAccount();
@@ -81,7 +83,13 @@ function CreatePassword({
     <Container>
       {!redirectedFromForgotPassword && (
         <WizardHeader
-          onClose={() => goTo(Wallet)}
+          onClose={() => {
+            if (redirectedFromSignUp) {
+              goTo(SignUp);
+            } else {
+              goTo(WelcomeBack);
+            }
+          }}
           onBack={() => {
             previousStep();
           }}

@@ -57,7 +57,7 @@ export default function RequestToConnect() {
           <CheckContainer>
             <CheckIcon stroke="#62c660" width={25} height={25} />
           </CheckContainer>{' '}
-          Make transaction from your account
+          View your wallet balance & activity
         </Text>
       </Content>
 

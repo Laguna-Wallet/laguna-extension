@@ -54,7 +54,6 @@ function BackupAccount({ handleSubmit, valid }: InjectedFormProps<Props>) {
         if (encodedSeed) {
           const bytes = AES.decrypt(encodedSeed as string, password);
           const decodedSeed = bytes.toString(Utf8);
-          console.log('~ decodedSeed', decodedSeed);
 
           setSeed(decodedSeed);
         }
@@ -161,8 +160,8 @@ function BackupAccount({ handleSubmit, valid }: InjectedFormProps<Props>) {
           <>
             {opened && seed.length && (
               <CopyBtn onClick={handleCopy}>
-                <ButtonsIcon fill="#fff" />
                 <span>Copy</span>
+                <ButtonsIcon fill="#fff" />
               </CopyBtn>
             )}
             <SeedContainer>{seed}</SeedContainer>
