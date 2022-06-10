@@ -206,7 +206,7 @@ function SendToken({
   return (
     <Container>
       <Header
-        title={`SEND ${selectedAsset?.symbol}  (${selectedAsset?.chain})`}
+        title={`SEND ${selectedAsset?.symbol} (${selectedAsset?.chain})`}
         closeAction={() => {
           dispatch(reset('sendToken'));
           goTo(Wallet);
@@ -264,7 +264,8 @@ function SendToken({
                   Icon: flow === SendAccountFlowEnum.SendToTrustedContact && (
                     <ContactsIcon stroke="#111" />
                   ),
-                  IconAlignment: 'right'
+                  IconAlignment:
+                    flow === SendAccountFlowEnum.SendToTrustedContact ? 'right' : 'left'
                 }}
               />
             </ContentItem>

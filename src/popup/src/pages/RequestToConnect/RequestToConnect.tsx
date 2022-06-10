@@ -17,7 +17,7 @@ export default function RequestToConnect() {
   const handleApprove = () => {
     chrome.runtime.sendMessage({
       type: Messages.DappAuthRequest,
-      payload: { approved: true, pendingDapp }
+      payload: { approved: true, pendingDapp, POPUP_CONTENT: process.env.REACT_APP_POPUP_CONTENT }
     });
 
     dispatch(changeDappAuthorization({}));

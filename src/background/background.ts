@@ -76,7 +76,7 @@ chrome.runtime.onConnect.addListener(function (port) {
 
         if (authorizedDapps.includes(dappName) || declinedDapps.includes(dappName)) return
 
-        if (msg.payload.approved) {
+        if (msg.payload.approved && msg?.payload?.POPUP_CONTENT === process.env.POPUP_CONTENT) {
           pendingRequests = []
           authorizedDapps.push(dappName)
           port.postMessage({ ...msg.payload.pendingDapp[0], payload: { id: msg.payload.pendingDapp[0].id, approved: true } })
@@ -95,10 +95,11 @@ chrome.runtime.onConnect.addListener(function (port) {
     if (msg.type === Messages.SignRequest) {
       try {
         const data = msg?.payload?.data?.data
-        if (msg.payload.approved) {
+        if (msg.payload.approved && msg?.payload?.POPUP_CONTENT === process.env.POPUP_CONTENT) {
           const pair = keyPairs.find((pair) => {
             return recodeToPolkadotAddress(pair.address) === recodeToPolkadotAddress(data.request.address)
           })
+
           if (data.message === "SIGN_PAYLOAD") {
             await cryptoWaitReady()
             registry.setSignedExtensions(data.request.signedExtensions)
@@ -117,7 +118,7 @@ chrome.runtime.onConnect.addListener(function (port) {
 
     if (msg.type === Messages.SignRawRequest) {
       const data = msg?.payload?.pendingDapp?.data
-      if (msg.payload.approved) {
+      if (msg.payload.approved && msg?.payload?.POPUP_CONTENT === process.env.POPUP_CONTENT) {
         const pair = keyPairs.find((pair) => {
           return recodeToPolkadotAddress(pair.address) === recodeToPolkadotAddress(data.request.address)
         })
@@ -125,7 +126,6 @@ chrome.runtime.onConnect.addListener(function (port) {
         if (data.message === "SIGN_RAW") {
           await cryptoWaitReady()
           const signature = u8aToHex(pair.sign(wrapBytes(data.request.data)))
-          console.log("~ signature", signature)
           port.postMessage({ ...data, payload: { id: data.id, approved: true, ...data.request, signature } })
         }
       } else {
@@ -205,6 +205,7 @@ chrome.runtime.onConnect.addListener(function (port) {
       if (pendingRequests.length === 0) {
         pendingRequests.push(data)
       }
+
       chrome.windows.create({
         focused: true,
         height: 621,

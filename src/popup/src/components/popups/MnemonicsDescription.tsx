@@ -76,7 +76,6 @@ const Line = styled.div`
   width: 48px;
   height: 6px;
   background-color: #d1d4db;
-  margin-top: 8px;
   border-radius: 100px;
 `;
 

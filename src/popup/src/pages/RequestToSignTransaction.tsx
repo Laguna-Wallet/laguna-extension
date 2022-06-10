@@ -15,7 +15,11 @@ export default function RequestToSignTransaction() {
   const handleApprove = () => {
     chrome.runtime.sendMessage({
       type: Messages.SignRequest,
-      payload: { approved: true, data: pendingToSign }
+      payload: {
+        approved: true,
+        data: pendingToSign,
+        POPUP_CONTENT: process.env.REACT_APP_POPUP_CONTENT
+      }
     });
 
     dispatch(changePendingToSign({}));
