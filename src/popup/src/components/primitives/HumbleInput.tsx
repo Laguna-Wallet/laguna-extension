@@ -215,7 +215,7 @@ const DummyElement = styled.span`
   line-height: 1.35;
   color: #fff;
   overflow: hidden;
-  z-index: 4;
+  z-index: 2;
 `;
 
 const StyledInput = styled.input<{
@@ -239,7 +239,7 @@ const StyledInput = styled.input<{
   font-family: Inter;
   font-weight: ${({ fontWeight }) => fontWeight || 400};
   caret-color: ${({ color }) => color || '#111'};
-  z-index: 5;
+  z-index: 3;
   :-webkit-autofill,
   :-webkit-autofill:hover,
   :-webkit-autofill:focus,
@@ -311,7 +311,7 @@ const Paste = styled.div``;
 const Copy = styled.div`
   position: absolute;
   right: 16px;
-  z-index: 5;
+  z-index: 3;
   border-radius: 5px;
   color: #fff;
   display: flex;
@@ -337,8 +337,8 @@ const Text = styled.p`
 
 const RightLabel = styled.span`
   position: absolute;
-  right: 10px;
-  z-index: 5;
+  right: 22px;
+  z-index: 3;
   top: 12px;
   color: #777e90;
   font-size: 16px;

@@ -154,7 +154,7 @@ function ChangePassword({ handleSubmit, valid }: InjectedFormProps<Form>) {
               props={{
                 type: 'password',
                 bgColor: '#303030',
-                color: '#b1b5c3',
+                color: '#fff',
                 placeholderColor: '#b1b5c3',
                 errorBorderColor: '#fb5a5a',
                 height: '48px',
@@ -175,7 +175,7 @@ function ChangePassword({ handleSubmit, valid }: InjectedFormProps<Form>) {
               props={{
                 type: 'password',
                 bgColor: '#303030',
-                color: '#b1b5c3',
+                color: '#fff',
                 placeholderColor: '#b1b5c3',
                 height: '48px',
                 marginTop: '12px',
