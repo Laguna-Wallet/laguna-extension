@@ -175,7 +175,7 @@ function SendToken({
 
   useEffect(() => {
     if (!abilityToTransfer && !loading) {
-      setSnackbarError('No enough founds to make transfer');
+      setSnackbarError('No enough funds to make transfer');
       setIsSnackbarOpen(true);
     }
   }, [loading]);
@@ -336,7 +336,7 @@ function SendToken({
         <BottomSection>
           <Info>
             <span>
-              Balance: {new BigNumber(selectedAsset.balance).toFormat(2)}{' '}
+              Transferable balance: {new BigNumber(selectedAsset.balance).toFormat(2)}{' '}
               {selectedAsset?.symbol.toUpperCase()}
             </span>
             <span>
