@@ -2,33 +2,32 @@ import Header from 'pages/Wallet/Header';
 import styled from 'styled-components';
 import { Asset, TokenInfo, Transaction } from 'utils/types';
 import dashboardBG from 'assets/imgs/dashboard-bg.jpg';
-import { goTo, Link } from 'react-chrome-extension-router';
-import Wallet from 'pages/Wallet/Wallet';
 import { useDispatch, useSelector } from 'react-redux';
 import NetworkIcons from 'components/primitives/NetworkIcons';
 import BigNumber from 'bignumber.js';
-import Send from 'pages/Send/Send';
-import Receive from 'pages/Recieve/Receive';
 import { selectAsset } from 'redux/actions';
 import { ActivityItem } from 'pages/Activity/Activity';
 import { useEffect, useState } from 'react';
 import { getLatestTransactionsForSingleChain } from 'utils/polkadot';
 import { useAccount } from 'context/AccountContext';
 import Footer from 'pages/Wallet/Footer';
-import ChainActivity from 'pages/Activity/ChainActivity';
 import ReceiveIcon from 'assets/svgComponents/ReceiveIcon';
 import SendIcon from 'assets/svgComponents/SendIIcon';
 import Popup from 'components/Popup/Popup';
 import ActivityInfo from 'pages/Activity/ActivityInfo';
 import InactiveField from 'components/InactiveField/InactiveField';
+import { useHistory, Link } from 'react-router-dom';
+import { router } from 'router/router';
 
 type Props = {
-  asset: Asset;
+  asset?: Asset;
 };
 
 export default function TokenDashboard({ asset }: Props) {
   const dispatch = useDispatch();
   const account = useAccount();
+  const history = useHistory();
+
   const currAccountAddress = account?.getActiveAccount()?.address;
   const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -41,14 +40,14 @@ export default function TokenDashboard({ asset }: Props) {
     loading: accountsChanging
   } = useSelector((state: any) => state.wallet);
 
-  const chain = asset.chain;
+  const chain = asset?.chain;
   // todo proper typeing
   const tokenInfo: TokenInfo = infos.find((item: TokenInfo) => item.id === chain);
 
   const price = tokenInfo?.current_price;
   const price_change_percentage_24h = tokenInfo?.price_change_percentage_24h;
-  const symbol = asset.symbol;
-  const balance = accountsBalances?.balances[chain];
+  const symbol = asset?.symbol;
+  const balance = accountsBalances?.balances[chain || 0];
   const balanceInUsd = price ? new BigNumber(balance).multipliedBy(price).toFormat(4) : 0;
 
   const negativeValue = String(price_change_percentage_24h).includes('-');
@@ -59,20 +58,27 @@ export default function TokenDashboard({ asset }: Props) {
     '+';
 
   const handleSendRoute = () => {
-    goTo(Send, { propsFromTokenDashboard: { chain, fromTokenDashboard: true, asset } });
-    dispatch(selectAsset(asset));
+    if (asset) {
+      history.push({
+        pathname: router.send,
+        state: { propsFromTokenDashboard: { chain, fromTokenDashboard: true, asset } }
+      });
+      dispatch(selectAsset(asset));
+    }
   };
 
   useEffect(() => {
     async function go() {
-      const { transactions } = await getLatestTransactionsForSingleChain(
-        currAccountAddress,
-        chain,
-        0,
-        10
-      );
+      if (chain) {
+        const { transactions } = await getLatestTransactionsForSingleChain(
+          currAccountAddress,
+          chain,
+          0,
+          10
+        );
 
-      setTransactions(transactions);
+        setTransactions(transactions);
+      }
     }
 
     go();
@@ -90,7 +96,7 @@ export default function TokenDashboard({ asset }: Props) {
 
   return (
     <Container bg={dashboardBG}>
-      <Header title={`${chain} Balance`} backAction={() => goTo(Wallet)}></Header>
+      <Header title={`${chain} Balance`} backAction={() => history.push(router.home)}></Header>
       <Content isEmpty={!balance}>
         {!balance ? (
           <InactiveField />
@@ -99,13 +105,13 @@ export default function TokenDashboard({ asset }: Props) {
             <CardContainer>
               <Card>
                 <Balance>
-                  <NetworkIcons chain={chain} />
+                  <NetworkIcons chain={chain || ''} />
                   <span>{new BigNumber(balance).toFormat(4, 1) || 0}</span>
                   <span>{symbol}</span>
                 </Balance>
                 <BalanceInUsd>${new BigNumber(balanceInUsd).toFixed(2)}</BalanceInUsd>
                 <CardBottom>
-                  <Tag>{handleChain(chain)}</Tag>
+                  <Tag>{handleChain(chain || '')}</Tag>
                   <Rate negativeValue={negativeValue}>
                     {renderPusSymbol}
                     {price_change_percentage_24h
@@ -123,9 +129,8 @@ export default function TokenDashboard({ asset }: Props) {
                 </RightArrowContainer>
                 <span>Send</span>
               </Button>
-              <StyledLink
-                component={Receive}
-                props={{ propsFromTokenDashboard: { chain, fromTokenDashboard: true, asset } }}>
+              <StyledLink to={router.receive}>
+                {/* props={{ propsFromTokenDashboard: { chain, fromTokenDashboard: true, asset } }}> */}
                 <Button>
                   <BarcodeIconContainer>
                     <ReceiveIcon width={20} height={20} />
@@ -139,8 +144,7 @@ export default function TokenDashboard({ asset }: Props) {
                 <TransactionsTitle>ACTIVITY</TransactionsTitle>
                 <TransactionsTitle
                   onClick={() => {
-                    goTo(ChainActivity, { chain, asset });
-                    // ChainActivity;
+                    history.push({ pathname: router.chainActivity, state: { chain, asset } });
                   }}>
                   SEE ALL
                 </TransactionsTitle>

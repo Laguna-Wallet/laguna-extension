@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 
 import styled from 'styled-components';
 import { useFormik } from 'formik';
-import { goTo } from 'react-chrome-extension-router';
 import MenuHeader from 'components/MenuHeader/MenuHeader';
 import HumbleInput from 'components/primitives/HumbleInput';
 import Button from 'components/primitives/Button';
@@ -11,9 +10,10 @@ import Snackbar from 'components/Snackbar/Snackbar';
 import AddBigIcon from 'assets/svgComponents/AddBigIcon';
 import { objectValuesToArray } from 'utils';
 import keyring from '@polkadot/ui-keyring';
-import AddressBook from './AddressBook';
 import EditBigIcon from 'assets/svgComponents/EditBigIcon';
 import { addressExists, isValidPolkadotAddress } from 'utils/polkadot';
+import { useHistory } from 'react-router-dom';
+import { router } from 'router/router';
 import { SnackbarMessages } from 'utils/types';
 
 type AddAddressFormikValues = {
@@ -29,7 +29,7 @@ type Props = {
   edit?: boolean;
   redirectedFromSend?: boolean;
   backAction?: any;
-  closeAction: () => void;
+  closeAction?: () => void;
 };
 
 export default function AddAddress({
@@ -41,6 +41,8 @@ export default function AddAddress({
   closeAction,
   redirectedFromSend
 }: Props) {
+  const history = useHistory();
+
   const [isOpen, setOpen] = useState<boolean>(true);
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
   const [snackbarError, setSnackbarError] = useState<string>('');
@@ -78,7 +80,10 @@ export default function AddAddress({
       if (redirectedFromSend) {
         backAction();
       } else {
-        goTo(AddressBook, { snackbar: { show: true, message: SnackbarMessages.AddressAdded } });
+        history.push({
+          pathname: router.addressBook,
+          state: { snackbar: { show: true, message: SnackbarMessages.AddressAdded } }
+        });
       }
     }
   });
@@ -88,7 +93,7 @@ export default function AddAddress({
     if (redirectedFromSend) {
       backAction();
     } else {
-      goTo(AddressBook);
+      history.push(router.addressBook);
     }
   };
 
@@ -106,7 +111,10 @@ export default function AddAddress({
     if (redirectedFromSend) {
       backAction();
     } else {
-      goTo(AddressBook, { snackbar: { show: true, message: SnackbarMessages.AddressRemoved } });
+      history.push({
+        pathname: router.addressBook,
+        state: { snackbar: { show: true, message: SnackbarMessages.AddressRemoved } }
+      });
     }
   };
 
@@ -114,9 +122,11 @@ export default function AddAddress({
     if (redirectedFromSend) {
       backAction();
     } else {
-      goTo(AddressBook);
+      history.push(router.addressBook);
     }
   };
+
+  const walletLocation = () => history.push(router.home);
 
   return (
     <Container edit={edit}>
@@ -124,15 +134,13 @@ export default function AddAddress({
         isOpen={isOpen}
         setOpen={setOpen}
         title={`${edit ? 'EDIT' : 'ADD'} ADDRESS`}
-        onClose={closeAction}
+        onClose={closeAction || walletLocation}
         backAction={back}
       />
       <Content>
         <Form onSubmit={formik.handleSubmit}>
           <PlusIconContainer edit={edit}>
-            {edit ? (<EditBigIcon/>) : (
-              <AddBigIcon/>
-            )}
+            {edit ? <EditBigIcon /> : <AddBigIcon />}
           </PlusIconContainer>
           <HumbleInput
             id={'name'}
@@ -177,7 +185,7 @@ export default function AddAddress({
               placeholderColor="#B1B5C3"
             />
           )}
-          
+
           <ButtonContainer>
             {!edit && (
               <Button
@@ -211,9 +219,8 @@ export default function AddAddress({
           message={snackbarError}
           type="error"
           left="8.5px"
-          transform='translateX(0)'
-          bottom={edit ? "86px" : "56px"}>
-          </Snackbar>
+          transform="translateX(0)"
+          bottom={edit ? '86px' : '56px'}></Snackbar>
       </Content>
     </Container>
   );

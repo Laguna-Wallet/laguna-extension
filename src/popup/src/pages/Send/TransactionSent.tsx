@@ -2,27 +2,29 @@ import { useRef } from 'react';
 import RightArrow from 'assets/svgComponents/RightArrow';
 import SuccessfullySentIcon from 'assets/svgComponents/SuccesfullySentIcon';
 import Button from 'components/primitives/Button';
-import Header from 'pages/Wallet/Header';
-import Wallet from 'pages/Wallet/Wallet';
-import { goTo, Link } from 'react-chrome-extension-router';
 import styled from 'styled-components';
 import bg from '../../assets/imgs/transaction-sent.png';
 import { useDispatch, useSelector } from 'react-redux';
 import { reset } from 'redux-form';
+import { useHistory } from 'react-router-dom';
+import { router } from 'router/router';
+import browser from 'webextension-polyfill';
 
 type Props = {
   blockHash: string;
 };
 export default function TransactionSent({ blockHash }: Props) {
+  const history = useHistory();
+
   const dispatch = useDispatch();
   const chain = useSelector((state: any) => state.sendToken.selectedAsset.chain);
   const onClick = (hash: string, chain: string) => {
-    chrome.windows.create({ url: `https://${chain}.subscan.io/extrinsic/${hash}` });
+    browser.windows.create({ url: `https://${chain}.subscan.io/extrinsic/${hash}` });
   };
 
   const handleClick = () => {
     dispatch(reset('sendToken'));
-    goTo(Wallet);
+    history.push(router.home);
   };
 
   return (

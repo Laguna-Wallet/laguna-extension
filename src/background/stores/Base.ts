@@ -1,10 +1,12 @@
+// import Browser from "webextension-polyfill";
 // Copyright 2019-2022 @polkadot/extension-base authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+import * as browser from "webextension-polyfill";
 
 type StoreValue = Record<string, unknown>;
 
 const lastError = (type: string): void => {
-  const error = chrome.runtime.lastError;
+  const error = browser.runtime.lastError;
 
   if (error) {
     console.error(`BaseStore.${type}:: runtime.lastError:`, error);
@@ -15,7 +17,7 @@ export default abstract class BaseStore<T> {
   private prefix: string;
 
   constructor(prefix: string | null) {
-    this.prefix = prefix ? `${prefix}:` : '';
+    this.prefix = prefix ? `${prefix}:` : "";
   }
 
   public all(update: (key: string, value: T) => void): void {
@@ -27,8 +29,8 @@ export default abstract class BaseStore<T> {
   }
 
   public allMap(update: (value: Record<string, T>) => void): void {
-    chrome.storage.local.get(null, (result: StoreValue): void => {
-      lastError('all');
+    browser.storage.local.get(null).then((result: StoreValue): void => {
+      lastError("all");
 
       const entries = Object.entries(result);
       const map: Record<string, T> = {};
@@ -37,7 +39,7 @@ export default abstract class BaseStore<T> {
         const [key, value] = entries[i];
 
         if (key.startsWith(this.prefix)) {
-          map[key.replace(this.prefix, '')] = value as T;
+          map[key.replace(this.prefix, "")] = value as T;
         }
       }
 
@@ -48,8 +50,8 @@ export default abstract class BaseStore<T> {
   public get(_key: string, update: (value: T) => void): void {
     const key = `${this.prefix}${_key}`;
 
-    chrome.storage.local.get([key], (result: StoreValue): void => {
-      lastError('get');
+    browser.storage.local.get([key]).then((result: StoreValue): void => {
+      lastError("get");
 
       update(result[key] as T);
     });
@@ -58,8 +60,8 @@ export default abstract class BaseStore<T> {
   public remove(_key: string, update?: () => void): void {
     const key = `${this.prefix}${_key}`;
 
-    chrome.storage.local.remove(key, (): void => {
-      lastError('remove');
+    browser.storage.local.remove(key).then((): void => {
+      lastError("remove");
 
       update && update();
     });
@@ -68,8 +70,8 @@ export default abstract class BaseStore<T> {
   public set(_key: string, value: T, update?: () => void): void {
     const key = `${this.prefix}${_key}`;
 
-    chrome.storage.local.set({ [key]: value }, (): void => {
-      lastError('set');
+    browser.storage.local.set({ [key]: value }).then((): void => {
+      lastError("set");
 
       update && update();
     });

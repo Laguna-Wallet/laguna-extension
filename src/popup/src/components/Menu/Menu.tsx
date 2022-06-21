@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import styled from 'styled-components';
-import { Link } from 'react-chrome-extension-router';
 import AddressBook from 'pages/AddressBook/AddressBook';
 import MenuHeader from 'components/MenuHeader/MenuHeader';
 import AutoLockTimer from 'pages/AutoLockTimer/AutoLockTimer';
@@ -17,6 +16,9 @@ import RemoveWalletMenuIcon from 'assets/svgComponents/MenuIcons/RemoveWalletMen
 import RightArrowMenuIcon from 'assets/svgComponents/MenuIcons/RightArrowMenuIcon';
 import { useAccount } from 'context/AccountContext';
 import CreateAccount from 'pages/AddImportAccount/CreateAccount/CreateAccount';
+// import Link from 'components/Link/Link';
+import { Link } from 'react-router-dom';
+import { router } from 'router/router';
 
 type Props = {
   onClose: () => void;
@@ -26,6 +28,11 @@ export default function Menu({ onClose }: Props) {
   const account = useAccount();
   const activeUser = account.getActiveAccount();
   const [isOpen, setOpen] = useState<boolean>(true);
+
+  const backupLocation = {
+    pathname: activeUser?.meta?.notSecured ? router.createAccount : router.backupAccount,
+    state: { redirectedFromDashboard: true }
+  };
 
   return (
     <Container>
@@ -38,7 +45,7 @@ export default function Menu({ onClose }: Props) {
           </StyledLink>
         </ListItem> */}
         <ListItem>
-          <StyledLink component={AddressBook}>
+          <StyledLink to={router.addressBook}>
             <AddressMenuIcon />
             <span>Address Book</span>
             <RightIconContainer>
@@ -47,7 +54,7 @@ export default function Menu({ onClose }: Props) {
           </StyledLink>
         </ListItem>
         <ListItem>
-          <StyledLink component={ConnectedSites}>
+          <StyledLink to={router.connectedSites} href={router.connectedSites}>
             <ConnectedSitesMenuIcon />
             <span>Connected Sites</span>
             <RightIconContainer>
@@ -57,7 +64,7 @@ export default function Menu({ onClose }: Props) {
         </ListItem>
 
         <ListItem>
-          <StyledLink component={AutoLockTimer}>
+          <StyledLink to={router.autoLockTimer}>
             <AutoLockTimerMenuIcon />
             <span>Auto-Lock Timer</span>
             <RightIconContainer>
@@ -66,7 +73,7 @@ export default function Menu({ onClose }: Props) {
           </StyledLink>
         </ListItem>
         <ListItem>
-          <StyledLink component={ChangePassword}>
+          <StyledLink to={router.changePassword}>
             <ChangePasswordMenuIcon />
             <span>Change Password</span>
             <RightIconContainer>
@@ -81,9 +88,7 @@ export default function Menu({ onClose }: Props) {
           </StyledLink>
         </ListItem> */}
         <ListItem>
-          <StyledLink
-            component={activeUser?.meta?.notSecured ? CreateAccount : BackupAccount}
-            props={{ redirectedFromDashboard: true }}>
+          <StyledLink to={backupLocation}>
             <BackupMenuIcon />
             <span>Backup Account</span>
             <RightIconContainer>
@@ -93,7 +98,7 @@ export default function Menu({ onClose }: Props) {
         </ListItem>
 
         <ListItem>
-          <StyledLink component={RemoveAccount}>
+          <StyledLink to={router.removeAccount}>
             <RemoveWalletMenuIcon />
             <span>Remove Account</span>
             <RightIconContainer>

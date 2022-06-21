@@ -3,11 +3,12 @@ import LockIcon from 'assets/svgComponents/LockIcon';
 import Button from 'components/primitives/Button';
 import Wallet from 'pages/Wallet/Wallet';
 import { memo, useEffect } from 'react';
-import { Link } from 'react-chrome-extension-router';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import RightArrow from 'assets/svgComponents/RightArrow';
 import { useAccount } from 'context/AccountContext';
 import { addAccountMeta } from 'utils/polkadot';
+import { router } from 'router/router';
 
 export default memo(function CongratsBackingUp() {
   const account = useAccount();
@@ -42,7 +43,7 @@ export default memo(function CongratsBackingUp() {
         </Description>
         <HelperText>settings {'>'} security & privacy</HelperText>
       </MainContent>
-      <StyledLink component={Wallet}>
+      <StyledLink to={router.home}>
         <Button text={'Continue'} Icon={<RightArrow width={23} />}></Button>
       </StyledLink>
     </Container>

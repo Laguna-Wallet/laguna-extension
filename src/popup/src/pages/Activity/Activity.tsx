@@ -3,8 +3,6 @@ import { useAccount } from 'context/AccountContext';
 import activityBg from 'assets/imgs/activity-bg.png';
 import Header from 'pages/Wallet/Header';
 import Footer from 'pages/Wallet/Footer';
-import { goTo } from 'react-chrome-extension-router';
-import Wallet from 'pages/Wallet/Wallet';
 import { recodeAddress } from 'utils/polkadot';
 import { useEffect, useState } from 'react';
 import ThreeDotsIcon from 'assets/svgComponents/ThreeDotsIcon';
@@ -21,6 +19,8 @@ import { fetchAccountsTransactions } from 'utils/fetchTransactions';
 import Popup from 'components/Popup/Popup';
 import Loader from 'components/Loader/Loader';
 import InactiveField from 'components/InactiveField/InactiveField';
+import { router } from 'router/router';
+import { useHistory } from 'react-router-dom';
 
 type Props = {
   isMenuOpen?: boolean;
@@ -78,6 +78,7 @@ export const ActivityItem = ({ transaction, onClick, bgColor }: Props) => {
 
 export default function Activity() {
   const account = useAccount();
+  const history = useHistory();
 
   const wallet = useSelector((state: any) => state.wallet);
   // const transactions = wallet?.transactions[account.getActiveAccount().address];
@@ -112,7 +113,7 @@ export default function Activity() {
 
   return (
     <Container bg={activityBg} isEmpty={!transactions.length}>
-      <Header backAction={() => goTo(Wallet)} title="Activity" />
+      <Header backAction={() => history.push(router.home)} title="Activity" />
       {transactions.length ? (
         <>
           <Content>
@@ -170,7 +171,7 @@ function handleIcons(chain: any) {
   }
 }
 
-const Container = styled.div<{ bg: string, isEmpty: boolean }>`
+const Container = styled.div<{ bg: string; isEmpty: boolean }>`
   width: 100%;
   height: 100%;
   display: flex;
@@ -180,7 +181,7 @@ const Container = styled.div<{ bg: string, isEmpty: boolean }>`
   position: relative;
   background-image: ${({ bg }) => `url(${bg})`};
   background-size: cover;
-  padding-top: ${({isEmpty}) => (isEmpty ? '88px' : '50px')};
+  padding-top: ${({ isEmpty }) => (isEmpty ? '88px' : '50px')};
   padding-bottom: 50px;
   overflow: hidden;
 `;

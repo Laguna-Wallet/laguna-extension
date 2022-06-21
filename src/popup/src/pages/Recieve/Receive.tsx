@@ -11,7 +11,7 @@ import { State } from 'redux/store';
 
 export interface PropsFromTokenDashboard {
   fromTokenDashboard?: boolean;
-  asset: Asset;
+  asset?: Asset;
   chain?: string;
 }
 

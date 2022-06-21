@@ -3,23 +3,32 @@
   "name": "HydrogenX Wallet",
   "version": "1.0.0",
   "description": "HydrogenX Polkadot Wallet",
-  "permissions": ["background", "storage", "notifications", "alarms", "clipboardRead", "clipboardWrite", "idle", "tabs", "activeTab", " *://*.coingecko.com/* "],
+  "permissions": [
+    "storage",
+    "notifications",
+    "alarms",
+    "clipboardRead",
+    "clipboardWrite",
+    "idle",
+    "tabs",
+    "activeTab"
+  ],
   "browser_action": {
     "default_popup": "popup/index.html",
     "default_title": "HydrogenX Polkadot Wallet"
   },
   "icons": {},
   "background": {
-    "scripts": ["background.js"],
+    "scripts": ["browser-polyfill.js", "background.js"],
     "persistent": true
   },
   "content_scripts": [
     {
-      "js": ["content.js"],
+      "js": ["browser-polyfill.js", "content.js"],
       "matches": ["http://*/*", "https://*/*"],
       "run_at": "document_start"
     }
   ],
   "web_accessible_resources": ["page.js"],
-  "content_security_policy": "script-src 'self' object-src 'self'"
+  "content_security_policy": "script-src 'self' blob: 'unsafe-eval' 'wasm-eval'; object-src 'self'"
 }

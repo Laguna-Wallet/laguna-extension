@@ -6,6 +6,7 @@ import { changeDappAuthorization } from 'redux/actions';
 import CheckMarkIcon from 'assets/svgComponents/CheckMarkIcon';
 import { CheckIcon } from '@heroicons/react/outline';
 import { Messages } from 'utils/types';
+import browser from 'webextension-polyfill';
 
 export default function RequestToConnect() {
   const { pendingDappAuthorization } = useSelector((state: any) => state.wallet);
@@ -15,7 +16,7 @@ export default function RequestToConnect() {
   const dappName = pendingDappAuthorization?.pendingDappAuthorization[0]?.request?.requestOrigin;
 
   const handleApprove = () => {
-    chrome.runtime.sendMessage({
+    browser.runtime.sendMessage({
       type: Messages.DappAuthRequest,
       payload: { approved: true, pendingDapp, POPUP_CONTENT: process.env.REACT_APP_POPUP_CONTENT }
     });
@@ -25,7 +26,7 @@ export default function RequestToConnect() {
   };
 
   const handleCancel = () => {
-    chrome.runtime.sendMessage({
+    browser.runtime.sendMessage({
       type: Messages.DappAuthRequest,
       payload: { approved: false, pendingDapp }
     });

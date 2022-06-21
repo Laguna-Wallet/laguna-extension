@@ -5,13 +5,12 @@ import { MnemonicsDescription } from 'components/popups/MnemonicsDescription';
 import Button from 'components/primitives/Button';
 import { useEnterClickListener } from 'hooks/useEnterClickListener';
 import WizardHeader from 'pages/AddImportAccount/WizardHeader';
-import SignUp from 'pages/SignUp/SignUp';
-import Wallet from 'pages/Wallet/Wallet';
 import { useState } from 'react';
-import { goTo } from 'react-chrome-extension-router';
 import { useWizard } from 'react-use-wizard';
 import styled from 'styled-components';
 import { SecurityLevelEnum } from '../CreateAccount';
+import { useHistory } from 'react-router-dom';
+import { router } from 'router/router';
 
 // todo onBack Prop wizard
 
@@ -28,6 +27,8 @@ export default function ChooseSecurityLevel({
   redirectedFromSignUp,
   redirectedFromDashboard
 }: Props) {
+  const history = useHistory();
+
   const { nextStep, previousStep } = useWizard();
 
   const [isMnemonicDescriptionOpen, setIsMnemonicDescriptionOpen] = useState<boolean>();
@@ -41,14 +42,14 @@ export default function ChooseSecurityLevel({
         // title={'SECURE YOUR WALLET'}
         onClose={() => {
           if (redirectedFromSignUp) {
-            goTo(SignUp);
+            history.push(router.signUp);
           } else {
-            goTo(Wallet);
+            history.push(router.home);
           }
         }}
         onBack={() => {
           if (redirectedFromSignUp) {
-            goTo(SignUp);
+            history.push(router.signUp);
           } else {
             previousStep();
           }

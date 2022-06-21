@@ -5,13 +5,14 @@ import TriangleIcon from 'assets/svgComponents/TriangleIcon';
 import Button from 'components/primitives/Button';
 import { useAccount } from 'context/AccountContext';
 import type { KeyringPair } from '@polkadot/keyring/types';
-import { Link } from 'react-chrome-extension-router';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import AddImportForBoardedUser from 'pages/AddImportAccount/AddImportForBoardedUser';
 import { getAccountImage, truncateString } from 'utils';
 import { useDispatch } from 'react-redux';
 import { toggleLoading } from 'redux/actions';
 import keyring from '@polkadot/ui-keyring';
+import { router } from 'router/router';
 
 type Props = {
   userContainerWidth: number;
@@ -83,7 +84,7 @@ export default function Accounts({ userContainerWidth }: Props) {
             );
           })}
       </AccountsContainer>
-      <StyledLink component={AddImportForBoardedUser}>
+      <StyledLink to={router.addImportForBoardedUser}>
         <Button
           width="100%"
           type="button"

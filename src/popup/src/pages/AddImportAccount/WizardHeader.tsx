@@ -1,9 +1,9 @@
 import { useWizard } from 'react-use-wizard';
 import styled from 'styled-components';
-import { goTo } from 'react-chrome-extension-router';
-import Wallet from 'pages/Wallet/Wallet';
 import LeftArrowThinIcon from 'assets/svgComponents/LeftArrowThinIcon';
 import ProgressBarCloseIcon from 'assets/svgComponents/ProgressBarCloseIcon';
+import { useHistory } from 'react-router-dom';
+import { router } from 'router/router';
 
 type Props = {
   title?: string;
@@ -35,11 +35,13 @@ export default function WizardHeader({
   isMnemonics = false,
   isImportPhase = false
 }: Props) {
+  const history = useHistory();
+
   const { activeStep, previousStep, isFirstStep } = useWizard();
 
   const handleBack = () => {
     if (isFirstStep && !isImportPhase) {
-      goTo(Wallet);
+      history.push(router.home);
     }
     if (onBack) {
       onBack();

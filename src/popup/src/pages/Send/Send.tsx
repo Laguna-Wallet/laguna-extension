@@ -1,16 +1,6 @@
 import styled from 'styled-components';
-import walletBG from 'assets/imgs/walletBG.jpg';
-import Header from 'pages/Wallet/Header';
 import SelectAsset from './SelectAsset';
-import BarcodeIcon from 'assets/svgComponents/BarcodeIcon';
-import SharpIcon from 'assets/svgComponents/SharpIcon';
-import WalletIcon from 'assets/svgComponents/WalletIcon';
-import ContactsIcon from 'assets/svgComponents/ContactsIcon';
-import HumbleInput from 'components/primitives/HumbleInput';
-import Button from 'components/primitives/Button';
-import RightArrow from 'assets/svgComponents/RightArrow';
 import Confirm from './Confirm';
-import { goTo, Link } from 'react-chrome-extension-router';
 import {
   getApiInstance,
   getAssets,
@@ -48,7 +38,7 @@ export type FlowValue =
 
 type Props = {
   initialIsContactsPopupOpen?: boolean;
-  propsFromTokenDashboard: PropsFromTokenDashboard;
+  propsFromTokenDashboard?: PropsFromTokenDashboard;
 };
 
 export default function Send({ initialIsContactsPopupOpen, propsFromTokenDashboard }: Props) {

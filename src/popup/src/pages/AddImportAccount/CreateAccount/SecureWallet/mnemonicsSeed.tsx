@@ -6,12 +6,11 @@ import Button from 'components/primitives/Button';
 import { useWizard } from 'react-use-wizard';
 import { useAccount } from 'context/AccountContext';
 import WizardHeader from 'pages/AddImportAccount/WizardHeader';
-import { goTo } from 'react-chrome-extension-router';
-import Wallet from 'pages/Wallet/Wallet';
-import SignUp from 'pages/SignUp/SignUp';
 import Snackbar from 'components/Snackbar/Snackbar';
 import { MnemonicsDescription } from 'components/popups/MnemonicsDescription';
 import { useEnterClickListener } from 'hooks/useEnterClickListener';
+import { useHistory } from 'react-router-dom';
+import { router } from 'router/router';
 
 type Props = {
   redirectedFromSignUp?: boolean;
@@ -19,6 +18,8 @@ type Props = {
 };
 
 export default function MnemonicsSeed({ redirectedFromSignUp, redirectedFromDashboard }: Props) {
+  const history = useHistory();
+
   const { nextStep, previousStep, handleStep } = useWizard();
   const [mnemonics, setMnemonics] = useState<string[]>([]);
 
@@ -54,9 +55,9 @@ export default function MnemonicsSeed({ redirectedFromSignUp, redirectedFromDash
       <WizardHeader
         onClose={() => {
           if (redirectedFromSignUp) {
-            goTo(SignUp);
+            history.push(router.signUp);
           } else {
-            goTo(Wallet);
+            history.push(router.home);
           }
         }}
         onBack={() => {

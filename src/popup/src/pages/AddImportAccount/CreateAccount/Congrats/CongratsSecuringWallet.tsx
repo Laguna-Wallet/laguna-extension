@@ -1,11 +1,11 @@
 import CheckMarkIcon from 'assets/svgComponents/CheckMarkIcon';
 import LockIcon from 'assets/svgComponents/LockIcon';
 import Button from 'components/primitives/Button';
-import Wallet from 'pages/Wallet/Wallet';
 import { memo } from 'react';
-import { Link } from 'react-chrome-extension-router';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import RightArrow from 'assets/svgComponents/RightArrow';
+import { router } from 'router/router';
 
 export default memo(function CongratsSecuringWallet() {
   return (
@@ -27,7 +27,7 @@ export default memo(function CongratsSecuringWallet() {
         </Description>
         <HelperText>settings {'>'} security & privacy</HelperText>
       </MainContent>
-      <StyledLink component={Wallet}>
+      <StyledLink to={router.home}>
         <Button text={'Continue'} Icon={<RightArrow width={23} />}></Button>
       </StyledLink>
     </Container>

@@ -6,6 +6,7 @@ import { changeDappAuthorization } from 'redux/actions';
 import CheckMarkIcon from 'assets/svgComponents/CheckMarkIcon';
 import { CheckIcon } from '@heroicons/react/outline';
 import { Messages } from 'utils/types';
+import browser from 'webextension-polyfill';
 
 export default function RequestToSignRaw() {
   const { pendingToSignRaw: pendingDapp } = useSelector((state: any) => state.wallet);
@@ -15,7 +16,7 @@ export default function RequestToSignRaw() {
   const dappName = pendingDapp?.data?.url;
 
   const handleApprove = () => {
-    chrome.runtime.sendMessage({
+    browser.runtime.sendMessage({
       type: Messages.SignRawRequest,
       payload: { approved: true, pendingDapp, POPUP_CONTENT: process.env.REACT_APP_POPUP_CONTENT }
     });
@@ -25,7 +26,7 @@ export default function RequestToSignRaw() {
   };
 
   const handleCancel = () => {
-    chrome.runtime.sendMessage({
+    browser.runtime.sendMessage({
       type: Messages.SignRawRequest,
       payload: { approved: false, pendingDapp }
     });

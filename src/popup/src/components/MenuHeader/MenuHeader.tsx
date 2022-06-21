@@ -10,10 +10,11 @@ import PencilIcon from 'assets/svgComponents/PencilIcon';
 import MenuLockIcon from 'assets/svgComponents/MenuIcons/MenuLockIcon';
 import { Messages, StorageKeys } from 'utils/types';
 import { saveToStorage } from 'utils/chrome';
-import { goTo } from 'react-chrome-extension-router';
-import WelcomeBack from 'pages/WelcomeBack/WelcomeBack';
 import MenuMainLogo from 'assets/svgComponents/MenuIcons/MenuMainLogo';
 import AvatarEditIcon from 'assets/svgComponents/AvatarEditIcon';
+import { useHistory } from 'react-router-dom';
+import { router } from 'router/router';
+import browser from 'webextension-polyfill';
 
 type Props = {
   isOpen: boolean;
@@ -26,6 +27,8 @@ type Props = {
 
 export default function MenuHeader({ showUser, onClose, title, backAction }: Props) {
   const account = useAccount();
+  const history = useHistory();
+
   const [name, setName] = useState(account?.getActiveAccount()?.meta?.name);
   const [editMode, setEditMode] = useState<boolean>(false);
   const inputFile = useRef<HTMLInputElement>(null);
@@ -75,10 +78,10 @@ export default function MenuHeader({ showUser, onClose, title, backAction }: Pro
   };
 
   const handleLogout = () => {
-    chrome.runtime.sendMessage({
+    browser.runtime.sendMessage({
       type: Messages.LogOutUser
     });
-    goTo(WelcomeBack);
+    history.push(router.home);
   };
 
   return (

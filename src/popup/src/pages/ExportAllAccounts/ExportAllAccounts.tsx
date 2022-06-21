@@ -2,14 +2,16 @@ import Button from 'components/primitives/Button';
 import Input from 'components/primitives/Input';
 import { PageContainer } from 'components/ui';
 import { useFormik } from 'formik';
-import Wallet from 'pages/Wallet/Wallet';
-import { Link, goTo } from 'react-chrome-extension-router';
 import styled from 'styled-components';
 import { exportJson } from 'utils';
 import { exportAll } from 'utils/polkadot';
 import { exportAllSchema } from 'utils/validations';
+import { useHistory, Link } from 'react-router-dom';
+import { router } from 'router/router';
 
 export default function ExportAllAccounts() {
+  const history = useHistory();
+
   const formik = useFormik({
     initialValues: {
       password: ''
@@ -18,7 +20,7 @@ export default function ExportAllAccounts() {
     onSubmit: async (values) => {
       const json = await exportAll(values.password);
       await exportJson(json);
-      goTo(Wallet);
+      history.push(router.home);
     }
   });
 
@@ -40,7 +42,7 @@ export default function ExportAllAccounts() {
           />
           <Button type="submit" text="Export All Accounts" justify="center" />
         </Form>
-        <Link component={Wallet}>
+        <Link to={router.home}>
           <CancelBtn>Cancel</CancelBtn>
         </Link>
       </MainContent>

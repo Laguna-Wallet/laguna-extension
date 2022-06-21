@@ -1,12 +1,8 @@
-import ActiveLightingIcon from 'assets/svgComponents/ActiveLightingIcon';
-import ArrowsIcon from 'assets/svgComponents/ArrowsIcon';
 import LightingIcon from 'assets/svgComponents/LightingIcon';
 import WalletIcon from 'assets/svgComponents/WalletIcon';
-import Activity from 'pages/Activity/Activity';
-import { Link } from 'react-chrome-extension-router';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import Wallet from './Wallet';
-import activeActivities from 'assets/imgs/activeActivities.png';
+import { router } from 'router/router';
 
 // todo move to enum
 type Props = {
@@ -16,7 +12,7 @@ type Props = {
 export default function Footer({ activeItem }: Props) {
   return (
     <Container>
-      <StyledLink component={Wallet}>
+      <StyledLink to={router.home}>
         {activeItem === 'wallet' ? (
           <WalletIcon stroke="#18191a" />
         ) : (
@@ -26,7 +22,7 @@ export default function Footer({ activeItem }: Props) {
       {/* <StyledLink component={Wallet}>
         <ArrowsIcon stroke="#b1b5c3" />
       </StyledLink> */}
-      <StyledLink component={Activity}>
+      <StyledLink to={router.activity}>
         {activeItem === 'activity' ? <LightingIcon fill="#18191a" /> : <LightingIcon />}
       </StyledLink>
     </Container>

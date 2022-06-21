@@ -14,11 +14,10 @@ import arrayShuffle from 'array-shuffle';
 import Snackbar from 'components/Snackbar/Snackbar';
 import { useWizard } from 'react-use-wizard';
 import WizardHeader from 'pages/AddImportAccount/WizardHeader';
-import SignUp from 'pages/SignUp/SignUp';
-import Wallet from 'pages/Wallet/Wallet';
-import { goTo } from 'react-chrome-extension-router';
 import { addAccountMeta } from 'utils/polkadot';
 import { useEnterClickListener } from 'hooks/useEnterClickListener';
+import { useHistory } from 'react-router-dom';
+import { router } from 'router/router';
 
 const calculateWordColor = (index: number, mnemonicIndexToChoose: number) => {
   if (index === mnemonicIndexToChoose) return '#F9F7CD';
@@ -37,6 +36,8 @@ export default function ConfirmSeed({
   redirectedFromDashboard,
   nextStepFromParent
 }: Props) {
+  const history = useHistory();
+
   const { nextStep, previousStep, handleStep } = useWizard();
   const { mnemonics, getActiveAccount, saveActiveAccount } = useAccount();
   const [mnemonicIndexes, setMnemonicIndexes] = useState<MnemonicsTriple>();
@@ -105,9 +106,9 @@ export default function ConfirmSeed({
       <WizardHeader
         onClose={() => {
           if (redirectedFromSignUp) {
-            goTo(SignUp);
+            history.push(router.signUp);
           } else {
-            goTo(Wallet);
+            history.push(router.home);
           }
         }}
         onBack={() => {

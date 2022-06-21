@@ -4,18 +4,21 @@ import ShareIcon from 'assets/svgComponents/ShareIcon';
 import MenuHeader from 'components/MenuHeader/MenuHeader';
 import Snackbar from 'components/Snackbar/Snackbar';
 import { useAccount } from 'context/AccountContext';
-import Wallet from 'pages/Wallet/Wallet';
-import { goTo } from 'react-chrome-extension-router';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { Messages, SnackbarMessages } from 'utils/types';
+import { useHistory } from 'react-router-dom';
+import { router } from 'router/router';
+import browser from 'webextension-polyfill';
 
 // todo proper typing
 type Props = {
-  handleSubmit: any;
+  handleSubmit?: any;
 };
 
 function ConnectedSites({ handleSubmit }: Props) {
+  const history = useHistory();
+
   const [isOpen, setOpen] = useState<boolean>(true);
 
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
@@ -27,13 +30,13 @@ function ConnectedSites({ handleSubmit }: Props) {
   const { connectedApps } = useSelector((state: any) => state.wallet);
 
   useEffect(() => {
-    chrome.runtime.sendMessage({
+    browser.runtime.sendMessage({
       type: Messages.ConnectedApps
     });
   }, []);
 
   const handleRevoke = (dappName: string) => {
-    chrome.runtime.sendMessage({ type: Messages.RevokeDapp, payload: { dappName } });
+    browser.runtime.sendMessage({ type: Messages.RevokeDapp, payload: { dappName } });
     setIsSnackbarOpen(true);
     setSnackbarMessage(SnackbarMessages.AccessRevoked);
   };
@@ -44,8 +47,10 @@ function ConnectedSites({ handleSubmit }: Props) {
         isOpen={isOpen}
         setOpen={setOpen}
         title="CONNECTED SITES"
-        onClose={() => goTo(Wallet)}
-        backAction={() => goTo(Wallet, { isMenuOpen: true })}
+        onClose={() => history.push(router.home)}
+        backAction={() => {
+          history.push({ pathname: router.home, state: { isMenuOpen: true } });
+        }}
       />
 
       <Content>

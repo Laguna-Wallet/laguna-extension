@@ -2,7 +2,9 @@ import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { reset } from 'redux-form';
 import { Wizard } from 'react-use-wizard';
-import { goTo } from 'react-chrome-extension-router';
+import { useHistory } from 'react-router-dom';
+import { router } from 'router/router';
+import browser from 'webextension-polyfill';
 
 import { mnemonicValidate } from '@polkadot/util-crypto';
 import { isHex } from '@polkadot/util';
@@ -20,13 +22,10 @@ import { State } from 'redux/store';
 import { useAccount } from 'context/AccountContext';
 
 import CreatePassword from '../CreateAccount/CreatePassword/CreatePassword';
-import SignUp from 'pages/SignUp/SignUp';
 import EncodeAccount from 'pages/AddImportAccount/EncodeAccount';
 import SetupComplete from 'pages/AddImportAccount/SetupComplete';
 import ImportPhase from 'pages/AddImportAccount/ImportAccount/importPhase';
-import Wallet from 'pages/Wallet/Wallet';
 import { saveToStorage } from 'utils/chrome';
-import WelcomeBack from 'pages/WelcomeBack/WelcomeBack';
 import { clearAccountsFromStorage } from 'utils';
 import { toggleLoading } from 'redux/actions';
 
@@ -63,6 +62,8 @@ type Props = {
 };
 
 function ImportAccount({ redirectedFromSignUp, redirectedFromForgotPassword }: Props) {
+  const history = useHistory();
+
   const account = useAccount();
   const encoded = account.encryptedPassword;
 
@@ -87,12 +88,12 @@ function ImportAccount({ redirectedFromSignUp, redirectedFromForgotPassword }: P
           account.saveActiveAccount(pair);
         }
         if (redirectedFromForgotPassword) {
-          chrome.runtime.sendMessage({
+          browser.runtime.sendMessage({
             type: Messages.ForgotPassword,
             payload: { seed: seedPhase, password, meta: pair.meta }
           });
         } else {
-          chrome.runtime.sendMessage({
+          browser.runtime.sendMessage({
             type: Messages.AddToKeyring,
             payload: { seed: seedPhase, password, meta: pair.meta }
           });
@@ -117,19 +118,19 @@ function ImportAccount({ redirectedFromSignUp, redirectedFromForgotPassword }: P
       }
 
       if (redirectedFromForgotPassword) {
-        chrome.runtime.sendMessage({
+        browser.runtime.sendMessage({
           type: Messages.ForgotPassword,
           payload: { password, json: file, jsonPassword, meta: newPair.meta }
         });
       } else {
-        chrome.runtime.sendMessage({
+        browser.runtime.sendMessage({
           type: Messages.AddToKeyring,
           payload: { password, json: file, jsonPassword, meta: newPair.meta }
         });
       }
     }
 
-    chrome.runtime.sendMessage({
+    browser.runtime.sendMessage({
       type: Messages.AuthUser,
       payload: { password }
     });
@@ -140,7 +141,7 @@ function ImportAccount({ redirectedFromSignUp, redirectedFromForgotPassword }: P
     dispatch(reset('EncodeAccount'));
 
     if (redirectedFromForgotPassword) {
-      goTo(Wallet);
+      history.push(router.home);
     }
   };
 
@@ -148,11 +149,11 @@ function ImportAccount({ redirectedFromSignUp, redirectedFromForgotPassword }: P
     dispatch(reset('ImportPhase'));
     dispatch(reset('EncodeAccount'));
     if (redirectedFromSignUp) {
-      goTo(SignUp);
+      history.push(router.signUp);
     } else if (redirectedFromForgotPassword) {
-      goTo(WelcomeBack);
+      history.push(router.welcomeBack);
     } else {
-      goTo(Wallet);
+      history.push(router.home);
     }
   };
 

@@ -5,15 +5,16 @@ import Button from 'components/primitives/Button';
 import HumbleInput from 'components/primitives/HumbleInput';
 import Snackbar from 'components/Snackbar/Snackbar';
 import { useAccount } from 'context/AccountContext';
-import Wallet from 'pages/Wallet/Wallet';
 import { useState } from 'react';
-import { goTo } from 'react-chrome-extension-router';
 import { Field, InjectedFormProps, reduxForm } from 'redux-form';
 import styled from 'styled-components';
 import { encryptPassword, isObjectEmpty, objectToArray } from 'utils';
 import { saveToStorage } from 'utils/chrome';
-import { encryptKeyringPairs, encryptMetaData, validatePassword } from 'utils/polkadot';
+import { validatePassword } from 'utils/polkadot';
 import { Messages, SnackbarMessages, StorageKeys } from 'utils/types';
+import { useHistory } from 'react-router-dom';
+import { router } from 'router/router';
+import browser from 'webextension-polyfill';
 
 type Form = {
   currentPassword: string;
@@ -60,6 +61,8 @@ const validate = (values: Form) => {
 };
 
 function ChangePassword({ handleSubmit, valid }: InjectedFormProps<Form>) {
+  const history = useHistory();
+
   const account = useAccount();
   const activeAccount = account.getActiveAccount();
 
@@ -93,7 +96,7 @@ function ChangePassword({ handleSubmit, valid }: InjectedFormProps<Form>) {
       const newAccount = keyring.getPair(activeAccount?.address);
       account.saveActiveAccount(newAccount);
 
-      chrome.runtime.sendMessage({
+      browser.runtime.sendMessage({
         type: Messages.ReEncryptPairs,
         payload: {
           oldPassword: values?.currentPassword,
@@ -101,8 +104,10 @@ function ChangePassword({ handleSubmit, valid }: InjectedFormProps<Form>) {
           metaData: keyring.getPairs().map((pair) => ({ address: pair.address, meta: pair.meta }))
         }
       });
-
-      goTo(Wallet, { snackbar: { show: true, message: SnackbarMessages.PasswordChanged } });
+      history.push({
+        pathname: router.home,
+        state: { snackbar: { show: true, message: SnackbarMessages.PasswordChanged } }
+      });
     }
   };
 
@@ -112,8 +117,10 @@ function ChangePassword({ handleSubmit, valid }: InjectedFormProps<Form>) {
         isOpen={isOpen}
         setOpen={setOpen}
         title="CHANGE PASSWORD"
-        onClose={() => goTo(Wallet)}
-        backAction={() => goTo(Wallet, { isMenuOpen: true })}
+        onClose={() => history.push(router.home)}
+        backAction={() => {
+          history.push({ pathname: router.home, state: { isMenuOpen: true } });
+        }}
       />
 
       <Content>
@@ -191,7 +198,9 @@ function ChangePassword({ handleSubmit, valid }: InjectedFormProps<Form>) {
           <ButtonsContainer>
             <Button
               type="button"
-              onClick={() => goTo(Wallet, { isMenuOpen: true })}
+              onClick={() => {
+                history.push({ pathname: router.home, state: { isMenuOpen: true } });
+              }}
               text="Cancel"
               color="#fff"
               bgColor="#414141"

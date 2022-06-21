@@ -1,6 +1,6 @@
 /*global chrome*/
 
-import { StorageKeys } from './types';
+import browser from 'webextension-polyfill';
 
 // todo refactor localStorage api to chrome.storage
 // export function saveToStorage({ key, value }: { key: string; value: string }) {
@@ -18,7 +18,7 @@ import { StorageKeys } from './types';
 export const getFromStorage = async function (key: string): Promise<string> {
   return new Promise((resolve, reject) => {
     try {
-      chrome.storage.local.get(key, function (value) {
+      browser.storage.local.get(key).then((value) => {
         resolve(value[key]);
       });
     } catch (ex) {
@@ -30,7 +30,7 @@ export const getFromStorage = async function (key: string): Promise<string> {
 export const saveToStorage = async function ({ key, value }: { key: string; value: any }) {
   return new Promise((resolve, reject) => {
     try {
-      chrome.storage.local.set({ [key]: value }, function () {
+      browser.storage.local.set({ [key]: value }).then(() => {
         resolve('');
       });
     } catch (ex) {
@@ -41,7 +41,7 @@ export const saveToStorage = async function ({ key, value }: { key: string; valu
 
 export function sendMessagePromise(obj: Record<string, unknown>): Promise<Record<string, any>> {
   return new Promise((resolve, reject) => {
-    chrome.runtime.sendMessage(obj, (response) => {
+    browser.runtime.sendMessage(obj).then((response) => {
       if (response) {
         resolve(response);
       } else {
@@ -54,7 +54,7 @@ export function sendMessagePromise(obj: Record<string, unknown>): Promise<Record
 export const clearFromStorage = async function (keys: string) {
   return new Promise((resolve, reject) => {
     try {
-      chrome.storage.local.remove(keys, function () {
+      browser.storage.local.remove(keys).then(() => {
         resolve('');
       });
     } catch (ex) {
@@ -65,12 +65,12 @@ export const clearFromStorage = async function (keys: string) {
 
 export function getFromChromeStorage(key: string) {
   return new Promise(function (resolve) {
-    chrome.storage.local.get([key], function (result) {
+    browser.storage.local.get([key]).then((result) => {
       resolve(result);
     });
   });
 }
 
 export async function saveToChromeStorage({ key, value }: { key: string; value: string }) {
-  await chrome.storage.local.set({ [key]: value });
+  await browser.storage.local.set({ [key]: value });
 }

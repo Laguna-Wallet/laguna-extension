@@ -5,18 +5,20 @@ import AddIcon from 'assets/svgComponents/AddIcon';
 import MenuHeader from 'components/MenuHeader/MenuHeader';
 import Button from 'components/primitives/Button';
 import Snackbar from 'components/Snackbar/Snackbar';
-import Wallet, { ShowSnackbar } from 'pages/Wallet/Wallet';
+import { ShowSnackbar } from 'pages/Wallet/Wallet';
 import { useEffect, useState } from 'react';
-import { goTo, Link } from 'react-chrome-extension-router';
 import styled from 'styled-components';
 import { truncateString } from 'utils';
-import AddAddress from './AddAddress';
+import { useHistory, Link } from 'react-router-dom';
+import { router } from 'router/router';
 
 type Props = {
-  snackbar: ShowSnackbar;
+  snackbar?: ShowSnackbar;
 };
 
 export default function AddressBook({ snackbar }: Props) {
+  const history = useHistory();
+
   const [isOpen, setOpen] = useState<boolean>(true);
   const [addresses, setAddresses] = useState<any[] | undefined>(undefined);
 
@@ -47,8 +49,8 @@ export default function AddressBook({ snackbar }: Props) {
         isOpen={isOpen}
         setOpen={setOpen}
         title="ADDRESS BOOK"
-        onClose={() => goTo(Wallet)}
-        backAction={() => goTo(Wallet, { isMenuOpen: true })}
+        onClose={() => history.push(router.home)}
+        backAction={() => history.push({ pathname: router.home, state: { isMenuOpen: true } })}
       />
 
       <Content>
@@ -63,9 +65,17 @@ export default function AddressBook({ snackbar }: Props) {
           <AddressesContainer>
             {addresses?.map((address) => (
               <StyledLink
-                key={address.address}
-                component={AddAddress}
-                props={{ edit: true, closeAction: () => goTo(Wallet), ...address }}>
+                to={{
+                  pathname: router.addAddress,
+                  state: {
+                    edit: true,
+                    closeAction: () => {
+                      history.push(router.home);
+                      return { ...address };
+                    }
+                  }
+                }}
+                key={address.address}>
                 <AddressComponent>
                   <Text>
                     {address.name}({truncateString(address.address)}){' '}
@@ -77,7 +87,7 @@ export default function AddressBook({ snackbar }: Props) {
           </AddressesContainer>
         )}
 
-        <StyledLink component={AddAddress} props={{ closeAction: () => goTo(Wallet) }}>
+        <StyledLink to={router.addAddress}>
           <Button
             text="Add Address"
             Icon={<AddIcon />}

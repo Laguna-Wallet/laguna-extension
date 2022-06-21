@@ -2,11 +2,9 @@ import styled from 'styled-components';
 import Header from 'pages/Wallet/Header';
 import Button from 'components/primitives/Button';
 import { FlowValue, SendAccountFlowEnum } from './Send';
-import { goTo } from 'react-chrome-extension-router';
 import { useAccount } from 'context/AccountContext';
 import { useWizard } from 'react-use-wizard';
 import { memo, useEffect, useState } from 'react';
-import Wallet from 'pages/Wallet/Wallet';
 import {
   getAccountNameByAddress,
   getContactNameByAddress,
@@ -19,6 +17,9 @@ import { Messages, SnackbarMessages } from 'utils/types';
 import NetworkIcons from 'components/primitives/NetworkIcons';
 import { reset } from 'redux-form';
 import Loader from 'components/Loader/Loader';
+import { useHistory } from 'react-router-dom';
+import { router } from 'router/router';
+import browser from 'webextension-polyfill';
 
 type Props = {
   fee: string;
@@ -32,6 +33,8 @@ type Props = {
 function Confirm({ fee, transfer, amountToSend, recoded, setBlockHash, flow }: Props) {
   const { nextStep, previousStep } = useWizard();
   const account = useAccount();
+  const history = useHistory();
+
   const dispatch = useDispatch();
   const [loadingTransaction, setLoadingTransaction] = useState(false);
   const [transactionConfirmed, setTransactionConfirmed] = useState(false);
@@ -54,7 +57,7 @@ function Confirm({ fee, transfer, amountToSend, recoded, setBlockHash, flow }: P
   const name = account?.getActiveAccount()?.meta?.name;
 
   const handleClick = async () => {
-    chrome.runtime.sendMessage({
+    browser.runtime.sendMessage({
       type: Messages.SendTransaction,
       payload: {
         sendTo: recoded,
@@ -69,12 +72,15 @@ function Confirm({ fee, transfer, amountToSend, recoded, setBlockHash, flow }: P
   };
 
   useEffect(() => {
-    chrome.runtime.onMessage.addListener((msg) => {
+    browser.runtime.onMessage.addListener((msg) => {
       if (msg.type === Messages.TransactionSuccess) {
         setBlockHash(msg.payload.block);
         setLoadingTransaction(false);
         setTransactionConfirmed(true);
-        goTo(Wallet, { snackbar: { show: true, message: SnackbarMessages.TransactionSent } });
+        history.push({
+          pathname: router.home,
+          state: { snackbar: { show: true, message: SnackbarMessages.TransactionSent } }
+        });
       }
     });
   }, []);
@@ -104,7 +110,7 @@ function Confirm({ fee, transfer, amountToSend, recoded, setBlockHash, flow }: P
         bgColor="#f2f2f2"
         closeAction={() => {
           dispatch(reset('sendToken'));
-          goTo(Wallet);
+          history.push(router.home);
         }}
         backAction={() => previousStep()}
       />
@@ -165,7 +171,7 @@ function Confirm({ fee, transfer, amountToSend, recoded, setBlockHash, flow }: P
       <BottomSection>
         <Button
           onClick={() => {
-            goTo(Wallet);
+            history.push(router.home);
             dispatch(reset('sendToken'));
           }}
           text="Cancel"
