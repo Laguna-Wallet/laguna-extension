@@ -243,7 +243,7 @@ function SendToken({
           </ContentItem>
           {handleShowAccountInput(flow, 'address') ? (
             <ContentItem>
-              <AddressContainer>Send to</AddressContainer>
+              <ContentItemTitle>Send to</ContentItemTitle>
               <Field
                 id="address"
                 name="address"
