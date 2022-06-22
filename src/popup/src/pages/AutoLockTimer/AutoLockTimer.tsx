@@ -10,7 +10,6 @@ import styled from 'styled-components';
 import { Messages, SnackbarMessages } from 'utils/types';
 import { useHistory, Link } from 'react-router-dom';
 import { router } from 'router/router';
-import browser from 'webextension-polyfill';
 
 function AutoLockTimer() {
   const history = useHistory();
@@ -45,7 +44,7 @@ function AutoLockTimer() {
       return;
     }
 
-    browser.runtime.sendMessage({
+    chrome.runtime.sendMessage({
       type: Messages.ChangeInterval,
       payload: { timeout: minutesToMilliseconds(Number(timeout)).toString() }
     });
@@ -56,7 +55,7 @@ function AutoLockTimer() {
   };
 
   useEffect(() => {
-    browser.runtime.sendMessage({ type: Messages.Timeout }).then((response) => {
+    chrome.runtime.sendMessage({ type: Messages.Timeout }, (response) => {
       changeTimeout(millisecondsToMinutes(response.payload.timeout).toString());
     });
   }, []);
@@ -75,7 +74,6 @@ function AutoLockTimer() {
               isMenuOpen: true
             }
           });
-          // goTo(Wallet, { isMenuOpen: true })
         }}
       />
       <Content>

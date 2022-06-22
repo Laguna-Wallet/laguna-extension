@@ -11,14 +11,14 @@ export default function IdleTimeoutWrapper({ children }: { children: React.React
   useEffect(() => {
     async function go() {
       const AuthResponse = await browser.runtime.sendMessage({ type: Messages.AuthCheck });
-      setIsLoggedIn(AuthResponse.payload.isLoggedIn);
+      // setIsLoggedIn(AuthResponse.payload.isLoggedIn);
     }
 
     go();
   }, []);
 
   const onAction = async () => {
-    browser.runtime.sendMessage({ type: Messages.ResetTimeout });
+    chrome.runtime.sendMessage({ type: Messages.ResetTimeout });
   };
 
   const idleTimer = useIdleTimer({ onAction });
