@@ -1,12 +1,6 @@
 import { useState } from 'react';
 import styled from 'styled-components';
-import AddressBook from 'pages/AddressBook/AddressBook';
 import MenuHeader from 'components/MenuHeader/MenuHeader';
-import AutoLockTimer from 'pages/AutoLockTimer/AutoLockTimer';
-import RemoveAccount from 'pages/RemoveAccount/RemoveAccount';
-import ChangePassword from 'pages/ChangePassword/ChangePassword';
-import BackupAccount from 'pages/BackupAccount/BackupAccount';
-import ConnectedSites from 'pages/ConnectedSites/ConnectedSites';
 import AddressMenuIcon from 'assets/svgComponents/MenuIcons/AddressMenuIcon';
 import ConnectedSitesMenuIcon from 'assets/svgComponents/MenuIcons/ConnectedSitesMenuIcon';
 import AutoLockTimerMenuIcon from 'assets/svgComponents/MenuIcons/AutoLockTimerMenuIcon';
@@ -15,8 +9,7 @@ import BackupMenuIcon from 'assets/svgComponents/MenuIcons/BackupMenuIcon';
 import RemoveWalletMenuIcon from 'assets/svgComponents/MenuIcons/RemoveWalletMenuIcon';
 import RightArrowMenuIcon from 'assets/svgComponents/MenuIcons/RightArrowMenuIcon';
 import { useAccount } from 'context/AccountContext';
-import CreateAccount from 'pages/AddImportAccount/CreateAccount/CreateAccount';
-// import Link from 'components/Link/Link';
+
 import { Link } from 'react-router-dom';
 import { router } from 'router/router';
 
@@ -26,6 +19,7 @@ type Props = {
 
 export default function Menu({ onClose }: Props) {
   const account = useAccount();
+
   const activeUser = account.getActiveAccount();
   const [isOpen, setOpen] = useState<boolean>(true);
 

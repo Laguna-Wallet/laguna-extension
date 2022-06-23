@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   copyToClipboard,
   generateNumberAbbreviation,
@@ -37,8 +37,11 @@ export default function ConfirmSeed({
   nextStepFromParent
 }: Props) {
   const history = useHistory();
+  const account = useAccount();
 
-  const { nextStep, previousStep, handleStep } = useWizard();
+  const activeAccount = useCallback(account.getActiveAccount(), [account]);
+
+  const { previousStep, handleStep } = useWizard();
   const { mnemonics, getActiveAccount, saveActiveAccount } = useAccount();
   const [mnemonicIndexes, setMnemonicIndexes] = useState<MnemonicsTriple>();
   const [chosenMnemonics, setChosenMnemonics] = useState<string[] | []>([]);
@@ -64,7 +67,7 @@ export default function ConfirmSeed({
       validateMnemonicChoice(mnemonics, chosenMnemonics, mnemonicIndexes as MnemonicsTriple) &&
       !isSnackbarOpen
     ) {
-      if (redirectedFromDashboard) {
+      if (redirectedFromDashboard || activeAccount?.meta?.notSecured) {
         const pair = addAccountMeta(getActiveAccount()?.address, { notSecured: false });
         saveActiveAccount(pair);
       }

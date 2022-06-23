@@ -81,7 +81,8 @@ export default function MenuHeader({ showUser, onClose, title, backAction }: Pro
     browser.runtime.sendMessage({
       type: Messages.LogOutUser
     });
-    history.push(router.home);
+
+    history.push(router.welcomeBack);
   };
 
   return (

@@ -1,6 +1,5 @@
 import keyring from '@polkadot/ui-keyring';
 import { useAccount } from 'context/AccountContext';
-import Wallet from 'pages/Wallet/Wallet';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import AES from 'crypto-js/aes';
@@ -177,8 +176,7 @@ function BackupAccount({ handleSubmit, valid }: InjectedFormProps<Props>) {
               bgColor="#fff"
               onClick={() => {
                 mnemonicHasBeenCopied && copyToClipboard('');
-                history.push(router.home);
-                // goTo(Wallet, { isMenuOpen: true });
+                history.push({ pathname: router.home, state: { isMenuOpen: true } });
               }}
             />
           </>
