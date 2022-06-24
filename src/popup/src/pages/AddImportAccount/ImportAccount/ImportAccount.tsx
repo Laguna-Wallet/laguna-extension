@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { reset } from 'redux-form';
 import { Wizard } from 'react-use-wizard';
-import { useHistory } from 'react-router-dom';
+import { RouteComponentProps, useHistory } from 'react-router-dom';
 import { router } from 'router/router';
 import browser from 'webextension-polyfill';
 
@@ -63,6 +63,7 @@ type Props = {
 
 function ImportAccount({ redirectedFromSignUp, redirectedFromForgotPassword }: Props) {
   const history = useHistory();
+  const { location } = history as RouteComponentProps | any;
 
   const account = useAccount();
   const encoded = account.encryptedPassword;
@@ -74,11 +75,14 @@ function ImportAccount({ redirectedFromSignUp, redirectedFromForgotPassword }: P
 
   const { seedPhase, file, password: jsonPassword }: any = { ...importPhaseFormValues };
 
+  const redirectPassword =
+    redirectedFromForgotPassword || location.state?.redirectedFromForgotPassword;
+
   const handleEncode = async (password: string) => {
     if (seedPhase) {
       if (mnemonicValidate(seedPhase)) {
         const pair = await importFromMnemonic(seedPhase, password);
-        if (redirectedFromForgotPassword) {
+        if (redirectPassword) {
           clearAccountsFromStorage(pair.address);
           account.saveActiveAccount(pair);
           dispatch(toggleLoading(true));
@@ -87,7 +91,7 @@ function ImportAccount({ redirectedFromSignUp, redirectedFromForgotPassword }: P
         if (!account.getActiveAccount()) {
           account.saveActiveAccount(pair);
         }
-        if (redirectedFromForgotPassword) {
+        if (redirectPassword) {
           browser.runtime.sendMessage({
             type: Messages.ForgotPassword,
             payload: { seed: seedPhase, password, meta: pair.meta }
@@ -107,7 +111,7 @@ function ImportAccount({ redirectedFromSignUp, redirectedFromForgotPassword }: P
 
       const newPair = await encryptKeyringPair(pair, jsonPassword, password);
 
-      if (redirectedFromForgotPassword) {
+      if (redirectPassword) {
         clearAccountsFromStorage(pair.address);
         account.saveActiveAccount(newPair);
         dispatch(toggleLoading(true));
@@ -117,7 +121,7 @@ function ImportAccount({ redirectedFromSignUp, redirectedFromForgotPassword }: P
         account.saveActiveAccount(newPair);
       }
 
-      if (redirectedFromForgotPassword) {
+      if (redirectPassword) {
         browser.runtime.sendMessage({
           type: Messages.ForgotPassword,
           payload: { password, json: file, jsonPassword, meta: newPair.meta }
@@ -140,7 +144,7 @@ function ImportAccount({ redirectedFromSignUp, redirectedFromForgotPassword }: P
     dispatch(reset('ImportPhase'));
     dispatch(reset('EncodeAccount'));
 
-    if (redirectedFromForgotPassword) {
+    if (redirectPassword) {
       history.push(router.home);
     }
   };
@@ -163,12 +167,12 @@ function ImportAccount({ redirectedFromSignUp, redirectedFromForgotPassword }: P
         {!encoded && <CreatePassword redirectedFromSignUp={redirectedFromSignUp} />}
 
         <ImportPhase
-          redirectedFromForgotPassword={redirectedFromForgotPassword}
+          redirectedFromForgotPassword={redirectPassword}
           redirectedFromSignUp={redirectedFromSignUp}
           onClose={onClose}
         />
 
-        {!redirectedFromForgotPassword && (
+        {!redirectedFromForgotPassword && !location.state?.redirectedFromForgotPassword && (
           <EncodeAccount
             title="Import Complete!"
             descriptionText="To encrypt your new account please enter your password below:"
@@ -176,10 +180,10 @@ function ImportAccount({ redirectedFromSignUp, redirectedFromForgotPassword }: P
           />
         )}
 
-        {redirectedFromForgotPassword && (
+        {redirectPassword && (
           <CreatePassword
             handleEncode={handleEncode}
-            redirectedFromForgotPassword={redirectedFromForgotPassword}
+            redirectedFromForgotPassword={redirectPassword}
           />
         )}
 
