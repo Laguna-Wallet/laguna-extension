@@ -43,6 +43,12 @@ export default function SelectNetwork({ setSelectedNetwork }: Props) {
     go();
   }, []);
 
+  const renderNetwork = (assets: Asset[] & Network[], networksFilter: string) => {
+    return assets.filter((asset) =>
+      asset.name.toLowerCase().includes(networksFilter.toLowerCase())
+    );
+  };
+
   const handleClick = (asset: Network & Asset) => {
     setSelectedNetwork(asset);
     nextStep();
@@ -84,7 +90,7 @@ export default function SelectNetwork({ setSelectedNetwork }: Props) {
           {assets
             ? assets.length === 0
               ? 'no assets'
-              : assets.map((asset: Asset & Network) => {
+              : renderNetwork(assets, networksFilter).map((asset: any) => {
                   return (
                     <ChainItemContainer key={asset.chain}>
                       <ChainItem

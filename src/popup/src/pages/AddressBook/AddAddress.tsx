@@ -42,9 +42,11 @@ export default function AddAddress({
   redirectedFromSend
 }: Props) {
   const history = useHistory();
-  const { state } = history.location as any;
+  const { location } = history as any;
 
-  const editAddress = edit || state.edit;
+  const editAddress = edit || location?.state?.edit;
+
+  const state = location?.state;
 
   const [isOpen, setOpen] = useState<boolean>(true);
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
@@ -52,9 +54,9 @@ export default function AddAddress({
 
   const formik = useFormik<AddAddressFormikValues>({
     initialValues: {
-      name: name || state.address.name || '',
-      address: address || state.address.address || '',
-      memo: memo || state.address.memo || ''
+      name: name || state?.address?.name || '',
+      address: address || state?.address?.address || '',
+      memo: memo || state?.address?.memo || ''
     },
     validationSchema: addAddressSchema,
     onSubmit: ({ address: newAddress, name: newAddressName, memo: newMemo }) => {
@@ -215,8 +217,11 @@ export default function AddAddress({
               // bgImage="linear-gradient(to right,#1cc3ce,#b9e260);"
             />
           </ButtonContainer>
-          {editAddress && address && (
-            <Remove onClick={() => removeAddress(address)}> Remove This Address</Remove>
+          {editAddress && (address || location?.state?.address) && (
+            <Remove onClick={() => removeAddress(address || location?.state?.address?.address)}>
+              {' '}
+              Remove This Address
+            </Remove>
           )}
         </Form>
         <Snackbar
