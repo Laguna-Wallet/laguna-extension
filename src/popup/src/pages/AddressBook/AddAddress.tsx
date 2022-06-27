@@ -42,6 +42,9 @@ export default function AddAddress({
   redirectedFromSend
 }: Props) {
   const history = useHistory();
+  const { state } = history.location as any;
+
+  const editAddress = edit || state.edit;
 
   const [isOpen, setOpen] = useState<boolean>(true);
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
@@ -49,9 +52,9 @@ export default function AddAddress({
 
   const formik = useFormik<AddAddressFormikValues>({
     initialValues: {
-      name: name || '',
-      address: address || '',
-      memo: memo || ''
+      name: name || state.address.name || '',
+      address: address || state.address.address || '',
+      memo: memo || state.address.memo || ''
     },
     validationSchema: addAddressSchema,
     onSubmit: ({ address: newAddress, name: newAddressName, memo: newMemo }) => {
@@ -65,13 +68,13 @@ export default function AddAddress({
         return;
       }
 
-      if (!edit && addressExists(newAddress)) {
+      if (!editAddress && addressExists(newAddress)) {
         setIsSnackbarOpen(true);
         setSnackbarError('Address already exists');
         return;
       }
 
-      if (edit && address) {
+      if (editAddress && address) {
         keyring.forgetAddress(address);
       }
 
@@ -126,21 +129,24 @@ export default function AddAddress({
     }
   };
 
-  const walletLocation = () => history.push(router.home);
+  const walletLocation = () => {
+    history.push(router.home);
+    return { ...state.address };
+  };
 
   return (
-    <Container edit={edit}>
+    <Container edit={editAddress}>
       <MenuHeader
         isOpen={isOpen}
         setOpen={setOpen}
-        title={`${edit ? 'EDIT' : 'ADD'} ADDRESS`}
+        title={`${editAddress ? 'EDIT' : 'ADD'} ADDRESS`}
         onClose={closeAction || walletLocation}
         backAction={back}
       />
       <Content>
         <Form onSubmit={formik.handleSubmit}>
-          <PlusIconContainer edit={edit}>
-            {edit ? <EditBigIcon /> : <AddBigIcon />}
+          <PlusIconContainer edit={editAddress}>
+            {editAddress ? <EditBigIcon /> : <AddBigIcon />}
           </PlusIconContainer>
           <HumbleInput
             id={'name'}
@@ -170,7 +176,7 @@ export default function AddAddress({
             color="#fff"
             placeholderColor="#B1B5C3"
           />
-          {!edit && (
+          {!editAddress && (
             <HumbleInput
               id={'memo'}
               height="48px"
@@ -187,7 +193,7 @@ export default function AddAddress({
           )}
 
           <ButtonContainer>
-            {!edit && (
+            {!editAddress && (
               <Button
                 onClick={handleCancel}
                 text="Cancel"
@@ -209,7 +215,7 @@ export default function AddAddress({
               // bgImage="linear-gradient(to right,#1cc3ce,#b9e260);"
             />
           </ButtonContainer>
-          {edit && address && (
+          {editAddress && address && (
             <Remove onClick={() => removeAddress(address)}> Remove This Address</Remove>
           )}
         </Form>
@@ -220,7 +226,7 @@ export default function AddAddress({
           type="error"
           left="8.5px"
           transform="translateX(0)"
-          bottom={edit ? '86px' : '56px'}></Snackbar>
+          bottom={editAddress ? '86px' : '56px'}></Snackbar>
       </Content>
     </Container>
   );

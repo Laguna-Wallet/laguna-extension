@@ -34,6 +34,9 @@ type Props = {
 function Wallet({ isMenuOpen, snackbar }: Props) {
   const account = useAccount();
   const history = useHistory();
+  const { location } = history as any;
+
+  const snackbarData = snackbar || location?.state?.snackbar;
 
   const activeAccount = useCallback(account.getActiveAccount(), [account]);
 
@@ -84,10 +87,10 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
   }, [activeAccount, balances]);
 
   useEffect(() => {
-    if (snackbar?.show) {
+    if (snackbarData?.show) {
       setTimeout(() => {
         setIsSnackbarOpen(true);
-        setSnackbarMessage(snackbar.message);
+        setSnackbarMessage(snackbarData?.message);
       }, 400);
     }
   }, []);

@@ -18,6 +18,8 @@ type Props = {
 
 export default function AddressBook({ snackbar }: Props) {
   const history = useHistory();
+  const { location } = history as any;
+  const snackbarMsg = snackbar || location?.state?.snackbar;
 
   const [isOpen, setOpen] = useState<boolean>(true);
   const [addresses, setAddresses] = useState<any[] | undefined>(undefined);
@@ -37,9 +39,9 @@ export default function AddressBook({ snackbar }: Props) {
   }, []);
 
   useEffect(() => {
-    if (snackbar?.show) {
+    if (snackbarMsg?.show) {
       setIsSnackbarOpen(true);
-      setSnackbarMessage(snackbar?.message);
+      setSnackbarMessage(snackbarMsg?.message);
     }
   }, []);
 
@@ -69,10 +71,7 @@ export default function AddressBook({ snackbar }: Props) {
                   pathname: router.addAddress,
                   state: {
                     edit: true,
-                    closeAction: () => {
-                      history.push(router.home);
-                      return { ...address };
-                    }
+                    address: { ...address }
                   }
                 }}
                 key={address.address}>
