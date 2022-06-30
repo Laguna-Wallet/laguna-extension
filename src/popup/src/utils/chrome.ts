@@ -41,13 +41,20 @@ export const saveToStorage = async function ({ key, value }: { key: string; valu
 
 export function sendMessagePromise(obj: Record<string, unknown>): Promise<Record<string, any>> {
   return new Promise((resolve, reject) => {
-    chrome.runtime.sendMessage(obj, (response) => {
-      if (response) {
-        resolve(response);
-      } else {
-        reject('Something wrong');
-      }
-    });
+    const response = browser.runtime.sendMessage(obj);
+    if (response) {
+      resolve(response);
+    } else {
+      reject('Something wrong');
+    }
+
+    // , (response) => {
+    //   if (response) {
+    //     resolve(response);
+    //   } else {
+    //     reject('Something wrong');
+    //   }
+    // });
   });
 }
 

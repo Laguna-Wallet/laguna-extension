@@ -1,23 +1,20 @@
 {
   "manifest_version": 2,
-  "name": "HydrogenX Wallet",
+  "name": "Laguna Wallet",
   "version": "1.0.0",
-  "description": "HydrogenX Polkadot Wallet",
-  "permissions": [
-    "storage",
-    "notifications",
-    "alarms",
-    "clipboardRead",
-    "clipboardWrite",
-    "idle",
-    "tabs",
-    "activeTab"
-  ],
+  "description": "Laguna Wallet",
+  "permissions": ["storage", "notifications", "alarms", "clipboardRead", "clipboardWrite", "idle", "tabs", "activeTab"],
   "browser_action": {
     "default_popup": "popup/index.html",
-    "default_title": "HydrogenX Polkadot Wallet"
+    "default_title": "Laguna Wallet"
   },
-  "icons": {},
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "64": "icons/icon-64.png",
+    "128": "icons/icon-128.png"
+  },
   "background": {
     "scripts": ["browser-polyfill.js", "background.js"],
     "persistent": true

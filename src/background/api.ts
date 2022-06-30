@@ -11,6 +11,7 @@ import { checkBalanceChange, getAccountAddresses, getFromStorage, recodeAddress,
 // import { ethereumEncode } from "@polkadot/util-crypto"
 import { cryptoWaitReady } from "@polkadot/util-crypto"
 // import { initWasm } from "@polkadot/wasm-crypto/initOnlyAsm"
+import browser from "webextension-polyfill"
 
 export async function Retrieve_balance_change_rates() {
   // const balances = getFromStorage()
@@ -26,8 +27,9 @@ export async function sendTransaction(pairs, { sendTo, sendFrom, amount, chain }
     const wsProvider = new WsProvider(`wss://${chain}.api.onfinality.io/public-ws?apikey=${process.env.ONFINALITY_KEY}`)
     const api = await ApiPromise.create({ provider: wsProvider })
     const unsub = await api.tx.balances.transfer(sendTo, amount).signAndSend(pair, ({ status }: any) => {
+      console.log("~ status", status)
       if (status.isInBlock) {
-        chrome.runtime.sendMessage({ type: Messages.TransactionSuccess, payload: { block: status?.asInBlock?.toString() } })
+        browser.runtime.sendMessage({ type: Messages.TransactionSuccess, payload: { block: status?.asInBlock?.toString() } })
         unsub()
         api.disconnect()
       }
@@ -95,7 +97,7 @@ export async function Retrieve_Coin_Decimals() {
     }
 
     saveToStorage({ key: StorageKeys.TokenDecimals, value: JSON.stringify(transformedObj) })
-    chrome.runtime.sendMessage({ type: Messages.TokenDecimalsUpdated, payload: JSON.stringify({ tokenDecimals: transformedObj }) })
+    browser.runtime.sendMessage({ type: Messages.TokenDecimalsUpdated, payload: JSON.stringify({ tokenDecimals: transformedObj }) })
   } catch (err) {
     Retrieve_Coin_Decimals()
     console.log(err)
@@ -153,10 +155,10 @@ export async function fetchAccountsBalances() {
       const hasReceived: boolean = await checkBalanceChange(result_obj, address)
 
       saveToStorage({ key: StorageKeys.AccountBalances, value: JSON.stringify({ address, balances: result_obj }) })
-      chrome.runtime.sendMessage({ type: Messages.AccountsBalanceUpdated, payload: JSON.stringify({ address, balances: result_obj }) })
+      browser.runtime.sendMessage({ type: Messages.AccountsBalanceUpdated, payload: JSON.stringify({ address, balances: result_obj }) })
 
       if (hasReceived) {
-        chrome.runtime.sendMessage({ type: Messages.TokenReceived, payload: JSON.stringify({ tokenReceived: hasReceived }) })
+        browser.runtime.sendMessage({ type: Messages.TokenReceived, payload: JSON.stringify({ tokenReceived: hasReceived }) })
       }
     }
 
