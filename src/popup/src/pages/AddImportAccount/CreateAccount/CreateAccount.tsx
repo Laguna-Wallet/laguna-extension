@@ -13,13 +13,17 @@ import { useSelector } from 'react-redux';
 import { State } from 'redux/store';
 import AES from 'crypto-js/aes';
 import { saveToStorage } from 'utils/chrome';
-import { useHistory } from 'react-router-dom';
+import { RouteComponentProps, useHistory } from 'react-router-dom';
 import { router } from 'router/router';
 import browser from 'webextension-polyfill';
+import { useLocation } from 'react-router-dom';
 
 type Props = {
   existingAccount?: boolean;
   encodePhase?: boolean;
+};
+
+type LocationState = {
   redirectedFromSignUp?: boolean;
   redirectedFromDashboard?: boolean;
 };
@@ -30,13 +34,15 @@ export enum SecurityLevelEnum {
 }
 
 export default function CreateAccount({
-  redirectedFromSignUp,
-  redirectedFromDashboard,
+  // redirectedFromSignUp,
+  // redirectedFromDashboard,
   encodePhase
-}: Props) {
+}: Props & Partial<RouteComponentProps>) {
   const account = useAccount();
   const encoded = account.encryptedPassword;
   const history = useHistory();
+  const location = useLocation<LocationState>();
+  const { redirectedFromSignUp, redirectedFromDashboard } = location?.state || {};
 
   const hasBoarded = useSelector((state: State) => state?.wallet?.onboarding);
 

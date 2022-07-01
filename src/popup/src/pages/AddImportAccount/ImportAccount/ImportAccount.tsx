@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { reset } from 'redux-form';
 import { Wizard } from 'react-use-wizard';
-import { RouteComponentProps, useHistory } from 'react-router-dom';
+import { RouteComponentProps, useHistory, useLocation } from 'react-router-dom';
 import { router } from 'router/router';
 import browser from 'webextension-polyfill';
 
@@ -56,15 +56,17 @@ const validate = (values: any) => {
   return errors;
 };
 
-type Props = {
+type LocationState = {
   redirectedFromSignUp?: boolean;
   redirectedFromForgotPassword?: boolean;
 };
 
-function ImportAccount({ redirectedFromSignUp, redirectedFromForgotPassword }: Props) {
+function ImportAccount() {
   const history = useHistory();
-  const { location } = history as RouteComponentProps | any;
 
+  const location = useLocation<LocationState>();
+  const { redirectedFromSignUp, redirectedFromForgotPassword } = location?.state || {};
+  
   const account = useAccount();
   const encoded = account.encryptedPassword;
 

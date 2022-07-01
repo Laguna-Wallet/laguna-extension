@@ -16,17 +16,19 @@ import SendIcon from 'assets/svgComponents/SendIIcon';
 import Popup from 'components/Popup/Popup';
 import ActivityInfo from 'pages/Activity/ActivityInfo';
 import InactiveField from 'components/InactiveField/InactiveField';
-import { useHistory, Link } from 'react-router-dom';
+import { useHistory, Link, useLocation } from 'react-router-dom';
 import { router } from 'router/router';
 
-type Props = {
+type LocationState = {
   asset?: Asset;
 };
 
-export default function TokenDashboard({ asset }: Props) {
+export default function TokenDashboard() {
   const dispatch = useDispatch();
   const account = useAccount();
   const history = useHistory();
+  const location = useLocation<LocationState>();
+  const { asset } = location?.state || {};
 
   const currAccountAddress = account?.getActiveAccount()?.address;
   const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false);
