@@ -65,6 +65,9 @@ function Confirm({ fee, transfer, amountToSend, recoded, setBlockHash, flow }: P
     });
 
     setLoadingTransaction(true);
+    chrome.runtime.sendMessage({
+      type: Messages.AccountsBalanceUpdated,
+    });
     dispatch(reset('sendToken'));
   };
 

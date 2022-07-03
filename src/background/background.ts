@@ -61,9 +61,14 @@ cryptoWaitReady().then(() => {
   keyring.loadAll({ ss58Format: 42, type: "sr25519", store: new AccountsStore() })
 })
 
-chrome.runtime.onConnect.addListener(function (port) {
-  assert([process.env.MESSAGING_PORT, process.env.PORT_EXTENSION].includes(port.name), `Unknown connection from ${port.name}`)
 
+
+chrome.runtime.onConnect.addListener(function (port: any) {
+  port.onDisconnect.addListener(deleteTimer);
+  port._timeout = setTimeout(forceReconnect, 250e3, port);
+  console.log(port)
+  assert([process.env.MESSAGING_PORT, process.env.PORT_EXTENSION].includes(port.name), `Unknown connection from ${port.name}`)
+  
   chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
     if (msg.type === Messages.RevokeDapp) {
       authorizedDapps = authorizedDapps.filter((item) => item !== msg.payload.dappName)
@@ -295,6 +300,11 @@ chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
       keyPairs = renewMetaToKeyPairs(keyPairs, msg.payload.metaData)
       keyPairs = reEncryptKeyringPairs(keyPairs, msg.payload.oldPassword, msg.payload.newPassword)
       break
+      case Messages.AccountsBalanceUpdated:
+        console.log("fetched")
+        await fetchAccountsBalances()
+        break
+
   }
 })
 
@@ -379,3 +389,15 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
     keyPairs = []
   }
 })
+
+function forceReconnect(port) {
+  deleteTimer(port);
+  port.disconnect();
+  console.log(`reconnected port: ${port}`)
+}
+function deleteTimer(port) {
+  if (port._timer) {
+    clearTimeout(port._timer);
+    delete port._timer;
+  }
+}
