@@ -139,7 +139,7 @@ export async function fetchAccountsBalances() {
         const resolved = await searchAccountBallance(network.chain, recodeAddress(address, network?.prefix, network?.encodeType))
 
         if (resolved.message === "Success") {
-          temp_obj[network.chain] = Number(resolved.data.account.balance)
+          temp_obj[network.chain] = { overall: Number(resolved.data.account.balance), locked: Number(resolved.data.account.balance_lock) }
         }
 
         if (parsedBalances.address === address) {

@@ -299,7 +299,7 @@ export async function isInPhishingList(url: string): Promise<boolean> {
   return false
 }
 
-export async function checkBalanceChange(newBalance: Record<string, string>, newAddress: string): Promise<boolean> {
+export async function checkBalanceChange(newBalance: Record<string, { overall: string; locked: string }>, newAddress: string): Promise<boolean> {
   const oldBalance = await getFromStorage(StorageKeys.AccountBalances)
   if (!oldBalance) return false
 
@@ -309,7 +309,7 @@ export async function checkBalanceChange(newBalance: Record<string, string>, new
   const parsedOldBallance = JSON.parse(oldBalance)?.balances
 
   for (const [key, balance] of Object.entries(newBalance)) {
-    if (balance > parsedOldBallance[key]) {
+    if (balance.overall > parsedOldBallance[key].overall) {
       return true
     }
   }
