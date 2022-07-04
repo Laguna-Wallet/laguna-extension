@@ -15,7 +15,10 @@ export interface State {
     isLoggedIn: boolean | undefined;
     prices: Prices;
     infos: any[];
-    accountsBalances: any;
+    accountsBalances: {
+      address: string;
+      balances: Record<string, { transferable: number; locked: number }>;
+    };
     transactions: any[];
     idleTimeout: number;
     tokenReceived: boolean;

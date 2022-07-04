@@ -62,6 +62,7 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
 
   const balances = accountsBalances?.balances;
   const isEmpty = balances && Object.keys(balances).length === 0;
+  console.log('~ isEmpty', isEmpty);
 
   const handleActiveTab = (activeTab: number): void => {
     setActiveTab(activeTab);
