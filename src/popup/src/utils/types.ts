@@ -54,7 +54,7 @@ export interface Asset {
   name: string;
   symbol: string;
   chain: string;
-  balance?: number;
+  balance?: { overall: number; locked: number };
   calculatedPrice?: number;
   price?: number;
   encodeType?: string;

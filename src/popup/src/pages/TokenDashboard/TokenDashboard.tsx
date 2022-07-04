@@ -48,8 +48,10 @@ export default function TokenDashboard({ asset }: Props) {
   const price = tokenInfo?.current_price;
   const price_change_percentage_24h = tokenInfo?.price_change_percentage_24h;
   const symbol = asset.symbol;
-  const balance = accountsBalances?.balances[chain];
-  const balanceInUsd = price ? new BigNumber(balance).multipliedBy(price).toFormat(4) : 0;
+  const overallBalance = accountsBalances?.balances[chain]?.overall;
+  const lockedBalance = accountsBalances?.balances[chain]?.locked;
+
+  const balanceInUsd = price ? new BigNumber(overallBalance).multipliedBy(price).toFormat(4) : 0;
 
   const negativeValue = String(price_change_percentage_24h).includes('-');
   const renderPusSymbol =
@@ -91,8 +93,8 @@ export default function TokenDashboard({ asset }: Props) {
   return (
     <Container bg={dashboardBG}>
       <Header title={`${chain} Balance`} backAction={() => goTo(Wallet)}></Header>
-      <Content isEmpty={!balance}>
-        {!balance ? (
+      <Content isEmpty={!overallBalance}>
+        {!overallBalance ? (
           <InactiveField />
         ) : (
           <>
@@ -100,10 +102,24 @@ export default function TokenDashboard({ asset }: Props) {
               <Card>
                 <Balance>
                   <NetworkIcons chain={chain} />
-                  <span>{new BigNumber(balance).toFormat(4, 1) || 0}</span>
+                  <span>{new BigNumber(overallBalance).toFormat(4, 1) || 0}</span>
                   <span>{symbol}</span>
                 </Balance>
                 <BalanceInUsd>${new BigNumber(balanceInUsd).toFixed(2)}</BalanceInUsd>
+                <Balances>
+                  <BalancesRow>
+                    <span>Transferable</span>
+                    <span>
+                      {new BigNumber(overallBalance).minus(lockedBalance).toFixed(2)} {symbol}
+                    </span>
+                  </BalancesRow>
+                  <BalancesRow>
+                    <span>Locked</span>
+                    <span>
+                      {lockedBalance.toFixed(2)} {symbol}
+                    </span>
+                  </BalancesRow>
+                </Balances>
                 <CardBottom>
                   <Tag>{handleChain(chain)}</Tag>
                   <Rate negativeValue={negativeValue}>
@@ -204,7 +220,7 @@ const CardContainer = styled.div`
 
 const Card = styled.div`
   width: 100%;
-  height: 160px;
+  height: 213px;
   background-color: #fff;
   border-radius: 5px;
   padding: 10px;
@@ -241,11 +257,30 @@ const BalanceInUsd = styled.div`
   color: #777e90;
 `;
 
+const Balances = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-top: 20px;
+`;
+
+const BalancesRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  font-family: 'IBM Plex Sans';
+  font-weight: 400;
+  font-size: 12px;
+  &:nth-child(2) {
+    margin-top: 8px;
+  }
+`;
+
 const CardBottom = styled.div`
   width: 100%;
   display: flex;
   justify-content: space-between;
-  margin-top: auto;
+
+  margin-top: 16px;
 `;
 
 const Tag = styled.div`

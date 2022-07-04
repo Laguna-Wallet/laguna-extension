@@ -32,7 +32,7 @@ export default function ChainItem({ asset, handleClick, iconSize }: Props) {
       </ListItemText>
       <ListItemText>
         <Symbol>
-          {balance ? new BigNumber(balance).toFormat(4, 1) : 0} {symbol}
+          {balance ? new BigNumber(balance.overall).toFormat(4, 1) : 0} {symbol}
         </Symbol>
         <Value>${calculatedPrice ? new BigNumber(calculatedPrice).toFixed(2) : 0}</Value>
       </ListItemText>
