@@ -11,7 +11,8 @@ import {
   getAccountNameByAddress,
   getContactNameByAddress,
   recodeToPolkadotAddress,
-  truncateString
+  truncateString,
+  updateBallanceCache
 } from 'utils';
 import BigNumber from 'bignumber.js';
 import { useDispatch, useSelector } from 'react-redux';
@@ -74,6 +75,7 @@ function Confirm({ fee, transfer, amountToSend, recoded, setBlockHash, flow }: P
         setBlockHash(msg.payload.block);
         setLoadingTransaction(false);
         setTransactionConfirmed(true);
+        updateBallanceCache(chain, amount, fee);
         goTo(Wallet, { snackbar: { show: true, message: SnackbarMessages.TransactionSent } });
       }
     });

@@ -97,8 +97,10 @@ export default function Send({ initialIsContactsPopupOpen, propsFromTokenDashboa
 
       setLoading(true);
       const api = await getApiInstance(reduxSendTokenState.selectedAsset.chain);
+
       const factor = new BigNumber(10).pow(new BigNumber(api.registry.chainDecimals[0]));
       const amount = new BigNumber(form.amount).multipliedBy(factor);
+
       const balance = await api.derive.balances.all(account.getActiveAccount().address);
       const available = `${balance.availableBalance}`;
       const prefix = api.consts.system.ss58Prefix;
@@ -116,8 +118,11 @@ export default function Send({ initialIsContactsPopupOpen, propsFromTokenDashboa
       const transfer = await api.tx.balances.transfer(form.address, amount.toString());
 
       const { partialFee, weight } = await transfer.paymentInfo(recoded);
+      const info = await transfer.paymentInfo(recoded);
+      console.log('~ info', partialFee.toHuman());
 
       const fees = new BigNumber(`${partialFee}`).multipliedBy(110).dividedBy(100);
+      console.log('~ fees', `${new BigNumber(partialFee.toString())}`);
 
       // todo check this
       const total = amount.plus(fees).plus(api.consts.balances.existentialDeposit.toString());

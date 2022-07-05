@@ -27,7 +27,7 @@ export async function sendTransaction(pairs, { sendTo, sendFrom, amount, chain }
     const api = await ApiPromise.create({ provider: wsProvider })
     const unsub = await api.tx.balances.transfer(sendTo, amount).signAndSend(pair, ({ status }: any) => {
       if (status.isInBlock) {
-        chrome.runtime.sendMessage({ type: Messages.TransactionSuccess, payload: { block: status?.asInBlock?.toString() } })
+        chrome.runtime.sendMessage({ type: Messages.TransactionSuccess, payload: { amount, chain, block: status?.asInBlock?.toString() } })
         unsub()
         api.disconnect()
       }

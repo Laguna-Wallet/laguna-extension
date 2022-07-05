@@ -8,6 +8,7 @@ import { getFromStorage } from './chrome';
 import keyring from '@polkadot/ui-keyring';
 import Resizer from 'react-image-file-resizer';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
+import BigNumber from 'bignumber.js';
 
 //==============================================================================
 // Mnemonics
@@ -170,6 +171,19 @@ export async function accountHasChanged(balances: Record<string, string>) {
   return false;
 }
 
+export async function updateBallanceCache(chain: string, amount: string, fee: string) {
+  const balances = await getFromStorage(StorageKeys.AccountBalances);
+
+  const parsed = balances && JSON.parse(balances);
+  console.log('~ parsed', parsed);
+  console.log('~ chain', chain);
+  console.log('~ amount', amount);
+  console.log('fee', fee);
+
+  const sum = new BigNumber(amount).plus(fee).toString();
+  console.log('~ balances', new BigNumber(parsed.balances[chain].overall).minus(sum).toString());
+}
+
 export function timer(ms: number) {
   return new Promise((res) => setTimeout(res, ms));
 }
@@ -216,14 +230,14 @@ export const enhancePasswordStrength = (string: string): string => {
   return '';
 };
 
-export const validPassword = (values: {password: string}) => {
-  const {password} = values;
+export const validPassword = (values: { password: string }) => {
+  const { password } = values;
   const errors: Record<string, string> = {};
   if (!password) {
     errors.password = 'Required';
   }
-  if(password?.length < 8){
-    errors.password = 'Must be at least 8 characters'
+  if (password?.length < 8) {
+    errors.password = 'Must be at least 8 characters';
   }
 
   return errors;
