@@ -13,17 +13,20 @@ import { Asset, Transaction } from 'utils/types';
 import Popup from 'components/Popup/Popup';
 import { ActivityItem } from './Activity';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import { router } from 'router/router';
 
-type Props = {
+type LocationState = {
   chain?: string;
   asset?: Asset;
 };
 
-export default function ChainActivity({ chain, asset }: Props) {
+export default function ChainActivity() {
   const account = useAccount();
   const history = useHistory();
+
+  const location = useLocation<LocationState>();
+  const { chain, asset } = location.state || {};
 
   const wallet = useSelector((state: any) => state.wallet);
   // const transactions = wallet?.transactions[account.getActiveAccount().address];

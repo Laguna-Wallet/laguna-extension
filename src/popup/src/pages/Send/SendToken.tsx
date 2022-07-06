@@ -339,14 +339,22 @@ function SendToken({
 
         <BottomSection>
           <Info>
-            <span>
-              Balance: {new BigNumber(selectedAsset.balance).toFormat(2)}{' '}
-              {selectedAsset?.symbol.toUpperCase()}
-            </span>
-            <span>
-              Estimated Fee: {loading ? '...' : new BigNumber(fee).toFormat(4)}{' '}
-              {selectedAsset?.symbol.toUpperCase()}
-            </span>
+            <InfoRow>
+              <span>Transferable Balance</span>
+              <span>
+                {new BigNumber(selectedAsset.balance.overall)
+                  .minus(selectedAsset.balance.locked)
+                  .toString()}{' '}
+                {selectedAsset?.symbol.toUpperCase()}
+              </span>
+            </InfoRow>
+            <InfoRow>
+              <span>Estimated Fee</span>
+              <span>
+                {loading ? '...' : new BigNumber(fee).toString()}{' '}
+                {selectedAsset?.symbol.toUpperCase()}
+              </span>
+            </InfoRow>
           </Info>
           <Button
             type="submit"
@@ -519,10 +527,18 @@ const BottomSection = styled.div`
 
 const Info = styled.div`
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   span {
     font-family: 'IBM Plex Sans';
     font-size: 12px;
+  }
+`;
+
+const InfoRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  &:nth-child(2) {
+    margin-top: 8px;
   }
 `;
 

@@ -27,10 +27,10 @@ export async function sendTransaction(pairs, { sendTo, sendFrom, amount, chain }
     const wsProvider = new WsProvider(`wss://${chain}.api.onfinality.io/public-ws?apikey=${process.env.ONFINALITY_KEY}`)
     const api = await ApiPromise.create({ provider: wsProvider })
     const unsub = await api.tx.balances.transfer(sendTo, amount).signAndSend(pair, ({ status }: any) => {
-      console.log("~ status", status)
       if (status.isInBlock) {
-        browser.runtime.sendMessage({ type: Messages.TransactionSuccess, payload: { block: status?.asInBlock?.toString() } })
+        chrome.runtime.sendMessage({ type: Messages.TransactionSuccess, payload: { amount, chain, block: status?.asInBlock?.toString() } })
         unsub()
+
         api.disconnect()
       }
     })
@@ -141,7 +141,7 @@ export async function fetchAccountsBalances() {
         const resolved = await searchAccountBallance(network.chain, recodeAddress(address, network?.prefix, network?.encodeType))
 
         if (resolved.message === "Success") {
-          temp_obj[network.chain] = { transferable: Number(resolved.data.account.balance), locked: Number(resolved.data.account.balance_lock) }
+          temp_obj[network.chain] = { overall: Number(resolved.data.account.balance), locked: Number(resolved.data.account.balance_lock) }
         }
 
         if (parsedBalances.address === address) {
