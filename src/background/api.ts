@@ -29,6 +29,7 @@ export async function sendTransaction(pairs, { sendTo, sendFrom, amount, chain }
       if (status.isInBlock) {
         chrome.runtime.sendMessage({ type: Messages.TransactionSuccess, payload: { amount, chain, block: status?.asInBlock?.toString() } })
         unsub()
+
         api.disconnect()
       }
     })

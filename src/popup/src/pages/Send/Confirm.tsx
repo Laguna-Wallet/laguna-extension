@@ -70,13 +70,26 @@ function Confirm({ fee, transfer, amountToSend, recoded, setBlockHash, flow }: P
   };
 
   useEffect(() => {
-    chrome.runtime.onMessage.addListener((msg) => {
+    chrome.runtime.onMessage.addListener(async (msg) => {
       if (msg.type === Messages.TransactionSuccess) {
         setBlockHash(msg.payload.block);
         setLoadingTransaction(false);
         setTransactionConfirmed(true);
         updateBallanceCache(chain, amount, fee);
         goTo(Wallet, { snackbar: { show: true, message: SnackbarMessages.TransactionSent } });
+          
+        // const res = await fetch(`https://${chain}.api.subscan.io/api/v2/scan/search`, {
+        //   method: 'POST',
+        //   mode: 'cors',
+        //   cache: 'no-cache',
+        //   credentials: 'same-origin',
+        //   headers: {
+        //     'Content-Type': 'application/json',
+        //     'X-API-Key': '9fee43a931ab8240c6e2e7a5ec676458'
+        //   },
+        //   body: JSON.stringify({ key: activeAccountAddress, row: 1, page: 1 })
+        // });
+        // console.log('~ res', await res.json());
       }
     });
   }, []);
