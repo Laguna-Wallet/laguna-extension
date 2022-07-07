@@ -24,7 +24,7 @@ export default function RequestToConnect() {
     });
 
     dispatch(changeDappAuthorization({}));
-    // window.close();
+    window.close();
   };
 
   const handleCancel = () => {
