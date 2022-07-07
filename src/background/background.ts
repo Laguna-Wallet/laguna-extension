@@ -70,6 +70,7 @@ browser.runtime.onConnect.addListener(function (port) {
   assert([process.env.MESSAGING_PORT, process.env.PORT_EXTENSION].includes(port.name), `Unknown connection from ${port.name}`)
 
   browser.runtime.onMessage.addListener(async (msg) => {
+    console.log("~ msg 1", msg)
     if (msg.type === Messages.RevokeDapp) {
       authorizedDapps = authorizedDapps.filter((item) => item !== msg.payload.dappName)
     }
@@ -263,6 +264,7 @@ browser.runtime.onConnect.addListener(function (port) {
 })
 
 browser.runtime.onMessage.addListener(async (msg, _sender) => {
+  console.log("~ msg 2", msg)
   switch (msg.type) {
     case Messages.AuthUser:
       if (validatePassword(msg.payload.password)) {
@@ -360,7 +362,6 @@ browser.runtime.onMessage.addListener(async (msg, _sender) => {
         timeoutStart = Date.now()
       }
       break
-
     case Messages.SendTransaction:
       if (msg?.payload) {
         await sendTransaction(keyPairs, msg.payload)

@@ -43,7 +43,7 @@ export default function Accounts({ userContainerWidth }: Props) {
 
       <Header>
         <HeaderItem>ACCOUNTS</HeaderItem>
-        <Connected>
+        {/* <Connected>
           <ConnectedRibbon isConnected={isConnected} />
           {isConnected ? (
             <>
@@ -56,7 +56,7 @@ export default function Accounts({ userContainerWidth }: Props) {
               <MouseOverText width="188px">You are not connected to app.uniswap.org</MouseOverText>
             </>
           )}
-        </Connected>
+        </Connected> */}
       </Header>
 
       <AccountsContainer>
@@ -159,9 +159,9 @@ const MouseOverText = styled.p<{ width?: string }>`
   top: 24px;
   right: 0;
 
-  ${HeaderItem}: hover ~& {
+  /* ${HeaderItem}: hover ~& {
     display: flex;
-  }
+  } */
 `;
 
 const Connected = styled.div`

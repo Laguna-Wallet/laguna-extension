@@ -13,7 +13,9 @@ export default function RequestToConnect() {
   const dispatch = useDispatch();
 
   const pendingDapp = pendingDappAuthorization?.pendingDappAuthorization;
-  const dappName = pendingDappAuthorization?.pendingDappAuthorization[0]?.request?.requestOrigin;
+  const dappName =
+    pendingDappAuthorization?.pendingDappAuthorization &&
+    pendingDappAuthorization?.pendingDappAuthorization[0]?.request?.requestOrigin;
 
   const handleApprove = () => {
     browser.runtime.sendMessage({
@@ -22,7 +24,7 @@ export default function RequestToConnect() {
     });
 
     dispatch(changeDappAuthorization({}));
-    window.close();
+    // window.close();
   };
 
   const handleCancel = () => {

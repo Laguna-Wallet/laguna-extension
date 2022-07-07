@@ -86,21 +86,25 @@ function App() {
         PendingDappAuthResponse?.payload?.pendingDappAuthorization?.length > 0
       ) {
         history.push(router.requestToConnect);
+        return;
       }
 
       // Check if Dapp is asking for Sign Transaction(connected site)
       if (AuthResponse?.payload?.isLoggedIn && CheckPendingDappSign?.payload?.pending) {
         history.push(router.requestToSign);
+        return;
       }
 
       if (AuthResponse?.payload?.isLoggedIn && CheckPendingDappSignRaw?.payload?.pending) {
         history.push(router.requestToSignRaw);
+        return;
       }
 
       // in case no pending requests from dapp and user is loggedIn go to Wallet
       if (AuthResponse?.payload?.isLoggedIn) {
         history.push(router.home);
       }
+
       setIsLoading(false);
       return;
     }
