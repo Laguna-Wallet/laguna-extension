@@ -97,11 +97,6 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
 
   useEffect(() => {
     async function go() {
-      console.log(
-        '~ accountBalances?.address !== activeAccount?.address',
-        accountBalances?.address,
-        activeAccount?.address
-      );
       if (accountBalances && activeAccount && accountBalances?.address !== activeAccount?.address) {
         dispatch(toggleLoading(true));
       }

@@ -22,6 +22,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { PropsFromTokenDashboard } from 'pages/Recieve/Receive';
 import { selectAsset } from 'redux/actions';
 import { State } from 'redux/store';
+import { useLocation } from 'react-router-dom';
 
 export enum SendAccountFlowEnum {
   SendToTrustedContact = 'SendToTrustedContact',
@@ -38,16 +39,22 @@ export type FlowValue =
 
 type Props = {
   initialIsContactsPopupOpen?: boolean;
+};
+
+type LocationState = {
   propsFromTokenDashboard?: PropsFromTokenDashboard;
 };
 
-export default function Send({ initialIsContactsPopupOpen, propsFromTokenDashboard }: Props) {
+export default function Send({ initialIsContactsPopupOpen }: Props) {
   const account = useAccount();
   const dispatch = useDispatch();
 
   const [flow, setFlow] = useState<FlowValue | undefined>(undefined);
   const [assets, setAssets] = useState<Asset[] | undefined>(undefined);
   const [accountMeta, setAccountMeta] = useState<AccountMeta>();
+
+  const location = useLocation<LocationState>();
+  const { propsFromTokenDashboard } = location?.state || {};
 
   const { prices, infos, accountsBalances, disabledTokens } = useSelector(
     (state: State) => state.wallet
@@ -109,10 +116,8 @@ export default function Send({ initialIsContactsPopupOpen, propsFromTokenDashboa
 
       const { partialFee, weight } = await transfer.paymentInfo(recoded);
       const info = await transfer.paymentInfo(recoded);
-      console.log('~ info', partialFee.toHuman());
 
       const fees = new BigNumber(`${partialFee}`).multipliedBy(110).dividedBy(100);
-      console.log('~ fees', `${new BigNumber(partialFee.toString())}`);
 
       // todo check this
       const total = amount.plus(fees).plus(api.consts.balances.existentialDeposit.toString());

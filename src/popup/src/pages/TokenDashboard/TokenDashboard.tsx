@@ -110,7 +110,7 @@ export default function TokenDashboard() {
               <Card>
                 <Balance>
                   <NetworkIcons chain={chain} />
-                  <span>{new BigNumber(overallBalance).toString() || 0}</span>
+                  <span>{new BigNumber(overallBalance).toFormat(4, 1) || 0}</span>
                   <span>{symbol}</span>
                 </Balance>
                 <BalanceInUsd>${new BigNumber(balanceInUsd).toFixed(2)}</BalanceInUsd>
@@ -125,7 +125,7 @@ export default function TokenDashboard() {
                   <BalancesRow>
                     <span>Locked</span>
                     <span>
-                      {lockedBalance.toFixed(2)} {symbol?.toUpperCase()}
+                      {lockedBalance.toString()} {symbol?.toUpperCase()}
                     </span>
                   </BalancesRow>
                 </Balances>
@@ -148,7 +148,11 @@ export default function TokenDashboard() {
                 </RightArrowContainer>
                 <span>Send</span>
               </Button>
-              <StyledLink to={router.receive}>
+              <StyledLink
+                to={{
+                  pathname: router.receive,
+                  state: { propsFromTokenDashboard: { chain, fromTokenDashboard: true, asset } }
+                }}>
                 {/* props={{ propsFromTokenDashboard: { chain, fromTokenDashboard: true, asset } }}> */}
                 <Button>
                   <BarcodeIconContainer>
