@@ -110,7 +110,7 @@ export default function TokenDashboard() {
               <Card>
                 <Balance>
                   <NetworkIcons chain={chain} />
-                  <span>{new BigNumber(overallBalance).toFormat(4, 1) || 0}</span>
+                  <span>{new BigNumber(overallBalance).toString() || 0}</span>
                   <span>{symbol}</span>
                 </Balance>
                 <BalanceInUsd>${new BigNumber(balanceInUsd).toFixed(2)}</BalanceInUsd>
@@ -118,13 +118,14 @@ export default function TokenDashboard() {
                   <BalancesRow>
                     <span>Transferable</span>
                     <span>
-                      {new BigNumber(overallBalance).minus(lockedBalance).toFixed(2)} {symbol}
+                      {new BigNumber(overallBalance).minus(lockedBalance).toString()}{' '}
+                      {symbol?.toUpperCase()}
                     </span>
                   </BalancesRow>
                   <BalancesRow>
                     <span>Locked</span>
                     <span>
-                      {lockedBalance.toFixed(2)} {symbol}
+                      {lockedBalance.toFixed(2)} {symbol?.toUpperCase()}
                     </span>
                   </BalancesRow>
                 </Balances>
