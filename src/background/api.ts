@@ -12,6 +12,7 @@ import { checkBalanceChange, getAccountAddresses, getFromStorage, recodeAddress,
 import { cryptoWaitReady } from "@polkadot/util-crypto"
 // import { initWasm } from "@polkadot/wasm-crypto/initOnlyAsm"
 import browser from "webextension-polyfill"
+import { rename } from "fs"
 
 export async function Retrieve_balance_change_rates() {
   // const balances = getFromStorage()

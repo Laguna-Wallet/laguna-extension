@@ -22,6 +22,7 @@ import { useHistory } from 'react-router-dom';
 import { router } from 'router/router';
 import browser from 'webextension-polyfill';
 import { changeAccountsBalances } from 'redux/actions';
+import { recodeAddress } from 'utils/polkadot';
 
 type Props = {
   fee: string;
@@ -101,7 +102,7 @@ function Confirm({ fee, transfer, amountToSend, recoded, setBlockHash, flow }: P
     if (flow === SendAccountFlowEnum.SendToAccount) {
       return getAccountNameByAddress(recoded);
     } else if (flow === SendAccountFlowEnum.SendToTrustedContact) {
-      return getContactNameByAddress(recodeToPolkadotAddress(recoded));
+      return getContactNameByAddress(recodeAddress(recoded, 42));
     }
 
     return '';
@@ -135,7 +136,7 @@ function Confirm({ fee, transfer, amountToSend, recoded, setBlockHash, flow }: P
             <AddressesInfoItem>
               <span>From</span>
               <span>
-                {name?.length > 10 ? truncateString(name, 5) : name}(
+                {name?.length > 12 ? truncateString(name, 5) : name}(
                 {truncateString(activeAccountAddress, 5)})
               </span>
             </AddressesInfoItem>

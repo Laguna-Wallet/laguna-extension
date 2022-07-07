@@ -25,6 +25,7 @@ import {
   renewMetaToKeyPairs,
   clearAccountsFromStorage,
 } from "./utils"
+
 import keyring from "@polkadot/ui-keyring"
 import { TypeRegistry } from "@polkadot/types"
 import { AccountsStore } from "./stores"
