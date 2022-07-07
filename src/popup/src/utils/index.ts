@@ -4,7 +4,7 @@ import { KeyringPair$Json } from '@polkadot/keyring/types';
 import { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
 import type { KeyringPair } from '@polkadot/keyring/types';
 import bcrypt from 'bcryptjs';
-import { getFromStorage } from './chrome';
+import { getFromStorage, saveToStorage } from './chrome';
 import keyring from '@polkadot/ui-keyring';
 import Resizer from 'react-image-file-resizer';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
@@ -175,13 +175,27 @@ export async function updateBallanceCache(chain: string, amount: string, fee: st
   const balances = await getFromStorage(StorageKeys.AccountBalances);
 
   const parsed = balances && JSON.parse(balances);
-  console.log('~ parsed', parsed);
-  console.log('~ chain', chain);
-  console.log('~ amount', amount);
-  console.log('fee', fee);
+  const sum =
+    chain === 'westend'
+      ? new BigNumber(amount).plus(fee).plus('0.001').toNumber()
+      : new BigNumber(amount).plus(fee).toNumber();
 
-  const sum = new BigNumber(amount).plus(fee).toString();
-  console.log('~ balances', new BigNumber(parsed.balances[chain].overall).minus(sum).toString());
+  const calculatedBalances = {
+    ...parsed.balances,
+    [chain]: {
+      overall: parsed.balances[chain].overall - sum,
+      locked: parsed.balances[chain].locked
+    }
+  };
+  console.log('~ calculatedBalances', calculatedBalances);
+  const newBalances = { address: parsed.address, balances: calculatedBalances };
+
+  saveToStorage({
+    key: StorageKeys.AccountBalances,
+    value: JSON.stringify(newBalances)
+  });
+
+  return newBalances;
 }
 
 export function timer(ms: number) {

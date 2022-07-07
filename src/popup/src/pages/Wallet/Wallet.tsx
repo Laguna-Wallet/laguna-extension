@@ -62,7 +62,6 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
 
   const balances = accountsBalances?.balances;
   const isEmpty = balances && Object.keys(balances).length === 0;
-  console.log('~ isEmpty', isEmpty);
 
   const handleActiveTab = (activeTab: number): void => {
     setActiveTab(activeTab);
@@ -98,13 +97,18 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
 
   useEffect(() => {
     async function go() {
-      if (accountBalances && accountBalances?.address !== activeAccount?.address) {
+      console.log(
+        '~ accountBalances?.address !== activeAccount?.address',
+        accountBalances?.address,
+        activeAccount?.address
+      );
+      if (accountBalances && activeAccount && accountBalances?.address !== activeAccount?.address) {
         dispatch(toggleLoading(true));
       }
     }
 
     go();
-  }, []);
+  }, [activeAccount]);
 
   const renderBallance = (balance: string): ReactNode => {
     const splited = balance.split('.');

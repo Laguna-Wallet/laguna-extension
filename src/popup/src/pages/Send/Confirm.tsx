@@ -21,6 +21,7 @@ import Loader from 'components/Loader/Loader';
 import { useHistory } from 'react-router-dom';
 import { router } from 'router/router';
 import browser from 'webextension-polyfill';
+import { changeAccountsBalances } from 'redux/actions';
 
 type Props = {
   fee: string;
@@ -78,24 +79,14 @@ function Confirm({ fee, transfer, amountToSend, recoded, setBlockHash, flow }: P
         setBlockHash(msg.payload.block);
         setLoadingTransaction(false);
         setTransactionConfirmed(true);
-        updateBallanceCache(chain, amount, fee);
+        const updatedBalances = await updateBallanceCache(chain, amount, fee);
+
+        dispatch(changeAccountsBalances(updatedBalances));
+
         history.push({
           pathname: router.home,
           state: { snackbar: { show: true, message: SnackbarMessages.TransactionSent } }
         });
-
-        // const res = await fetch(`https://${chain}.api.subscan.io/api/v2/scan/search`, {
-        //   method: 'POST',
-        //   mode: 'cors',
-        //   cache: 'no-cache',
-        //   credentials: 'same-origin',
-        //   headers: {
-        //     'Content-Type': 'application/json',
-        //     'X-API-Key': '9fee43a931ab8240c6e2e7a5ec676458'
-        //   },
-        //   body: JSON.stringify({ key: activeAccountAddress, row: 1, page: 1 })
-        // });
-        // console.log('~ res', await res.json());
       }
     });
   }, []);
@@ -177,7 +168,7 @@ function Confirm({ fee, transfer, amountToSend, recoded, setBlockHash, flow }: P
         <InfoItem>
           <span>Fee</span>
           <span>
-            {new BigNumber(fee).toFormat(4) + ` ${token.toUpperCase()}`}
+            {new BigNumber(fee).toString() + ` ${token.toUpperCase()}`}
             (${new BigNumber(fee).times(price || 0).toFormat(4)})
           </span>
         </InfoItem>

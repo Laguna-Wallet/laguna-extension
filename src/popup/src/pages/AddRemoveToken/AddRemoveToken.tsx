@@ -74,7 +74,7 @@ export default function AddRemoveToken() {
                     <TokenItem
                       key={`${network?.chain}-${index}`}
                       network={network}
-                      balance={balances[network?.chain]}
+                      balance={balances[network?.chain]?.overall}
                     />
                   );
                 })
