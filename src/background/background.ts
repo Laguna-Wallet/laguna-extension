@@ -375,9 +375,9 @@ browser.runtime.onMessage.addListener(async (msg, _sender) => {
       keyPairs = reEncryptKeyringPairs(keyPairs, msg.payload.oldPassword, msg.payload.newPassword)
       break
     case Messages.FreezeAccountBalanceUpdate:
-      saveToStorage({ key: StorageKeys.IsAccountBalanceUpdateFreezed, value: "true" })
+      saveToStorage({ key: StorageKeys.IsAccountBalanceUpdateFreezed, value: JSON.stringify({ isFreezed: "true" }) })
       setTimeout(() => {
-        saveToStorage({ key: StorageKeys.IsAccountBalanceUpdateFreezed, value: "false" })
+        saveToStorage({ key: StorageKeys.IsAccountBalanceUpdateFreezed, value: JSON.stringify({ isFreezed: "false" }) })
       }, 5000)
   }
 })

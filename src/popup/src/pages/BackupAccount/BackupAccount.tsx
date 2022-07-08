@@ -32,6 +32,7 @@ function BackupAccount({ handleSubmit, valid }: InjectedFormProps<Props>) {
   const formValues = useSelector((state: any) => state?.form?.backupAccount?.values);
 
   const [seed, setSeed] = useState<string>('');
+  console.log('~ seed', seed);
   const [isOpen, setOpen] = useState<boolean>(true);
   const [opened, setOpened] = useState<boolean>(false);
   const [seedExists, setSeedExists] = useState<boolean>(false);

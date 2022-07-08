@@ -156,7 +156,8 @@ export async function fetchAccountsBalances() {
       const hasReceived: boolean = await checkBalanceChange(result_obj, address)
 
       const isAccountBalanceFreezed = await getFromStorage(StorageKeys.IsAccountBalanceUpdateFreezed)
-      if (Boolean(isAccountBalanceFreezed)) {
+      const isFreezed = isAccountBalanceFreezed ? JSON.parse(isAccountBalanceFreezed)?.isFreezed : false
+      if (Boolean(isFreezed)) {
         setTimeout(() => fetchAccountsBalances(), 3000)
         return
       }
