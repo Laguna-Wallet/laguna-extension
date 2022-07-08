@@ -107,7 +107,8 @@ export enum Messages {
   RevokeDapp = 'REVOKE_DAPP',
   TokenReceived = 'TOKEN_RECEIVED',
   Timeout = 'TIMEOUT',
-  ResetTimeout = 'RESET_TIMEOUT'
+  ResetTimeout = 'RESET_TIMEOUT',
+  FreezeAccountBalanceUpdate = 'FREEZE_ACCOUNT_BALANCE_UPDATE'
 }
 
 //==============================================================================

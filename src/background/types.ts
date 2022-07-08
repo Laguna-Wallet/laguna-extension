@@ -10,6 +10,7 @@ export enum StorageKeys {
   Transactions = "transactions",
   TokenDecimals = "token-decimals",
   IdleTImeout = "idle-timeout",
+  IsAccountBalanceUpdateFreezed = "account-balance-update-freezed",
 }
 
 export enum Messages {
@@ -42,6 +43,7 @@ export enum Messages {
   TokenReceived = "TOKEN_RECEIVED",
   Timeout = "TIMEOUT",
   ResetTimeout = "RESET_TIMEOUT",
+  FreezeAccountBalanceUpdate = "FREEZE_ACCOUNT_BALANCE_UPDATE",
 }
 
 export const chains = ["westend", "polkadot", "kusama", "moonriver", "moonbeam", "shiden", "astar"]

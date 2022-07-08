@@ -23,6 +23,7 @@ import { router } from 'router/router';
 import browser from 'webextension-polyfill';
 import { changeAccountsBalances } from 'redux/actions';
 import { recodeAddress } from 'utils/polkadot';
+import { sendMessagePromise } from 'utils/chrome';
 
 type Props = {
   fee: string;
@@ -83,6 +84,8 @@ function Confirm({ fee, transfer, amountToSend, recoded, setBlockHash, flow }: P
         const updatedBalances = await updateBallanceCache(chain, amount, fee);
 
         dispatch(changeAccountsBalances(updatedBalances));
+
+        sendMessagePromise({ type: Messages.FreezeAccountBalanceUpdate });
 
         history.push({
           pathname: router.home,

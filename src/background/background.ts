@@ -71,7 +71,6 @@ browser.runtime.onConnect.addListener(function (port) {
   assert([process.env.MESSAGING_PORT, process.env.PORT_EXTENSION].includes(port.name), `Unknown connection from ${port.name}`)
 
   browser.runtime.onMessage.addListener(async (msg) => {
-    console.log("~ msg 1", msg)
     if (msg.type === Messages.RevokeDapp) {
       authorizedDapps = authorizedDapps.filter((item) => item !== msg.payload.dappName)
     }
@@ -265,7 +264,6 @@ browser.runtime.onConnect.addListener(function (port) {
 })
 
 browser.runtime.onMessage.addListener(async (msg, _sender) => {
-  console.log("~ msg 2", msg)
   switch (msg.type) {
     case Messages.AuthUser:
       if (validatePassword(msg.payload.password)) {
@@ -376,6 +374,11 @@ browser.runtime.onMessage.addListener(async (msg, _sender) => {
       keyPairs = renewMetaToKeyPairs(keyPairs, msg.payload.metaData)
       keyPairs = reEncryptKeyringPairs(keyPairs, msg.payload.oldPassword, msg.payload.newPassword)
       break
+    case Messages.FreezeAccountBalanceUpdate:
+      saveToStorage({ key: StorageKeys.IsAccountBalanceUpdateFreezed, value: "true" })
+      setTimeout(() => {
+        saveToStorage({ key: StorageKeys.IsAccountBalanceUpdateFreezed, value: "false" })
+      }, 5000)
   }
 })
 
@@ -405,14 +408,6 @@ browser.runtime.onInstalled.addListener(async (port) => {
 
   browser.alarms.create("keep alive", { periodInMinutes: 1 })
 
-  // const timeout = await handleInitialIdleTimeout()
-  // chrome.idle.setDetectionInterval(Number(timeout))
-  // chrome.idle.onStateChanged.addListener((status: string) => {
-  //   if (status === "idle") {
-  //     isLoggedIn = false
-  //   }
-  // })
-
   await Retrieve_Coin_Decimals()
 
   fetchAccountsBalances()
@@ -441,14 +436,6 @@ browser.runtime.onStartup.addListener(async () => {
   browser.alarms.create("refresh", { periodInMinutes: 1 })
   browser.alarms.create("refetch-account-balances", { periodInMinutes: 3 })
   browser.alarms.create("24-hr-ballance-change", { periodInMinutes: 3600 })
-
-  // const timeout = handleInitialIdleTimeout()
-  // // chrome.idle.setDetectionInterval(Number(timeout))
-  // chrome.idle.onStateChanged.addListener((status: string) => {
-  //   if (status === "idle") {
-  //     isLoggedIn = false
-  //   }
-  // })
 
   await Retrieve_Coin_Decimals()
 
