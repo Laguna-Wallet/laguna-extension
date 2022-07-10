@@ -301,7 +301,6 @@ chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
       keyPairs = reEncryptKeyringPairs(keyPairs, msg.payload.oldPassword, msg.payload.newPassword)
       break
       case Messages.AccountsBalanceUpdated:
-        console.log("fetched")
         await fetchAccountsBalances()
         break
 
@@ -393,7 +392,6 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
 function forceReconnect(port) {
   deleteTimer(port);
   port.disconnect();
-  console.log(`reconnected port: ${port}`)
 }
 function deleteTimer(port) {
   if (port._timer) {
