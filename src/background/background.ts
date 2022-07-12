@@ -386,6 +386,9 @@ browser.runtime.onMessage.addListener(async (msg, _sender) => {
       console.log("fetched")
       await fetchAccountsBalances()
       break
+    case Messages.AccountsBalanceUpdated:
+      await fetchAccountsBalances()
+      break
   }
 })
 
@@ -485,7 +488,6 @@ browser.alarms.onAlarm.addListener(async (alarm) => {
 function forceReconnect(port) {
   deleteTimer(port)
   port.disconnect()
-  console.log(`reconnected port: ${port}`)
 }
 function deleteTimer(port) {
   if (port._timer) {
