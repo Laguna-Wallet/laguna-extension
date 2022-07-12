@@ -190,7 +190,7 @@ function BackupAccount({ handleSubmit, valid }: InjectedFormProps<Props>) {
         message={snackbarMessage}
         type={snackbarType}
         left="26px"
-        bottom="150px"
+        bottom="55px"
         transform="translateX(0)"
       />
     </Container>
