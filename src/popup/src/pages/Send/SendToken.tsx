@@ -179,7 +179,7 @@ function SendToken({
 
   useEffect(() => {
     if (!abilityToTransfer && !loading) {
-      setSnackbarError('No enough founds to make transfer');
+      setSnackbarError('No enough funds to make transfer');
       setIsSnackbarOpen(true);
     }
   }, [loading]);

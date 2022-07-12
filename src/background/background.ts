@@ -67,10 +67,13 @@ cryptoWaitReady().then(() => {
   })
 })
 
-browser.runtime.onConnect.addListener(function (port) {
+browser.runtime.onConnect.addListener(function (port: any) {
+  port.onDisconnect.addListener(deleteTimer)
+  port._timeout = setTimeout(forceReconnect, 250e3, port)
+  console.log(port)
   assert([process.env.MESSAGING_PORT, process.env.PORT_EXTENSION].includes(port.name), `Unknown connection from ${port.name}`)
 
-  browser.runtime.onMessage.addListener(async (msg) => {
+  chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
     if (msg.type === Messages.RevokeDapp) {
       authorizedDapps = authorizedDapps.filter((item) => item !== msg.payload.dappName)
     }
@@ -379,6 +382,10 @@ browser.runtime.onMessage.addListener(async (msg, _sender) => {
     //   setTimeout(() => {
     //     saveToStorage({ key: StorageKeys.IsAccountBalanceUpdateFreezed, value: JSON.stringify({ isFreezed: false }) })
     //   }, 100000)
+    case Messages.AccountsBalanceUpdated:
+      console.log("fetched")
+      await fetchAccountsBalances()
+      break
   }
 })
 
@@ -474,3 +481,15 @@ browser.alarms.onAlarm.addListener(async (alarm) => {
     keyPairs = []
   }
 })
+
+function forceReconnect(port) {
+  deleteTimer(port)
+  port.disconnect()
+  console.log(`reconnected port: ${port}`)
+}
+function deleteTimer(port) {
+  if (port._timer) {
+    clearTimeout(port._timer)
+    delete port._timer
+  }
+}
