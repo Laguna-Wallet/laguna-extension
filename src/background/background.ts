@@ -374,11 +374,11 @@ browser.runtime.onMessage.addListener(async (msg, _sender) => {
       keyPairs = renewMetaToKeyPairs(keyPairs, msg.payload.metaData)
       keyPairs = reEncryptKeyringPairs(keyPairs, msg.payload.oldPassword, msg.payload.newPassword)
       break
-    case Messages.FreezeAccountBalanceUpdate:
-      saveToStorage({ key: StorageKeys.IsAccountBalanceUpdateFreezed, value: JSON.stringify({ isFreezed: "true" }) })
-      setTimeout(() => {
-        saveToStorage({ key: StorageKeys.IsAccountBalanceUpdateFreezed, value: JSON.stringify({ isFreezed: "false" }) })
-      }, 5000)
+    // case Messages.FreezeAccountBalanceUpdate:
+    //   saveToStorage({ key: StorageKeys.IsAccountBalanceUpdateFreezed, value: JSON.stringify({ isFreezed: true }) })
+    //   setTimeout(() => {
+    //     saveToStorage({ key: StorageKeys.IsAccountBalanceUpdateFreezed, value: JSON.stringify({ isFreezed: false }) })
+    //   }, 100000)
   }
 })
 

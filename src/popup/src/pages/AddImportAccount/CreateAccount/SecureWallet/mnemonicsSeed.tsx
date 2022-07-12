@@ -48,7 +48,10 @@ export default function MnemonicsSeed({ redirectedFromSignUp, redirectedFromDash
     setSnackbarMessage('Mnemonics Copied');
   };
 
-  useEnterClickListener(() => nextStep(), []);
+  useEnterClickListener(
+    () => !isMnemonicDescriptionOpen && nextStep(),
+    [isMnemonicDescriptionOpen]
+  );
 
   return (
     <Container>

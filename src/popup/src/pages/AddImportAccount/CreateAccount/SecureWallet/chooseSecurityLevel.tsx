@@ -34,7 +34,10 @@ export default function ChooseSecurityLevel({
   const [isMnemonicDescriptionOpen, setIsMnemonicDescriptionOpen] = useState<boolean>();
   const [isConfirmSkipOpen, setConfirmSkipOpen] = useState<boolean>();
 
-  useEnterClickListener(() => nextStep(), []);
+  useEnterClickListener(
+    () => !isMnemonicDescriptionOpen && nextStep(),
+    [isMnemonicDescriptionOpen]
+  );
 
   return (
     <Container redirectedFromDashboard={redirectedFromDashboard}>

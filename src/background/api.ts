@@ -155,12 +155,13 @@ export async function fetchAccountsBalances() {
 
       const hasReceived: boolean = await checkBalanceChange(result_obj, address)
 
-      const isAccountBalanceFreezed = await getFromStorage(StorageKeys.IsAccountBalanceUpdateFreezed)
-      const isFreezed = isAccountBalanceFreezed ? JSON.parse(isAccountBalanceFreezed)?.isFreezed : false
-      if (Boolean(isFreezed)) {
-        setTimeout(() => fetchAccountsBalances(), 3000)
-        return
-      }
+      // const isAccountBalanceFreezed = await getFromStorage(StorageKeys.IsAccountBalanceUpdateFreezed)
+      // const isFreezed = isAccountBalanceFreezed ? JSON.parse(isAccountBalanceFreezed)?.isFreezed : false
+      // // console.log("~ isFreezed", isFreezed)
+      // if (isFreezed) {
+      //   setTimeout(() => fetchAccountsBalances(), 3000)
+      //   return
+      // }
 
       saveToStorage({ key: StorageKeys.AccountBalances, value: JSON.stringify({ address, balances: result_obj }) })
       browser.runtime.sendMessage({ type: Messages.AccountsBalanceUpdated, payload: JSON.stringify({ address, balances: result_obj }) })
