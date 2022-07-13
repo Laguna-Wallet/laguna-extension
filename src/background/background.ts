@@ -391,6 +391,7 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
 
 function forceReconnect(port) {
   deleteTimer(port);
+  fetchAccountsBalances()
   port.disconnect();
 }
 function deleteTimer(port) {
