@@ -78,3 +78,5 @@ async function generateStore(): Promise<Store<any, any>> {
 }
 
 export default generateStore;
+
+export type AppDispatch = (arg: State) => State;

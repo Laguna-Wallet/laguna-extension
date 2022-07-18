@@ -99,11 +99,13 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
     async function go() {
       if (accountBalances && accountBalances?.address !== activeAccount?.address) {
         dispatch(toggleLoading(true));
+      } else {
+        dispatch(toggleLoading(false));
       }
     }
 
     go();
-  }, []);
+  }, [accountBalances]);
 
   const renderBallance = (balance: string): ReactNode => {
     const splited = balance.split('.');

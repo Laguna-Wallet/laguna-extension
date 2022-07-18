@@ -138,6 +138,8 @@ export async function fetchAccountsBalances() {
 
         const resolved = await searchAccountBallance(network.chain, recodeAddress(address, network?.prefix, network?.encodeType))
 
+        // if (resolved.message !== "Success") return
+
         if (resolved.message === "Success") {
           temp_obj[network.chain] = Number(resolved.data.account.balance)
         }
@@ -160,10 +162,10 @@ export async function fetchAccountsBalances() {
       }
     }
 
-    setTimeout(() => fetchAccountsBalances(), 3000)
+    // setTimeout(() => fetchAccountsBalances(), 3000)
   } catch (err) {
-    setTimeout(() => fetchAccountsBalances(), 5000)
-    console.log(err)
+    // setTimeout(() => fetchAccountsBalances(), 5000)
+    console.log("error while fetching balances:", err)
   }
 }
 

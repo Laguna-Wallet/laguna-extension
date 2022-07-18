@@ -1,15 +1,15 @@
 import { chrome } from "@polkadot/extension-inject/chrome"
 
 // handles port disconnection after 5 minutes
-let port;
+let port
 function connect() {
-   port = chrome.runtime.connect({ name: process.env.MESSAGING_PORT })
-  port.onDisconnect.addListener(connect);
-  port.onMessage.addListener(msg => {
-    console.log('received', msg, 'from background');
-  });
+  port = chrome.runtime.connect({ name: process.env.MESSAGING_PORT })
+  port.onDisconnect.addListener(connect)
+  port.onMessage.addListener((msg) => {
+    console.log("received", msg, "from background")
+  })
 }
-connect();
+connect()
 
 // handles from background to page
 port.onMessage.addListener(function (data) {
@@ -25,9 +25,9 @@ window.addEventListener("message", ({ data, source }) => {
   port.postMessage({ ...data, origin: process.env.MESSAGE_ORIGIN_CONTENT })
 })
 
-if (chrome?.extension?.getURL) {
+if (chrome.runtime.getURL) {
   const script = document.createElement("script")
-  script.src = chrome.extension.getURL("page.js")
+  script.src = chrome.runtime.getURL("page.js")
 
   script.onload = (): void => {
     if (script.parentNode) {
