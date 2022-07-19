@@ -105,7 +105,7 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
     }
 
     go();
-  }, [accountBalances]);
+  }, [activeAccount, accountBalances]);
 
   const renderBallance = (balance: string): ReactNode => {
     const splited = balance.split('.');
