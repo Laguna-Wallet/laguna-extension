@@ -22,6 +22,7 @@ import { State } from 'redux/store';
 // import '@polkadot/extension-inject/crossenv';
 import '@polkadot/wasm-crypto/initOnlyAsm';
 import RequestToSignTransaction from 'pages/RequestToSignTransaction';
+import { fetchAccountsBalances } from 'utils/Api';
 
 function App() {
   const account = useAccount();
@@ -37,6 +38,10 @@ function App() {
     chrome.runtime.onMessage.addListener(async (msg) => {
       MessageListener(msg, dispatch);
     });
+  }, []);
+
+  useEffect(() => {
+    fetchAccountsBalances(dispatch);
   }, []);
 
   return (

@@ -216,15 +216,36 @@ export const enhancePasswordStrength = (string: string): string => {
   return '';
 };
 
-export const validPassword = (values: {password: string}) => {
-  const {password} = values;
+export const validPassword = (values: { password: string }) => {
+  const { password } = values;
   const errors: Record<string, string> = {};
   if (!password) {
     errors.password = 'Required';
   }
-  if(password?.length < 8){
-    errors.password = 'Must be at least 8 characters'
+  if (password?.length < 8) {
+    errors.password = 'Must be at least 8 characters';
   }
 
   return errors;
 };
+
+export async function checkBalanceChange(
+  newBalance: Record<string, string>,
+  newAddress: string
+): Promise<boolean> {
+  const oldBalance = await getFromStorage(StorageKeys.AccountBalances);
+  if (!oldBalance) return false;
+
+  const oldAddress = JSON.parse(oldBalance)?.address;
+  if (newAddress !== oldAddress) return false;
+
+  const parsedOldBallance = JSON.parse(oldBalance)?.balances;
+
+  for (const [key, balance] of Object.entries(newBalance)) {
+    if (balance > parsedOldBallance[key]) {
+      return true;
+    }
+  }
+
+  return false;
+}

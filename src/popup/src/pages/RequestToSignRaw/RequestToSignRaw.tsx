@@ -9,6 +9,7 @@ import { Messages } from 'utils/types';
 
 export default function RequestToSignRaw() {
   const { pendingToSignRaw: pendingDapp } = useSelector((state: any) => state.wallet);
+  console.log('~ pendingDapp', pendingDapp);
   const dispatch = useDispatch();
 
   const address = pendingDapp?.data?.request?.address;
@@ -43,7 +44,7 @@ export default function RequestToSignRaw() {
           Connecting to
         </Text>
         <Text fSize="12px" marginTop="6px" color="#484848">
-          {new URL(dappName).origin}
+          {dappName && new URL(dappName).origin}
         </Text>
       </Content>
 

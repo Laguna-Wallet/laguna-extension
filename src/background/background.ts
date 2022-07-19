@@ -61,14 +61,12 @@ cryptoWaitReady().then(() => {
   keyring.loadAll({ ss58Format: 42, type: "sr25519", store: new AccountsStore() })
 })
 
-
-
 chrome.runtime.onConnect.addListener(function (port: any) {
-  port.onDisconnect.addListener(deleteTimer);
-  port._timeout = setTimeout(forceReconnect, 250e3, port);
+  port.onDisconnect.addListener(deleteTimer)
+  port._timeout = setTimeout(forceReconnect, 250e3, port)
   console.log(port)
   assert([process.env.MESSAGING_PORT, process.env.PORT_EXTENSION].includes(port.name), `Unknown connection from ${port.name}`)
-  
+
   chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
     if (msg.type === Messages.RevokeDapp) {
       authorizedDapps = authorizedDapps.filter((item) => item !== msg.payload.dappName)
@@ -164,6 +162,7 @@ chrome.runtime.onConnect.addListener(function (port: any) {
       signRequestPending = true
       signRequest = data
     }
+
     if (data.message === "SIGN_RAW") {
       const POPUP_URL = chrome.runtime.getURL("popup/index.html")
       chrome.windows.create({
@@ -300,10 +299,9 @@ chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
       keyPairs = renewMetaToKeyPairs(keyPairs, msg.payload.metaData)
       keyPairs = reEncryptKeyringPairs(keyPairs, msg.payload.oldPassword, msg.payload.newPassword)
       break
-      case Messages.AccountsBalanceUpdated:
-        await fetchAccountsBalances()
-        break
-
+    case Messages.AccountsBalanceUpdated:
+      await fetchAccountsBalances()
+      break
   }
 })
 
@@ -321,16 +319,7 @@ chrome.runtime.onInstalled.addListener(async (port) => {
   chrome.alarms.create("check-timeout", { periodInMinutes: 1 })
   chrome.alarms.create("refetch-account-balances", { periodInMinutes: 3 })
   chrome.alarms.create("24-hr-ballance-change", { periodInMinutes: 3600 })
-
-  chrome.alarms.create("keep alive", { periodInMinutes: 1 })
-
-  // const timeout = await handleInitialIdleTimeout()
-  // chrome.idle.setDetectionInterval(Number(timeout))
-  // chrome.idle.onStateChanged.addListener((status: string) => {
-  //   if (status === "idle") {
-  //     isLoggedIn = false
-  //   }
-  // })
+  chrome.alarms.create("update-balances", { periodInMinutes: 1 })
 
   await Retrieve_Coin_Decimals()
 
@@ -348,17 +337,10 @@ chrome.runtime.onStartup.addListener(async () => {
   chrome.runtime.sendMessage({ type: Messages.CoinInfoUpdated, payload: JSON.stringify(Infos) })
   saveToStorage({ key: StorageKeys.TokenInfos, value: JSON.stringify(Infos) })
 
-  chrome.alarms.create("refresh", { periodInMinutes: 1 })
+  chrome.alarms.create("check-timeout", { periodInMinutes: 1 })
   chrome.alarms.create("refetch-account-balances", { periodInMinutes: 3 })
   chrome.alarms.create("24-hr-ballance-change", { periodInMinutes: 3600 })
-
-  // const timeout = handleInitialIdleTimeout()
-  // // chrome.idle.setDetectionInterval(Number(timeout))
-  // chrome.idle.onStateChanged.addListener((status: string) => {
-  //   if (status === "idle") {
-  //     isLoggedIn = false
-  //   }
-  // })
+  chrome.alarms.create("update-balances", { periodInMinutes: 1 })
 
   await Retrieve_Coin_Decimals()
 
@@ -369,34 +351,39 @@ chrome.runtime.onStartup.addListener(async () => {
 
 chrome.alarms.onAlarm.addListener(async (alarm) => {
   // coin prices
-  const prices = await Retrieve_Coin_Prices()
-  chrome.runtime.sendMessage({ type: Messages.PriceUpdated, payload: JSON.stringify(prices) })
-  saveToStorage({ key: StorageKeys.TokenPrices, value: JSON.stringify(prices) })
 
-  // coin info
-  const Infos = await Retrieve_Coin_Infos()
-  chrome.runtime.sendMessage({ type: Messages.CoinInfoUpdated, payload: JSON.stringify(Infos) })
-  saveToStorage({ key: StorageKeys.TokenInfos, value: JSON.stringify(Infos) })
+  if ((alarm.name = "update-balances")) {
+    fetchAccountsBalances()
+  } else {
+    const prices = await Retrieve_Coin_Prices()
+    chrome.runtime.sendMessage({ type: Messages.PriceUpdated, payload: JSON.stringify(prices) })
+    saveToStorage({ key: StorageKeys.TokenPrices, value: JSON.stringify(prices) })
 
-  if (alarm.name === "24-hr-ballance-change") {
-    // const balance24hrChangeRate = Retrieve_balance_change_rates()
-  }
+    // coin info
+    const Infos = await Retrieve_Coin_Infos()
+    chrome.runtime.sendMessage({ type: Messages.CoinInfoUpdated, payload: JSON.stringify(Infos) })
+    saveToStorage({ key: StorageKeys.TokenInfos, value: JSON.stringify(Infos) })
 
-  // check if login-timeout has passed
-  if (Date.now() - timeoutStart > timeout) {
-    isLoggedIn = false
-    keyPairs = []
+    if (alarm.name === "24-hr-ballance-change") {
+      // const balance24hrChangeRate = Retrieve_balance_change_rates()
+    }
+
+    // check if login-timeout has passed
+    if (Date.now() - timeoutStart > timeout) {
+      isLoggedIn = false
+      keyPairs = []
+    }
   }
 })
 
 function forceReconnect(port) {
-  deleteTimer(port);
+  deleteTimer(port)
   fetchAccountsBalances()
-  port.disconnect();
+  port.disconnect()
 }
 function deleteTimer(port) {
   if (port._timer) {
-    clearTimeout(port._timer);
-    delete port._timer;
+    clearTimeout(port._timer)
+    delete port._timer
   }
 }

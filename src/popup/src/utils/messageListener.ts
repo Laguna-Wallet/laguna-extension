@@ -68,7 +68,7 @@ function updateCoinInfo(message: any, dispatch: any) {
   saveToStorage({ key: StorageKeys.TokenInfos, value: message.payload });
 }
 
-async function updateAccountsBalances(message: any, dispatch: any) {
+export async function updateAccountsBalances(message: any, dispatch: any) {
   dispatch(changeAccountsBalances(JSON.parse(message.payload)));
   saveToStorage({ key: StorageKeys.AccountBalances, value: message.payload });
 
