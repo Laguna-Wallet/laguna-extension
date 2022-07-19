@@ -120,7 +120,7 @@ export default function Send({ initialIsContactsPopupOpen, propsFromTokenDashboa
       const fees = new BigNumber(`${partialFee}`).multipliedBy(110).dividedBy(100);
 
       // todo check this
-      const total = amount.plus(fees).plus(api.consts.balances.existentialDeposit.toString());
+      const total = amount.plus(fees).plus(available);
 
       api.disconnect();
 
