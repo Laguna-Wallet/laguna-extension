@@ -41,7 +41,8 @@ export default function TokenAndAmountSelect({ tokens, Icon, value }: Props) {
 
   return (
     <Container>
-      {value && Icon}
+      {/* {value && } */}
+      {Icon}
       <Field name="amount" type="text" label="amount" component={Input} />
       <Field name="token" label="token" component={renderSelect} />
       {/* <IconContainer>
@@ -53,10 +54,18 @@ export default function TokenAndAmountSelect({ tokens, Icon, value }: Props) {
 
 const Input = ({ input: { value, onChange } }: any) => (
   <StyledInput
-    type="number"
+    type="text"
     isValue={!value}
     value={value}
-    onChange={(e) => onChange(parseNumeric(e.target.value))}
+    // onChange={(e) => {
+    //   console.log('~ parseNumeric(e, e.target.value)', parseNumeric(e, e.target.value));
+    //   if (parseNumeric(e, e.target.value)) {
+    //     onChange(e.target.value);
+    //   }
+    // }}
+    onChange={(e) => {
+      onChange(parseNumeric(e.target.value));
+    }}
     placeholder="Enter Amount"
   />
 );
@@ -110,7 +119,8 @@ const StyledInput = styled.input<{ isValue: boolean }>`
   width: ${({ isValue }) => (isValue ? '100%' : 'calc(100% - 40px)')};
   padding-right: 12px;
   height: 48px;
-  margin-left: ${({ isValue }) => (isValue ? '2px' : '14px')};
+  /* margin-left: ${({ isValue }) => (isValue ? '2px' : '14px')}; */
+  margin-left: 10px;
   border: 0;
   border-top-left-radius: 5px;
   border-bottom-left-radius: 5px;
@@ -146,10 +156,11 @@ const StyledSelect = styled.div`
   font-weight: 600;
   color: #18191a;
   position: relative;
-  display:flex
+  display: flex;
   align-items: center;
+  justify-content: center;
   flex-direction: column;
-  
+
   &:focus {
     outline: none;
   }

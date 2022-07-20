@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js';
 import NetworkIcons from 'components/primitives/NetworkIcons';
-import { Link } from 'react-chrome-extension-router';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { Asset } from 'utils/types';
 
@@ -16,7 +16,7 @@ export default function ChainItem({ asset, handleClick, iconSize }: Props) {
   const { chain, symbol, balance, calculatedPrice } = asset;
   const iconCurrentSize = iconSize || '36px';
   return (
-    // <StyledLink component={TokenDashboard} props={{ asset }}>
+    // <StyledLink to={router.tokenDashboard} props={{ asset }}>
     <Container onClick={handleClick}>
       <ListItemIcon iconSize={iconSize}>
         <NetworkIcons
@@ -32,7 +32,7 @@ export default function ChainItem({ asset, handleClick, iconSize }: Props) {
       </ListItemText>
       <ListItemText>
         <Symbol>
-          {balance ? new BigNumber(balance).toFormat(4, 1) : 0} {symbol}
+          {balance ? new BigNumber(balance.overall).toFormat(4, 1) : 0} {symbol}
         </Symbol>
         <Value>${calculatedPrice ? new BigNumber(calculatedPrice).toFixed(2) : 0}</Value>
       </ListItemText>

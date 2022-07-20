@@ -171,6 +171,7 @@ const AddressesContainer = styled.div`
   max-height: 336px;
   overflow-y: scroll;
   margin: 12px 0;
+  scrollbar-width: none;
 
   ::-webkit-scrollbar {
     display: none;

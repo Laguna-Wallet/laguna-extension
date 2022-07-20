@@ -13,7 +13,14 @@ connect()
 
 // handles from background to page
 port.onMessage.addListener(function (data) {
-  window.postMessage({ ...data, origin: process.env.MESSAGE_ORIGIN_CONTENT, from: "window-postMessage" }, "*")
+  window.postMessage(
+    {
+      ...data,
+      origin: process.env.MESSAGE_ORIGIN_CONTENT,
+      from: "window-postMessage",
+    },
+    "*"
+  )
 })
 
 // handles from page to background

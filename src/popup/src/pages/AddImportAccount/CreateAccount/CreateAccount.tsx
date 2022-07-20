@@ -1,18 +1,10 @@
 import keyring from '@polkadot/ui-keyring';
-import { PageContainer } from 'components/ui';
-import WizardStepHeader from 'components/WizardStepHeader/WizardStepHeader';
 import { useAccount } from 'context/AccountContext';
 import EncodeAccount from 'pages/AddImportAccount/EncodeAccount';
 import SetupComplete from 'pages/AddImportAccount/SetupComplete';
-import { mnemonicGenerate } from '@polkadot/util-crypto/mnemonic';
-import Wallet from 'pages/Wallet/Wallet';
-import { goTo } from 'react-chrome-extension-router';
 import { Wizard } from 'react-use-wizard';
-import CongratsSecuringWallet from './Congrats/CongratsSecuringWallet';
 import CreatePassword from './CreatePassword/CreatePassword';
 import SecureWallet from './SecureWallet/SecureWallet';
-import { randomAsHex } from '@polkadot/util-crypto';
-import SignUp from 'pages/SignUp/SignUp';
 import { useState } from 'react';
 import { Messages, StorageKeys } from 'utils/types';
 import { generateRandomBase64Avatar } from 'utils';
@@ -20,12 +12,18 @@ import { addAccountMeta } from 'utils/polkadot';
 import { useSelector } from 'react-redux';
 import { State } from 'redux/store';
 import AES from 'crypto-js/aes';
-import CongratsBackingUp from './SecureWallet/CongratsBackingUp';
 import { saveToStorage } from 'utils/chrome';
+import { RouteComponentProps, useHistory } from 'react-router-dom';
+import { router } from 'router/router';
+import browser from 'webextension-polyfill';
+import { useLocation } from 'react-router-dom';
 
 type Props = {
   existingAccount?: boolean;
   encodePhase?: boolean;
+};
+
+type LocationState = {
   redirectedFromSignUp?: boolean;
   redirectedFromDashboard?: boolean;
 };
@@ -36,13 +34,15 @@ export enum SecurityLevelEnum {
 }
 
 export default function CreateAccount({
-  redirectedFromSignUp,
-  redirectedFromDashboard,
+  // redirectedFromSignUp,
+  // redirectedFromDashboard,
   encodePhase
-}: Props) {
-  console.log('~ redirectedFromSignUp', redirectedFromSignUp);
+}: Props & Partial<RouteComponentProps>) {
   const account = useAccount();
   const encoded = account.encryptedPassword;
+  const history = useHistory();
+  const location = useLocation<LocationState>();
+  const { redirectedFromSignUp, redirectedFromDashboard } = location?.state || {};
 
   const hasBoarded = useSelector((state: State) => state?.wallet?.onboarding);
 
@@ -71,12 +71,12 @@ export default function CreateAccount({
         account.saveActiveAccount(newPair);
       }
 
-      chrome.runtime.sendMessage({
+      browser.runtime.sendMessage({
         type: Messages.AddToKeyring,
         payload: { seed: mnemonicsStr, password, meta: newPair.meta }
       });
 
-      chrome.runtime.sendMessage({
+      browser.runtime.sendMessage({
         type: Messages.AuthUser,
         payload: { password }
       });
@@ -100,14 +100,14 @@ export default function CreateAccount({
         account.saveActiveAccount(newPair);
       }
 
-      chrome.runtime.sendMessage({
+      browser.runtime.sendMessage({
         type: Messages.AuthUser,
         payload: { password }
       });
 
       saveToStorage({ key: StorageKeys.OnBoarding, value: true });
 
-      chrome.runtime.sendMessage({
+      browser.runtime.sendMessage({
         type: Messages.AddToKeyring,
         payload: { seed: mnemonicsStr, password, meta: newPair.meta }
       });
@@ -120,9 +120,9 @@ export default function CreateAccount({
 
   const onClose = () => {
     if (redirectedFromSignUp) {
-      goTo(SignUp);
+      history.push(router.signUp);
     } else {
-      goTo(Wallet);
+      history.push(router.home);
     }
   };
 

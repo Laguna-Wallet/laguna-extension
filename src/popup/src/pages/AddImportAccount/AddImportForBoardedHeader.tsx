@@ -1,10 +1,5 @@
-import { useWizard } from 'react-use-wizard';
 import styled from 'styled-components';
 import CloseIcon from 'assets/svgComponents/CloseIcon';
-import LeftArrowIcon from 'assets/svgComponents/LeftArrowIcon';
-import { goTo } from 'react-chrome-extension-router';
-import SignUp from 'pages/SignUp/SignUp';
-import Wallet from 'pages/Wallet/Wallet';
 import LeftArrowThinIcon from 'assets/svgComponents/LeftArrowThinIcon';
 
 type Props = {

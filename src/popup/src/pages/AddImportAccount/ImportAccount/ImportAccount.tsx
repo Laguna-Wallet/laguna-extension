@@ -2,7 +2,9 @@ import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { reset } from 'redux-form';
 import { Wizard } from 'react-use-wizard';
-import { goTo } from 'react-chrome-extension-router';
+import { RouteComponentProps, useHistory, useLocation } from 'react-router-dom';
+import { router } from 'router/router';
+import browser from 'webextension-polyfill';
 
 import { mnemonicValidate } from '@polkadot/util-crypto';
 import { isHex } from '@polkadot/util';
@@ -20,13 +22,10 @@ import { State } from 'redux/store';
 import { useAccount } from 'context/AccountContext';
 
 import CreatePassword from '../CreateAccount/CreatePassword/CreatePassword';
-import SignUp from 'pages/SignUp/SignUp';
 import EncodeAccount from 'pages/AddImportAccount/EncodeAccount';
 import SetupComplete from 'pages/AddImportAccount/SetupComplete';
 import ImportPhase from 'pages/AddImportAccount/ImportAccount/importPhase';
-import Wallet from 'pages/Wallet/Wallet';
 import { saveToStorage } from 'utils/chrome';
-import WelcomeBack from 'pages/WelcomeBack/WelcomeBack';
 import { clearAccountsFromStorage } from 'utils';
 import { toggleLoading } from 'redux/actions';
 
@@ -57,12 +56,17 @@ const validate = (values: any) => {
   return errors;
 };
 
-type Props = {
+type LocationState = {
   redirectedFromSignUp?: boolean;
   redirectedFromForgotPassword?: boolean;
 };
 
-function ImportAccount({ redirectedFromSignUp, redirectedFromForgotPassword }: Props) {
+function ImportAccount() {
+  const history = useHistory();
+
+  const location = useLocation<LocationState>();
+  const { redirectedFromSignUp, redirectedFromForgotPassword } = location?.state || {};
+  
   const account = useAccount();
   const encoded = account.encryptedPassword;
 
@@ -73,11 +77,14 @@ function ImportAccount({ redirectedFromSignUp, redirectedFromForgotPassword }: P
 
   const { seedPhase, file, password: jsonPassword }: any = { ...importPhaseFormValues };
 
+  const redirectPassword =
+    redirectedFromForgotPassword || location.state?.redirectedFromForgotPassword;
+
   const handleEncode = async (password: string) => {
     if (seedPhase) {
       if (mnemonicValidate(seedPhase)) {
         const pair = await importFromMnemonic(seedPhase, password);
-        if (redirectedFromForgotPassword) {
+        if (redirectPassword) {
           clearAccountsFromStorage(pair.address);
           account.saveActiveAccount(pair);
           dispatch(toggleLoading(true));
@@ -86,13 +93,13 @@ function ImportAccount({ redirectedFromSignUp, redirectedFromForgotPassword }: P
         if (!account.getActiveAccount()) {
           account.saveActiveAccount(pair);
         }
-        if (redirectedFromForgotPassword) {
-          chrome.runtime.sendMessage({
+        if (redirectPassword) {
+          browser.runtime.sendMessage({
             type: Messages.ForgotPassword,
             payload: { seed: seedPhase, password, meta: pair.meta }
           });
         } else {
-          chrome.runtime.sendMessage({
+          browser.runtime.sendMessage({
             type: Messages.AddToKeyring,
             payload: { seed: seedPhase, password, meta: pair.meta }
           });
@@ -106,7 +113,7 @@ function ImportAccount({ redirectedFromSignUp, redirectedFromForgotPassword }: P
 
       const newPair = await encryptKeyringPair(pair, jsonPassword, password);
 
-      if (redirectedFromForgotPassword) {
+      if (redirectPassword) {
         clearAccountsFromStorage(pair.address);
         account.saveActiveAccount(newPair);
         dispatch(toggleLoading(true));
@@ -116,20 +123,20 @@ function ImportAccount({ redirectedFromSignUp, redirectedFromForgotPassword }: P
         account.saveActiveAccount(newPair);
       }
 
-      if (redirectedFromForgotPassword) {
-        chrome.runtime.sendMessage({
+      if (redirectPassword) {
+        browser.runtime.sendMessage({
           type: Messages.ForgotPassword,
           payload: { password, json: file, jsonPassword, meta: newPair.meta }
         });
       } else {
-        chrome.runtime.sendMessage({
+        browser.runtime.sendMessage({
           type: Messages.AddToKeyring,
           payload: { password, json: file, jsonPassword, meta: newPair.meta }
         });
       }
     }
 
-    chrome.runtime.sendMessage({
+    browser.runtime.sendMessage({
       type: Messages.AuthUser,
       payload: { password }
     });
@@ -139,8 +146,8 @@ function ImportAccount({ redirectedFromSignUp, redirectedFromForgotPassword }: P
     dispatch(reset('ImportPhase'));
     dispatch(reset('EncodeAccount'));
 
-    if (redirectedFromForgotPassword) {
-      goTo(Wallet);
+    if (redirectPassword) {
+      history.push(router.home);
     }
   };
 
@@ -148,11 +155,11 @@ function ImportAccount({ redirectedFromSignUp, redirectedFromForgotPassword }: P
     dispatch(reset('ImportPhase'));
     dispatch(reset('EncodeAccount'));
     if (redirectedFromSignUp) {
-      goTo(SignUp);
+      history.push(router.signUp);
     } else if (redirectedFromForgotPassword) {
-      goTo(WelcomeBack);
+      history.push(router.welcomeBack);
     } else {
-      goTo(Wallet);
+      history.push(router.home);
     }
   };
 
@@ -162,12 +169,12 @@ function ImportAccount({ redirectedFromSignUp, redirectedFromForgotPassword }: P
         {!encoded && <CreatePassword redirectedFromSignUp={redirectedFromSignUp} />}
 
         <ImportPhase
-          redirectedFromForgotPassword={redirectedFromForgotPassword}
+          redirectedFromForgotPassword={redirectPassword}
           redirectedFromSignUp={redirectedFromSignUp}
           onClose={onClose}
         />
 
-        {!redirectedFromForgotPassword && (
+        {!redirectedFromForgotPassword && !location.state?.redirectedFromForgotPassword && (
           <EncodeAccount
             title="Import Complete!"
             descriptionText="To encrypt your new account please enter your password below:"
@@ -175,10 +182,10 @@ function ImportAccount({ redirectedFromSignUp, redirectedFromForgotPassword }: P
           />
         )}
 
-        {redirectedFromForgotPassword && (
+        {redirectPassword && (
           <CreatePassword
             handleEncode={handleEncode}
-            redirectedFromForgotPassword={redirectedFromForgotPassword}
+            redirectedFromForgotPassword={redirectPassword}
           />
         )}
 

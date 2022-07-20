@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   copyToClipboard,
   generateNumberAbbreviation,
@@ -14,11 +14,10 @@ import arrayShuffle from 'array-shuffle';
 import Snackbar from 'components/Snackbar/Snackbar';
 import { useWizard } from 'react-use-wizard';
 import WizardHeader from 'pages/AddImportAccount/WizardHeader';
-import SignUp from 'pages/SignUp/SignUp';
-import Wallet from 'pages/Wallet/Wallet';
-import { goTo } from 'react-chrome-extension-router';
 import { addAccountMeta } from 'utils/polkadot';
 import { useEnterClickListener } from 'hooks/useEnterClickListener';
+import { useHistory } from 'react-router-dom';
+import { router } from 'router/router';
 
 const calculateWordColor = (index: number, mnemonicIndexToChoose: number) => {
   if (index === mnemonicIndexToChoose) return '#F9F7CD';
@@ -37,7 +36,12 @@ export default function ConfirmSeed({
   redirectedFromDashboard,
   nextStepFromParent
 }: Props) {
-  const { nextStep, previousStep, handleStep } = useWizard();
+  const history = useHistory();
+  const account = useAccount();
+
+  const activeAccount = useCallback(account.getActiveAccount(), [account]);
+
+  const { previousStep, handleStep } = useWizard();
   const { mnemonics, getActiveAccount, saveActiveAccount } = useAccount();
   const [mnemonicIndexes, setMnemonicIndexes] = useState<MnemonicsTriple>();
   const [chosenMnemonics, setChosenMnemonics] = useState<string[] | []>([]);
@@ -63,7 +67,7 @@ export default function ConfirmSeed({
       validateMnemonicChoice(mnemonics, chosenMnemonics, mnemonicIndexes as MnemonicsTriple) &&
       !isSnackbarOpen
     ) {
-      if (redirectedFromDashboard) {
+      if (redirectedFromDashboard || activeAccount?.meta?.notSecured) {
         const pair = addAccountMeta(getActiveAccount()?.address, { notSecured: false });
         saveActiveAccount(pair);
       }
@@ -105,9 +109,9 @@ export default function ConfirmSeed({
       <WizardHeader
         onClose={() => {
           if (redirectedFromSignUp) {
-            goTo(SignUp);
+            history.push(router.signUp);
           } else {
-            goTo(Wallet);
+            history.push(router.home);
           }
         }}
         onBack={() => {

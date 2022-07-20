@@ -2,13 +2,14 @@ import { useEffect, useRef, useState } from 'react';
 import { ArrowSmRightIcon } from '@heroicons/react/outline';
 import { Settings } from 'react-slick';
 import Slider from 'components/Slider/Slider';
-import { Link } from 'react-chrome-extension-router';
+import { Link } from 'react-router-dom';
 import Button from 'components/primitives/Button';
 import SignUp from 'pages/SignUp/SignUp';
 import { PageContainer } from 'components/ui';
 import { saveToStorage } from 'utils/chrome';
 import RightArrow from 'assets/svgComponents/RightArrow';
 import styled from 'styled-components';
+import { router } from 'router/router';
 
 export default function ProductIntro() {
   const [activeIndex, setIndex] = useState<number>(0);
@@ -76,7 +77,7 @@ export default function ProductIntro() {
         <Title>HydroX</Title>
         <Description>The future of Banking</Description>
         {/* todo button separate shared component */}
-        <StyledLink component={SignUp}>
+        <StyledLink to={router.signUp}>
           <Button onClick={handleClick} Icon={<RightArrow width={23} />} text={'Get Started'} />
         </StyledLink>
       </MainSection>

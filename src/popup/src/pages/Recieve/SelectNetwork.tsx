@@ -2,25 +2,25 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import Header from 'pages/Wallet/Header';
-import Wallet from 'pages/Wallet/Wallet';
 import HumbleInput from 'components/primitives/HumbleInput';
 // Todo Move ChainItem Into Shared
 import ChainItem from '../../pages/Wallet/ChainItem';
 import { useAccount } from 'context/AccountContext';
-import { goTo } from 'react-chrome-extension-router';
 import { Asset, Network } from 'utils/types';
 import { useWizard } from 'react-use-wizard';
 import { useSelector } from 'react-redux';
 import LoopIcon from 'assets/svgComponents/loopIcon';
 import { State } from 'redux/store';
 import { getAssets } from 'utils/polkadot';
-import TokenDashboard from 'pages/TokenDashboard/TokenDashboard';
+import { useHistory } from 'react-router-dom';
+import { router } from 'router/router';
 
 type Props = {
   setSelectedNetwork: (network: Network & Asset) => void;
 };
 
 export default function SelectNetwork({ setSelectedNetwork }: Props) {
+  const history = useHistory();
   const account = useAccount();
   const { nextStep } = useWizard();
 
@@ -43,20 +43,26 @@ export default function SelectNetwork({ setSelectedNetwork }: Props) {
     go();
   }, []);
 
+  const renderNetwork = (assets: Asset[] & Network[], networksFilter: string) => {
+    return assets.filter((asset) =>
+      asset.name.toLowerCase().includes(networksFilter.toLowerCase())
+    );
+  };
+
   const handleClick = (asset: Network & Asset) => {
     setSelectedNetwork(asset);
     nextStep();
   };
+
+  const headerAction = () => history.push(router.home);
 
   return (
     <Container>
       <Header
         title="SELECT ASSET"
         bgColor="#f2f2f2"
-        closeAction={() => {
-          goTo(Wallet);
-        }}
-        backAction={() => goTo(Wallet)}
+        closeAction={headerAction}
+        backAction={headerAction}
         stroke="#777E91"
       />
       <Content>
@@ -84,7 +90,7 @@ export default function SelectNetwork({ setSelectedNetwork }: Props) {
           {assets
             ? assets.length === 0
               ? 'no assets'
-              : assets.map((asset: Asset & Network) => {
+              : renderNetwork(assets, networksFilter).map((asset: any) => {
                   return (
                     <ChainItemContainer key={asset.chain}>
                       <ChainItem

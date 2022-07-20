@@ -2,16 +2,15 @@ import styled from 'styled-components';
 import Header from 'pages/Wallet/Header';
 import Button from 'components/primitives/Button';
 import { FlowValue, SendAccountFlowEnum } from './Send';
-import { goTo } from 'react-chrome-extension-router';
 import { useAccount } from 'context/AccountContext';
 import { useWizard } from 'react-use-wizard';
 import { memo, useEffect, useState } from 'react';
-import Wallet from 'pages/Wallet/Wallet';
 import {
   getAccountNameByAddress,
   getContactNameByAddress,
   recodeToPolkadotAddress,
-  truncateString
+  truncateString,
+  updateBallanceCache
 } from 'utils';
 import BigNumber from 'bignumber.js';
 import { useDispatch, useSelector } from 'react-redux';
@@ -19,6 +18,12 @@ import { Messages, SnackbarMessages } from 'utils/types';
 import NetworkIcons from 'components/primitives/NetworkIcons';
 import { reset } from 'redux-form';
 import Loader from 'components/Loader/Loader';
+import { useHistory } from 'react-router-dom';
+import { router } from 'router/router';
+import browser from 'webextension-polyfill';
+import { changeAccountsBalances } from 'redux/actions';
+import { recodeAddress } from 'utils/polkadot';
+import { sendMessagePromise } from 'utils/chrome';
 
 type Props = {
   fee: string;
@@ -32,6 +37,8 @@ type Props = {
 function Confirm({ fee, transfer, amountToSend, recoded, setBlockHash, flow }: Props) {
   const { nextStep, previousStep } = useWizard();
   const account = useAccount();
+  const history = useHistory();
+
   const dispatch = useDispatch();
   const [loadingTransaction, setLoadingTransaction] = useState(false);
   const [transactionConfirmed, setTransactionConfirmed] = useState(false);
@@ -54,7 +61,7 @@ function Confirm({ fee, transfer, amountToSend, recoded, setBlockHash, flow }: P
   const name = account?.getActiveAccount()?.meta?.name;
 
   const handleClick = async () => {
-    chrome.runtime.sendMessage({
+    browser.runtime.sendMessage({
       type: Messages.SendTransaction,
       payload: {
         sendTo: recoded,
@@ -72,12 +79,21 @@ function Confirm({ fee, transfer, amountToSend, recoded, setBlockHash, flow }: P
   };
 
   useEffect(() => {
-    chrome.runtime.onMessage.addListener((msg) => {
+    browser.runtime.onMessage.addListener(async (msg) => {
       if (msg.type === Messages.TransactionSuccess) {
         setBlockHash(msg.payload.block);
         setLoadingTransaction(false);
         setTransactionConfirmed(true);
-        goTo(Wallet, { snackbar: { show: true, message: SnackbarMessages.TransactionSent } });
+        const updatedBalances = await updateBallanceCache(chain, amount, fee);
+
+        dispatch(changeAccountsBalances(updatedBalances));
+
+        // sendMessagePromise({ type: Messages.FreezeAccountBalanceUpdate });
+
+        history.push({
+          pathname: router.home,
+          state: { snackbar: { show: true, message: SnackbarMessages.TransactionSent } }
+        });
       }
     });
   }, []);
@@ -92,7 +108,7 @@ function Confirm({ fee, transfer, amountToSend, recoded, setBlockHash, flow }: P
     if (flow === SendAccountFlowEnum.SendToAccount) {
       return getAccountNameByAddress(recoded);
     } else if (flow === SendAccountFlowEnum.SendToTrustedContact) {
-      return getContactNameByAddress(recodeToPolkadotAddress(recoded));
+      return getContactNameByAddress(recodeAddress(recoded, 42));
     }
 
     return '';
@@ -107,7 +123,7 @@ function Confirm({ fee, transfer, amountToSend, recoded, setBlockHash, flow }: P
         bgColor="#f2f2f2"
         closeAction={() => {
           dispatch(reset('sendToken'));
-          goTo(Wallet);
+          history.push(router.home);
         }}
         backAction={() => previousStep()}
       />
@@ -126,7 +142,7 @@ function Confirm({ fee, transfer, amountToSend, recoded, setBlockHash, flow }: P
             <AddressesInfoItem>
               <span>From</span>
               <span>
-                {name?.length > 10 ? truncateString(name, 5) : name}(
+                {name?.length > 12 ? truncateString(name, 5) : name}(
                 {truncateString(activeAccountAddress, 5)})
               </span>
             </AddressesInfoItem>
@@ -159,7 +175,7 @@ function Confirm({ fee, transfer, amountToSend, recoded, setBlockHash, flow }: P
         <InfoItem>
           <span>Fee</span>
           <span>
-            {new BigNumber(fee).toFormat(4) + ` ${token.toUpperCase()}`}
+            {new BigNumber(fee).toString() + ` ${token.toUpperCase()}`}
             (${new BigNumber(fee).times(price || 0).toFormat(4)})
           </span>
         </InfoItem>
@@ -168,7 +184,7 @@ function Confirm({ fee, transfer, amountToSend, recoded, setBlockHash, flow }: P
       <BottomSection>
         <Button
           onClick={() => {
-            goTo(Wallet);
+            history.push(router.home);
             dispatch(reset('sendToken'));
           }}
           text="Cancel"

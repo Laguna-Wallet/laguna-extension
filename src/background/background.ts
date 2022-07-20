@@ -25,6 +25,7 @@ import {
   renewMetaToKeyPairs,
   clearAccountsFromStorage,
 } from "./utils"
+
 import keyring from "@polkadot/ui-keyring"
 import { TypeRegistry } from "@polkadot/types"
 import { AccountsStore } from "./stores"
@@ -33,6 +34,7 @@ import type { KeyringPair } from "@polkadot/keyring/types"
 import assert = require("assert")
 import type { SignerPayloadJSON, SignerPayloadRaw } from "@polkadot/types/types"
 import { hexToString } from "@polkadot/util"
+import browser from "webextension-polyfill"
 
 // import { getCurrentTab } from "./utils"
 
@@ -58,10 +60,14 @@ let timeoutStart = Date.now()
 
 cryptoWaitReady().then(() => {
   // load all available addresses and accounts
-  keyring.loadAll({ ss58Format: 42, type: "sr25519", store: new AccountsStore() })
+  keyring.loadAll({
+    ss58Format: 42,
+    type: "sr25519",
+    store: new AccountsStore(),
+  })
 })
 
-chrome.runtime.onConnect.addListener(function (port: any) {
+browser.runtime.onConnect.addListener(function (port: any) {
   port.onDisconnect.addListener(deleteTimer)
   port._timeout = setTimeout(forceReconnect, 250e3, port)
   console.log(port)
@@ -82,12 +88,18 @@ chrome.runtime.onConnect.addListener(function (port: any) {
         if (msg.payload.approved && msg?.payload?.POPUP_CONTENT === process.env.POPUP_CONTENT) {
           pendingRequests = []
           authorizedDapps.push(dappName)
-          port.postMessage({ ...msg.payload.pendingDapp[0], payload: { id: msg.payload.pendingDapp[0].id, approved: true } })
+          port.postMessage({
+            ...msg.payload.pendingDapp[0],
+            payload: { id: msg.payload.pendingDapp[0].id, approved: true },
+          })
           return true
         } else {
           pendingRequests = []
           declinedDapps.push(dappName)
-          port.postMessage({ ...msg.payload.pendingDapp[0], payload: { id: msg.payload.pendingDapp[0].id, approved: false } })
+          port.postMessage({
+            ...msg.payload.pendingDapp[0],
+            payload: { id: msg.payload.pendingDapp[0].id, approved: false },
+          })
           return true
         }
       } catch (err) {
@@ -107,11 +119,21 @@ chrome.runtime.onConnect.addListener(function (port: any) {
           if (data.message === "SIGN_PAYLOAD") {
             await cryptoWaitReady()
             registry.setSignedExtensions(data.request.signedExtensions)
-            const result = registry.createType("ExtrinsicPayload", data.request, { version: data.request.version }).sign(pair)
-            port.postMessage({ ...data, payload: { id: data.id, approved: true, ...result } })
+            const result = registry
+              .createType("ExtrinsicPayload", data.request, {
+                version: data.request.version,
+              })
+              .sign(pair)
+            port.postMessage({
+              ...data,
+              payload: { id: data.id, approved: true, ...result },
+            })
           }
         } else {
-          port.postMessage({ ...data, payload: { id: data.id, approved: false } })
+          port.postMessage({
+            ...data,
+            payload: { id: data.id, approved: false },
+          })
         }
         signRequestPending = false
         signRequest = {}
@@ -131,10 +153,21 @@ chrome.runtime.onConnect.addListener(function (port: any) {
         if (data.message === "SIGN_RAW") {
           await cryptoWaitReady()
           const signature = u8aToHex(pair.sign(wrapBytes(data.request.data)))
-          port.postMessage({ ...data, payload: { id: data.id, approved: true, ...data.request, signature } })
+          port.postMessage({
+            ...data,
+            payload: {
+              id: data.id,
+              approved: true,
+              ...data.request,
+              signature,
+            },
+          })
         }
       } else {
-        port.postMessage({ ...data, payload: { id: data.id, approved: false } })
+        port.postMessage({
+          ...data,
+          payload: { id: data.id, approved: false },
+        })
       }
       signRawRequestPending = false
       signRawRequest = {}
@@ -149,8 +182,8 @@ chrome.runtime.onConnect.addListener(function (port: any) {
     }
 
     if (data.message === "SIGN_PAYLOAD") {
-      const POPUP_URL = chrome.runtime.getURL("popup/index.html")
-      chrome.windows.create({
+      const POPUP_URL = browser.runtime.getURL("popup/index.html")
+      browser.windows.create({
         focused: true,
         height: 621,
         left: 1250,
@@ -164,8 +197,8 @@ chrome.runtime.onConnect.addListener(function (port: any) {
     }
 
     if (data.message === "SIGN_RAW") {
-      const POPUP_URL = chrome.runtime.getURL("popup/index.html")
-      chrome.windows.create({
+      const POPUP_URL = browser.runtime.getURL("popup/index.html")
+      browser.windows.create({
         focused: true,
         height: 621,
         left: 1250,
@@ -186,13 +219,19 @@ chrome.runtime.onConnect.addListener(function (port: any) {
 
       // if no account is created don't allow dap to connect
       if (!hasBoarded) {
-        port.postMessage({ ...data, payload: { id: data.id, approved: false } })
+        port.postMessage({
+          ...data,
+          payload: { id: data.id, approved: false },
+        })
       }
 
       // todo check tab name differently
       isInPhishingList(dappName).then((isDenied) => {
         if (isDenied) {
-          port.postMessage({ ...data, payload: { id: data.id, approved: false } })
+          port.postMessage({
+            ...data,
+            payload: { id: data.id, approved: false },
+          })
           return
         }
       })
@@ -203,16 +242,19 @@ chrome.runtime.onConnect.addListener(function (port: any) {
       }
 
       if (declinedDapps.includes(dappName)) {
-        port.postMessage({ ...data, payload: { id: data.id, approved: false } })
+        port.postMessage({
+          ...data,
+          payload: { id: data.id, approved: false },
+        })
         return false
       }
 
-      const POPUP_URL = chrome.runtime.getURL("popup/index.html")
+      const POPUP_URL = browser.runtime.getURL("popup/index.html")
       if (pendingRequests.length === 0) {
         pendingRequests.push(data)
       }
 
-      chrome.windows.create({
+      browser.windows.create({
         focused: true,
         height: 621,
         left: 1250,
@@ -225,7 +267,7 @@ chrome.runtime.onConnect.addListener(function (port: any) {
   })
 })
 
-chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
+browser.runtime.onMessage.addListener(async (msg, _sender) => {
   switch (msg.type) {
     case Messages.AuthUser:
       if (validatePassword(msg.payload.password)) {
@@ -235,8 +277,18 @@ chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
       }
       break
     case Messages.CheckPendingDappAuth:
-      chrome.runtime.sendMessage({ type: Messages.DappAuthorization, payload: { pendingDappAuthorization: pendingRequests } })
-      sendResponse({ type: Messages.DappAuthorization, payload: { pendingDappAuthorization: pendingRequests } })
+      chrome.runtime.sendMessage({
+        type: Messages.DappAuthorization,
+        payload: { pendingDappAuthorization: pendingRequests },
+      })
+      return {
+        type: Messages.DappAuthorization,
+        payload: { pendingDappAuthorization: pendingRequests },
+      }
+      // sendResponse({
+      //   type: Messages.DappAuthorization,
+      //   payload: { pendingDappAuthorization: pendingRequests },
+      // })
       break
     case Messages.LogOutUser:
       isLoggedIn = false
@@ -244,12 +296,32 @@ chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
       break
 
     case Messages.CheckPendingSign:
-      chrome.runtime.sendMessage({ type: Messages.CheckPendingSign, payload: { pending: signRequestPending, data: signRequest } })
-      sendResponse({ type: Messages.CheckPendingSign, payload: { pending: signRequestPending, data: signRequest } })
+      chrome.runtime.sendMessage({
+        type: Messages.CheckPendingSign,
+        payload: { pending: signRequestPending, data: signRequest },
+      })
+      return {
+        type: Messages.CheckPendingSign,
+        payload: { pending: signRequestPending, data: signRequest },
+      }
+      // sendResponse({
+      //   type: Messages.CheckPendingSign,
+      //   payload: { pending: signRequestPending, data: signRequest },
+      // })
       break
     case Messages.CheckPendingSignRaw:
-      chrome.runtime.sendMessage({ type: Messages.CheckPendingSignRaw, payload: { pending: signRawRequestPending, data: signRawRequest } })
-      sendResponse({ type: Messages.CheckPendingSignRaw, payload: { pending: signRawRequestPending, data: signRawRequest } })
+      chrome.runtime.sendMessage({
+        type: Messages.CheckPendingSignRaw,
+        payload: { pending: signRawRequestPending, data: signRawRequest },
+      })
+      return {
+        type: Messages.CheckPendingSignRaw,
+        payload: { pending: signRawRequestPending, data: signRawRequest },
+      }
+      // sendResponse({
+      //   type: Messages.CheckPendingSignRaw,
+      //   payload: { pending: signRawRequestPending, data: signRawRequest },
+      // })
       break
     case Messages.RemoveFromKeyring:
       isLoggedIn = false
@@ -262,14 +334,21 @@ chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
       keyPairs = [newPair]
       break
     case Messages.ConnectedApps:
-      chrome.runtime.sendMessage({ type: Messages.ConnectedApps, payload: { connectedApps: authorizedDapps } })
+      chrome.runtime.sendMessage({
+        type: Messages.ConnectedApps,
+        payload: { connectedApps: authorizedDapps },
+      })
       break
     case Messages.AuthCheck:
-      sendResponse({ payload: { isLoggedIn } })
+      return { payload: { isLoggedIn } }
+      // sendResponse({ payload: { isLoggedIn } })
       break
     case Messages.RevokeDapp:
       authorizedDapps = authorizedDapps.filter((item) => item !== msg.payload.dappName)
-      chrome.runtime.sendMessage({ type: Messages.ConnectedApps, payload: { connectedApps: authorizedDapps } })
+      chrome.runtime.sendMessage({
+        type: Messages.ConnectedApps,
+        payload: { connectedApps: authorizedDapps },
+      })
       break
     case Messages.ChangeInterval:
       if (msg?.payload?.timeout) {
@@ -278,14 +357,14 @@ chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
       }
       break
     case Messages.Timeout:
-      sendResponse({ payload: { timeout } })
+      return { payload: { timeout } }
+      // sendResponse({ payload: { timeout } })
       break
     case Messages.ResetTimeout:
       if (isLoggedIn) {
         timeoutStart = Date.now()
       }
       break
-
     case Messages.SendTransaction:
       if (msg?.payload) {
         await sendTransaction(keyPairs, msg.payload)
@@ -299,86 +378,114 @@ chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
       keyPairs = renewMetaToKeyPairs(keyPairs, msg.payload.metaData)
       keyPairs = reEncryptKeyringPairs(keyPairs, msg.payload.oldPassword, msg.payload.newPassword)
       break
-    case Messages.AccountsBalanceUpdated:
-      await fetchAccountsBalances()
-      break
+    // case Messages.FreezeAccountBalanceUpdate:
+    //   saveToStorage({ key: StorageKeys.IsAccountBalanceUpdateFreezed, value: JSON.stringify({ isFreezed: true }) })
+    //   setTimeout(() => {
+    //     saveToStorage({ key: StorageKeys.IsAccountBalanceUpdateFreezed, value: JSON.stringify({ isFreezed: false }) })
+    //   }, 100000)
+    // case Messages.AccountsBalanceUpdated:
+    //   console.log("fetched")
+    //   await fetchAccountsBalances()
+    //   break
+    // case Messages.AccountsBalanceUpdated:
+    //   await fetchAccountsBalances()
+    //   break
   }
 })
 
-chrome.runtime.onInstalled.addListener(async (port) => {
+browser.runtime.onInstalled.addListener(async (port) => {
   const prices = await Retrieve_Coin_Prices()
-  chrome.runtime.sendMessage({ type: Messages.PriceUpdated, payload: JSON.stringify(prices) })
+  browser.runtime.sendMessage({
+    type: Messages.PriceUpdated,
+    payload: JSON.stringify(prices),
+  })
 
-  saveToStorage({ key: StorageKeys.TokenPrices, value: JSON.stringify(prices) })
+  saveToStorage({
+    key: StorageKeys.TokenPrices,
+    value: JSON.stringify(prices),
+  })
 
   const Infos = await Retrieve_Coin_Infos()
-  chrome.runtime.sendMessage({ type: Messages.CoinInfoUpdated, payload: JSON.stringify(Infos) })
+  browser.runtime.sendMessage({
+    type: Messages.CoinInfoUpdated,
+    payload: JSON.stringify(Infos),
+  })
 
   saveToStorage({ key: StorageKeys.TokenInfos, value: JSON.stringify(Infos) })
 
-  chrome.alarms.create("check-timeout", { periodInMinutes: 1 })
-  chrome.alarms.create("refetch-account-balances", { periodInMinutes: 3 })
-  chrome.alarms.create("24-hr-ballance-change", { periodInMinutes: 3600 })
-  chrome.alarms.create("update-balances", { periodInMinutes: 1 })
+  // browser.alarms.create("check-timeout", { periodInMinutes: 1 })
+  // browser.alarms.create("refetch-account-balances", { periodInMinutes: 3 })
+  // browser.alarms.create("24-hr-ballance-change", { periodInMinutes: 3600 })
+
+  browser.alarms.create("keep alive", { periodInMinutes: 1 })
 
   await Retrieve_Coin_Decimals()
 
-  fetchAccountsBalances()
+  // fetchAccountsBalances()
 
   // fetchAccountsTransactions()
 })
 
-chrome.runtime.onStartup.addListener(async () => {
+browser.runtime.onStartup.addListener(async () => {
   const prices = await Retrieve_Coin_Prices()
-  chrome.runtime.sendMessage({ type: Messages.PriceUpdated, payload: JSON.stringify(prices) })
-  saveToStorage({ key: StorageKeys.TokenPrices, value: JSON.stringify(prices) })
+  browser.runtime.sendMessage({
+    type: Messages.PriceUpdated,
+    payload: JSON.stringify(prices),
+  })
+  saveToStorage({
+    key: StorageKeys.TokenPrices,
+    value: JSON.stringify(prices),
+  })
 
   const Infos = await Retrieve_Coin_Infos()
-  chrome.runtime.sendMessage({ type: Messages.CoinInfoUpdated, payload: JSON.stringify(Infos) })
+  browser.runtime.sendMessage({
+    type: Messages.CoinInfoUpdated,
+    payload: JSON.stringify(Infos),
+  })
   saveToStorage({ key: StorageKeys.TokenInfos, value: JSON.stringify(Infos) })
 
-  chrome.alarms.create("check-timeout", { periodInMinutes: 1 })
-  chrome.alarms.create("refetch-account-balances", { periodInMinutes: 3 })
-  chrome.alarms.create("24-hr-ballance-change", { periodInMinutes: 3600 })
-  chrome.alarms.create("update-balances", { periodInMinutes: 1 })
+  // browser.alarms.create("refresh", { periodInMinutes: 1 })
+  // browser.alarms.create("refetch-account-balances", { periodInMinutes: 3 })
+  // browser.alarms.create("24-hr-ballance-change", { periodInMinutes: 3600 })
+
+  browser.alarms.create("keep alive", { periodInMinutes: 1 })
 
   await Retrieve_Coin_Decimals()
 
-  fetchAccountsBalances()
+  // fetchAccountsBalances()
 
   // fetchAccountsTransactions()
 })
 
-chrome.alarms.onAlarm.addListener(async (alarm) => {
+browser.alarms.onAlarm.addListener(async (alarm) => {
   // coin prices
 
-  if ((alarm.name = "update-balances")) {
-    fetchAccountsBalances()
-  } else {
-    const prices = await Retrieve_Coin_Prices()
-    chrome.runtime.sendMessage({ type: Messages.PriceUpdated, payload: JSON.stringify(prices) })
-    saveToStorage({ key: StorageKeys.TokenPrices, value: JSON.stringify(prices) })
+  // if ((alarm.name = "update-balances")) {
+  // fetchAccountsBalances()
+  // } else {
 
-    // coin info
-    const Infos = await Retrieve_Coin_Infos()
-    chrome.runtime.sendMessage({ type: Messages.CoinInfoUpdated, payload: JSON.stringify(Infos) })
-    saveToStorage({ key: StorageKeys.TokenInfos, value: JSON.stringify(Infos) })
+  const prices = await Retrieve_Coin_Prices()
+  chrome.runtime.sendMessage({ type: Messages.PriceUpdated, payload: JSON.stringify(prices) })
+  saveToStorage({ key: StorageKeys.TokenPrices, value: JSON.stringify(prices) })
 
-    if (alarm.name === "24-hr-ballance-change") {
-      // const balance24hrChangeRate = Retrieve_balance_change_rates()
-    }
+  // coin info
+  const Infos = await Retrieve_Coin_Infos()
+  chrome.runtime.sendMessage({ type: Messages.CoinInfoUpdated, payload: JSON.stringify(Infos) })
+  saveToStorage({ key: StorageKeys.TokenInfos, value: JSON.stringify(Infos) })
 
-    // check if login-timeout has passed
-    if (Date.now() - timeoutStart > timeout) {
-      isLoggedIn = false
-      keyPairs = []
-    }
+  if (alarm.name === "24-hr-ballance-change") {
+    // const balance24hrChangeRate = Retrieve_balance_change_rates()
+  }
+
+  // check if login-timeout has passed
+  if (Date.now() - timeoutStart > timeout) {
+    isLoggedIn = false
+    keyPairs = []
   }
 })
 
 function forceReconnect(port) {
   deleteTimer(port)
-  fetchAccountsBalances()
   port.disconnect()
 }
 function deleteTimer(port) {

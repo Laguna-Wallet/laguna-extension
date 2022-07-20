@@ -7,25 +7,20 @@ import ChainItem from './ChainItem';
 import { getAssets, recodeAddress } from 'utils/polkadot';
 import NetworkItem from './NetworkItem';
 import dashboardBG from 'assets/imgs/dashboard-bg.jpg';
-import { goTo, Link } from 'react-chrome-extension-router';
-import Send from 'pages/Send/Send';
-import Receive from 'pages/Recieve/Receive';
 import BigNumber from 'bignumber.js';
 import { useDispatch, useSelector } from 'react-redux';
 import Snackbar from 'components/Snackbar/Snackbar';
-import TokenDashboard from 'pages/TokenDashboard/TokenDashboard';
 import ReceiveIcon from 'assets/svgComponents/ReceiveIcon';
 import SendIcon from 'assets/svgComponents/SendIIcon';
 import SwitchAssetsIcon from 'assets/svgComponents/SwitchAssetIcon';
-import AddRemoveToken from 'pages/AddRemoveToken/AddRemoveToken';
 import { State } from 'redux/store';
 import SecureNowIcon from 'assets/svgComponents/SecureNowIcon';
 import RightArrowMenuIcon from 'assets/svgComponents/MenuIcons/RightArrowMenuIcon';
-import CreateAccount from 'pages/AddImportAccount/CreateAccount/CreateAccount';
 import { toggleLoading } from 'redux/actions';
 import { Asset } from 'utils/types';
 import { emptyAssets } from 'utils/emptyAssets';
-
+import { useHistory, Link } from 'react-router-dom';
+import { router } from 'router/router';
 export interface ShowSnackbar {
   message: string;
   show: boolean;
@@ -38,6 +33,11 @@ type Props = {
 
 function Wallet({ isMenuOpen, snackbar }: Props) {
   const account = useAccount();
+  const history = useHistory();
+  const { location } = history as any;
+
+  const snackbarData = snackbar || location?.state?.snackbar;
+
   const activeAccount = useCallback(account.getActiveAccount(), [account]);
 
   const [assets, setAssets] = useState<Asset[]>([]);
@@ -87,17 +87,17 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
   }, [activeAccount, balances]);
 
   useEffect(() => {
-    if (snackbar?.show) {
+    if (snackbarData?.show) {
       setTimeout(() => {
         setIsSnackbarOpen(true);
-        setSnackbarMessage(snackbar.message);
+        setSnackbarMessage(snackbarData?.message);
       }, 400);
     }
   }, []);
 
   useEffect(() => {
     async function go() {
-      if (accountBalances && accountBalances?.address !== activeAccount?.address) {
+      if (accountBalances && activeAccount && accountBalances?.address !== activeAccount?.address) {
         dispatch(toggleLoading(true));
       } else {
         dispatch(toggleLoading(false));
@@ -163,7 +163,7 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
             asset={asset}
             accountAddress={account.getActiveAccount()?.address}
             handleClick={() => {
-              goTo(TokenDashboard, { asset });
+              history.push({ pathname: router.tokenDashboard, state: { asset } });
             }}
           />
         );
@@ -180,7 +180,7 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
                 asset={asset}
                 accountAddress={account.getActiveAccount()?.address}
                 handleClick={() => {
-                  goTo(TokenDashboard, { asset });
+                  history.push({ pathname: router.tokenDashboard, state: { asset } });
                 }}
               />
             );
@@ -197,7 +197,13 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
       <Header menuInitialOpenState={isMenuOpen} />
       <Content>
         {activeAccount?.meta?.notSecured && (
-          <SecureNowMessage onClick={() => goTo(CreateAccount, { redirectedFromDashboard: true })}>
+          <SecureNowMessage
+            onClick={() => {
+              history.push({
+                pathname: router.createAccount,
+                state: { redirectedFromDashboard: true }
+              });
+            }}>
             <SecureNowIcon />
             <span>Your account is not backed up, please secure now</span>
             <RightArrowMenuIcon fill="#e1e7f3" stroke="#111" />
@@ -237,7 +243,7 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
 
           <Buttons>
             {!isEmpty && (
-              <StyledLink component={Send}>
+              <StyledLink to={router.send}>
                 <Button>
                   <RightArrowContainer>
                     <SendIcon stroke="#111" />
@@ -246,7 +252,7 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
                 </Button>
               </StyledLink>
             )}
-            <StyledLink component={Receive}>
+            <StyledLink to={router.receive}>
               <Button isEmpty={isEmpty}>
                 <BarcodeIconContainer>
                   <ReceiveIcon width={20} height={20} />
@@ -264,7 +270,7 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
             <ListHeaderItem onClick={() => handleActiveTab(2)} index={2} active={activeTab}>
               NETWORKS
             </ListHeaderItem>
-            <SwitchAssetIconContainer onClick={() => goTo(AddRemoveToken)}>
+            <SwitchAssetIconContainer onClick={() => history.push(router.addRemoveToken)}>
               <SwitchAssetsIcon />
             </SwitchAssetIconContainer>
           </ListHeader>
@@ -494,6 +500,8 @@ const ListContentParent = styled.div`
 const ListContentChild = styled.div`
   width: 100%;
   overflow-y: scroll;
+  scrollbar-width: none;
+
   ::-webkit-scrollbar {
     display: none;
   }

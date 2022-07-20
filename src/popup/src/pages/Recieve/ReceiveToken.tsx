@@ -9,11 +9,10 @@ import { useState } from 'react';
 
 import { Network } from 'utils/types';
 import { useWizard } from 'react-use-wizard';
-import { goTo } from 'react-chrome-extension-router';
-import Wallet from 'pages/Wallet/Wallet';
-import TokenDashboard from 'pages/TokenDashboard/TokenDashboard';
 import { PropsFromTokenDashboard } from './Receive';
 import Snackbar from 'components/Snackbar/Snackbar';
+import { useHistory } from 'react-router-dom';
+import { router } from 'router/router';
 
 type Props = {
   selectedNetwork: Network | undefined;
@@ -22,6 +21,8 @@ type Props = {
 };
 
 export default function ReceiveToken({ selectedNetwork, recoded, propsFromTokenDashboard }: Props) {
+  const history = useHistory();
+
   const { previousStep } = useWizard();
 
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
@@ -43,10 +44,13 @@ export default function ReceiveToken({ selectedNetwork, recoded, propsFromTokenD
         title={`Receive ${selectedNetwork?.chain.toLocaleUpperCase()}`}
         backAction={() =>
           propsFromTokenDashboard?.fromTokenDashboard
-            ? goTo(TokenDashboard, { asset: propsFromTokenDashboard.asset })
+            ? history.push({
+                pathname: router.tokenDashboard,
+                state: { asset: propsFromTokenDashboard.asset }
+              })
             : previousStep()
         }
-        closeAction={() => goTo(Wallet)}
+        closeAction={() => history.push(router.home)}
         bgColor="#f2f2f2"
       />
       <Content>

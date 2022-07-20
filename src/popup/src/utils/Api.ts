@@ -59,7 +59,10 @@ export async function fetchAccountsBalances(
       const address = JSON.parse(account as string).address;
       let result_obj: any = {};
       const temp_obj: Record<string, any> = {};
-      for (let i = 0; i < networks.length; i += 1) {
+
+      let i = 0;
+
+      while (i < networks.length) {
         await timer(1000);
         const network = networks[i];
 
@@ -70,9 +73,17 @@ export async function fetchAccountsBalances(
 
         // if (resolved.message !== "Success") return
 
-        if (resolved.message === 'Success') {
-          temp_obj[network.chain] = Number(resolved.data.account.balance);
+        if (resolved.message !== 'Success') {
+          if (resolved.message === 'Record Not Found') {
+            i++;
+          }
+          continue;
         }
+
+        temp_obj[network.chain] = {
+          overall: Number(resolved.data.account.balance),
+          locked: Number(resolved.data.account.balance_lock)
+        };
 
         if (parsedBalances.address === address) {
           const accountBalances = parsedBalances?.balances;
@@ -80,7 +91,11 @@ export async function fetchAccountsBalances(
         } else {
           result_obj = { ...temp_obj };
         }
+
+        i++;
       }
+
+      i = 0;
 
       const hasReceived: boolean = await checkBalanceChange(result_obj, address);
 

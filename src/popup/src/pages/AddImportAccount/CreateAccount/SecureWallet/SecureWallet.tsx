@@ -1,5 +1,3 @@
-import Wallet from 'pages/Wallet/Wallet';
-import { goTo } from 'react-chrome-extension-router';
 import { useWizard, Wizard } from 'react-use-wizard';
 import { SecurityLevelEnum } from '../CreateAccount';
 import ChooseSecurityLevel from './chooseSecurityLevel';
@@ -9,6 +7,8 @@ import MnemonicsSeed from './mnemonicsSeed';
 import { useAccount } from 'context/AccountContext';
 import ConfirmSeed from './confirmSeed';
 import SetupComplete from 'pages/AddImportAccount/SetupComplete';
+import { useHistory } from 'react-router-dom';
+import { router } from 'router/router';
 
 type Props = {
   redirectedFromSignUp?: boolean;
@@ -23,13 +23,14 @@ export default function SecureWallet({
   redirectedFromSignUp,
   redirectedFromDashboard
 }: Props) {
+  const history = useHistory();
+
   const { nextStep } = useWizard();
   const account = useAccount();
   const encoded = account.encryptedPassword;
 
   // todo refactor
   // pass onClose function instead of redirectedFromSignUp prop
-  // const onClose = () => redirectedFromSignUp ? goTo(Signup) : goTo(Wallet)
 
   return (
     <Wizard>
@@ -38,7 +39,7 @@ export default function SecureWallet({
       <ChooseSecurityLevel
         redirectedFromSignUp={redirectedFromSignUp}
         redirectedFromDashboard={redirectedFromDashboard}
-        nextStepFromParent={redirectedFromDashboard ? () => goTo(Wallet) : nextStep}
+        nextStepFromParent={redirectedFromDashboard ? () => history.push(router.home) : nextStep}
         setLevel={setLevel}
       />
 

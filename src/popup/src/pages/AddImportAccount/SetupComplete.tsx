@@ -1,9 +1,9 @@
 import styled from 'styled-components';
 import CheckMarkIcon from 'assets/svgComponents/CheckMarkIcon';
+import { useHistory } from 'react-router-dom';
+import { router } from 'router/router';
 
 import Button from 'components/primitives/Button';
-import Wallet from 'pages/Wallet/Wallet';
-import { goTo } from 'react-chrome-extension-router';
 
 import { SnackbarMessages } from 'utils/types';
 import DiscordIcon from 'assets/svgComponents/DiscordIcon';
@@ -13,8 +13,14 @@ import { reduxForm } from 'redux-form';
 import { useEnterClickListener } from 'hooks/useEnterClickListener';
 
 function SetupComplete() {
+  const history = useHistory();
+
   useEnterClickListener(
-    () => goTo(Wallet, { snackbar: { show: true, message: SnackbarMessages.WalletCreated } }),
+    () =>
+      history.push({
+        pathname: router.home,
+        state: { snackbar: { show: true, message: SnackbarMessages.WalletCreated } }
+      }),
     []
   );
 
@@ -50,7 +56,10 @@ function SetupComplete() {
         <BottomSection>
           <Button
             onClick={() =>
-              goTo(Wallet, { snackbar: { show: true, message: SnackbarMessages.WalletCreated } })
+              history.push({
+                pathname: router.home,
+                state: { snackbar: { show: true, message: SnackbarMessages.WalletCreated } }
+              })
             }
             type="button"
             justify="center"

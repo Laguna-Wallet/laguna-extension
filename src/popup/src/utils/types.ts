@@ -54,7 +54,7 @@ export interface Asset {
   name: string;
   symbol: string;
   chain: string;
-  balance?: number;
+  balance?: { overall: number; locked: number };
   calculatedPrice?: number;
   price?: number;
   encodeType?: string;
@@ -107,7 +107,8 @@ export enum Messages {
   RevokeDapp = 'REVOKE_DAPP',
   TokenReceived = 'TOKEN_RECEIVED',
   Timeout = 'TIMEOUT',
-  ResetTimeout = 'RESET_TIMEOUT'
+  ResetTimeout = 'RESET_TIMEOUT',
+  FreezeAccountBalanceUpdate = 'FREEZE_ACCOUNT_BALANCE_UPDATE'
 }
 
 //==============================================================================

@@ -1,25 +1,22 @@
 import { useState } from 'react';
 import styled from 'styled-components';
-import { reset } from 'redux-form';
 import { useDispatch, useSelector } from 'react-redux';
-
-import { useAccount } from 'context/AccountContext';
+import { useHistory } from 'react-router-dom';
+import { router } from 'router/router';
 
 import Header from 'pages/Wallet/Header';
-import Wallet from 'pages/Wallet/Wallet';
 import HumbleInput from 'components/primitives/HumbleInput';
 
-import { goTo } from 'react-chrome-extension-router';
 import { getNetworks } from 'utils/polkadot';
 
 import { Network } from 'utils/types';
 
-import SearchIcon from 'assets/svgComponents/SearchIcon';
 import TokenItem from './TokenItem';
 import LoopIcon from 'assets/svgComponents/loopIcon';
 
 export default function AddRemoveToken() {
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const {
     prices,
@@ -40,16 +37,14 @@ export default function AddRemoveToken() {
     );
   };
 
+  const headerAction = () => history.push(router.home);
+
   return (
     <Container>
       <Header
         title="ADD / REMOVE TOKENS"
-        closeAction={() => {
-          goTo(Wallet);
-        }}
-        backAction={() => {
-          goTo(Wallet);
-        }}
+        closeAction={headerAction}
+        backAction={headerAction}
         bgColor="#f2f2f2"
       />
       <Content>
@@ -79,7 +74,7 @@ export default function AddRemoveToken() {
                     <TokenItem
                       key={`${network?.chain}-${index}`}
                       network={network}
-                      balance={balances[network?.chain]}
+                      balance={balances[network?.chain]?.overall}
                     />
                   );
                 })
