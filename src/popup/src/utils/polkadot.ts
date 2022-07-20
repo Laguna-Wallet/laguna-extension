@@ -359,8 +359,8 @@ export async function getAssets(
       const price = prices[chain]?.usd;
 
       // todo rename calculatedBalance
-      const calculatedPrice = new BigNumber(balance).multipliedBy(price || 0);
-
+      const calculatedPrice = new BigNumber(balance.overall).multipliedBy(price || 0);
+      
       if (price) {
         overallBalance += calculatedPrice.toNumber();
         overallPriceChange += Number(price_change_percentage_24h);

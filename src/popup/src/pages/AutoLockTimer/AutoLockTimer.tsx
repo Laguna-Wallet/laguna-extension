@@ -5,13 +5,15 @@ import HumbleInput from 'components/primitives/HumbleInput';
 import Snackbar from 'components/Snackbar/Snackbar';
 import { millisecondsToMinutes } from 'date-fns';
 import { minutesToMilliseconds } from 'date-fns/esm';
-import Wallet from 'pages/Wallet/Wallet';
 import { memo, useEffect, useState } from 'react';
-import { goTo, Link } from 'react-chrome-extension-router';
 import styled from 'styled-components';
 import { Messages, SnackbarMessages } from 'utils/types';
+import { useHistory, Link } from 'react-router-dom';
+import { router } from 'router/router';
 
 function AutoLockTimer() {
+  const history = useHistory();
+
   const [isOpen, setOpen] = useState<boolean>(true);
   const [timeout, changeTimeout] = useState<string>('');
   const [isChangeTime, setIsChangeTime] = useState<boolean>(false);
@@ -46,7 +48,10 @@ function AutoLockTimer() {
       type: Messages.ChangeInterval,
       payload: { timeout: minutesToMilliseconds(Number(timeout)).toString() }
     });
-    goTo(Wallet, { snackbar: { show: true, message: SnackbarMessages.AutoLockUpdated } });
+    history.push({
+      pathname: router.home,
+      state: { snackbar: { show: true, message: SnackbarMessages.AutoLockUpdated } }
+    });
   };
 
   useEffect(() => {
@@ -61,8 +66,15 @@ function AutoLockTimer() {
         isOpen={isOpen}
         setOpen={setOpen}
         title="AUTO-LOCK TIMER"
-        onClose={() => goTo(Wallet)}
-        backAction={() => goTo(Wallet, { isMenuOpen: true })}
+        onClose={() => history.push(router.home)}
+        backAction={() => {
+          history.push({
+            pathname: router.home,
+            state: {
+              isMenuOpen: true
+            }
+          });
+        }}
       />
       <Content>
         <IconContainer>
@@ -84,7 +96,7 @@ function AutoLockTimer() {
           fontSize="16px"
         />
         <ButtonContainer>
-          <StyledLink component={Wallet} props={{ closeAction: () => goTo(Wallet) }}>
+          <StyledLink to={router.home}>
             <Button
               text="Cancel"
               bgColor="#414141"

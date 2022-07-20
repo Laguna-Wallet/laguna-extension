@@ -8,21 +8,24 @@ import { getNetworks, recodeAddress } from 'utils/polkadot';
 import { useSelector } from 'react-redux';
 import SelectNetwork from './SelectNetwork';
 import { State } from 'redux/store';
-
+import { useLocation } from 'react-router-dom';
 export interface PropsFromTokenDashboard {
   fromTokenDashboard?: boolean;
-  asset: Asset;
+  asset?: Asset;
   chain?: string;
 }
 
-type Props = {
+type LocationState = {
   propsFromTokenDashboard?: PropsFromTokenDashboard;
 };
 
-export default function Receive({ propsFromTokenDashboard }: Props) {
+export default function Receive() {
   const account = useAccount();
   const activeAccount = account.getActiveAccount();
   const { prices, infos, disabledTokens } = useSelector((state: State) => state.wallet);
+
+  const location = useLocation<LocationState>();
+  const { propsFromTokenDashboard } = location?.state || {};
 
   const [networks, setNetworks] = useState<any>(getNetworks(prices, infos, disabledTokens));
   const [selectedNetwork, setSelectedNetwork] = useState<Network & Asset>();

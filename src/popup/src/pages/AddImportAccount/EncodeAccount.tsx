@@ -2,9 +2,7 @@ import CheckMarkIcon from 'assets/svgComponents/CheckMarkIcon';
 import Button from 'components/primitives/Button';
 import HumbleInput from 'components/primitives/HumbleInput';
 import Snackbar from 'components/Snackbar/Snackbar';
-import Wallet from 'pages/Wallet/Wallet';
 import { useState } from 'react';
-import { goTo } from 'react-chrome-extension-router';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { validatePassword } from 'utils/polkadot';
@@ -13,6 +11,8 @@ import { useWizard } from 'react-use-wizard';
 import { State } from 'redux/store';
 import { reduxForm, Field, InjectedFormProps } from 'redux-form';
 import { isObjectEmpty, validPassword } from 'utils';
+import { useHistory } from 'react-router-dom';
+import { router } from 'router/router';
 
 type Props = {
   handleEncode: (password: string) => void;
@@ -32,6 +32,7 @@ function EncodeAccount({
   descriptionText
 }: InjectedFormProps<Form> & Props) {
   const { nextStep } = useWizard();
+  const history = useHistory();
 
   const [snackbarError, setSnackbarError] = useState<string>('');
   const [isChangeValue, setIsChangeValue] = useState<boolean>(false);
@@ -49,7 +50,7 @@ function EncodeAccount({
         handleEncode(values?.password);
 
         if (hasBoarded) {
-          goTo(Wallet);
+          history.push(router.home);
         } else {
           nextStep();
         }

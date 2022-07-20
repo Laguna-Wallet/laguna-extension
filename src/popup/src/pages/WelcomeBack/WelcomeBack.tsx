@@ -1,27 +1,27 @@
 import Button from 'components/primitives/Button';
-import { goTo } from 'react-chrome-extension-router';
 import styled from 'styled-components';
 import { PageContainer } from 'components/ui';
-import Wallet from 'pages/Wallet/Wallet';
 import { Messages } from 'utils/types';
 import { useState } from 'react';
 import Snackbar from 'components/Snackbar/Snackbar';
 import HumbleInput from 'components/primitives/HumbleInput';
 import { validatePassword } from 'utils/polkadot';
 import { useSelector } from 'react-redux';
-import RequestToConnect from 'pages/RequestToConnect/RequestToConnect';
-import ImportAccount from 'pages/AddImportAccount/ImportAccount/ImportAccount';
-import RequestToSign from 'pages/RequestToSignTransaction';
 import backgroundImage from 'assets/imgs/sign-up-bg.png';
 import mainLogoSvg from 'assets/imgs/main-logo-white.svg';
 import { Field, reduxForm, InjectedFormProps } from 'redux-form';
 import { isObjectEmpty, validPassword } from 'utils';
+import { useHistory } from 'react-router-dom';
+import { router } from 'router/router';
+import browser from 'webextension-polyfill';
 
 type Props = {
   password: string;
 };
 
 function WelcomeBack({ handleSubmit, valid }: InjectedFormProps<Props>) {
+  const history = useHistory();
+
   const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
   const [snackbarError, setSnackbarError] = useState<string | undefined>();
   const { pendingDappAuthorization, pendingToSign } = useSelector((state: any) => state.wallet);
@@ -36,17 +36,17 @@ function WelcomeBack({ handleSubmit, valid }: InjectedFormProps<Props>) {
       const isValid = await validatePassword(password);
 
       if (isValid) {
-        chrome.runtime.sendMessage({
+        browser.runtime.sendMessage({
           type: Messages.AuthUser,
           payload: { password }
         });
 
         if (pendingDapps?.length > 0) {
-          goTo(RequestToConnect);
+          history.push(router.requestToConnect);
         } else if (pendingToSign.pending) {
-          goTo(RequestToSign);
+          history.push(router.requestToSign);
         } else {
-          goTo(Wallet);
+          history.push(router.home);
         }
       } else {
         setSnackbarError('Incorrect Password');
@@ -95,7 +95,13 @@ function WelcomeBack({ handleSubmit, valid }: InjectedFormProps<Props>) {
         </Form>
         <BottomContainer>
           <Text>Contact Support</Text>
-          <Text onClick={() => goTo(ImportAccount, { redirectedFromForgotPassword: true })}>
+          <Text
+            onClick={() => {
+              history.push({
+                pathname: router.importAccount,
+                state: { redirectedFromForgotPassword: true }
+              });
+            }}>
             Forgot your password?
           </Text>
         </BottomContainer>

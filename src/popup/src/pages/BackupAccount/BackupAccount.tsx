@@ -1,12 +1,10 @@
 import keyring from '@polkadot/ui-keyring';
 import { useAccount } from 'context/AccountContext';
-import Wallet from 'pages/Wallet/Wallet';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import AES from 'crypto-js/aes';
 import Utf8 from 'crypto-js/enc-utf8';
 import { exportAccount, validatePassword } from 'utils/polkadot';
-import { goTo } from 'react-chrome-extension-router';
 import MenuHeader from 'components/MenuHeader/MenuHeader';
 import ExclamationIcon from 'assets/svgComponents/ExclamationIcon';
 import LockIcon from 'assets/svgComponents/LockIcon';
@@ -18,6 +16,8 @@ import { useSelector } from 'react-redux';
 import { isObjectEmpty } from 'utils';
 import { copyToClipboard, exportJson, validPassword } from 'utils';
 import ButtonsIcon from 'assets/svgComponents/ButtonsIcon';
+import { useHistory } from 'react-router-dom';
+import { router } from 'router/router';
 
 type Props = {
   password: string;
@@ -25,11 +25,14 @@ type Props = {
 
 function BackupAccount({ handleSubmit, valid }: InjectedFormProps<Props>) {
   const account = useAccount();
+  const history = useHistory();
+
   const address = account?.getActiveAccount()?.address;
 
   const formValues = useSelector((state: any) => state?.form?.backupAccount?.values);
 
   const [seed, setSeed] = useState<string>('');
+  console.log('~ seed', seed);
   const [isOpen, setOpen] = useState<boolean>(true);
   const [opened, setOpened] = useState<boolean>(false);
   const [seedExists, setSeedExists] = useState<boolean>(false);
@@ -95,11 +98,11 @@ function BackupAccount({ handleSubmit, valid }: InjectedFormProps<Props>) {
         title="BACKUP ACCOUNT"
         onClose={() => {
           mnemonicHasBeenCopied && copyToClipboard('');
-          goTo(Wallet);
+          history.push(router.home);
         }}
         backAction={() => {
           mnemonicHasBeenCopied && copyToClipboard('');
-          goTo(Wallet, { isMenuOpen: true });
+          history.push({ pathname: router.home, state: { isMenuOpen: true } });
         }}
       />
 
@@ -174,7 +177,7 @@ function BackupAccount({ handleSubmit, valid }: InjectedFormProps<Props>) {
               bgColor="#fff"
               onClick={() => {
                 mnemonicHasBeenCopied && copyToClipboard('');
-                goTo(Wallet, { isMenuOpen: true });
+                history.push({ pathname: router.home, state: { isMenuOpen: true } });
               }}
             />
           </>

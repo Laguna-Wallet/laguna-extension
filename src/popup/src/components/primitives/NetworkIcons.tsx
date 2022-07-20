@@ -12,20 +12,20 @@ type Props = {
   height?: string;
   chain: string;
   fill?: string;
-  isSmallIcon?: boolean; 
+  isSmallIcon?: boolean;
 };
 
 export default function NetworkIcons({ width, height, chain, isSmallIcon = false, fill }: Props) {
   if (chain === 'polkadot' || chain === 'westend') {
-    return isSmallIcon ? <SmallPolkadotIcon fill={fill}/> : <PolkadotIcon/>;
+    return isSmallIcon ? <SmallPolkadotIcon fill={fill} /> : <PolkadotIcon />;
   }
 
   if (chain === 'kusama') {
-    return isSmallIcon ? <SmallKusamaIcon/> : <KusamaIcon />;
+    return isSmallIcon ? <SmallKusamaIcon /> : <KusamaIcon />;
   }
 
   if (chain === 'moonriver') {
-    return isSmallIcon ? <SmallMonriverIcon/> : <MoonriverIcon />;
+    return isSmallIcon ? <SmallMonriverIcon /> : <MoonriverIcon />;
   }
 
   if (chain === 'astar') {

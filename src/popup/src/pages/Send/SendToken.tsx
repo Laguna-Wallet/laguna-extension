@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { goTo, Link } from 'react-chrome-extension-router';
 import { isValidPolkadotAddress } from 'utils/polkadot';
 import { useEffect, useState } from 'react';
 import TokenAndAmountSelect from 'pages/Send/TokenAndAmountSelect';
@@ -20,16 +19,16 @@ import { useDispatch, useSelector, connect } from 'react-redux';
 import { Field, change, reset, reduxForm, getFormSyncErrors, formValueSelector } from 'redux-form';
 import Snackbar from 'components/Snackbar/Snackbar';
 import { isObjectEmpty, objectToArray, truncateString } from 'utils';
-import Wallet from 'pages/Wallet/Wallet';
 import NetworkIcons from 'components/primitives/NetworkIcons';
 import AccountsPopup from './AccountsPopup';
 import BarcodeSendIcon from 'assets/svgComponents/BarcodeSendIcon';
 import { PropsFromTokenDashboard } from 'pages/Recieve/Receive';
-import TokenDashboard from 'pages/TokenDashboard/TokenDashboard';
 import keyring from '@polkadot/ui-keyring';
 import { AccountMeta } from 'utils/types';
 import { FlowValue, SendAccountFlowEnum } from './Send';
 import HashtagIcon from 'assets/svgComponents/HashtagIcon';
+import { useHistory } from 'react-router-dom';
+import { router } from 'router/router';
 
 const validate = (values: { address: string; amount: number }) => {
   const errors: any = {};
@@ -57,7 +56,7 @@ type Props = {
   errors?: any;
   abilityToTransfer: boolean;
   amount: string;
-  propsFromTokenDashboard: PropsFromTokenDashboard;
+  propsFromTokenDashboard?: PropsFromTokenDashboard;
   accountMeta: AccountMeta | undefined;
   setAccountMeta: (accountMeta: AccountMeta) => void;
 };
@@ -86,6 +85,8 @@ function SendToken({
   accountMeta,
   setAccountMeta
 }: Props) {
+  const history = useHistory();
+
   const dispatch = useDispatch();
   const { nextStep, previousStep } = useWizard();
 
@@ -165,7 +166,10 @@ function SendToken({
 
   const handleBack = () => {
     if (propsFromTokenDashboard?.fromTokenDashboard) {
-      goTo(TokenDashboard, { asset: propsFromTokenDashboard.asset });
+      history.push({
+        pathname: router.tokenDashboard,
+        state: { asset: propsFromTokenDashboard?.asset }
+      });
     } else {
       previousStep();
       dispatch(reset('sendToken'));
@@ -175,7 +179,7 @@ function SendToken({
 
   useEffect(() => {
     if (!abilityToTransfer && !loading) {
-      setSnackbarError('No enough founds to make transfer');
+      setSnackbarError('No enough funds to make transfer');
       setIsSnackbarOpen(true);
     }
   }, [loading]);
@@ -209,7 +213,7 @@ function SendToken({
         title={`SEND ${selectedAsset?.symbol} (${selectedAsset?.chain})`}
         closeAction={() => {
           dispatch(reset('sendToken'));
-          goTo(Wallet);
+          history.push(router.home);
         }}
         backAction={handleBack}
         smallIcon
@@ -239,7 +243,7 @@ function SendToken({
           </ContentItem>
           {handleShowAccountInput(flow, 'address') ? (
             <ContentItem>
-              <AddressContainer>Send to</AddressContainer>
+              <ContentItemTitle>Send to</ContentItemTitle>
               <Field
                 id="address"
                 name="address"
@@ -335,14 +339,22 @@ function SendToken({
 
         <BottomSection>
           <Info>
-            <span>
-              Balance: {new BigNumber(selectedAsset.balance).toFormat(2)}{' '}
-              {selectedAsset?.symbol.toUpperCase()}
-            </span>
-            <span>
-              Estimated Fee: {loading ? '...' : new BigNumber(fee).toFormat(4)}{' '}
-              {selectedAsset?.symbol.toUpperCase()}
-            </span>
+            <InfoRow>
+              <span>Transferable Balance</span>
+              <span>
+                {new BigNumber(selectedAsset.balance.overall)
+                  .minus(selectedAsset.balance.locked)
+                  .toString()}{' '}
+                {selectedAsset?.symbol.toUpperCase()}
+              </span>
+            </InfoRow>
+            <InfoRow>
+              <span>Estimated Fee</span>
+              <span>
+                {loading ? '...' : new BigNumber(fee).toString()}{' '}
+                {selectedAsset?.symbol.toUpperCase()}
+              </span>
+            </InfoRow>
           </Info>
           <Button
             type="submit"
@@ -373,7 +385,7 @@ function SendToken({
           }}
           closeAction={() => {
             dispatch(reset('sendToken'));
-            goTo(Wallet);
+            history.push(router.home);
           }}
           handleCloseContacts={handleCloseContacts}
         />
@@ -515,19 +527,19 @@ const BottomSection = styled.div`
 
 const Info = styled.div`
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   span {
     font-family: 'IBM Plex Sans';
     font-size: 12px;
   }
 `;
 
-const LinkContainer = styled.div`
-  pointer-events: none;
-`;
-
-const StyledLink = styled(Link)`
-  text-decoration: none;
+const InfoRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  &:nth-child(2) {
+    margin-top: 8px;
+  }
 `;
 
 const AccountsSection = styled.div`

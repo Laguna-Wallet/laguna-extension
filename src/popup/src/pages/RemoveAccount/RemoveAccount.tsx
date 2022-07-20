@@ -5,9 +5,7 @@ import Button from 'components/primitives/Button';
 import HumbleInput from 'components/primitives/HumbleInput';
 import Snackbar from 'components/Snackbar/Snackbar';
 import { useAccount } from 'context/AccountContext';
-import Wallet from 'pages/Wallet/Wallet';
 import { useState } from 'react';
-import { goTo } from 'react-chrome-extension-router';
 import { useDispatch } from 'react-redux';
 import { Field, InjectedFormProps, reduxForm } from 'redux-form';
 import { toggleLoading } from 'redux/actions';
@@ -16,14 +14,17 @@ import { truncateString, validPassword } from 'utils';
 import { clearFromStorage } from 'utils/chrome';
 import { validatePassword } from 'utils/polkadot';
 import { Messages, SnackbarMessages, StorageKeys } from 'utils/types';
-import SignUp from 'pages/SignUp/SignUp';
 import { isObjectEmpty } from 'utils';
+import { useHistory } from 'react-router-dom';
+import { router } from 'router/router';
+import browser from 'webextension-polyfill';
 
 type Props = {
   password: string;
 };
 
 const RemoveAccount = ({ handleSubmit, valid }: InjectedFormProps<Props>) => {
+  const history = useHistory();
   const dispatch = useDispatch();
   const account = useAccount();
   const activeAccount = account.getActiveAccount();
@@ -51,14 +52,17 @@ const RemoveAccount = ({ handleSubmit, valid }: InjectedFormProps<Props>) => {
         dispatch(toggleLoading(true));
         if (first) {
           account.saveActiveAccount(first);
-          goTo(Wallet, { snackbar: { show: true, message: SnackbarMessages.WalletRemoved } });
+          history.push({
+            pathname: router.home,
+            state: { snackbar: { show: true, message: SnackbarMessages.WalletRemoved } }
+          });
         } else {
           account.saveActiveAccount({});
           clearFromStorage(StorageKeys.OnBoarding);
-          goTo(SignUp);
+          history.push(router.signUp);
         }
 
-        chrome.runtime.sendMessage({
+        browser.runtime.sendMessage({
           type: Messages.RemoveFromKeyring,
           payload: { address }
         });
@@ -75,8 +79,10 @@ const RemoveAccount = ({ handleSubmit, valid }: InjectedFormProps<Props>) => {
         isOpen={isOpen}
         setOpen={setOpen}
         title="REMOVE ACCOUNT"
-        onClose={() => goTo(Wallet)}
-        backAction={() => goTo(Wallet, { isMenuOpen: true })}
+        onClose={() => history.push(router.home)}
+        backAction={() => {
+          history.push({ pathname: router.home, state: { isMenuOpen: true } });
+        }}
       />
 
       <Content>
@@ -117,7 +123,9 @@ const RemoveAccount = ({ handleSubmit, valid }: InjectedFormProps<Props>) => {
           />
           <ButtonContainer>
             <Button
-              onClick={() => goTo(Wallet, { isMenuOpen: true })}
+              onClick={() => {
+                history.push({ pathname: router.home, state: { isMenuOpen: true } });
+              }}
               type="button"
               text="Cancel"
               color="#fff"
