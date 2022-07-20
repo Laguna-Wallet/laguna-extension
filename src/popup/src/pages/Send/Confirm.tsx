@@ -73,7 +73,7 @@ function Confirm({ fee, transfer, amountToSend, recoded, setBlockHash, flow }: P
 
     setLoadingTransaction(true);
     chrome.runtime.sendMessage({
-      type: Messages.AccountsBalanceUpdated,
+      type: Messages.AccountsBalanceUpdated
     });
     dispatch(reset('sendToken'));
   };
@@ -84,9 +84,9 @@ function Confirm({ fee, transfer, amountToSend, recoded, setBlockHash, flow }: P
         setBlockHash(msg.payload.block);
         setLoadingTransaction(false);
         setTransactionConfirmed(true);
-        const updatedBalances = await updateBallanceCache(chain, amount, fee);
+        // const updatedBalances = await updateBallanceCache(chain, amount, fee);
 
-        dispatch(changeAccountsBalances(updatedBalances));
+        // dispatch(changeAccountsBalances(updatedBalances));
 
         // sendMessagePromise({ type: Messages.FreezeAccountBalanceUpdate });
 
