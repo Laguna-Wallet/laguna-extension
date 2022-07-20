@@ -131,7 +131,7 @@ function Send({ initialIsContactsPopupOpen }: Props) {
         setAbilityToTransfer(true);
         setAmountToSend(amount.toString());
       }
-      
+
       setFee(`${new BigNumber(partialFee.toString()).div(factor)}`);
       setTransfer(transfer);
       setLoading(false);

@@ -3,7 +3,7 @@
   "name": "Laguna Wallet",
   "version": "1.0.0",
   "description": "Laguna Polkadot Wallet",
-  "permissions": ["background", "storage", "notifications", "alarms", "clipboardRead", "clipboardWrite", "idle", "tabs", "activeTab", "scripting"],
+  "permissions": ["background", "storage", "alarms", "clipboardWrite", "activeTab"],
   "host_permissions": ["<all_urls>"],
   "icons": {
     "16": "icons/icon-16.png",
