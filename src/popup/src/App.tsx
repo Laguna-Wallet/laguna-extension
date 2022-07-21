@@ -1,7 +1,7 @@
 import './App.css';
 import '@polkadot/wasm-crypto/initOnlyAsm';
 import browser from 'webextension-polyfill';
-import { getFromStorage } from 'utils/chrome';
+import { getFromStorage, isInPopup } from 'utils/chrome';
 import { Messages, StorageKeys } from 'utils/types';
 import { useEffect, useState } from 'react';
 import { MessageListener } from 'utils/messageListener';
@@ -40,6 +40,7 @@ import AddRemoveToken from 'pages/AddRemoveToken/AddRemoveToken';
 import { fetchAccountsBalances } from 'utils/Api';
 
 function App() {
+  console.log(isInPopup());
   const dispatch = useDispatch();
   const history = useHistory();
 
