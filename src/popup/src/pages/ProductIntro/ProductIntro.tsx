@@ -104,7 +104,7 @@ const IconContainer = styled.div`
 `;
 
 const Text = styled.span`
-  font-family: 'SFCompactDisplayRegular', fantasy;
+  font-family: 'Inter', fantasy;
   font-size: 24px;
   font-weight: 600;
   color: #313131;
@@ -119,7 +119,7 @@ const MainSection = styled.div`
 `;
 
 const Title = styled.div`
-  font-family: 'SFCompactDisplayRegular', fantasy;
+  font-family: 'Inter', fantasy;
   font-weight: 600;
   font-size: 24px;
   color: #313131;
@@ -128,7 +128,7 @@ const Title = styled.div`
 const Description = styled.div`
   margin-top: 5px;
   font-size: 14px;
-  font-family: 'SFCompactDisplayRegular', fantasy;
+  font-family: 'Inter', fantasy;
   color: #313131;
   opacity: 0.7;
 `;

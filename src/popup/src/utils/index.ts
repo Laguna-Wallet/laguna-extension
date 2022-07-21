@@ -187,7 +187,6 @@ export async function updateBallanceCache(chain: string, amount: string, fee: st
       locked: parsed.balances[chain].locked
     }
   };
-  console.log('~ calculatedBalances', calculatedBalances);
   const newBalances = { address: parsed.address, balances: calculatedBalances };
 
   saveToStorage({
@@ -258,7 +257,7 @@ export const validPassword = (values: { password: string }) => {
 };
 
 export async function checkBalanceChange(
-  newBalance: Record<string, string>,
+  newBalance: Record<string, any>,
   newAddress: string
 ): Promise<boolean> {
   const oldBalance = await getFromStorage(StorageKeys.AccountBalances);
@@ -270,7 +269,7 @@ export async function checkBalanceChange(
   const parsedOldBallance = JSON.parse(oldBalance)?.balances;
 
   for (const [key, balance] of Object.entries(newBalance)) {
-    if (balance > parsedOldBallance[key]) {
+    if (balance?.overall > parsedOldBallance[key].overall) {
       return true;
     }
   }

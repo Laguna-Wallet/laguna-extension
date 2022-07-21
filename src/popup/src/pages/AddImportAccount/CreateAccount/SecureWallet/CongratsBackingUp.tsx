@@ -102,7 +102,7 @@ const Description = styled.div`
   color: #767e93;
   margin-top: 25px;
   font-size: 16px;
-  font-family: 'SFCompactDisplayRegular';
+  font-family: 'Inter';
 `;
 
 const HelperText = styled.div`

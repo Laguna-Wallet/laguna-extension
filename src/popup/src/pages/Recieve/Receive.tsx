@@ -112,7 +112,7 @@ const Text = styled.div`
 `;
 
 const BottomText = styled.div`
-  font-family: 'SFCompactDisplayRegular';
+  font-family: 'Inter';
   font-weight: 400;
   font-size: 14px;
   color: #000000;

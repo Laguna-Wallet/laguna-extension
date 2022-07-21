@@ -149,7 +149,7 @@ const LinksContainer = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  font-family: 'SFCompactDisplayRegular';
+  font-family: 'Inter';
   font-size: 14px;
   font-weight: 600;
   margin-top: 21px;

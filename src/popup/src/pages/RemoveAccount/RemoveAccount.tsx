@@ -212,7 +212,7 @@ const Form = styled.form`
 `;
 
 const Text = styled.div`
-  font-family: SFCompactDisplayRegular;
+  font-family: Inter;
   font-size: 18px;
   color: #dfdfdf;
   margin: 39px 0;

@@ -32,7 +32,6 @@ function BackupAccount({ handleSubmit, valid }: InjectedFormProps<Props>) {
   const formValues = useSelector((state: any) => state?.form?.backupAccount?.values);
 
   const [seed, setSeed] = useState<string>('');
-  console.log('~ seed', seed);
   const [isOpen, setOpen] = useState<boolean>(true);
   const [opened, setOpened] = useState<boolean>(false);
   const [seedExists, setSeedExists] = useState<boolean>(false);
@@ -283,7 +282,7 @@ const WarningContainer = styled.div<{ seedExists?: boolean }>`
   margin-top: auto;
   color: #fff;
   font-size: 16px;
-  font-family: SFCompactDisplayRegular;
+  font-family: Inter;
   text-align: center;
 `;
 

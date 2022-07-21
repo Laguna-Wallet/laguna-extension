@@ -162,7 +162,6 @@ export async function fetchAccountsBalances() {
 
       // const isAccountBalanceFreezed = await getFromStorage(StorageKeys.IsAccountBalanceUpdateFreezed)
       // const isFreezed = isAccountBalanceFreezed ? JSON.parse(isAccountBalanceFreezed)?.isFreezed : false
-      // // console.log("~ isFreezed", isFreezed)
       // if (isFreezed) {
       //   setTimeout(() => fetchAccountsBalances(), 3000)
       //   return

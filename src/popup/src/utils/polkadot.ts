@@ -165,6 +165,7 @@ export async function exportAll(password: string) {
 }
 
 export async function exportAccount(address: string, password: string) {
+  console.log('~ keyring.getPair(address)', keyring.getPair(address));
   return keyring.backupAccount(keyring.getPair(address), password);
 }
 
@@ -360,7 +361,7 @@ export async function getAssets(
 
       // todo rename calculatedBalance
       const calculatedPrice = new BigNumber(balance.overall).multipliedBy(price || 0);
-      
+
       if (price) {
         overallBalance += calculatedPrice.toNumber();
         overallPriceChange += Number(price_change_percentage_24h);

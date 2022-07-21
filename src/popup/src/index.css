@@ -10,26 +10,6 @@ html {
   justify-content: center;
 }
 
-/* @font-face {
-  font-family: 'SFCompactDisplayRegular';
-  src: url('./assets/fonts/SFCompactDisplayFont/SFCompactDisplayRegular.otf') format('truetype');
-} */
-/* Move to separate file */
-@font-face {
-  font-family: 'SFCompactDisplayRegular';
-  src: url('./assets/fonts/SFCompactDisplayFont/SFCompactDisplayRegular/SFCompactDisplay-Regular.eot');
-  src: url('./assets/fonts/SFCompactDisplayFont/SFCompactDisplayRegular/SFCompactDisplay-Regular.eot?#iefix')
-      format('embedded-opentype'),
-    url('./assets/fonts/SFCompactDisplayFont/SFCompactDisplayRegular/SFCompactDisplay-Regular.woff2')
-      format('woff2'),
-    url('./assets/fonts/SFCompactDisplayFont/SFCompactDisplayRegular/SFCompactDisplay-Regular.woff')
-      format('woff'),
-    url('./assets/fonts/SFCompactDisplayFont/SFCompactDisplayRegular/SFCompactDisplay-Regular.ttf')
-      format('truetype'),
-    url('./assets/fonts/SFCompactDisplayFont/SFCompactDisplayRegular/SFCompactDisplay-Regular.svg#SFCompactDisplay-Regular')
-      format('svg');
-}
-
 @font-face {
   font-family: 'Sequel100Wide55Wide';
   src: url('./assets/fonts/Sequel100WideFont/Sequel100Wide45Wide/Sequel100Wide-55Wide.eot');
@@ -49,11 +29,6 @@ html {
   font-family: 'IBMPlexSans';
   src: url('./assets/fonts/IbmpPlexFont/IBMPlexSans-Regular.ttf') format('opentype');
 }
-/*
-@font-face {
-  font-family: 'Sequel100Wide55Wide';
-  src: url('./assets/fonts/Sequel100WideFont/Sequel100Wide55Wide.otf') format('opentype');
-} */
 
 body {
   width: 375px;
@@ -65,7 +40,3 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
-/* code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
-} */

@@ -10,7 +10,6 @@ import browser from 'webextension-polyfill';
 
 export default function RequestToSignRaw() {
   const { pendingToSignRaw: pendingDapp } = useSelector((state: any) => state.wallet);
-  console.log('~ pendingDapp', pendingDapp);
   const dispatch = useDispatch();
 
   const address = pendingDapp?.data?.request?.address;
@@ -96,7 +95,7 @@ const Container = styled.div`
 const Title = styled.div`
   width: 100%;
   height: 40px;
-  font-family: 'SFCompactDisplayRegular';
+  font-family: 'Inter';
   font-size: 17px;
   font-weight: 600;
   line-height: 2.35;

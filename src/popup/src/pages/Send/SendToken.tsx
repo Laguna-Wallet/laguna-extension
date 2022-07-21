@@ -571,7 +571,7 @@ const AccountsSectionContentHeader = styled.div`
   display: flex;
   justify-content: space-between;
   span {
-    font-family: SFCompactDisplayRegular;
+    font-family: Inter;
     font-weight: 600;
   }
 `;

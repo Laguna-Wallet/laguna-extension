@@ -71,7 +71,6 @@ cryptoWaitReady().then(() => {
 browser.runtime.onConnect.addListener(function (port: any) {
   port.onDisconnect.addListener(deleteTimer)
   port._timeout = setTimeout(forceReconnect, 250e3, port)
-  console.log(port)
   assert([process.env.MESSAGING_PORT, process.env.PORT_EXTENSION].includes(port.name), `Unknown connection from ${port.name}`)
 
   chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
@@ -271,8 +270,6 @@ browser.runtime.onConnect.addListener(function (port: any) {
 browser.runtime.onMessage.addListener(async (msg, _sender) => {
   switch (msg.type) {
     case Messages.AuthUser:
-      const url = `${browser.runtime.getURL("popup/index.html")}#/`
-      chrome.tabs.create({ url })
       if (validatePassword(msg.payload.password)) {
         isLoggedIn = true
         timeoutStart = Date.now()
