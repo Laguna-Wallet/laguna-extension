@@ -6,6 +6,8 @@ html {
   width: 100%;
   height: 100%;
   font-size: 16px;
+  display: flex;
+  justify-content: center;
 }
 
 /* @font-face {
@@ -43,7 +45,7 @@ html {
       format('svg');
 }
 
- @font-face {
+@font-face {
   font-family: 'IBMPlexSans';
   src: url('./assets/fonts/IbmpPlexFont/IBMPlexSans-Regular.ttf') format('opentype');
 }

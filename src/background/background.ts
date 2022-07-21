@@ -35,6 +35,7 @@ import assert = require("assert")
 import type { SignerPayloadJSON, SignerPayloadRaw } from "@polkadot/types/types"
 import { hexToString } from "@polkadot/util"
 import browser from "webextension-polyfill"
+import { userInfo } from "os"
 
 // import { getCurrentTab } from "./utils"
 
@@ -270,6 +271,8 @@ browser.runtime.onConnect.addListener(function (port: any) {
 browser.runtime.onMessage.addListener(async (msg, _sender) => {
   switch (msg.type) {
     case Messages.AuthUser:
+      const url = `${browser.runtime.getURL("popup/index.html")}#/`
+      chrome.tabs.create({ url })
       if (validatePassword(msg.payload.password)) {
         isLoggedIn = true
         timeoutStart = Date.now()
