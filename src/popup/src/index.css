@@ -10,26 +10,6 @@ html {
   justify-content: center;
 }
 
-@font-face {
-  font-family: 'Sequel100Wide55Wide';
-  src: url('./assets/fonts/Sequel100WideFont/Sequel100Wide45Wide/Sequel100Wide-55Wide.eot');
-  src: url('./assets/fonts/Sequel100WideFont/Sequel100Wide45Wide/Sequel100Wide-55Wide.eot?#iefix')
-      format('embedded-opentype'),
-    url('./assets/fonts/Sequel100WideFont/Sequel100Wide45Wide/Sequel100Wide-55Wide.woff2')
-      format('woff2'),
-    url('./assets/fonts/Sequel100WideFont/Sequel100Wide45Wide/Sequel100Wide-55Wide.woff')
-      format('woff'),
-    url('./assets/fonts/Sequel100WideFont/Sequel100Wide45Wide/Sequel100Wide-55Wide.ttf')
-      format('truetype'),
-    url('./assets/fonts/Sequel100WideFont/Sequel100Wide45Wide/Sequel100Wide-55Wide.svg#Sequel100Wide-55Wide')
-      format('svg');
-}
-
-@font-face {
-  font-family: 'IBMPlexSans';
-  src: url('./assets/fonts/IbmpPlexFont/IBMPlexSans-Regular.ttf') format('opentype');
-}
-
 body {
   width: 375px;
   height: 600px;
