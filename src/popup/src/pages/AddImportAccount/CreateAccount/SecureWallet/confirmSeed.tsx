@@ -238,7 +238,7 @@ const Mnemonic = styled.div<{ indexesHt?: Record<string, string>; active: boolea
   margin-right: 16px;
   font-size: 13.4px;
   cursor: pointer;
-  font-family: 'SFCompactDisplayRegular';
+  font-family: 'Inter';
   &:nth-child(3n + 3) {
     margin-right: 0;
   }
@@ -256,7 +256,7 @@ const Word = styled.div<{ bgColor: string }>`
   margin-right: 10px;
   font-size: 13.4px;
   cursor: pointer;
-  font-family: 'SFCompactDisplayRegular';
+  font-family: 'Inter';
   &:nth-child(3n + 3) {
     margin-right: 0;
   }

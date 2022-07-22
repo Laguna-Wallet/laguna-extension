@@ -89,7 +89,6 @@ function Confirm({ fee, transfer, amountToSend, recoded, setBlockHash, flow }: P
         // dispatch(changeAccountsBalances(updatedBalances));
 
         // sendMessagePromise({ type: Messages.FreezeAccountBalanceUpdate });
-        console.log('here');
         history.push({
           pathname: router.home,
           state: { snackbar: { show: true, message: SnackbarMessages.TransactionSent } }

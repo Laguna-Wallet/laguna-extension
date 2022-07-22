@@ -288,7 +288,7 @@ const ButtonContainer = styled.div`
 `;
 
 const Remove = styled.div`
-  font-family: 'SFCompactDisplayRegular';
+  font-family: 'Inter';
   font-size: 13.4px;
   color: #fff;
   cursor: pointer;

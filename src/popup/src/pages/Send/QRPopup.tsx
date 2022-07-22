@@ -88,7 +88,7 @@ const ScannerContainer = styled.div`
 `;
 
 const Text = styled.div`
-  font-family: 'SFCompactDisplayRegular';
+  font-family: 'Inter';
   line-height: 1.45;
   text-align: center;
   color: #898989;

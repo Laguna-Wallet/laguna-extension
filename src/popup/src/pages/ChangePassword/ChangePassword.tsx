@@ -10,7 +10,7 @@ import { Field, InjectedFormProps, reduxForm } from 'redux-form';
 import styled from 'styled-components';
 import { encryptPassword, isObjectEmpty, objectToArray } from 'utils';
 import { saveToStorage } from 'utils/chrome';
-import { encryptMetaData, validatePassword } from 'utils/polkadot';
+import { encryptKeyringPairs, encryptMetaData, validatePassword } from 'utils/polkadot';
 import { Messages, SnackbarMessages, StorageKeys } from 'utils/types';
 import { useHistory } from 'react-router-dom';
 import { router } from 'router/router';
@@ -86,7 +86,7 @@ function ChangePassword({ handleSubmit, valid }: InjectedFormProps<Form>) {
       setSnackbarError('Incorrect current password');
       setIsSnackbarOpen(true);
     } else {
-      // encryptKeyringPairs(values?.currentPassword, values?.newPassword);
+      encryptKeyringPairs(values?.currentPassword, values?.newPassword);
       encryptMetaData(values?.currentPassword, values?.newPassword);
 
       const newEncryptedPassword = encryptPassword({ password: values?.newPassword });

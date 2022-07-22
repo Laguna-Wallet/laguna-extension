@@ -58,7 +58,6 @@ const Input = ({ input: { value, onChange } }: any) => (
     isValue={!value}
     value={value}
     // onChange={(e) => {
-    //   console.log('~ parseNumeric(e, e.target.value)', parseNumeric(e, e.target.value));
     //   if (parseNumeric(e, e.target.value)) {
     //     onChange(e.target.value);
     //   }

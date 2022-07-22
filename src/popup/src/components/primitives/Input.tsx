@@ -151,7 +151,7 @@ const StyledTextarea = styled.textarea<{
   outline: none;
   resize: none;
   font-size: 20px;
-  font-family: 'SFCompactDisplayRegular';
+  font-family: 'Inter';
 `;
 
 const ErrorContainer = styled.div`
