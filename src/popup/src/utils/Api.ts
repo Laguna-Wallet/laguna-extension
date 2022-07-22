@@ -98,7 +98,6 @@ export async function fetchAccountsBalances(
       i = 0;
 
       const hasReceived: boolean = await checkBalanceChange(result_obj, address);
-      console.log('~ hasReceived', hasReceived);
 
       saveToStorage({
         key: StorageKeys.AccountBalances,
@@ -108,7 +107,6 @@ export async function fetchAccountsBalances(
       dispatch(changeAccountsBalances({ address, balances: result_obj }));
 
       if (hasReceived) {
-        console.log('~ hasReceived', hasReceived);
         dispatch(changeTokenReceived({ tokenReceived: hasReceived }));
       }
     }
