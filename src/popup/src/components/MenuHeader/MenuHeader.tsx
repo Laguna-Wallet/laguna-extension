@@ -15,6 +15,7 @@ import AvatarEditIcon from 'assets/svgComponents/AvatarEditIcon';
 import { useHistory } from 'react-router-dom';
 import { router } from 'router/router';
 import browser from 'webextension-polyfill';
+import ExpandIcon from 'assets/svgComponents/ExpandIcon';
 
 type Props = {
   isOpen: boolean;
@@ -85,6 +86,10 @@ export default function MenuHeader({ showUser, onClose, title, backAction }: Pro
     history.push(router.welcomeBack);
   };
 
+  const handleExpand = () => {
+    browser.runtime.sendMessage({ type: Messages });
+  };
+
   return (
     <Container>
       <Header>
@@ -93,6 +98,9 @@ export default function MenuHeader({ showUser, onClose, title, backAction }: Pro
           <span>Laguna</span>
         </LogoContainer>
         <HeaderLeft>
+          <ExpandContainer onClick={handleExpand}>
+            <ExpandIcon />
+          </ExpandContainer>
           <LockContainer onClick={handleLogout}>
             <MenuLockIcon />
           </LockContainer>
@@ -180,7 +188,15 @@ const HeaderLeft = styled.div`
   display: flex;
   align-items: center;
   height: 24px;
-  width: 54px;
+  width: 65px;
+`;
+
+const ExpandContainer = styled.div`
+  cursor: pointer;
+  z-index: 9999;
+  margin-right: 10px;
+  /* height: 24px;
+  width: 24px; */
 `;
 
 const LockContainer = styled.div`

@@ -165,7 +165,6 @@ export async function exportAll(password: string) {
 }
 
 export async function exportAccount(address: string, password: string) {
-  console.log('~ keyring.getPair(address)', keyring.getPair(address));
   return keyring.backupAccount(keyring.getPair(address), password);
 }
 

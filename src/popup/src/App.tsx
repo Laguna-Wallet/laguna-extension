@@ -47,7 +47,6 @@ function App() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const { tokenReceived } = useSelector((state: State) => state.wallet);
-  console.log('~ tokenReceived', tokenReceived);
 
   useEffect(() => {
     browser.runtime.onMessage.addListener(async (msg) => {

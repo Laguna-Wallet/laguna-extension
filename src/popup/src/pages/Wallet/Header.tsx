@@ -10,6 +10,7 @@ import BackIcon from 'assets/svgComponents/BackIcon';
 import CloseArrowIcon from 'assets/svgComponents/CloseArrowIcon';
 import { truncateString } from 'utils';
 import CloseSmallIcon from 'assets/svgComponents/CloseSmallIcon';
+import ExpandIcon from 'assets/svgComponents/ExpandIcon';
 
 type Props = {
   title?: string;
