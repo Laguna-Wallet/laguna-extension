@@ -24,19 +24,20 @@ import { router } from 'router/router';
 export interface ShowSnackbar {
   message: string;
   show: boolean;
+  isMenuOpen?: boolean;
 }
 
 type Props = {
-  isMenuOpen?: boolean;
   snackbar?: ShowSnackbar;
 };
 
-function Wallet({ isMenuOpen, snackbar }: Props) {
+function Wallet({ snackbar }: Props) {
   const account = useAccount();
   const history = useHistory();
   const { location } = history as any;
 
   const snackbarData = snackbar || location?.state?.snackbar;
+  const isMenuOpen = location?.state?.isMenuOpen;
 
   const activeAccount = useCallback(account.getActiveAccount(), [account]);
 

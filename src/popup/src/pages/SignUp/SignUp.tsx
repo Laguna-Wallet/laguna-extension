@@ -40,7 +40,7 @@ export default function SignUp() {
             boxShadow="0 4px 50px 0 rgba(0, 0, 0, 0.1)"
           />
         </StyledLink>
-        <Text>Contact Support</Text>
+        <Text onClick={}>Contact Support</Text>
       </MainSection>
     </PageContainer>
   );
