@@ -234,7 +234,7 @@ export function getNetworks(
       chain: 'kusama',
       node: 'wss://kusama-rpc.polkadot.io',
       prefix: 2
-    },
+    }
     // {
     //   name: 'Moonriver',
     //   symbol: 'movr',
@@ -256,13 +256,13 @@ export function getNetworks(
     //   chain: 'shiden',
     //   node: 'wss://shiden.api.onfinality.io/public-ws'
     // },
-    {
-      name: 'Astar',
-      symbol: TokenSymbols.astar,
-      chain: 'astar',
-      node: 'wss://astar.api.onfinality.io/public-ws',
-      prefix: 5
-    }
+    // {
+    //   name: 'Astar',
+    //   symbol: TokenSymbols.astar,
+    //   chain: 'astar',
+    //   node: 'wss://astar.api.onfinality.io/public-ws',
+    //   prefix: 5
+    // }
 
     // wss://rpc.astar.network
 
