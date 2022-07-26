@@ -378,6 +378,10 @@ browser.runtime.onMessage.addListener(async (msg, _sender) => {
       keyPairs = renewMetaToKeyPairs(keyPairs, msg.payload.metaData)
       keyPairs = reEncryptKeyringPairs(keyPairs, msg.payload.oldPassword, msg.payload.newPassword)
       break
+    case Messages.ExpandExtension:
+      const url = `${browser.runtime.getURL("popup/index.html")}#/`
+      browser.tabs.create({ url })
+      break
     // case Messages.FreezeAccountBalanceUpdate:
     //   saveToStorage({ key: StorageKeys.IsAccountBalanceUpdateFreezed, value: JSON.stringify({ isFreezed: true }) })
     //   setTimeout(() => {

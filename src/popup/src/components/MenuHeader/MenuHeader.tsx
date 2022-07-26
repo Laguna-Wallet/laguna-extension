@@ -87,7 +87,7 @@ export default function MenuHeader({ showUser, onClose, title, backAction }: Pro
   };
 
   const handleExpand = () => {
-    browser.runtime.sendMessage({ type: Messages });
+    browser.runtime.sendMessage({ type: Messages.ExpandExtension });
   };
 
   return (
