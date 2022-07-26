@@ -66,7 +66,7 @@ function ImportAccount() {
 
   const location = useLocation<LocationState>();
   const { redirectedFromSignUp, redirectedFromForgotPassword } = location?.state || {};
-  
+
   const account = useAccount();
   const encoded = account.encryptedPassword;
 

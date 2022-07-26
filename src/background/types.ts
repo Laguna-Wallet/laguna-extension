@@ -44,6 +44,7 @@ export enum Messages {
   Timeout = "TIMEOUT",
   ResetTimeout = "RESET_TIMEOUT",
   FreezeAccountBalanceUpdate = "FREEZE_ACCOUNT_BALANCE_UPDATE",
+  OpenSupport = "OPEN_SUPPORT",
 }
 
 export const chains = ["westend", "polkadot", "kusama", "moonriver", "moonbeam", "shiden", "astar"]

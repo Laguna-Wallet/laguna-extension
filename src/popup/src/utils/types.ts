@@ -108,7 +108,8 @@ export enum Messages {
   TokenReceived = 'TOKEN_RECEIVED',
   Timeout = 'TIMEOUT',
   ResetTimeout = 'RESET_TIMEOUT',
-  FreezeAccountBalanceUpdate = 'FREEZE_ACCOUNT_BALANCE_UPDATE'
+  FreezeAccountBalanceUpdate = 'FREEZE_ACCOUNT_BALANCE_UPDATE',
+  OpenSupport = 'OPEN_SUPPORT'
 }
 
 //==============================================================================
