@@ -1,17 +1,20 @@
+import { useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { Field } from 'redux-form';
 import { parseNumeric } from 'utils/validations';
 import SelectSmallIcon from 'assets/svgComponents/SelectSmallIcon';
-import { useRef, useState } from 'react';
 import useOnClickOutside from 'hooks/useOnClickOutside';
+import debounce from 'lodash.debounce';
+import { useEffect } from 'react';
 
 type Props = {
   Icon: any;
   tokens: string[];
   value?: string;
+  onChangeCallback: () => void;
 };
 
-export default function TokenAndAmountSelect({ tokens, Icon, value }: Props) {
+export default function TokenAndAmountSelect({ tokens, Icon, value, onChangeCallback }: Props) {
   const optionContainerRef = useRef<HTMLDivElement | null>(null);
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
@@ -43,7 +46,13 @@ export default function TokenAndAmountSelect({ tokens, Icon, value }: Props) {
     <Container>
       {/* {value && } */}
       {Icon}
-      <Field name="amount" type="text" label="amount" component={Input} />
+      <Field
+        name="amount"
+        type="text"
+        label="amount"
+        component={Input}
+        onChangeCallback={onChangeCallback}
+      />
       <Field name="token" label="token" component={renderSelect} />
       {/* <IconContainer>
         <SelectSmallIcon />
@@ -52,22 +61,39 @@ export default function TokenAndAmountSelect({ tokens, Icon, value }: Props) {
   );
 }
 
-const Input = ({ input: { value, onChange } }: any) => (
-  <StyledInput
-    type="text"
-    isValue={!value}
-    value={value}
-    // onChange={(e) => {
-    //   if (parseNumeric(e, e.target.value)) {
-    //     onChange(e.target.value);
-    //   }
-    // }}
-    onChange={(e) => {
-      onChange(parseNumeric(e.target.value));
-    }}
-    placeholder="Enter Amount"
-  />
-);
+const Input = ({ input: { value, onChange }, onChangeCallback }: any) => {
+  const changeHandler = (event: any) => {
+    onChange(parseNumeric(event.target.value));
+  };
+
+  const debouncedChangeHandler = useMemo(() => debounce(changeHandler, 3000), []);
+
+  useEffect(() => {
+    return () => {
+      debouncedChangeHandler.cancel();
+    };
+  }, []);
+
+  return (
+    <StyledInput
+      type="text"
+      isvalue={!value}
+      // value={value}
+      // onChange={(e) => {
+      //   if (parseNumeric(e, e.target.value)) {
+      //     onChange(e.target.value);
+      //   }
+      // }}
+      // todo proper typing
+      onChange={(e) => {
+        onChangeCallback();
+        debouncedChangeHandler(e);
+      }}
+      placeholder="Enter Amount"
+      // debounceTimeout={600}
+    />
+  );
+};
 
 const Container = styled.div`
   width: 100%;
@@ -114,11 +140,11 @@ const OptionContainer = styled.div`
   color: #fff;
 `;
 
-const StyledInput = styled.input<{ isValue: boolean }>`
-  width: ${({ isValue }) => (isValue ? '100%' : 'calc(100% - 40px)')};
+const StyledInput = styled.input<{ isvalue: boolean }>`
+  width: ${({ isvalue }) => (isvalue ? '100%' : 'calc(100% - 40px)')};
   padding-right: 12px;
   height: 48px;
-  /* margin-left: ${({ isValue }) => (isValue ? '2px' : '14px')}; */
+  /* margin-left: ${({ isvalue }) => (isvalue ? '2px' : '14px')}; */
   margin-left: 10px;
   border: 0;
   border-top-left-radius: 5px;

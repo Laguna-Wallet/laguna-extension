@@ -121,10 +121,10 @@ function Send({ initialIsContactsPopupOpen }: Props) {
       const fees = new BigNumber(`${partialFee}`).multipliedBy(110).dividedBy(100);
 
       // todo check this
-      const total = amount.plus(fees).plus(api.consts.balances.existentialDeposit.toString());
+      const total = amount.plus(fees);
+      // .plus(api.consts.balances.existentialDeposit.toString());
 
       api.disconnect();
-
       if (total.gt(new BigNumber(available))) {
         setAbilityToTransfer(false);
       } else {
@@ -154,8 +154,10 @@ function Send({ initialIsContactsPopupOpen }: Props) {
           flow={flow}
           setFlow={setFlow}
           fee={fee}
+          setLoading={setLoading}
           loading={loading}
           abilityToTransfer={abilityToTransfer}
+          setAbilityToTransfer={setAbilityToTransfer}
           propsFromTokenDashboard={propsFromTokenDashboard}
           accountMeta={accountMeta}
           setAccountMeta={setAccountMeta}
