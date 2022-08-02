@@ -361,6 +361,7 @@ browser.runtime.onMessage.addListener(async (msg, _sender) => {
       // sendResponse({ payload: { timeout } })
       break
     case Messages.ResetTimeout:
+      console.log("here")
       if (isLoggedIn) {
         timeoutStart = Date.now()
       }
