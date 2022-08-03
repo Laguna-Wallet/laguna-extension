@@ -262,7 +262,14 @@ export function getNetworks(
       chain: 'astar',
       node: 'wss://astar.api.onfinality.io/public-ws',
       prefix: 5
-    }
+    },
+    {
+      name: 'Ethereum',
+      symbol: TokenSymbols.ethereum,
+      chain: 'Ethereum',
+      node: 'wss://eth-mainnet.g.alchemy.com/v2/IFip5pZqfpAsi50-O2a0ZEJoA82E8KR_',
+      prefix: 0
+    },
 
     // wss://rpc.astar.network
 
@@ -292,6 +299,7 @@ export function getNetworks(
     //   symbol: 'EDG',
     //   chain: 'edgeware'
     // }
+    
   ];
 
   const ht = tokenInfos.reduce((acc: any, item: any) => {

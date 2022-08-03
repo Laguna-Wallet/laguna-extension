@@ -126,14 +126,16 @@ export enum TokenSymbols {
   moonriver = 'movr',
   moonbeam = 'glmr',
   shiden = 'sdn',
-  astar = 'astr'
+  astar = 'astr',
+  ethereum = "eth"
 }
 
 export type Token =
   | TokenSymbols.westend
   | TokenSymbols.polkadot
   | TokenSymbols.kusama
-  | TokenSymbols.astar;
+  | TokenSymbols.astar
+  | TokenSymbols.ethereum;
 
 // todo move chain names to enum
 export interface Transaction {
@@ -238,7 +240,8 @@ export const chains = [
   // 'moonriver',
   //  'moonbeam',
   // 'shiden',
-  'astar'
+  'astar',
+  'Ethereum'
 ];
 
 export interface TokenInfo {
@@ -324,5 +327,11 @@ export const networks: Network[] = [
     chain: 'astar',
     node: 'wss://astar.api.onfinality.io/public-ws',
     prefix: 5
+  },
+  {
+    name: 'Ethereum',
+    symbol: TokenSymbols.ethereum,
+    chain: "etherum",
+    node: "wss://eth-mainnet.g.alchemy.com/v2",
   }
 ];
