@@ -183,12 +183,16 @@ export function encryptKeyringPair(pair: any, oldPassword: string, newPassword: 
 }
 
 export function unlockKeyPairs(password: string) {
-  const pairs = keyring.getPairs()
+  try {
+    const pairs = keyring.getPairs()
 
-  return pairs.map((pair) => {
-    pair.unlock(password)
-    return pair
-  })
+    return pairs.map((pair) => {
+      pair.unlock(password)
+      return pair
+    })
+  } catch (err) {
+    console.log("err", err)
+  }
 }
 
 export function removeFromKeypair(pairs, address) {

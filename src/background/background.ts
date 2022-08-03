@@ -270,10 +270,14 @@ browser.runtime.onConnect.addListener(function (port: any) {
 browser.runtime.onMessage.addListener(async (msg, _sender) => {
   switch (msg.type) {
     case Messages.AuthUser:
+      console.log("1")
       if (validatePassword(msg.payload.password)) {
+        console.log("2")
         isLoggedIn = true
         timeoutStart = Date.now()
         keyPairs = unlockKeyPairs(msg.payload.password)
+        console.log("~ keyPairs", keyPairs)
+        console.log("3")
       }
       break
     case Messages.CheckPendingDappAuth:
@@ -361,7 +365,6 @@ browser.runtime.onMessage.addListener(async (msg, _sender) => {
       // sendResponse({ payload: { timeout } })
       break
     case Messages.ResetTimeout:
-      console.log("here")
       if (isLoggedIn) {
         timeoutStart = Date.now()
       }

@@ -320,7 +320,7 @@ const CopyBtn = styled.div`
   margin-top: auto;
 
   span {
-    margin-left: 5px;
+    margin-right: 5px;
   }
 `;
 const ExportJson = styled.div`
