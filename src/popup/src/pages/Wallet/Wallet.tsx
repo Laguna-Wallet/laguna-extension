@@ -21,6 +21,7 @@ import { Asset } from 'utils/types';
 import { emptyAssets } from 'utils/emptyAssets';
 import { useHistory, Link } from 'react-router-dom';
 import { router } from 'router/router';
+import { isInPopup } from 'utils/chrome';
 export interface ShowSnackbar {
   message: string;
   show: boolean;
@@ -49,6 +50,7 @@ function Wallet({ snackbar }: Props) {
   const [snackbarMessage, setSnackbarMessage] = useState<string>('');
   const accountBalances = useSelector((state: State) => state.wallet?.accountsBalances);
   const [overallPriceChange, setOverallPriceChange] = useState<number | undefined>(undefined);
+  const isPopupWindow = isInPopup();
 
   const negativeValue = String(overallPriceChange).includes('-');
   const dispatch = useDispatch();
@@ -58,8 +60,7 @@ function Wallet({ snackbar }: Props) {
     infos,
     accountsBalances,
     loading: accountsChanging,
-    disabledTokens,
-    tokenReceived
+    disabledTokens
   } = useSelector((state: State) => state.wallet);
 
   const balances = accountsBalances?.balances;
@@ -276,7 +277,9 @@ function Wallet({ snackbar }: Props) {
               <SwitchAssetsIcon />
             </SwitchAssetIconContainer>
           </ListHeader>
-          <ListContentParent>{accountsChanging ? 'Loading...' : renderAssets}</ListContentParent>
+          <ListContentParent isPopupWindow={isPopupWindow}>
+            {accountsChanging ? 'Loading...' : renderAssets}
+          </ListContentParent>
         </List>
         <Snackbar
           width="194.9px"
@@ -488,9 +491,9 @@ const ListHeaderItem = styled.div<{ index: number; active: number }>`
   }
 `;
 
-const ListContentParent = styled.div`
+const ListContentParent = styled.div<{ isPopupWindow?: boolean | null }>`
   width: 100%;
-  height: 213px;
+  height: ${({ isPopupWindow }) => (isPopupWindow ? '213px' : '100%')};
   overflow: hidden;
   display: flex;
   flex-direction: column;

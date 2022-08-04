@@ -385,15 +385,11 @@ browser.runtime.onMessage.addListener(async (msg, _sender) => {
     case Messages.OpenSupport:
       browser.tabs.create({ url: "https://lagu.na/contact/" })
       break
-    // case Messages.ContactSupport:
+    // case Messages.ExpandExtension:
     //   const url = `${browser.runtime.getURL("popup/index.html")}#/`
     //   browser.tabs.create({ url })
     //   break
-    // case Messages.FreezeAccountBalanceUpdate:
-    //   saveToStorage({ key: StorageKeys.IsAccountBalanceUpdateFreezed, value: JSON.stringify({ isFreezed: true }) })
-    //   setTimeout(() => {
-    //     saveToStorage({ key: StorageKeys.IsAccountBalanceUpdateFreezed, value: JSON.stringify({ isFreezed: false }) })
-    //   }, 100000)
+
     // case Messages.AccountsBalanceUpdated:
     //   console.log("fetched")
     //   await fetchAccountsBalances()

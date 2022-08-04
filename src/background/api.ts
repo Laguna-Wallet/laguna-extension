@@ -46,16 +46,19 @@ export async function sendTransaction(pairs, { sendTo, sendFrom, amount, chain }
 
 // todo make chains dynamic
 export async function Retrieve_Coin_Prices() {
-  const data = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=polkadot,kusama,moonriver,moonbeam,shiden,astar&vs_currencies=usd")
+  // moonriver,
+  // moonbeam,
+  // shiden,
+  // astar
+  const data = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=polkadot,kusama,&vs_currencies=usd`)
   const json = await data.json()
   return json
 }
 // todo make chains dynamic
 // todo proper typing and get rid of unneeded fields from the return object
 export async function Retrieve_Coin_Infos() {
-  const data = await fetch(
-    `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=polkadot,kusama,moonriver,moonbeam,shiden,astar&order=market_cap_desc&per_page=100&page=1&sparkline=false`
-  )
+  // moonriver, moonbeam,მო სულიკო რაზედ მოგიცკენიააა    shiden, astar
+  const data = await fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=polkadot,kusama,&order=market_cap_desc&per_page=100&page=1&sparkline=false`)
 
   return await data.json()
 }

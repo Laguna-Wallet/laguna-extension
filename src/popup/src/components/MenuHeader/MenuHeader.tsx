@@ -180,7 +180,7 @@ const HeaderLeft = styled.div`
   display: flex;
   align-items: center;
   height: 24px;
-  width: 54px;
+  width: 65px;
 `;
 
 const LockContainer = styled.div`

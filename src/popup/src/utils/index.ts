@@ -272,6 +272,8 @@ export async function checkBalanceChange(
   if (newAddress !== oldAddress) return false;
 
   const parsedOldBallance = JSON.parse(oldBalance)?.balances;
+  console.log('~ parsedOldBallance', parsedOldBallance);
+  console.log('~ newBalance', newBalance);
 
   for (const [key, balance] of Object.entries(newBalance)) {
     if (balance?.overall > parsedOldBallance[key].overall) {
