@@ -110,7 +110,7 @@ function HumbleInput({
           <StyledTextarea
             id={id}
             value={value || input?.value}
-            onChange={onChange || input.onChange}
+            onChange={onChange || input?.onChange}
             placeholder={placeholder}
             fontSize={fontSize}
             placeholderColor={placeholderColor}
@@ -126,7 +126,7 @@ function HumbleInput({
               {...input}
               id={id}
               value={handleValue(value || input?.value)}
-              onChange={onChange || input.onChange}
+              onChange={onChange || input?.onChange}
               type={type}
               placeholder={placeholder}
               fontSize={fontSize}

@@ -67,17 +67,20 @@ const ImportPhase = ({
   const dispatch = useDispatch();
 
   const onDrop = useCallback(async (acceptedFile: any) => {
-    if (!acceptedFile.length) return;
-    setIsLoading(true);
-    const json = await convertUploadedFileToJson(acceptedFile);
-    // isKeyringPairs$Json(json) ||
-    if (isKeyringJson(json)) {
-      setIsLoading(false);
-      setUploaded(true);
-      setIsFinishSlider(true);
-      dispatch(change('ImportPhase', 'file', json));
-    } else {
+    try {
+      if (!acceptedFile.length) return;
+      setIsLoading(true);
+      const json = await convertUploadedFileToJson(acceptedFile);
+      // isKeyringPairs$Json(json) ||
+      if (isKeyringJson(json)) {
+        setUploaded(true);
+        setIsLoading(false);
+        setIsFinishSlider(true);
+        dispatch(change('ImportPhase', 'file', json));
+      }
+    } catch (err) {
       setIsSnackbarOpen(true);
+      setIsLoading(false);
       setSnackbarError('Not A Valid JSON Backup File (.Json)');
     }
   }, []);
@@ -239,7 +242,7 @@ const ImportPhase = ({
             </InputContainer>
           )}
         </DndContainer>
-        {!uploaded && !seedPhase && (
+        {!uploaded && !seedPhase && !isLoading && (
           <HelpButton onClick={() => setIsPopupOpen(true)}>
             <ButtonsIcon fill="#18191a" />
             <span>Help</span>

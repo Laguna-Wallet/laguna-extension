@@ -105,14 +105,19 @@ export async function convertUploadedFileToJson(
   acceptedFile: File[]
 ): Promise<KeyringPair$Json | KeyringPairs$Json> {
   try {
-    return await new Promise((resolve) => {
+    return await new Promise((resolve, reject) => {
       const fileReader = new FileReader();
       fileReader.readAsText(acceptedFile[0], 'UTF-8');
       fileReader.onload = (e: any) => {
-        resolve(JSON.parse(e.target.result));
+        try {
+          const parsed = JSON.parse(e.target.result);
+          console.log('~ e.target.result', e.target.result);
+          resolve(parsed);
+        } catch (err) {
+          reject(err);
+        }
       };
     });
-    12;
   } catch (err: any) {
     throw new Error(err.message);
   }
