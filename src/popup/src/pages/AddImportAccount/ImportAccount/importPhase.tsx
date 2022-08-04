@@ -271,7 +271,7 @@ const ImportPhase = ({
           />
         )}
         {isPopupOpen && (
-          <Popup onClose={() => setIsPopupOpen(false)} bg={'rgba(0, 0, 0, 0.3)'}>
+          <Popup bg={'rgba(0, 0, 0, 0.3)'}>
             <HelpImport onClose={() => setIsPopupOpen(false)} />
           </Popup>
         )}
