@@ -70,10 +70,7 @@ export async function fetchAccountsBalances(
           network.chain,
           recodeAddress(address, network?.prefix, network?.encodeType)
         );
-        console.log('~ resolved', resolved);
-
         // if (resolved.message !== "Success") return
-
         if (resolved.message !== 'Success') {
           if (resolved.message === 'Record Not Found' || resolved?.data?.account?.balance === 0) {
             i++;

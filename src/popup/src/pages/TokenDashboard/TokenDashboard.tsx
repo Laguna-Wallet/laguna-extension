@@ -18,6 +18,7 @@ import ActivityInfo from 'pages/Activity/ActivityInfo';
 import InactiveField from 'components/InactiveField/InactiveField';
 import { useHistory, Link, useLocation } from 'react-router-dom';
 import { router } from 'router/router';
+import ToolTipIcon from 'assets/svgComponents/ToolTipIcon';
 
 type LocationState = {
   asset: Asset;
@@ -123,7 +124,10 @@ export default function TokenDashboard() {
                     </span>
                   </BalancesRow>
                   <BalancesRow>
-                    <span>Locked</span>
+                    <span>
+                      Locked
+                      <ToolTipIcon />
+                    </span>
                     <span>
                       {lockedBalance.toString()} {symbol?.toUpperCase()}
                     </span>
@@ -283,6 +287,12 @@ const BalancesRow = styled.div`
   font-size: 12px;
   &:nth-child(2) {
     margin-top: 8px;
+  }
+
+  span {
+    display: flex;
+    align-items: center;
+    margin-left: 5px;
   }
 `;
 
