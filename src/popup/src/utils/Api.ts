@@ -124,8 +124,8 @@ async function searchAccountBallance(chain: string, address: string) {
     cache: 'no-cache',
     credentials: 'same-origin',
     headers: {
-      'Content-Type': 'application/json',
-      'X-API-Key': process.env.REACT_APP_SUBSCAN_KEY || ''
+      'Content-Type': 'application/json'
+      // 'X-API-Key': process.env.REACT_APP_SUBSCAN_KEY || ''
     },
     body: JSON.stringify({ key: address, row: 1, page: 1 })
   });

@@ -24,6 +24,7 @@ import {
   getFromStorage,
   renewMetaToKeyPairs,
   clearAccountsFromStorage,
+  encryptMetaData,
 } from "./utils"
 
 import keyring from "@polkadot/ui-keyring"
@@ -270,14 +271,10 @@ browser.runtime.onConnect.addListener(function (port: any) {
 browser.runtime.onMessage.addListener(async (msg, _sender) => {
   switch (msg.type) {
     case Messages.AuthUser:
-      console.log("1")
       if (validatePassword(msg.payload.password)) {
-        console.log("2")
         isLoggedIn = true
         timeoutStart = Date.now()
         keyPairs = unlockKeyPairs(msg.payload.password)
-        console.log("~ keyPairs", keyPairs)
-        console.log("3")
       }
       break
     case Messages.CheckPendingDappAuth:
@@ -379,8 +376,9 @@ browser.runtime.onMessage.addListener(async (msg, _sender) => {
       keyPairs = [...keyPairs, pair]
       break
     case Messages.ReEncryptPairs:
-      keyPairs = renewMetaToKeyPairs(keyPairs, msg.payload.metaData)
       keyPairs = reEncryptKeyringPairs(keyPairs, msg.payload.oldPassword, msg.payload.newPassword)
+
+      // renewMetaToKeyPairs(keyPairs, msg.payload.metaData)
       break
     case Messages.OpenSupport:
       browser.tabs.create({ url: "https://lagu.na/contact/" })

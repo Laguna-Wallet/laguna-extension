@@ -41,7 +41,6 @@ function Wallet({ snackbar }: Props) {
   const isMenuOpen = location?.state?.isMenuOpen;
 
   const activeAccount = useCallback(account.getActiveAccount(), [account]);
-  console.log('~ activeAccount', activeAccount);
 
   const [assets, setAssets] = useState<Asset[]>([]);
   const [activeTab, setActiveTab] = useState<number>(1);

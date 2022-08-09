@@ -24,6 +24,8 @@ export async function sendTransaction(pairs, { sendTo, sendFrom, amount, chain }
       return recodeToPolkadotAddress(pair.address) === recodeToPolkadotAddress(sendFrom)
     })
 
+    console.log("~ pair", pair)
+
     await cryptoWaitReady()
     const wsProvider = new WsProvider(`wss://${chain}.api.onfinality.io/public-ws?apikey=${process.env.ONFINALITY_KEY}`)
     const api = await ApiPromise.create({ provider: wsProvider })
@@ -117,7 +119,7 @@ async function searchAccountBallance(chain: string, address: string) {
     credentials: "same-origin",
     headers: {
       "Content-Type": "application/json",
-      "X-API-Key": process.env.SUBSCAN_KEY,
+      // "X-API-Key": process.env.SUBSCAN_KEY,
     },
     body: JSON.stringify({ key: address, row: 1, page: 1 }),
   })

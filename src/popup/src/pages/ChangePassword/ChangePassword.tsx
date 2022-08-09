@@ -86,8 +86,8 @@ function ChangePassword({ handleSubmit, valid }: InjectedFormProps<Form>) {
       setSnackbarError('Incorrect current password');
       setIsSnackbarOpen(true);
     } else {
-      encryptKeyringPairs(values?.currentPassword, values?.newPassword);
       encryptMetaData(values?.currentPassword, values?.newPassword);
+      encryptKeyringPairs(values?.currentPassword, values?.newPassword);
 
       const newEncryptedPassword = encryptPassword({ password: values?.newPassword });
       saveToStorage({ key: StorageKeys.Encoded, value: newEncryptedPassword });

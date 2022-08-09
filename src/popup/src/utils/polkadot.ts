@@ -468,13 +468,20 @@ export function encryptKeyringPairs(oldPassword: string, newPassword: string) {
 
   for (let i = 0; i < pairs.length; i++) {
     const pair = pairs[i];
-    pair.unlock(oldPassword);
 
+    pair.decodePkcs8(oldPassword);
+
+    // const json = pair.toJson(newPassword);
+    // console.log('~ json', json);
+    // keyring.restoreAccount(json, newPassword);
+
+    // pair.unlock(oldPassword);
     keyring.forgetAccount(pair.address);
     const { pair: newPair } = keyring.addPair(pair, newPassword);
 
-    newPair.setMeta(pair.meta);
-    keyring.saveAccountMeta(newPair, { ...pair.meta });
+    // console.log('~ newPair', newPair);
+    // newPair.setMeta(pair.meta);
+    // keyring.saveAccountMeta(newPair, { ...pair.meta });
   }
 }
 
