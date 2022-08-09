@@ -26,7 +26,7 @@ import EncodeAccount from 'pages/AddImportAccount/EncodeAccount';
 import SetupComplete from 'pages/AddImportAccount/SetupComplete';
 import ImportPhase from 'pages/AddImportAccount/ImportAccount/importPhase';
 import { saveToStorage } from 'utils/chrome';
-import { clearAccountsFromStorage } from 'utils';
+import { clearAccountsFromStorage, isObjectEmpty } from 'utils';
 import { toggleLoading } from 'redux/actions';
 
 const validate = (values: any) => {
@@ -68,6 +68,8 @@ function ImportAccount() {
   const { redirectedFromSignUp, redirectedFromForgotPassword } = location?.state || {};
 
   const account = useAccount();
+  const activeAccount = account.getActiveAccount();
+
   const encoded = account.encryptedPassword;
 
   const dispatch = useDispatch();
@@ -90,9 +92,10 @@ function ImportAccount() {
           dispatch(toggleLoading(true));
         }
 
-        if (!account.getActiveAccount()) {
+        if (!activeAccount || (activeAccount && isObjectEmpty(activeAccount))) {
           account.saveActiveAccount(pair);
         }
+
         if (redirectPassword) {
           browser.runtime.sendMessage({
             type: Messages.ForgotPassword,
@@ -119,7 +122,7 @@ function ImportAccount() {
         dispatch(toggleLoading(true));
       }
 
-      if (!account.getActiveAccount()) {
+      if (!activeAccount || (activeAccount && isObjectEmpty(activeAccount))) {
         account.saveActiveAccount(newPair);
       }
 

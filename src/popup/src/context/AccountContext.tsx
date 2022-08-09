@@ -89,15 +89,14 @@ const AccountProvider = ({ children }: { children?: ReactNode }) => {
   }, []);
 
   const getActiveAccount = () => {
-    if (activeAccount && !isObjectEmpty(activeAccount as any)) {
-      return activeAccount;
-    } else {
-      const accounts = keyring.getPairs();
-      if (!accounts.length) return undefined;
-      saveToStorage({ key: StorageKeys.ActiveAccount, value: JSON.stringify(accounts[0]) });
-      setActiveAccount(accounts[0]);
-      return accounts[0];
-    }
+    return activeAccount;
+    // } else {
+    //   const accounts = keyring.getPairs();
+    //   if (!accounts.length) return undefined;
+    //   saveToStorage({ key: StorageKeys.ActiveAccount, value: JSON.stringify(accounts[0]) });
+    //   setActiveAccount(accounts[0]);
+    //   return accounts[0];
+    // }
   };
 
   const saveActiveAccount = async (account: any) => {

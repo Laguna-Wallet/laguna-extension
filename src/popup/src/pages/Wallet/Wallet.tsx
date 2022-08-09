@@ -22,6 +22,8 @@ import { emptyAssets } from 'utils/emptyAssets';
 import { useHistory, Link } from 'react-router-dom';
 import { router } from 'router/router';
 import { isInPopup } from 'utils/chrome';
+import { isObjectEmpty } from 'utils';
+import keyring from '@polkadot/ui-keyring';
 export interface ShowSnackbar {
   message: string;
   show: boolean;
