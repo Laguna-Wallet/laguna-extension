@@ -94,7 +94,7 @@ export default function AccountsPopup({ handleClickAccount, onBack }: Props) {
                     onClick={() => handleClickAccount(account.address)}>
                     <IconContainer img={account?.img} />
                     <Text>
-                      {truncateString(account.name, 3)}(
+                      {truncateString(account.name, 8)}(
                       {truncateString(recodeAddress(account.address, prefix))})
                     </Text>
                     {/* <AlternateEmail stroke="#111" /> */}

@@ -51,9 +51,11 @@ type Props = {
   flow: FlowValue | undefined;
   setFlow: (flow: FlowValue | undefined) => void;
   fee: string;
+  setLoading: (loading: boolean) => void;
   loading: boolean;
   handleSubmit?: any;
   errors?: any;
+  setAbilityToTransfer: (abilityToTransfer: boolean) => void;
   abilityToTransfer: boolean;
   amount: string;
   propsFromTokenDashboard?: PropsFromTokenDashboard;
@@ -77,9 +79,11 @@ function SendToken({
   setFlow,
   fee,
   loading,
+  setLoading,
   handleSubmit,
   errors,
   abilityToTransfer,
+  setAbilityToTransfer,
   amount,
   propsFromTokenDashboard,
   accountMeta,
@@ -230,6 +234,10 @@ function SendToken({
               }
               tokens={[selectedAsset.symbol]}
               value={amount}
+              onChangeCallback={() => {
+                setLoading(true);
+                setAbilityToTransfer(false);
+              }}
             />
 
             <Price>

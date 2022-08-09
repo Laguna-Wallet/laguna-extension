@@ -86,8 +86,8 @@ function ChangePassword({ handleSubmit, valid }: InjectedFormProps<Form>) {
       setSnackbarError('Incorrect current password');
       setIsSnackbarOpen(true);
     } else {
-      encryptKeyringPairs(values?.currentPassword, values?.newPassword);
       encryptMetaData(values?.currentPassword, values?.newPassword);
+      encryptKeyringPairs(values?.currentPassword, values?.newPassword);
 
       const newEncryptedPassword = encryptPassword({ password: values?.newPassword });
       saveToStorage({ key: StorageKeys.Encoded, value: newEncryptedPassword });
@@ -245,7 +245,7 @@ export default reduxForm<Record<string, unknown>, any>({
 
 const Container = styled.div`
   width: 100%;
-  height: 600px;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   position: absolute;

@@ -111,7 +111,7 @@ export default function Menu({ onClose }: Props) {
 
 const Container = styled.div`
   width: 100%;
-  height: 542px;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   position: absolute;

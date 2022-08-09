@@ -239,7 +239,7 @@ export default function AddAddress({
 
 const Container = styled.div<{ redirectedFromSend?: boolean; edit?: boolean }>`
   width: 100%;
-  height: 600px;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   position: absolute;

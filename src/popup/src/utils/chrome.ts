@@ -81,3 +81,9 @@ export function getFromChromeStorage(key: string) {
 export async function saveToChromeStorage({ key, value }: { key: string; value: string }) {
   await browser.storage.local.set({ [key]: value });
 }
+
+export const isInPopup = function () {
+  return typeof chrome != undefined && chrome.extension
+    ? chrome.extension.getViews({ type: 'popup' }).length > 0
+    : null;
+};

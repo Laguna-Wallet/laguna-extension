@@ -203,7 +203,7 @@ export default reduxForm<Record<string, unknown>, any>({
 
 const Container = styled.div<{ opened: boolean }>`
   width: 100%;
-  height: 600px;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   position: absolute;
@@ -320,7 +320,7 @@ const CopyBtn = styled.div`
   margin-top: auto;
 
   span {
-    margin-left: 5px;
+    margin-right: 5px;
   }
 `;
 const ExportJson = styled.div`

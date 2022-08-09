@@ -10,6 +10,7 @@ import { Messages, SnackbarMessages } from 'utils/types';
 import { useHistory } from 'react-router-dom';
 import { router } from 'router/router';
 import browser from 'webextension-polyfill';
+import RevokeIcon from 'assets/svgComponents/RevokeIcon';
 
 // todo proper typing
 type Props = {
@@ -54,12 +55,20 @@ function ConnectedSites({ handleSubmit }: Props) {
       />
 
       <Content>
+        <HeroText>
+          &rsquo;&rsquo;Account Name&rsquo;&rsquo; is connected to these sites. They can view your
+          account address
+        </HeroText>
+
         {connectedApps?.connectedApps?.length ? (
           connectedApps?.connectedApps.map((item: string, index: number) => (
             <ConnectedAppItem key={`${item}-${index}`}>
-              <CheckIcon width={25} height={25} stroke="#68dd65" />
+              {/* <CheckIcon width={25} height={25} stroke="#68dd65" /> */}
               <AppName>{item}</AppName>
-              <RevokeBtn onClick={() => handleRevoke(item)}>Revoke</RevokeBtn>
+              <RevokeIconContainer onClick={() => handleRevoke(item)}>
+                <RevokeIcon />
+              </RevokeIconContainer>
+              {/* <RevokeBtn onClick={() => handleRevoke(item)}>Revoke</RevokeBtn> */}
             </ConnectedAppItem>
           ))
         ) : (
@@ -88,7 +97,7 @@ export default ConnectedSites;
 
 const Container = styled.div`
   width: 100%;
-  height: 600px;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   position: absolute;
@@ -107,16 +116,25 @@ const Content = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 30px; /* justify-content: center; */
+  margin-top: 10px;
+`;
+
+const HeroText = styled.div`
+  font-size: 16px;
+  font-weight: 400;
+  font-family: Inter;
+  line-height: 20px;
+  color: #fff;
+  margin-bottom: 15px;
 `;
 
 const ConnectedAppItem = styled.div`
-  width: 323px;
+  width: 100%;
   height: 48px;
   padding: 9px 11px 10px 12px;
   box-sizing: border-box;
-  border-radius: 4.1px;
-  background-color: #303030;
+  border-radius: 8px;
+  background: #303030;
   align-items: center;
   display: flex;
 `;
@@ -127,18 +145,22 @@ const AppName = styled.div`
   margin-left: 5px;
 `;
 
-const RevokeBtn = styled.div`
-  width: 74px;
-  height: 29px;
-  border-radius: 4px;
-  background-color: #fb5a5a;
-  padding: 10px;
-  box-sizing: border-box;
+// const RevokeBtn = styled.div`
+//   width: 74px;
+//   height: 29px;
+//   border-radius: 4px;
+//   background-color: #fb5a5a;
+//   padding: 10px;
+//   box-sizing: border-box;
+//   color: #fff;
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   cursor: pointer;
+// `;
+
+const RevokeIconContainer = styled.div`
   margin-left: auto;
-  color: #fff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   cursor: pointer;
 `;
 

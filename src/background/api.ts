@@ -24,6 +24,8 @@ export async function sendTransaction(pairs, { sendTo, sendFrom, amount, chain }
       return recodeToPolkadotAddress(pair.address) === recodeToPolkadotAddress(sendFrom)
     })
 
+    console.log("~ pair", pair)
+
     await cryptoWaitReady()
     const wsProvider = new WsProvider(`wss://${chain}.api.onfinality.io/public-ws?apikey=${process.env.ONFINALITY_KEY}`)
     const api = await ApiPromise.create({ provider: wsProvider })
@@ -46,16 +48,19 @@ export async function sendTransaction(pairs, { sendTo, sendFrom, amount, chain }
 
 // todo make chains dynamic
 export async function Retrieve_Coin_Prices() {
-  const data = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=polkadot,kusama,moonriver,moonbeam,shiden,astar&vs_currencies=usd")
+  // moonriver,
+  // moonbeam,
+  // shiden,
+  // astar
+  const data = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=polkadot,kusama,&vs_currencies=usd`)
   const json = await data.json()
   return json
 }
 // todo make chains dynamic
 // todo proper typing and get rid of unneeded fields from the return object
 export async function Retrieve_Coin_Infos() {
-  const data = await fetch(
-    `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=polkadot,kusama,moonriver,moonbeam,shiden,astar&order=market_cap_desc&per_page=100&page=1&sparkline=false`
-  )
+  // moonriver, moonbeam,მო სულიკო რაზედ მოგიცკენიააა    shiden, astar
+  const data = await fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=polkadot,kusama,&order=market_cap_desc&per_page=100&page=1&sparkline=false`)
 
   return await data.json()
 }
@@ -114,7 +119,7 @@ async function searchAccountBallance(chain: string, address: string) {
     credentials: "same-origin",
     headers: {
       "Content-Type": "application/json",
-      "X-API-Key": process.env.SUBSCAN_KEY,
+      // "X-API-Key": process.env.SUBSCAN_KEY,
     },
     body: JSON.stringify({ key: address, row: 1, page: 1 }),
   })

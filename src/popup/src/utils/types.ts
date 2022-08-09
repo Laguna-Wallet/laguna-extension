@@ -108,7 +108,8 @@ export enum Messages {
   TokenReceived = 'TOKEN_RECEIVED',
   Timeout = 'TIMEOUT',
   ResetTimeout = 'RESET_TIMEOUT',
-  FreezeAccountBalanceUpdate = 'FREEZE_ACCOUNT_BALANCE_UPDATE'
+  FreezeAccountBalanceUpdate = 'FREEZE_ACCOUNT_BALANCE_UPDATE',
+  OpenSupport = 'OPEN_SUPPORT'
 }
 
 //==============================================================================
@@ -293,7 +294,7 @@ export const networks: Network[] = [
     chain: 'kusama',
     node: 'wss://kusama-rpc.polkadot.io',
     prefix: 2
-  },
+  }
   // {
   //   name: 'Moonriver',
   //   symbol: 'movr',
@@ -318,11 +319,11 @@ export const networks: Network[] = [
   //   node: 'wss://shiden.api.onfinality.io/public-ws',
   //   prefix: 5
   // },
-  {
-    name: 'Astar',
-    symbol: TokenSymbols.astar,
-    chain: 'astar',
-    node: 'wss://astar.api.onfinality.io/public-ws',
-    prefix: 5
-  }
+  // {
+  //   name: 'Astar',
+  //   symbol: TokenSymbols.astar,
+  //   chain: 'astar',
+  //   node: 'wss://astar.api.onfinality.io/public-ws',
+  //   prefix: 5
+  // }
 ];

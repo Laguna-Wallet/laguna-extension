@@ -7,7 +7,7 @@ import CreatePassword from './CreatePassword/CreatePassword';
 import SecureWallet from './SecureWallet/SecureWallet';
 import { useState } from 'react';
 import { Messages, StorageKeys } from 'utils/types';
-import { generateRandomBase64Avatar } from 'utils';
+import { generateRandomBase64Avatar, isObjectEmpty } from 'utils';
 import { addAccountMeta } from 'utils/polkadot';
 import { useSelector } from 'react-redux';
 import { State } from 'redux/store';
@@ -39,6 +39,7 @@ export default function CreateAccount({
   encodePhase
 }: Props & Partial<RouteComponentProps>) {
   const account = useAccount();
+  const activeAccount = account.getActiveAccount();
   const encoded = account.encryptedPassword;
   const history = useHistory();
   const location = useLocation<LocationState>();
@@ -67,7 +68,7 @@ export default function CreateAccount({
         name: pair.address
       });
 
-      if (!account.getActiveAccount()) {
+      if (!activeAccount || (activeAccount && isObjectEmpty(activeAccount))) {
         account.saveActiveAccount(newPair);
       }
 
@@ -96,7 +97,7 @@ export default function CreateAccount({
         name: pair.address
       });
 
-      if (!account.getActiveAccount()) {
+      if (!activeAccount || (activeAccount && isObjectEmpty(activeAccount))) {
         account.saveActiveAccount(newPair);
       }
 

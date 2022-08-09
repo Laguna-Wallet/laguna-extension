@@ -234,7 +234,7 @@ export function getNetworks(
       chain: 'kusama',
       node: 'wss://kusama-rpc.polkadot.io',
       prefix: 2
-    },
+    }
     // {
     //   name: 'Moonriver',
     //   symbol: 'movr',
@@ -256,13 +256,13 @@ export function getNetworks(
     //   chain: 'shiden',
     //   node: 'wss://shiden.api.onfinality.io/public-ws'
     // },
-    {
-      name: 'Astar',
-      symbol: TokenSymbols.astar,
-      chain: 'astar',
-      node: 'wss://astar.api.onfinality.io/public-ws',
-      prefix: 5
-    }
+    // {
+    //   name: 'Astar',
+    //   symbol: TokenSymbols.astar,
+    //   chain: 'astar',
+    //   node: 'wss://astar.api.onfinality.io/public-ws',
+    //   prefix: 5
+    // }
 
     // wss://rpc.astar.network
 
@@ -468,13 +468,20 @@ export function encryptKeyringPairs(oldPassword: string, newPassword: string) {
 
   for (let i = 0; i < pairs.length; i++) {
     const pair = pairs[i];
-    pair.unlock(oldPassword);
 
+    pair.decodePkcs8(oldPassword);
+
+    // const json = pair.toJson(newPassword);
+    // console.log('~ json', json);
+    // keyring.restoreAccount(json, newPassword);
+
+    // pair.unlock(oldPassword);
     keyring.forgetAccount(pair.address);
     const { pair: newPair } = keyring.addPair(pair, newPassword);
 
-    newPair.setMeta(pair.meta);
-    keyring.saveAccountMeta(newPair, { ...pair.meta });
+    // console.log('~ newPair', newPair);
+    // newPair.setMeta(pair.meta);
+    // keyring.saveAccountMeta(newPair, { ...pair.meta });
   }
 }
 
@@ -508,9 +515,12 @@ export function encryptMetaData(oldPassword: string, newPassword: string) {
     // decode seed and encode with new password
     if (meta?.encodedSeed) {
       const decodedSeedBytes = AES.decrypt(meta?.encodedSeed as string, oldPassword);
+      console.log('~ decodedSeedBytes', decodedSeedBytes);
       const decodedSeed = decodedSeedBytes.toString(Utf8);
+      console.log('~ decodedSeed', decodedSeed);
 
       const reEncodedSeed = AES.encrypt(decodedSeed, newPassword).toString();
+      console.log('~ reEncodedSeed', reEncodedSeed);
 
       keyring.saveAccountMeta(pair, { ...pair.meta, encodedSeed: reEncodedSeed });
       pair.setMeta({ ...pair.meta, encodedSeed: reEncodedSeed });

@@ -2,14 +2,20 @@ import Button from 'components/primitives/Button';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { PageContainer } from 'components/ui';
-
+import browser from 'webextension-polyfill';
 import signUpBg from 'assets/imgs/sign-up-bg.png';
 import mainLogoSvg from 'assets/imgs/main-logo-white.svg';
 import { router } from 'router/router';
+import { Messages } from 'utils/types';
 
 // import ImportAccount from 'pages/AddImportAccount/ImportAccount';
 
 export default function SignUp() {
+  const handleClick = () => {
+    browser.runtime.sendMessage({
+      type: Messages.OpenSupport
+    });
+  };
   return (
     <PageContainer bgImage={signUpBg}>
       <IconSection>
@@ -40,7 +46,7 @@ export default function SignUp() {
             boxShadow="0 4px 50px 0 rgba(0, 0, 0, 0.1)"
           />
         </StyledLink>
-        <Text>Contact Support</Text>
+        <Text onClick={handleClick}>Contact Support</Text>
       </MainSection>
     </PageContainer>
   );
@@ -99,4 +105,6 @@ const Text = styled.div`
   margin-top: 20px;
   color: #777e90;
   font-size: 12px;
+  z-index: 9999;
+  cursor: pointer;
 `;
