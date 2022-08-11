@@ -79,3 +79,18 @@ export const sendERC20Transaction = async (contractAddress: string, senderAddres
     await tx.await()
 
 }
+
+export const getFeeData = async (contractAddress: string, ReceiverAddress: string, amount: string) => {
+    if(contractAddress === "eth") {
+        const data = provider.getFeeData()
+       return await data
+    }
+
+    const contract = new ethers.Contract(contractAddress, ERC20_ABI, provider)
+    const estimationData = await contract.estimateGas.transfer(ReceiverAddress, amount)
+    return estimationData
+
+
+}
+
+
