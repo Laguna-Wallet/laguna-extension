@@ -53,13 +53,14 @@ export const getERC20Accounts = (walletAddress: string): TokenData[] => {
     return dataArray
 }
 
-export const generateNewWalletAddress = (phrase: string): ethers.Wallet | string => {
-    if(!ethers.utils.isValidMnemonic(phrase))
-    {
-        return "invalid memonic phrase";
-    }
-    const wallet = ethers.Wallet.fromMnemonic(phrase)
+export const generateNewWalletAddress = (phrase: string): ethers.Wallet | string => {    
+    const wallet = ethers.Wallet.createRandom()
     return wallet;
+}
+
+export const importWalletAddress = async (JSON: any, password: string) => {
+    const wallet = await ethers.Wallet.fromEncryptedJsonSync( JSON , password )
+    return wallet
 }
 
 export const sendERC20Transaction = async (contractAddress: string, senderAddress: string, ReceiverAddress: string , phrase:    string, amount: string) => {
