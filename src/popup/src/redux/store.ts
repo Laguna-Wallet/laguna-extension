@@ -16,8 +16,15 @@ export interface State {
     prices: Prices;
     infos: any[];
     accountsBalances: {
+      polkodot: {
       address: string;
       balances: Record<string, { transferable: number; locked: number }>;
+      };
+      ethereum: {
+        contractAddress: string;
+        name: string;
+        balance: string;
+      };
     };
     transactions: any[];
     idleTimeout: number;
