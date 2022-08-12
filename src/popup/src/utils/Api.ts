@@ -70,11 +70,9 @@ export async function fetchAccountsBalances(
           network.chain,
           recodeAddress(address, network?.prefix, network?.encodeType)
         );
-
         // if (resolved.message !== "Success") return
-
         if (resolved.message !== 'Success') {
-          if (resolved.message === 'Record Not Found') {
+          if (resolved.message === 'Record Not Found' || resolved?.data?.account?.balance === 0) {
             i++;
           }
           continue;
@@ -126,8 +124,8 @@ async function searchAccountBallance(chain: string, address: string) {
     cache: 'no-cache',
     credentials: 'same-origin',
     headers: {
-      'Content-Type': 'application/json',
-      'X-API-Key': process.env.REACT_APP_SUBSCAN_KEY || ''
+      'Content-Type': 'application/json'
+      // 'X-API-Key': process.env.REACT_APP_SUBSCAN_KEY || ''
     },
     body: JSON.stringify({ key: address, row: 1, page: 1 })
   });

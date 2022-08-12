@@ -28,6 +28,13 @@ function WelcomeBack({ handleSubmit, valid }: InjectedFormProps<Props>) {
 
   const pendingDapps = pendingDappAuthorization?.pendingDappAuthorization;
 
+  const handleOpenSupport = () => {
+    console.log(1);
+    browser.runtime.sendMessage({
+      type: Messages.OpenSupport
+    });
+  };
+
   const submit = async (values: Props) => {
     const { password } = values;
     const errors = validPassword(values);
@@ -94,7 +101,7 @@ function WelcomeBack({ handleSubmit, valid }: InjectedFormProps<Props>) {
           />
         </Form>
         <BottomContainer>
-          <Text>Contact Support</Text>
+          <Text onClick={handleOpenSupport}>Contact Support</Text>
           <Text
             onClick={() => {
               history.push({

@@ -161,7 +161,7 @@ const BottomText = styled.div`
   font-weight: 400;
   margin-top: 30.5px;
   text-align: center;
-  font-family: IBMPlexSans;
+  font-family: 'IBM Plex Sans';
   font-size: 12px;
   text-align: center;
   color: #18191a;

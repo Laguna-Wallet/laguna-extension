@@ -21,22 +21,26 @@ import { Asset } from 'utils/types';
 import { emptyAssets } from 'utils/emptyAssets';
 import { useHistory, Link } from 'react-router-dom';
 import { router } from 'router/router';
+import { isInPopup } from 'utils/chrome';
+import { isObjectEmpty } from 'utils';
+import keyring from '@polkadot/ui-keyring';
 export interface ShowSnackbar {
   message: string;
   show: boolean;
+  isMenuOpen?: boolean;
 }
 
 type Props = {
-  isMenuOpen?: boolean;
   snackbar?: ShowSnackbar;
 };
 
-function Wallet({ isMenuOpen, snackbar }: Props) {
+function Wallet({ snackbar }: Props) {
   const account = useAccount();
   const history = useHistory();
   const { location } = history as any;
 
   const snackbarData = snackbar || location?.state?.snackbar;
+  const isMenuOpen = location?.state?.isMenuOpen;
 
   const activeAccount = useCallback(account.getActiveAccount(), [account]);
 
@@ -47,6 +51,7 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
   const [snackbarMessage, setSnackbarMessage] = useState<string>('');
   const accountBalances = useSelector((state: State) => state.wallet?.accountsBalances);
   const [overallPriceChange, setOverallPriceChange] = useState<number | undefined>(undefined);
+  const isPopupWindow = isInPopup();
 
   const negativeValue = String(overallPriceChange).includes('-');
   const dispatch = useDispatch();
@@ -56,8 +61,7 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
     infos,
     accountsBalances,
     loading: accountsChanging,
-    disabledTokens,
-    tokenReceived
+    disabledTokens
   } = useSelector((state: State) => state.wallet);
 
   const balances = accountsBalances?.balances;
@@ -274,7 +278,9 @@ function Wallet({ isMenuOpen, snackbar }: Props) {
               <SwitchAssetsIcon />
             </SwitchAssetIconContainer>
           </ListHeader>
-          <ListContentParent>{accountsChanging ? 'Loading...' : renderAssets}</ListContentParent>
+          <ListContentParent isPopupWindow={isPopupWindow}>
+            {accountsChanging ? 'Loading...' : renderAssets}
+          </ListContentParent>
         </List>
         <Snackbar
           width="194.9px"
@@ -486,9 +492,9 @@ const ListHeaderItem = styled.div<{ index: number; active: number }>`
   }
 `;
 
-const ListContentParent = styled.div`
+const ListContentParent = styled.div<{ isPopupWindow?: boolean | null }>`
   width: 100%;
-  height: 213px;
+  height: ${({ isPopupWindow }) => (isPopupWindow ? '213px' : '100%')};
   overflow: hidden;
   display: flex;
   flex-direction: column;

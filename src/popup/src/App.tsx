@@ -38,13 +38,14 @@ import ChainActivity from 'pages/Activity/ChainActivity';
 import Receive from 'pages/Recieve/Receive';
 import AddRemoveToken from 'pages/AddRemoveToken/AddRemoveToken';
 import { fetchAccountsBalances } from 'utils/Api';
+import { useAccount } from 'context/AccountContext';
 
 function App() {
   const dispatch = useDispatch();
   const history = useHistory();
-
+  const account = useAccount();
+  const activeAccount = account.getActiveAccount();
   const [isLoading, setIsLoading] = useState<boolean>(true);
-
   const { tokenReceived } = useSelector((state: State) => state.wallet);
 
   useEffect(() => {
@@ -54,7 +55,11 @@ function App() {
   }, []);
 
   useEffect(() => {
-    fetchAccountsBalances(dispatch);
+    async function go() {
+      fetchAccountsBalances(dispatch);
+    }
+
+    go();
   }, []);
 
   useEffect(() => {

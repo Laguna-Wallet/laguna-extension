@@ -1,4 +1,4 @@
-import { memo, ReactElement, useEffect, useState } from 'react';
+import { memo, ReactElement, useCallback, useEffect, useState, useMemo } from 'react';
 import styled from 'styled-components/macro';
 import { truncateString } from 'utils';
 import { AccountMeta } from 'utils/types';
@@ -86,11 +86,11 @@ function HumbleInput({
     const changeDummyText = Array(input?.value?.length).fill('*').join('');
     setDummyText(changeDummyText);
   }, [input?.value]);
-
+  // debounce
   const handleValue = (value: string) => {
     if (!value) return '';
     if (truncate) {
-      return truncateString(value, 7);
+      return truncateString(value, 8);
     }
     return value;
   };
@@ -110,7 +110,7 @@ function HumbleInput({
           <StyledTextarea
             id={id}
             value={value || input?.value}
-            onChange={onChange || input.onChange}
+            onChange={onChange || input?.onChange}
             placeholder={placeholder}
             fontSize={fontSize}
             placeholderColor={placeholderColor}
@@ -283,7 +283,7 @@ const StyledTextarea = styled(TextareaAutosize)<{
   &::placeholder {
     color: ${({ placeholderColor }) => placeholderColor || '#111'};
   }
-  
+
   &:after {
     border: 1px solid black;
     padding: 0.5rem;

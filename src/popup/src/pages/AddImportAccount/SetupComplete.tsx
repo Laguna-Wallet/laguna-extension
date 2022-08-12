@@ -41,16 +41,20 @@ function SetupComplete() {
         </Title>
         <LinksContainer>
           <LinkContainer>
-            <LinkIconContainer>
-              <DiscordIcon width={22} height={22} />
-            </LinkIconContainer>
-            <span>Join our Discord</span>
+            <a target="_blank" href="https://discord.com/invite/pWT49HTJJu" rel="noreferrer">
+              <LinkIconContainer>
+                <DiscordIcon width={22} height={22} />
+              </LinkIconContainer>
+              <span>Join our Discord</span>
+            </a>
           </LinkContainer>
           <LinkContainer>
-            <LinkIconContainer>
-              <TwitterIcon width={22} height={22} />
-            </LinkIconContainer>
-            <span>Follow us on Twitter</span>
+            <a target="_blank" href="https://twitter.com/lagunalabs" rel="noreferrer">
+              <LinkIconContainer>
+                <TwitterIcon width={22} height={22} />
+              </LinkIconContainer>
+              <span>Follow us on Twitter</span>
+            </a>
           </LinkContainer>
         </LinksContainer>
         <BottomSection>
@@ -159,13 +163,21 @@ const LinkContainer = styled.div`
   width: 199px;
   height: 39px;
   display: flex;
-  align-items: center;
-  justify-content: center;
+
   background-color: #e6e8ec;
   box-sizing: border-box;
   border-radius: 25px;
   margin-top: 13px;
   cursor: pointer;
+
+  a {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: #fff;
+  }
 
   span {
     font-family: Inter;
@@ -178,6 +190,7 @@ const LinkContainer = styled.div`
 
 const LinkIconContainer = styled.div`
   margin-right: 12px;
+  height: 20px;
 `;
 
 const BottomSection = styled.div`

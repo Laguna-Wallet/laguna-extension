@@ -13,7 +13,7 @@ import { mnemonicGenerate } from '@polkadot/util-crypto/mnemonic';
 import { getFromStorage, saveToStorage } from 'utils/chrome';
 import { StorageKeys } from 'utils/types';
 import keyring from '@polkadot/ui-keyring';
-import { encryptPassword } from 'utils';
+import { encryptPassword, isObjectEmpty } from 'utils';
 import type { KeyringPair } from '@polkadot/keyring/types';
 
 // todoProperTyping
@@ -66,16 +66,15 @@ const AccountProvider = ({ children }: { children?: ReactNode }) => {
 
   useEffect(() => {
     getFromStorage(StorageKeys.ActiveAccount).then((data) => {
-      if (!data) {
+      if (data && !isObjectEmpty(JSON.parse(data))) {
+        setActiveAccount(JSON.parse(data));
+      } else {
         const accounts = keyring.getPairs();
         if (!accounts.length) return undefined;
-
         saveToStorage({ key: StorageKeys.ActiveAccount, value: JSON.stringify(accounts[0]) });
         setActiveAccount(accounts[0]);
         return accounts[0];
       }
-
-      setActiveAccount(JSON.parse(data));
     });
 
     getFromStorage(StorageKeys.Encoded).then((data) => {
@@ -91,6 +90,13 @@ const AccountProvider = ({ children }: { children?: ReactNode }) => {
 
   const getActiveAccount = () => {
     return activeAccount;
+    // } else {
+    //   const accounts = keyring.getPairs();
+    //   if (!accounts.length) return undefined;
+    //   saveToStorage({ key: StorageKeys.ActiveAccount, value: JSON.stringify(accounts[0]) });
+    //   setActiveAccount(accounts[0]);
+    //   return accounts[0];
+    // }
   };
 
   const saveActiveAccount = async (account: any) => {
