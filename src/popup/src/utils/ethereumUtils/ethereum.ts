@@ -1,6 +1,9 @@
 import { ethers } from "ethers";
 import { useDispatch } from "react-redux";
-import { TokenData } from "./ethereumTypes"
+import { StorageKeys } from "../../../../background/types";
+import { changeAccountsBalances } from "../../redux/actions";
+import { getFromStorage, saveToStorage } from './chrome';
+import { TokenData, Balance } from "./ethereumTypes"
 
 
 const provider = new ethers.providers.JsonRpcProvider(`https://eth-mainnet.g.alchemy.com/v2/IFip5pZqfpAsi50-O2a0ZEJoA82E8KR_`)
@@ -19,39 +22,67 @@ const ERC20_ABI = [
 ]
 
 
-export const getEthAccountBalances = async (contract: string, walletAddress: string): Promise<TokenData> => {
+export const getEthAccountBalances = async (contract: string): Promise<Record<string, any>> => {
     const dispatch = useDispatch();
-    
+    const temp_obj: Record<string, any> = {};
+    const walletAddress = ''
+
     if(contract === "eth") {
         const balance = await provider.getBalance(walletAddress)
-       return await Promise.resolve({
-            symbol: "ETH",
-            balance: ethers.utils.formatEther(balance)
-        })
+        temp_obj[contract] = {
+          overall: ethers.utils.formatEther(balance),
+        };
+       return await Promise.resolve({temp_obj})
     }
 
     const etherContract = new ethers.Contract(contract, ERC20_ABI, provider)
     const balance = await etherContract.balanceOf(walletAddress)
     const symbol = await etherContract.symbol()
-
-    const result = await Promise.resolve({
-        symbol: symbol,
-        balance: ethers.utils.formatEther(balance)
-    })
+        temp_obj[contract] = {
+          overall: ethers.utils.formatEther(balance),
+        };
+    const result = await Promise.resolve({ temp_obj })
     
     return result;
 }
 
-export const getERC20Accounts = (walletAddress: string): TokenData[] => {
-    const dataArray: TokenData[] = []
+export const getERC20Accounts = (dispatch: any
+) => {
+    const address = ""
+    const dataArray: Balance[] = []
 
-    contractAddresses.forEach(async element => {
-        const data = getEthAccountBalances(element, walletAddress)
-        dataArray.push(await data)
-    });
+    try {
+        contractAddresses.forEach(async element => {
+            const data = getEthAccountBalances(element)
+            dataArray.push(await data)
+        });
 
-    return dataArray
-}
+
+        saveToStorage({
+        key: StorageKeys.AccountBalances,
+        value: JSON.stringify({ walletAddress, balances: {...dataArray}})
+        });
+
+        const tokenData: TokenData = {
+            walletAddress: address,
+            balances: dataArray
+        }
+
+        dispatch(changeEthereumBalances({
+            walletAddress,
+            balances: {...dataArray}
+        }));
+        
+        setTimeout(() => getERC20Accounts(dispatch), 3000);
+    } catch (err) {
+        setTimeout(() => getERC20Accounts(dispatch), 3000);
+        console.log(`error while fetching ethereum balances:${}`)
+    }
+
+    }
+   
+
+     
 
 export const generateNewWalletAddress = (phrase: string): ethers.Wallet | string => {    
     const wallet = ethers.Wallet.createRandom()
@@ -90,8 +121,5 @@ export const getFeeData = async (contractAddress: string, ReceiverAddress: strin
     const contract = new ethers.Contract(contractAddress, ERC20_ABI, provider)
     const estimationData = await contract.estimateGas.transfer(ReceiverAddress, amount)
     return estimationData
-
-
 }
-
 
