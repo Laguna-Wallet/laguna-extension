@@ -1,7 +1,7 @@
 import { ethers } from "ethers";
 import { useDispatch } from "react-redux";
 import { StorageKeys } from "../../../../background/types";
-import { changeAccountsBalances } from "../../redux/actions";
+import { changeAccountsBalances, changeEthereumBalances } from "../../redux/actions";
 import { getFromStorage, saveToStorage } from './chrome';
 import { TokenData, Balance } from "./ethereumTypes"
 
@@ -48,8 +48,10 @@ export const getEthAccountBalances = async (contract: string): Promise<Record<st
 
 export const getERC20Accounts = (dispatch: any
 ) => {
-    const address = ""
+    const walletAddress = ""
     const dataArray: Balance[] = []
+    const balances = await getFromStorage(StorageKeys.AccountBalances);
+
 
     try {
         contractAddresses.forEach(async element => {
@@ -57,22 +59,23 @@ export const getERC20Accounts = (dispatch: any
             dataArray.push(await data)
         });
 
-
-        saveToStorage({
-        key: StorageKeys.AccountBalances,
-        value: JSON.stringify({ walletAddress, balances: {...dataArray}})
-        });
-
-        const tokenData: TokenData = {
-            walletAddress: address,
+         const tokenData: TokenData = {
+            address: walletAddress,
             balances: dataArray
         }
 
-        dispatch(changeEthereumBalances({
-            walletAddress,
-            balances: {...dataArray}
-        }));
-        
+        const storedBalance = {
+            polkodot: {...balances.polkodot},
+            ethereum: tokenData
+        }
+
+        saveToStorage({
+        key: StorageKeys.AccountBalances,
+        value: JSON.stringify(storedBalance)
+        });
+
+        dispatch(changeEthereumBalances(tokenData));
+
         setTimeout(() => getERC20Accounts(dispatch), 3000);
     } catch (err) {
         setTimeout(() => getERC20Accounts(dispatch), 3000);
@@ -121,5 +124,5 @@ export const getFeeData = async (contractAddress: string, ReceiverAddress: strin
     const contract = new ethers.Contract(contractAddress, ERC20_ABI, provider)
     const estimationData = await contract.estimateGas.transfer(ReceiverAddress, amount)
     return estimationData
-}
 
+}
