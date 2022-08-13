@@ -8,6 +8,7 @@ export enum StorageKeys {
   TokenInfos = "token-infos",
   AccountBalances = "account-balances",
   Transactions = "transactions",
+  EthereumTransactions = "ethereum-transactions",
   TokenDecimals = "token-decimals",
   IdleTImeout = "idle-timeout",
   IsAccountBalanceUpdateFreezed = "account-balance-update-freezed",
