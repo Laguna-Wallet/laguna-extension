@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { StorageKeys } from "../../../../background/types";
 import { changeAccountsBalances, changeEthereumBalances } from "../../redux/actions";
 import { getFromStorage, saveToStorage } from './chrome';
-import { TokenData, Balance } from "./ethereumTypes"
+import { EthereumBalanceData, Balance } from "./ethereumTypes"
 
 
 const provider = new ethers.providers.JsonRpcProvider(`https://eth-mainnet.g.alchemy.com/v2/IFip5pZqfpAsi50-O2a0ZEJoA82E8KR_`)
@@ -22,8 +22,7 @@ const ERC20_ABI = [
 ]
 
 
-export const getEthAccountBalances = async (contract: string): Promise<Record<string, any>> => {
-    const dispatch = useDispatch();
+export const getEthAccountBalances = async (contract: string): Promise<Balance> => {
     const walletAddress = ''
 
     if(contract === "eth") {
@@ -46,7 +45,7 @@ export const getEthAccountBalances = async (contract: string): Promise<Record<st
     return await Promise.resolve(balanceObject);
 }
 
-export const getERC20Accounts = (dispatch: any
+export const getERC20Accounts = async (dispatch: any
 ) => {
     const walletAddress = ""
     const dataArray: Balance[] = []
@@ -59,7 +58,7 @@ export const getERC20Accounts = (dispatch: any
             dataArray.push(await data)
         });
 
-         const tokenData: TokenData = {
+         const tokenData: EthereumBalanceData = {
             address: walletAddress,
             balances: dataArray
         }
@@ -79,15 +78,13 @@ export const getERC20Accounts = (dispatch: any
         setTimeout(() => getERC20Accounts(dispatch), 3000);
     } catch (err) {
         setTimeout(() => getERC20Accounts(dispatch), 3000);
-        console.log(`error while fetching ethereum balances:${}`)
+        console.log(`error while fetching ethereum balances:${err}`)
     }
 
     }
    
 
-     
-
-export const generateNewWalletAddress = (phrase: string): ethers.Wallet | string => {    
+export const generateNewWalletAddress = (): ethers.Wallet | string => {    
     const wallet = ethers.Wallet.createRandom()
     return wallet;
 }
@@ -97,8 +94,11 @@ export const importWalletAddress = async (JSON: any, password: string) => {
     return wallet
 }
 
-export const sendERC20Transaction = async (contractAddress: string, senderAddress: string, ReceiverAddress: string , phrase:    string, amount: string) => {
-    const wallet = ethers.Wallet.fromMnemonic(phrase)
+export const sendERC20Transaction = async (contractAddress: string, ReceiverAddress: string , amount: string) => {
+    const privateKey = ''
+    const balances = await getFromStorage(StorageKeys.AccountBalances);
+    const wallet = new ethers.Wallet(privateKey, provider);
+
     if(contractAddress === "eth") {
         const tx = await wallet.sendTransaction({
             to: ReceiverAddress,
@@ -125,4 +125,47 @@ export const getFeeData = async (contractAddress: string, ReceiverAddress: strin
     const estimationData = await contract.estimateGas.transfer(ReceiverAddress, amount)
     return estimationData
 
+
 }
+
+export const getEthAccountTransactions = async (contractAddress: string): Promise<Record<string, string>> => {
+    const walletAddress = ''
+
+    // if(contract === "eth") {
+    //     const balance = await provider.getBalance(walletAddress)
+    //        const balanceObject: Balance = {
+    //         contractAddress: "eth",
+    //         amount: balance
+    //        };
+    //    return await Promise.resolve(balanceObject)
+    // }
+
+    const etherContract = new ethers.Contract(contractAddress, ERC20_ABI, provider)
+    const transactions = etherContract.filters.transfer(walletAddress, null)
+    
+    return await transactions 
+    
+}
+
+export const getTransactionData = async() => {
+    const transactionArray = []
+
+try {
+    contractAddresses.forEach(element => {
+       const transactions = getEthAccountTransactions(element)
+         transactionArray.push(transactions)
+     })
+    
+
+    
+    saveToStorage({
+        key: StorageKeys.EthereumTransactions,
+        value: JSON.stringify(transactionObj)
+        });
+
+    } catch(err) {
+        console.log(`error getting ethereum transactions ${err}`)
+    }    
+
+}
+
