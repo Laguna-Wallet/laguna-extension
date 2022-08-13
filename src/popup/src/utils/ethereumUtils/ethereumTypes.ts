@@ -4,6 +4,11 @@
  }
 
  export interface TokenData {
-    symbol: string;
-    balance: string;
+    address: string;
+    balances: Balance[];
  }
+
+ export interface Balance {
+  contractAddress: string
+  amount: string
+ };
