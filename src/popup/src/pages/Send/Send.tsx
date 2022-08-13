@@ -61,7 +61,7 @@ function Send({ initialIsContactsPopupOpen }: Props) {
     (state: State) => state.wallet
   );
 
-  const balances = accountsBalances?.balances;
+  const balances = accountsBalances?.polkodot.balances;
 
   // TODO REFETCH NETWORKS FROM STORAGE
   useEffect(() => {

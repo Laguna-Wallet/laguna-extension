@@ -234,7 +234,7 @@ export function getNetworks(
       chain: 'kusama',
       node: 'wss://kusama-rpc.polkadot.io',
       prefix: 2
-    }
+    },
     // {
     //   name: 'Moonriver',
     //   symbol: 'movr',

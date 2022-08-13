@@ -1,5 +1,7 @@
+import { storage } from 'googleapis/build/src/apis/storage';
 import { createStore, Store } from 'redux';
 import { getFromChromeStorage, getFromStorage } from 'utils/chrome';
+import { TokenData } from 'utils/ethereumUtils/ethereumTypes';
 import { Prices, StorageKeys, Token } from 'utils/types';
 import { string } from 'yup/lib/locale';
 import rootReducer from './reducer';
@@ -20,7 +22,7 @@ export interface State {
       address: string;
       balances: Record<string, { transferable: number; locked: number }>;
       };
-      ethereum: EthereumBalanceData;
+      ethereum: TokenData;
     };
     transactions: any[];
     ethereumTransactions: Record<string, string>;
@@ -36,6 +38,7 @@ async function handleInitialState(): Promise<State> {
   const infos = await getFromStorage(StorageKeys.TokenInfos);
   const accountsBalances = await getFromStorage(StorageKeys.AccountBalances);
   const transactions = await getFromStorage(StorageKeys.Transactions);
+  const ethereumTransactions = await getFromStorage(StorageKeys.EthereumTransactions)
   const idleTimeout = await getFromStorage(StorageKeys.IdleTimeout);
   const tokenDecimals = await getFromStorage(StorageKeys.TokenDecimals);
   const pendingDappAuthorization: [] = [];
@@ -59,6 +62,7 @@ async function handleInitialState(): Promise<State> {
       infos: infos ? JSON.parse(infos) : [],
       accountsBalances: accountsBalances ? JSON.parse(accountsBalances) : [],
       transactions: transactions ? JSON.parse(transactions) : [],
+      ethereumTransactions: ethereumTransactions ? JSON.parse(ethereumTransactions): [],
       idleTimeout: Number(idleTimeout) || 10,
       tokenReceived: false,
       disabledTokens: disabledTokens ? JSON.parse(disabledTokens) : [],

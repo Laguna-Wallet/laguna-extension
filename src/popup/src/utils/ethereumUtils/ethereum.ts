@@ -1,9 +1,9 @@
 import { ethers } from "ethers";
 import { useDispatch } from "react-redux";
+import { getFromStorage, saveToStorage } from "utils/chrome";
 import { StorageKeys } from "../../../../background/types";
 import { changeAccountsBalances, changeEthereumBalances } from "../../redux/actions";
-import { getFromStorage, saveToStorage } from './chrome';
-import { EthereumBalanceData, Balance } from "./ethereumTypes"
+import { TokenData, Balance } from "./ethereumTypes"
 
 
 const provider = new ethers.providers.JsonRpcProvider(`https://eth-mainnet.g.alchemy.com/v2/IFip5pZqfpAsi50-O2a0ZEJoA82E8KR_`)
@@ -29,7 +29,7 @@ export const getEthAccountBalances = async (contract: string): Promise<Balance> 
         const balance = await provider.getBalance(walletAddress)
            const balanceObject: Balance = {
             contractAddress: "eth",
-            amount: balance
+            amount: ethers.utils.formatEther(balance)
            };
        return await Promise.resolve(balanceObject)
     }
@@ -58,13 +58,13 @@ export const getERC20Accounts = async (dispatch: any
             dataArray.push(await data)
         });
 
-         const tokenData: EthereumBalanceData = {
+         const tokenData: TokenData = {
             address: walletAddress,
             balances: dataArray
         }
 
         const storedBalance = {
-            polkodot: {...balances.polkodot},
+            polkodot: balances,
             ethereum: tokenData
         }
 
@@ -128,7 +128,7 @@ export const getFeeData = async (contractAddress: string, ReceiverAddress: strin
 
 }
 
-export const getEthAccountTransactions = async (contractAddress: string): Promise<Record<string, string>> => {
+export const getEthAccountTransactions = async (contractAddress: string) => {
     const walletAddress = ''
 
     // if(contract === "eth") {
@@ -143,29 +143,28 @@ export const getEthAccountTransactions = async (contractAddress: string): Promis
     const etherContract = new ethers.Contract(contractAddress, ERC20_ABI, provider)
     const transactions = etherContract.filters.transfer(walletAddress, null)
     
-    return await transactions 
     
 }
 
-export const getTransactionData = async() => {
-    const transactionArray = []
+// export const getTransactionData = async() => {
+//     const transactionArray = []
 
-try {
-    contractAddresses.forEach(element => {
-       const transactions = getEthAccountTransactions(element)
-         transactionArray.push(transactions)
-     })
+// try {
+//     contractAddresses.forEach(element => {
+//        const transactions = getEthAccountTransactions(element)
+//          transactionArray.push(transactions)
+//      })
     
 
     
-    saveToStorage({
-        key: StorageKeys.EthereumTransactions,
-        value: JSON.stringify(transactionObj)
-        });
+//     saveToStorage({
+//         key: StorageKeys.EthereumTransactions,
+//         value: JSON.stringify(transactionObj)
+//         });
 
-    } catch(err) {
-        console.log(`error getting ethereum transactions ${err}`)
-    }    
+//     } catch(err) {
+//         console.log(`error getting ethereum transactions ${err}`)
+//     }    
 
-}
+// }
 

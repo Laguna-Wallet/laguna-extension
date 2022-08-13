@@ -11,4 +11,4 @@
  export interface Balance {
   contractAddress: string
   amount: string
- };
+ }

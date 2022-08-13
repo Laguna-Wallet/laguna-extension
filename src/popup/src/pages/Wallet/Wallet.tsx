@@ -64,7 +64,7 @@ function Wallet({ snackbar }: Props) {
     disabledTokens
   } = useSelector((state: State) => state.wallet);
 
-  const balances = accountsBalances?.balances;
+  const balances = accountsBalances?.polkodot.balances;
   const isEmpty = balances && Object.keys(balances).length === 0;
 
   const handleActiveTab = (activeTab: number): void => {
@@ -101,7 +101,7 @@ function Wallet({ snackbar }: Props) {
 
   useEffect(() => {
     async function go() {
-      if (accountBalances && activeAccount && accountBalances?.address !== activeAccount?.address) {
+      if (accountBalances && activeAccount && accountBalances?.polkodot.address !== activeAccount?.address) {
         dispatch(toggleLoading(true));
       } else {
         dispatch(toggleLoading(false));

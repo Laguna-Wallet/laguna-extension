@@ -1,3 +1,4 @@
+import { TokenData } from 'utils/ethereumUtils/ethereumTypes';
 import { Asset, Token } from 'utils/types';
 
 // send token

@@ -29,6 +29,7 @@ export enum StorageKeys {
   TokenInfos = 'token-infos',
   AccountBalances = 'account-balances',
   Transactions = 'transactions',
+  EthereumTransactions = 'ethereum-transactions',
   IdleTimeout = 'idle-timeout',
   UnlockedPairs = 'unlocked-pairs',
   TokenDecimals = 'token-decimals',
@@ -297,7 +298,7 @@ export const networks: Network[] = [
     chain: 'kusama',
     node: 'wss://kusama-rpc.polkadot.io',
     prefix: 2
-  }
+  },
   // {
   //   name: 'Moonriver',
   //   symbol: 'movr',
