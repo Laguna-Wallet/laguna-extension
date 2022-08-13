@@ -20,9 +20,10 @@ export interface State {
       address: string;
       balances: Record<string, { transferable: number; locked: number }>;
       };
-      ethereum: TokenData[];
+      ethereum: EthereumBalanceData;
     };
     transactions: any[];
+    ethereumTransactions: Record<string, string>;
     idleTimeout: number;
     tokenReceived: boolean;
     disabledTokens: Token[];
