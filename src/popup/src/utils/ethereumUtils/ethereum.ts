@@ -24,26 +24,26 @@ const ERC20_ABI = [
 
 export const getEthAccountBalances = async (contract: string): Promise<Record<string, any>> => {
     const dispatch = useDispatch();
-    const temp_obj: Record<string, any> = {};
     const walletAddress = ''
 
     if(contract === "eth") {
         const balance = await provider.getBalance(walletAddress)
-        temp_obj[contract] = {
-          overall: ethers.utils.formatEther(balance),
-        };
-       return await Promise.resolve({temp_obj})
+           const balanceObject: Balance = {
+            contractAddress: "eth",
+            amount: balance
+           };
+       return await Promise.resolve(balanceObject)
     }
 
     const etherContract = new ethers.Contract(contract, ERC20_ABI, provider)
     const balance = await etherContract.balanceOf(walletAddress)
-    const symbol = await etherContract.symbol()
-        temp_obj[contract] = {
-          overall: ethers.utils.formatEther(balance),
-        };
-    const result = await Promise.resolve({ temp_obj })
+
+    const balanceObject: Balance = {
+        contractAddress: contract,
+        amount: balance
+    };
     
-    return result;
+    return await Promise.resolve(balanceObject);
 }
 
 export const getERC20Accounts = (dispatch: any
