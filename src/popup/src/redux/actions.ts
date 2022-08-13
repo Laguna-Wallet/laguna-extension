@@ -65,6 +65,13 @@ export function changeAccountsBalances(accountsBalances: Record<string, number>)
   };
 }
 
+export function changeEthereumBalances(accountsBalances: TokenData) {
+  return {
+    type: 'CHANGE_ETHEREUM_BALANCES',
+    payload: {accountsBalances}
+  }
+}
+
 export function changeTransactions(transactions: Record<string, number>) {
   return {
     type: 'CHANGE_TRANSACTIONS',
@@ -134,3 +141,4 @@ export function changeDisabledTokens(disabledTokens: Token[]) {
     payload: { disabledTokens }
   };
 }
+
