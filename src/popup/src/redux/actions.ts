@@ -66,10 +66,10 @@ export function changeAccountsBalances(accountsBalances: Record<string, number>)
   };
 }
 
-export function changeEthereumBalances(accountsBalances: TokenData) {
+export function changeEthereumBalances(ethereumBalances: TokenData) {
   return {
     type: 'CHANGE_ETHEREUM_BALANCES',
-    payload: {accountsBalances}
+    payload: {ethereumBalances}
   }
 }
 

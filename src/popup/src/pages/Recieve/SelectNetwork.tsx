@@ -32,7 +32,7 @@ export default function SelectNetwork({ setSelectedNetwork }: Props) {
     (state: State) => state.wallet
   );
 
-  const balances = accountsBalances?.polkodot.balances;
+  const balances = accountsBalances?.balances;
 
   useEffect(() => {
     async function go() {

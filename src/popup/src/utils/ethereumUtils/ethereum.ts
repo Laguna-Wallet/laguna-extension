@@ -8,12 +8,6 @@ import { TokenData, Balance } from "./ethereumTypes"
 
 const provider = new ethers.providers.JsonRpcProvider(`https://eth-mainnet.g.alchemy.com/v2/IFip5pZqfpAsi50-O2a0ZEJoA82E8KR_`)
 
-// Array of contract addresses specific to ERC-20 tokens (ETH is a native token so it does not have an address)
-const contractAddresses = [
-    "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48", // USDC
-    "eth" // Ethereum
-]
-
 const ERC20_ABI = [
     "function name() view returns (string)",
     "function symbol() view returns (string)",
@@ -22,66 +16,6 @@ const ERC20_ABI = [
 ]
 
 
-export const getEthAccountBalances = async (contract: string): Promise<Balance> => {
-    const walletAddress = ''
-
-    if(contract === "eth") {
-        const balance = await provider.getBalance(walletAddress)
-           const balanceObject: Balance = {
-            contractAddress: "eth",
-            amount: ethers.utils.formatEther(balance)
-           };
-       return await Promise.resolve(balanceObject)
-    }
-
-    const etherContract = new ethers.Contract(contract, ERC20_ABI, provider)
-    const balance = await etherContract.balanceOf(walletAddress)
-
-    const balanceObject: Balance = {
-        contractAddress: contract,
-        amount: balance
-    };
-    
-    return await Promise.resolve(balanceObject);
-}
-
-export const getERC20Accounts = async (dispatch: any
-) => {
-    const walletAddress = ""
-    const dataArray: Balance[] = []
-    const balances = await getFromStorage(StorageKeys.AccountBalances);
-
-
-    try {
-        contractAddresses.forEach(async element => {
-            const data = getEthAccountBalances(element)
-            dataArray.push(await data)
-        });
-
-         const tokenData: TokenData = {
-            address: walletAddress,
-            balances: dataArray
-        }
-
-        const storedBalance = {
-            polkodot: balances,
-            ethereum: tokenData
-        }
-
-        saveToStorage({
-        key: StorageKeys.AccountBalances,
-        value: JSON.stringify(storedBalance)
-        });
-
-        dispatch(changeEthereumBalances(tokenData));
-
-        setTimeout(() => getERC20Accounts(dispatch), 3000);
-    } catch (err) {
-        setTimeout(() => getERC20Accounts(dispatch), 3000);
-        console.log(`error while fetching ethereum balances:${err}`)
-    }
-
-    }
    
 
 export const generateNewWalletAddress = (): ethers.Wallet | string => {    

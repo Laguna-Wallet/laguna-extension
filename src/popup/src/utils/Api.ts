@@ -1,10 +1,12 @@
 import axios from 'axios';
-import { changeAccountsBalances, changeTokenReceived } from 'redux/actions';
+import { ethers } from 'ethers';
+import { changeAccountsBalances, changeEthereumBalances, changeTokenReceived } from 'redux/actions';
 import { AppDispatch } from 'redux/store';
 import { checkBalanceChange, timer } from 'utils';
 import { getFromStorage, saveToStorage } from './chrome';
+import { Balance, TokenData } from './ethereumUtils/ethereumTypes';
 import { recodeAddress } from './polkadot';
-import { Messages, networks, StorageKeys } from './types';
+import { contractAddresses, Messages, networks, StorageKeys } from './types';
 
 interface PriceConverter {
   symbol: string;
@@ -132,3 +134,71 @@ async function searchAccountBallance(chain: string, address: string) {
 
   return await res.json();
 }
+
+export const getEthAccountBalances = async (walletAddress: string, contract: string): Promise<Balance> => {
+  const provider = new ethers.providers.JsonRpcProvider(`https://eth-mainnet.g.alchemy.com/v2/IFip5pZqfpAsi50-O2a0ZEJoA82E8KR_`)
+
+  const ERC20_ABI = [
+    "function name() view returns (string)",
+    "function symbol() view returns (string)",
+    "function balanceOf(address) view returns (uint)",
+    "function transfer(address to, uint amount) returns (bool)"
+  ]
+
+  if(contract === "eth") {
+      const balance = await provider.getBalance(walletAddress)
+         const balanceObject: Balance = {
+          contractAddress: "eth",
+          amount: ethers.utils.formatEther(balance)
+         };
+     return await Promise.resolve(balanceObject)
+  }
+
+  const etherContract = new ethers.Contract(contract, ERC20_ABI, provider)
+  const balance = await etherContract.balanceOf(walletAddress)
+
+  const balanceObject: Balance = {
+      contractAddress: contract,
+      amount: ethers.utils.formatUnits(balance)
+  };
+  
+  return await Promise.resolve(balanceObject);
+}
+
+export async function getERC20Accounts(dispatch: any
+){
+  const walletAddress = "0xb7f830845E9F385372AE6fB160Aa968908F5BFBC"
+
+  const dataArray: Balance[] = []
+
+
+  try {
+      contractAddresses.forEach(async element => {
+          const data = await getEthAccountBalances(walletAddress, element)
+          console.log(data)
+          dataArray.push( data)
+      });
+
+       const tokenData: TokenData = {
+          address: walletAddress,
+          balances: dataArray
+      }
+
+      const storedBalance = {
+          ethereum: tokenData
+      }
+      console.log(storedBalance)
+
+      saveToStorage({
+      key: StorageKeys.ethereumBalances,
+      value: JSON.stringify(storedBalance)
+      });
+
+      dispatch(changeEthereumBalances(tokenData));
+
+  } catch (err) {
+      console.log(`error while fetching ethereum balances:${err}`)
+  }
+
+  }
+ 

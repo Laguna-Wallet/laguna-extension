@@ -28,6 +28,7 @@ export enum StorageKeys {
   TokenPrices = 'token-prices',
   TokenInfos = 'token-infos',
   AccountBalances = 'account-balances',
+  ethereumBalances = 'ethereum-balances',
   Transactions = 'transactions',
   EthereumTransactions = 'ethereum-transactions',
   IdleTimeout = 'idle-timeout',
@@ -36,6 +37,13 @@ export enum StorageKeys {
   DisabledTokens = 'disabled-tokens',
   OnBoarding = 'onboarding'
 }
+
+// Array of contract addresses specific to ERC-20 tokens (ETH is a native token so it does not have an address)
+export const contractAddresses = [
+  "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48", // USDC
+  "0xdAC17F958D2ee523a2206206994597C13D831ec7", // USDT
+  "eth" // Ethereum
+]
 
 //==============================================================================
 // Polkadot
@@ -243,7 +251,6 @@ export const chains = [
   //  'moonbeam',
   // 'shiden',
   'astar',
-  'Ethereum'
 ];
 
 export interface TokenInfo {
@@ -330,12 +337,6 @@ export const networks: Network[] = [
     node: 'wss://astar.api.onfinality.io/public-ws',
     prefix: 5
   },
-  {
-    name: 'Ethereum',
-    symbol: TokenSymbols.ethereum,
-    chain: "etherum",
-    node: "wss://eth-mainnet.g.alchemy.com/v2",
-  }
   // {
   //   name: 'Astar',
   //   symbol: TokenSymbols.astar,

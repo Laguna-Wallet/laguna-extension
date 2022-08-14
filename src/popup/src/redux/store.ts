@@ -18,12 +18,10 @@ export interface State {
     prices: Prices;
     infos: any[];
     accountsBalances: {
-      polkodot: {
       address: string;
       balances: Record<string, { transferable: number; locked: number }>;
-      };
-      ethereum: TokenData;
-    };
+    },
+    ethereumBalances: TokenData;
     transactions: any[];
     ethereumTransactions: Record<string, string>;
     idleTimeout: number;
@@ -37,6 +35,7 @@ async function handleInitialState(): Promise<State> {
   const prices = await getFromStorage(StorageKeys.TokenPrices);
   const infos = await getFromStorage(StorageKeys.TokenInfos);
   const accountsBalances = await getFromStorage(StorageKeys.AccountBalances);
+  const ethereumBalances = await getFromStorage(StorageKeys.ethereumBalances)
   const transactions = await getFromStorage(StorageKeys.Transactions);
   const ethereumTransactions = await getFromStorage(StorageKeys.EthereumTransactions)
   const idleTimeout = await getFromStorage(StorageKeys.IdleTimeout);
@@ -61,6 +60,7 @@ async function handleInitialState(): Promise<State> {
       prices: prices ? JSON.parse(prices) : {},
       infos: infos ? JSON.parse(infos) : [],
       accountsBalances: accountsBalances ? JSON.parse(accountsBalances) : [],
+      ethereumBalances: ethereumBalances ? JSON.parse(ethereumBalances): [],
       transactions: transactions ? JSON.parse(transactions) : [],
       ethereumTransactions: ethereumTransactions ? JSON.parse(ethereumTransactions): [],
       idleTimeout: Number(idleTimeout) || 10,
