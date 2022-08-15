@@ -29,7 +29,6 @@ function WelcomeBack({ handleSubmit, valid }: InjectedFormProps<Props>) {
   const pendingDapps = pendingDappAuthorization?.pendingDappAuthorization;
 
   const handleOpenSupport = () => {
-    console.log(1);
     browser.runtime.sendMessage({
       type: Messages.OpenSupport
     });

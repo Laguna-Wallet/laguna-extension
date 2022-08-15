@@ -333,6 +333,8 @@ const Text = styled.p`
   text-align: center;
   color: #ffffff;
   margin-left: 4px;
+  font-family: 'IBM Plex Sans';
+
 `;
 
 const RightLabel = styled.span`
