@@ -4,6 +4,8 @@ import { getFromStorage, saveToStorage } from "utils/chrome";
 import { StorageKeys } from "../../../../background/types";
 import { changeAccountsBalances, changeEthereumBalances } from "../../redux/actions";
 import { TokenData, Balance } from "./ethereumTypes"
+import keyring from '@polkadot/ui-keyring';
+
 
 
 const provider = new ethers.providers.JsonRpcProvider(`https://eth-mainnet.g.alchemy.com/v2/IFip5pZqfpAsi50-O2a0ZEJoA82E8KR_`)
@@ -18,8 +20,9 @@ const ERC20_ABI = [
 
    
 
-export const generateNewWalletAddress = (): ethers.Wallet | string => {    
-    const wallet = ethers.Wallet.createRandom()
+export const generateNewWalletAddress = (address: string): ethers.Wallet | string => {   
+    const pair = keyring.getPair(address) 
+    const wallet = ethers.Wallet.fromMnemonic(pair?.meta?.encodedSeed as string)
     return wallet;
 }
 
@@ -28,10 +31,11 @@ export const importWalletAddress = async (JSON: any, password: string) => {
     return wallet
 }
 
-export const sendERC20Transaction = async (contractAddress: string, ReceiverAddress: string , amount: string) => {
-    const privateKey = ''
+export const sendERC20Transaction = async (contractAddress: string, ReceiverAddress: string , senderAddress: string, amount: string) => {
     const balances = await getFromStorage(StorageKeys.AccountBalances);
-    const wallet = new ethers.Wallet(privateKey, provider);
+    const pair = keyring.getPair(senderAddress) 
+    const wallet = ethers.Wallet.fromMnemonic(pair?.meta?.encodedSeed as string)
+
 
     if(contractAddress === "eth") {
         const tx = await wallet.sendTransaction({
@@ -77,7 +81,6 @@ export const getEthAccountTransactions = async (contractAddress: string) => {
     const etherContract = new ethers.Contract(contractAddress, ERC20_ABI, provider)
     const transactions = etherContract.filters.transfer(walletAddress, null)
     
-    
 }
 
 // export const getTransactionData = async() => {
@@ -101,4 +104,3 @@ export const getEthAccountTransactions = async (contractAddress: string) => {
 //     }    
 
 // }
-
