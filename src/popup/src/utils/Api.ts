@@ -1,3 +1,4 @@
+import keyring from '@polkadot/ui-keyring';
 import axios from 'axios';
 import { ethers } from 'ethers';
 import { changeAccountsBalances, changeEthereumBalances, changeTokenReceived } from 'redux/actions';
@@ -167,20 +168,22 @@ export const getEthAccountBalances = async (walletAddress: string, contract: str
 
 export async function getERC20Accounts(dispatch: any
 ){
-  const walletAddress = "0xb7f830845E9F385372AE6fB160Aa968908F5BFBC"
-
+  const account = await getFromStorage(StorageKeys.ActiveAccount);
+  const address = JSON.parse(account as string).address
+  const pair = keyring.getPair(address) 
+  const walletAddress = ethers.Wallet.fromMnemonic(pair?.meta?.encodedSeed as string)
   const dataArray: Balance[] = []
 
 
   try {
       contractAddresses.forEach(async element => {
-          const data = await getEthAccountBalances(walletAddress, element)
+          const data = await getEthAccountBalances(walletAddress.address, element)
           console.log(data)
           dataArray.push( data)
       });
 
        const tokenData: TokenData = {
-          address: walletAddress,
+          address: walletAddress.address,
           balances: dataArray
       }
 
