@@ -138,7 +138,7 @@ async function searchAccountBallance(chain: string, address: string) {
   return await res.json();
 }
 
-export const sendEthtransaction = async (password: string): Promise<ethers.providers.TransactionResponse>=> {   
+export const sendEthTransaction = async (password: string, amountEth: string, receiverAddress: string): Promise<ethers.providers.TransactionResponse>=> {   
   const account = await getFromStorage(StorageKeys.ActiveAccount);
   const provider = new ethers.providers.JsonRpcProvider(`https://eth-goerli.g.alchemy.com/v2/IFip5pZqfpAsi50-O2a0ZEJoA82E8KR_`)
   const address = JSON.parse(account as string).address;
@@ -153,27 +153,18 @@ export const sendEthtransaction = async (password: string): Promise<ethers.provi
 
   const wallet =  ethers.Wallet.fromMnemonic(seed)
   const signer = wallet.connect(provider)
-  console.log(wallet.address)
-
-  const receiverAddress = "0x61E9EAfb9EbC85D271872980540b5F64Bb5cDC65"
   const gasPrice = provider.getGasPrice()
-  console.log((gasPrice))
-  const balance = await provider.getBalance(wallet.address)
-  console.log(ethers.utils.formatEther(balance))
-  const sendAmount = "0.000001"
 
   const tx = {
     to: receiverAddress,
     from: wallet.address,
-    value: ethers.utils.parseUnits(sendAmount, "ether"),
+    value: ethers.utils.parseUnits(amountEth, "ether"),
     gasPrice: gasPrice,
     gasLimit: ethers.utils.hexlify(100000),
     nonce: provider.getTransactionCount(wallet.address, "latest"),
 
   }
-
   const transaction = await signer.sendTransaction(tx)
-
   return transaction;
 
 }
