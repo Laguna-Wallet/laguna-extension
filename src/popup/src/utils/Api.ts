@@ -1,5 +1,7 @@
 import keyring from '@polkadot/ui-keyring';
 import axios from 'axios';
+import { AES } from 'crypto-js';
+import Utf8 from 'crypto-js/enc-utf8';
 import { ethers } from 'ethers';
 import { changeAccountsBalances, changeEthereumBalances, changeTokenReceived } from 'redux/actions';
 import { AppDispatch } from 'redux/store';
@@ -134,6 +136,46 @@ async function searchAccountBallance(chain: string, address: string) {
   });
 
   return await res.json();
+}
+
+export const generateNewWalletAddress = async () => {   
+  const account = await getFromStorage(StorageKeys.ActiveAccount);
+  const provider = new ethers.providers.JsonRpcProvider(`https://eth-goerli.g.alchemy.com/v2/IFip5pZqfpAsi50-O2a0ZEJoA82E8KR_`)
+  const address = JSON.parse(account as string).address;
+
+
+  const pair = keyring.getPair(address) 
+  const decodedSeed = AES.decrypt(
+    pair?.meta?.encodedSeed  as string,
+    "Theviper12"
+  );
+  const seed = decodedSeed.toString(Utf8);
+
+  const wallet =  ethers.Wallet.fromMnemonic(seed)
+  const signer = wallet.connect(provider)
+  console.log(wallet.address)
+
+  const receiverAddress = "0x61E9EAfb9EbC85D271872980540b5F64Bb5cDC65"
+  const gasPrice = provider.getGasPrice()
+  console.log((gasPrice))
+  const balance = await provider.getBalance(wallet.address)
+  console.log(ethers.utils.formatEther(balance))
+  const sendAmount = "0.000001"
+
+  const tx = {
+    to: receiverAddress,
+    from: wallet.address,
+    value: ethers.utils.parseUnits(sendAmount, "ether"),
+    gasPrice: gasPrice,
+    gasLimit: ethers.utils.hexlify(100000),
+    nonce: provider.getTransactionCount(wallet.address, "latest"),
+
+  }
+
+  // const transaction = await signer.sendTransaction(tx)
+
+  // console.log(transaction);
+
 }
 
 export const getEthAccountBalances = async (walletAddress: string, contract: string): Promise<Balance> => {
