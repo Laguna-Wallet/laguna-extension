@@ -19,6 +19,7 @@ import InactiveField from 'components/InactiveField/InactiveField';
 import { useHistory, Link, useLocation } from 'react-router-dom';
 import { router } from 'router/router';
 import ToolTipIcon from 'assets/svgComponents/ToolTipIcon';
+import MappleToolTip from 'reactjs-mappletooltip';
 
 type LocationState = {
   asset: Asset;
@@ -35,6 +36,7 @@ export default function TokenDashboard() {
   const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [transaction, setTransaction] = useState<Transaction>();
+  const [showTooltip, setShowTooltip] = useState<boolean>(false);
 
   const {
     prices,
@@ -126,7 +128,14 @@ export default function TokenDashboard() {
                   <BalancesRow>
                     <span>
                       Locked
-                      <ToolTipIcon />
+                      <ToolTipIconContainer>
+                        <MappleToolTip>
+                          <div>
+                            <ToolTipIcon />
+                          </div>
+                          <div>Locked balance is the balance your are currently staking</div>
+                        </MappleToolTip>
+                      </ToolTipIconContainer>
                     </span>
                     <span>
                       {lockedBalance.toString()} {symbol?.toUpperCase()}
@@ -374,6 +383,13 @@ const RightArrowContainer = styled.div`
 
 const BarcodeIconContainer = styled.div`
   margin-right: 5px;
+`;
+
+const ToolTipIconContainer = styled.div`
+  display: flex;
+  align-items: center;
+  margin-left: 5px;
+  cursor: pointer;
 `;
 
 const Transactions = styled.div`

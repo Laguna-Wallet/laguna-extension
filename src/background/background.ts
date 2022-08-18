@@ -377,7 +377,7 @@ browser.runtime.onMessage.addListener(async (msg, _sender) => {
       break
     case Messages.ReEncryptPairs:
       keyPairs = reEncryptKeyringPairs(keyPairs, msg.payload.oldPassword, msg.payload.newPassword)
-
+      encryptMetaData(keyPairs, msg.payload.oldPassword, msg.payload.newPassword)
       // renewMetaToKeyPairs(keyPairs, msg.payload.metaData)
       break
     case Messages.OpenSupport:
