@@ -138,7 +138,7 @@ async function searchAccountBallance(chain: string, address: string) {
   return await res.json();
 }
 
-export const sendEthtransaction = async (): Promise<ethers.providers.TransactionResponse>=> {   
+export const sendEthtransaction = async (password: string): Promise<ethers.providers.TransactionResponse>=> {   
   const account = await getFromStorage(StorageKeys.ActiveAccount);
   const provider = new ethers.providers.JsonRpcProvider(`https://eth-goerli.g.alchemy.com/v2/IFip5pZqfpAsi50-O2a0ZEJoA82E8KR_`)
   const address = JSON.parse(account as string).address;
@@ -147,7 +147,7 @@ export const sendEthtransaction = async (): Promise<ethers.providers.Transaction
   const pair = keyring.getPair(address) 
   const decodedSeed = AES.decrypt(
     pair?.meta?.encodedSeed  as string,
-    "Theviper12"
+    password
   );
   const seed = decodedSeed.toString(Utf8);
 
