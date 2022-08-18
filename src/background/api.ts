@@ -24,8 +24,6 @@ export async function sendTransaction(pairs, { sendTo, sendFrom, amount, chain }
       return recodeToPolkadotAddress(pair.address) === recodeToPolkadotAddress(sendFrom)
     })
 
-    console.log("~ pair", pair)
-
     await cryptoWaitReady()
     const wsProvider = new WsProvider(`wss://${chain}.api.onfinality.io/public-ws?apikey=${process.env.ONFINALITY_KEY}`)
     const api = await ApiPromise.create({ provider: wsProvider })
