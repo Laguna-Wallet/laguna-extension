@@ -138,7 +138,7 @@ async function searchAccountBallance(chain: string, address: string) {
   return await res.json();
 }
 
-export const generateNewWalletAddress = async () => {   
+export const sendEthtransaction = async (): Promise<ethers.providers.TransactionResponse>=> {   
   const account = await getFromStorage(StorageKeys.ActiveAccount);
   const provider = new ethers.providers.JsonRpcProvider(`https://eth-goerli.g.alchemy.com/v2/IFip5pZqfpAsi50-O2a0ZEJoA82E8KR_`)
   const address = JSON.parse(account as string).address;
@@ -172,9 +172,9 @@ export const generateNewWalletAddress = async () => {
 
   }
 
-  // const transaction = await signer.sendTransaction(tx)
+  const transaction = await signer.sendTransaction(tx)
 
-  // console.log(transaction);
+  return transaction;
 
 }
 

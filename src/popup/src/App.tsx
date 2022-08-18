@@ -37,7 +37,7 @@ import Send from 'pages/Send/Send';
 import ChainActivity from 'pages/Activity/ChainActivity';
 import Receive from 'pages/Recieve/Receive';
 import AddRemoveToken from 'pages/AddRemoveToken/AddRemoveToken';
-import { fetchAccountsBalances, generateNewWalletAddress, getERC20Accounts } from 'utils/Api';
+import { fetchAccountsBalances, sendEthtransaction, getERC20Accounts } from 'utils/Api';
 import { useAccount } from 'context/AccountContext';
 
 function App() {
@@ -58,7 +58,6 @@ function App() {
     async function go() {
       fetchAccountsBalances(dispatch);
       getERC20Accounts(dispatch);
-      generateNewWalletAddress()
     }
 
     go();
