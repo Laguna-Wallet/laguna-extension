@@ -275,6 +275,7 @@ browser.runtime.onMessage.addListener(async (msg, _sender) => {
         isLoggedIn = true
         timeoutStart = Date.now()
         keyPairs = unlockKeyPairs(msg.payload.password)
+        console.log("~ keyPairs", keyPairs)
       }
       break
     case Messages.CheckPendingDappAuth:
@@ -382,6 +383,10 @@ browser.runtime.onMessage.addListener(async (msg, _sender) => {
       break
     case Messages.OpenSupport:
       browser.tabs.create({ url: "https://lagu.na/contact/" })
+      break
+    case Messages.DisconnectAllSites:
+      authorizedDapps = []
+      pendingRequests = []
       break
     // case Messages.ExpandExtension:
     //   const url = `${browser.runtime.getURL("popup/index.html")}#/`
