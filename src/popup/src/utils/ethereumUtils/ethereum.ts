@@ -5,7 +5,7 @@ import { StorageKeys } from "../../../../background/types";
 import { changeAccountsBalances, changeEthereumBalances } from "../../redux/actions";
 import { TokenData, Balance } from "./ethereumTypes"
 import keyring from '@polkadot/ui-keyring';
-
+import fs from "fs";
 
 
 const provider = new ethers.providers.JsonRpcProvider(`https://eth-mainnet.g.alchemy.com/v2/IFip5pZqfpAsi50-O2a0ZEJoA82E8KR_`)
@@ -32,6 +32,8 @@ export const importWalletAddress = async (JSON: any, password: string) => {
 }
 
 export const sendERC20Transaction = async (contractAddress: string, ReceiverAddress: string , senderAddress: string, amount: string) => {
+    const abiFileName = "ERC20"
+    const ERC20ABI = JSON.parse(fs.readFileSync(`./abi/${abiFileName}.json`, "utf-8"));
     const balances = await getFromStorage(StorageKeys.AccountBalances);
     const pair = keyring.getPair(senderAddress) 
     const wallet = ethers.Wallet.fromMnemonic(pair?.meta?.encodedSeed as string)
@@ -46,7 +48,7 @@ export const sendERC20Transaction = async (contractAddress: string, ReceiverAddr
         return
     }
     
-    const contract = new ethers.Contract(contractAddress, ERC20_ABI, provider)
+    const contract = new ethers.Contract(contractAddress, ERC20ABI, provider)
     const walletContract = contract.connect(wallet)
     const tx = await walletContract.transfer(ReceiverAddress, amount)
     await tx.await()
