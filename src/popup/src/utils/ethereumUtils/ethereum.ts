@@ -32,7 +32,7 @@ export const importWalletAddress = async (JSON: any, password: string) => {
 }
 
 export const sendERC20Transaction = async (contractAddress: string, ReceiverAddress: string , senderAddress: string, amount: string) => {
-    const abiFileName = "ERC20"
+    const abiFileName = "ERC20";
     const ERC20ABI = JSON.parse(fs.readFileSync(`./abi/${abiFileName}.json`, "utf-8"));
     const balances = await getFromStorage(StorageKeys.AccountBalances);
     const pair = keyring.getPair(senderAddress) 
