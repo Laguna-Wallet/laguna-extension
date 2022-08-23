@@ -49,9 +49,7 @@ export const buildEthereumTransaction = (receiverAddress: string, amount: string
         gasPrice: gasPrice,
         gasLimit: ethers.utils.hexlify(100000),
         nonce: provider.getTransactionCount(walletAddress, "latest"),
-    
     }
-
     return tx
 }
 
