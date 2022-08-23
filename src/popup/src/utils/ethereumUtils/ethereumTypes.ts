@@ -4,7 +4,6 @@
  }
 
  export interface TokenData {
-    address: string;
     balances: Balance[];
  }
 

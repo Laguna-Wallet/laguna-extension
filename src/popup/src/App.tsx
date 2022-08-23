@@ -37,8 +37,9 @@ import Send from 'pages/Send/Send';
 import ChainActivity from 'pages/Activity/ChainActivity';
 import Receive from 'pages/Recieve/Receive';
 import AddRemoveToken from 'pages/AddRemoveToken/AddRemoveToken';
-import { fetchAccountsBalances, getERC20Accounts } from 'utils/Api';
+import { fetchAccountsBalances } from 'utils/Api';
 import { useAccount } from 'context/AccountContext';
+import { getERC20Accounts } from 'utils/ethereumUtils/ethereum';
 
 function App() {
   const dispatch = useDispatch();

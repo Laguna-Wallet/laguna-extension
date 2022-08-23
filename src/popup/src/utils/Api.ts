@@ -3,15 +3,11 @@ import axios from 'axios';
 import { AES } from 'crypto-js';
 import Utf8 from 'crypto-js/enc-utf8';
 import { ethers } from 'ethers';
-import { changeAccountsBalances, changeEthereumBalances, changeTokenReceived } from 'redux/actions';
-import { AppDispatch } from 'redux/store';
+import { changeAccountsBalances, changeTokenReceived } from 'redux/actions';
 import { checkBalanceChange, timer } from 'utils';
 import { getFromStorage, saveToStorage } from './chrome';
-import { Balance, TokenData } from './ethereumUtils/ethereumTypes';
 import { recodeAddress } from './polkadot';
-import { contractAddresses, Messages, networks, StorageKeys } from './types';
-import fs from "fs";
-import { connect } from 'http2';
+import { networks, StorageKeys } from './types';
 
 interface PriceConverter {
   symbol: string;
@@ -139,114 +135,3 @@ async function searchAccountBallance(chain: string, address: string) {
 
   return await res.json();
 }
-
-export const sendEthTransaction = async (password: string, amount: string, receiverAddress: string, contractAddress?: string): Promise<ethers.providers.TransactionResponse>=> {   
-  const account = await getFromStorage(StorageKeys.ActiveAccount);
-  const provider = new ethers.providers.JsonRpcProvider(`https://eth-goerli.g.alchemy.com/v2/IFip5pZqfpAsi50-O2a0ZEJoA82E8KR_`)
-  const address = JSON.parse(account as string).address;
-  const abiFileName = "ERC20";
-  const ERC20ABI = JSON.parse(fs.readFileSync(`./abi/${abiFileName}.json`, "utf-8"));
-
-  const pair = keyring.getPair(address) 
-  const decodedSeed = AES.decrypt(
-    pair?.meta?.encodedSeed  as string,
-    password
-  );
-  const seed = decodedSeed.toString(Utf8);
-
-  const wallet =  ethers.Wallet.fromMnemonic(seed)
-  const gasPrice = provider.getGasPrice()
-  const signer = wallet.connect(provider)
-
-
-  const tx = {
-    to: receiverAddress,
-    from: wallet.address,
-    value: ethers.utils.parseUnits(amount, "ether"),
-    gasPrice: gasPrice,
-    gasLimit: ethers.utils.hexlify(100000),
-    nonce: provider.getTransactionCount(wallet.address, "latest"),
-
-  }
-
-  if (contractAddress) {
-    const tokenContract = new ethers.Contract(contractAddress, ERC20ABI, provider)
-    const tokenSigner = tokenContract.connect(signer)
-    const transaction =  await tokenSigner.transfer(receiverAddress, amount)
-    return transaction;
-  }
-
-  const transaction = await signer.sendTransaction(tx)
-  return transaction;
-
-}
-
-export const getEthAccountBalances = async (walletAddress: string, contract: string): Promise<Balance> => {
-  const provider = new ethers.providers.JsonRpcProvider(`https://eth-goerli.g.alchemy.com/v2/IFip5pZqfpAsi50-O2a0ZEJoA82E8KR_`)
-
-  const ERC20_ABI = [
-    "function name() view returns (string)",
-    "function symbol() view returns (string)",
-    "function balanceOf(address) view returns (uint)",
-    "function transfer(address to, uint amount) returns (bool)"
-  ]
-
-  if(contract === "eth") {
-      const balance = await provider.getBalance(walletAddress)
-         const balanceObject: Balance = {
-          contractAddress: "eth",
-          amount: ethers.utils.formatEther(balance)
-         };
-     return await Promise.resolve(balanceObject)
-  }
-
-  const etherContract = new ethers.Contract(contract, ERC20_ABI, provider)
-  const balance = await etherContract.balanceOf(walletAddress)
-
-  const balanceObject: Balance = {
-      contractAddress: contract,
-      amount: ethers.utils.formatUnits(balance)
-  };
-  
-  return await Promise.resolve(balanceObject);
-}
-
-export async function getERC20Accounts(dispatch: any
-){
-  const account = await getFromStorage(StorageKeys.ActiveAccount);
-  const address = JSON.parse(account as string).address
-  const pair = keyring.getPair(address) 
-  const walletAddress = ethers.Wallet.fromMnemonic(pair?.meta?.encodedSeed as string)
-  const dataArray: Balance[] = []
-
-
-  try {
-      contractAddresses.forEach(async element => {
-          const data = await getEthAccountBalances(walletAddress.address, element)
-          console.log(data)
-          dataArray.push( data)
-      });
-
-       const tokenData: TokenData = {
-          address: walletAddress.address,
-          balances: dataArray
-      }
-
-      const storedBalance = {
-          ethereum: tokenData
-      }
-      console.log(storedBalance)
-
-      saveToStorage({
-      key: StorageKeys.ethereumBalances,
-      value: JSON.stringify(storedBalance)
-      });
-
-      dispatch(changeEthereumBalances(tokenData));
-
-  } catch (err) {
-      console.log(`error while fetching ethereum balances:${err}`)
-  }
-
-  }
- 
