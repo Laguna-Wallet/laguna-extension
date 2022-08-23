@@ -10,7 +10,6 @@ import { AES } from "crypto-js";
 import Utf8 from "crypto-js/enc-utf8";
 
 
-const provider = new ethers.providers.JsonRpcProvider(`https://eth-mainnet.g.alchemy.com/v2/IFip5pZqfpAsi50-O2a0ZEJoA82E8KR_`)
 
 const contractAddress = [
     {
@@ -18,6 +17,13 @@ const contractAddress = [
         "contractAddress": "0xdAC17F958D2ee523a2206206994597C13D831ec7"
     }
   ]
+
+  const ERC20_ABI = [
+    "function name() view returns (string)",
+    "function symbol() view returns (string)",
+    "function totalSupply() view returns (uint256)",
+   "function balanceOf(address) view returns (uint)",
+];
 
 export const generateNewWalletAddress = (address: string): ethers.Wallet | string => {   
     const pair = keyring.getPair(address) 
@@ -32,6 +38,7 @@ export const importWalletAddress = async (JSON: any, password: string) => {
 
 
 export const getFeeData = async (contractAddress: string, ReceiverAddress: string, amount: string) => {
+  const provider = new ethers.providers.JsonRpcProvider(`https://eth-goerli.g.alchemy.com/v2/IFip5pZqfpAsi50-O2a0ZEJoA82E8KR_`)
     const abiFileName = "ERC20";
     const ERC20ABI = JSON.parse(fs.readFileSync(`./abi/${abiFileName}.json`, "utf-8"));
     const contract = new ethers.Contract(contractAddress, ERC20ABI, provider)
@@ -41,7 +48,8 @@ export const getFeeData = async (contractAddress: string, ReceiverAddress: strin
 }
 
 export const buildEthereumTransaction = (receiverAddress: string, amount: string, gasPrice: Promise<ethers.BigNumber>, walletAddress: string) => {
-    
+  const provider = new ethers.providers.JsonRpcProvider(`https://eth-goerli.g.alchemy.com/v2/IFip5pZqfpAsi50-O2a0ZEJoA82E8KR_`)
+
     const tx = {
         to: receiverAddress,
         from: walletAddress,
@@ -101,16 +109,16 @@ export const sendEthTransaction = async (password: string, amount: string, recei
   }
   
   export const getERC20Balances = async (contract: string): Promise<Balance> => {
-    const provider = new ethers.providers.JsonRpcProvider(`https://eth-goerli.g.alchemy.com/v2/IFip5pZqfpAsi50-O2a0ZEJoA82E8KR_`)
+    const provider = new ethers.providers.JsonRpcProvider(`https://eth-mainnet.g.alchemy.com/v2/IFip5pZqfpAsi50-O2a0ZEJoA82E8KR_`)
     const abiFileName = "ERC20";
-    const ERC20ABI = JSON.parse(fs.readFileSync(`./abi/${abiFileName}.json`, "utf-8"));
+    // const ERC20ABI = JSON.parse(fs.readFileSync(`./abi/${abiFileName}.json`, "utf-8"));
     const account = await getFromStorage(StorageKeys.ActiveAccount);
     const address = JSON.parse(account as string).address;
     // TODO ask revaz how passwords are sourced
-    const password = "TheViper12"
+    const password = "Theviper12"
     const walletAddress = await getWalletAddress(password, address)
 
-    const etherContract = new ethers.Contract(contract, ERC20ABI, provider)
+    const etherContract = new ethers.Contract(contract, ERC20_ABI, provider)
     const balance = await etherContract.balanceOf(walletAddress.address)
   
     const balanceObject: Balance = {
@@ -123,24 +131,28 @@ export const sendEthTransaction = async (password: string, amount: string, recei
   }
 
   export const getETHAccountBalances = async (): Promise<Balance> => {
+    const provider = new ethers.providers.JsonRpcProvider(`https://eth-goerli.g.alchemy.com/v2/IFip5pZqfpAsi50-O2a0ZEJoA82E8KR_`)
     const account = await getFromStorage(StorageKeys.ActiveAccount);
     const address = JSON.parse(account as string).address;
-    const password = "TheViper12"
+    const password = "Theviper12"
     const walletAddress = await getWalletAddress(password, address)
-    
     const balance = await provider.getBalance(walletAddress.address)
-           const balanceObject: Balance = {
-            contractAddress: "eth",
-            amount: ethers.utils.formatEther(balance)
-           };
-       return await Promise.resolve(balanceObject)
+
+
+    const balanceObject: Balance = {
+      contractAddress: "ETH",
+      amount: ethers.utils.formatEther(balance)
+    };
+    return await Promise.resolve(balanceObject)
   }
   
   export async function getERC20Accounts(dispatch: any
   ){
     const dataArray: Balance[] = []
-  
+
     try {
+      dataArray.push(await getETHAccountBalances())
+
       contractAddress.forEach(async element => {
             const data = await getERC20Balances(element.contractAddress)
             dataArray.push( data)
@@ -158,7 +170,7 @@ export const sendEthTransaction = async (password: string, amount: string, recei
         key: StorageKeys.ethereumBalances,
         value: JSON.stringify(storedBalance)
         });
-  
+
         dispatch(changeEthereumBalances(tokenData));
   
     } catch (err) {
@@ -169,41 +181,34 @@ export const sendEthTransaction = async (password: string, amount: string, recei
   
 
 // export const getEthAccountTransactions = async (contractAddress: string) => {
-//     const abiFileName = "ERC20";
-//     const ERC20ABI = JSON.parse(fs.readFileSync(`./abi/${abiFileName}.json`, "utf-8"));
-
-//     // if(contract === "eth") {
-//     //     const balance = await provider.getBalance(walletAddress)
-//     //        const balanceObject: Balance = {
-//     //         contractAddress: "eth",
-//     //         amount: balance
-//     //        };
-//     //    return await Promise.resolve(balanceObject)
-//     // }
-
-//     const etherContract = new ethers.Contract(contractAddress, ERC20ABI, provider)
-//     const transactions = etherContract.filters.transfer(walletAddress, null)
     
 // }
 
-// export const getTransactionData = async() => {
-//     const transactionArray = []
+export const getERC20AccountTransactions = async (contractAddress: string) => {
+  const provider = new ethers.providers.JsonRpcProvider(`https://eth-mainnet.g.alchemy.com/v2/IFip5pZqfpAsi50-O2a0ZEJoA82E8KR_`)
+  const account = await getFromStorage(StorageKeys.ActiveAccount);
+  const address = JSON.parse(account as string).address;
+  const password = "Theviper12"
+  const walletAddress = await getWalletAddress(password, address)
+  const etherContract = new ethers.Contract(contractAddress, ERC20_ABI, provider)
 
-// try {
-//     contractAddresses.forEach(element => {
-//        const transactions = getEthAccountTransactions(element)
-//          transactionArray.push(transactions)
-//      })
+  const transactions = etherContract.filters.transfer(walletAddress, null)
+  return transactions
+}
+
+export const getTransactionData = async() => {
+    const transactionArray = []
+
+try {
+  
+    contractAddress.forEach(element => {
+       const transactions = getERC20AccountTransactions(element.contractAddress)
+         transactionArray.push(transactions)
+     })
     
 
-    
-//     saveToStorage({
-//         key: StorageKeys.EthereumTransactions,
-//         value: JSON.stringify(transactionObj)
-//         });
+    } catch(err) {
+        console.log(`error getting ethereum transactions ${err}`)
+    }    
 
-//     } catch(err) {
-//         console.log(`error getting ethereum transactions ${err}`)
-//     }    
-
-// }
+}
