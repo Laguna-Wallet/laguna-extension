@@ -63,29 +63,6 @@ function App() {
     go();
   }, []);
 
-  // useEffect(() => {
-  //   const { pair } = keyring.addUri(
-  //     'inherit clap pledge rocket deliver chest wing afraid indoor panel woman payment',
-  //     '123123123'
-  //   );
-
-  //   pair.decodePkcs8('123123123');
-
-  //   keyring.encryptAccount(pair, '321321321');
-
-  //   const newPair = keyring.getPair(pair.address);
-
-  //   newPair.decodePkcs8('123123123');
-  //   console.log('~ newPair', newPair);
-  // }, []);
-
-  // useEffect(() => {
-  //   const pair = keyring.getPairs()[0];
-
-  //   pair.decodePkcs8('321321321');
-  //   console.log('~ pair', pair);
-  // }, []);
-
   useEffect(() => {
     async function go() {
       //       // Login State
