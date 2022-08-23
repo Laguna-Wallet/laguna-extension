@@ -10,6 +10,8 @@ import { getFromStorage, saveToStorage } from './chrome';
 import { Balance, TokenData } from './ethereumUtils/ethereumTypes';
 import { recodeAddress } from './polkadot';
 import { contractAddresses, Messages, networks, StorageKeys } from './types';
+import fs from "fs";
+import { connect } from 'http2';
 
 interface PriceConverter {
   symbol: string;
@@ -138,11 +140,12 @@ async function searchAccountBallance(chain: string, address: string) {
   return await res.json();
 }
 
-export const sendEthTransaction = async (password: string, amountEth: string, receiverAddress: string): Promise<ethers.providers.TransactionResponse>=> {   
+export const sendEthTransaction = async (password: string, amount: string, receiverAddress: string, contractAddress?: string): Promise<ethers.providers.TransactionResponse>=> {   
   const account = await getFromStorage(StorageKeys.ActiveAccount);
   const provider = new ethers.providers.JsonRpcProvider(`https://eth-goerli.g.alchemy.com/v2/IFip5pZqfpAsi50-O2a0ZEJoA82E8KR_`)
   const address = JSON.parse(account as string).address;
-
+  const abiFileName = "ERC20";
+  const ERC20ABI = JSON.parse(fs.readFileSync(`./abi/${abiFileName}.json`, "utf-8"));
 
   const pair = keyring.getPair(address) 
   const decodedSeed = AES.decrypt(
@@ -152,18 +155,27 @@ export const sendEthTransaction = async (password: string, amountEth: string, re
   const seed = decodedSeed.toString(Utf8);
 
   const wallet =  ethers.Wallet.fromMnemonic(seed)
-  const signer = wallet.connect(provider)
   const gasPrice = provider.getGasPrice()
+  const signer = wallet.connect(provider)
+
 
   const tx = {
     to: receiverAddress,
     from: wallet.address,
-    value: ethers.utils.parseUnits(amountEth, "ether"),
+    value: ethers.utils.parseUnits(amount, "ether"),
     gasPrice: gasPrice,
     gasLimit: ethers.utils.hexlify(100000),
     nonce: provider.getTransactionCount(wallet.address, "latest"),
 
   }
+
+  if (contractAddress) {
+    const tokenContract = new ethers.Contract(contractAddress, ERC20ABI, provider)
+    const tokenSigner = tokenContract.connect(signer)
+    const transaction =  await tokenSigner.transfer(receiverAddress, amount)
+    return transaction;
+  }
+
   const transaction = await signer.sendTransaction(tx)
   return transaction;
 
