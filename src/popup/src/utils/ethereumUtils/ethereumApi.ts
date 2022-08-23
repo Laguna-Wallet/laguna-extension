@@ -100,7 +100,7 @@ export const sendEthTransaction = async (password: string, amount: string, recei
     return wallet;
   }
   
-  export const getEthAccountBalances = async (contract: string): Promise<Balance> => {
+  export const getERC20Balances = async (contract: string): Promise<Balance> => {
     const provider = new ethers.providers.JsonRpcProvider(`https://eth-goerli.g.alchemy.com/v2/IFip5pZqfpAsi50-O2a0ZEJoA82E8KR_`)
     const abiFileName = "ERC20";
     const ERC20ABI = JSON.parse(fs.readFileSync(`./abi/${abiFileName}.json`, "utf-8"));
@@ -109,18 +109,7 @@ export const sendEthTransaction = async (password: string, amount: string, recei
     // TODO ask revaz how passwords are sourced
     const password = "TheViper12"
     const walletAddress = await getWalletAddress(password, address)
-  
-  
-    if(contract === "eth") {
-        const balance = await provider.getBalance(walletAddress.address)
-           const balanceObject: Balance = {
-            contractAddress: "eth",
-            amount: ethers.utils.formatEther(balance)
-           };
-       return await Promise.resolve(balanceObject)
 
-    }
-  
     const etherContract = new ethers.Contract(contract, ERC20ABI, provider)
     const balance = await etherContract.balanceOf(walletAddress.address)
   
@@ -132,6 +121,20 @@ export const sendEthTransaction = async (password: string, amount: string, recei
     
     return await Promise.resolve(balanceObject);
   }
+
+  export const getETHAccountBalances = async (): Promise<Balance> => {
+    const account = await getFromStorage(StorageKeys.ActiveAccount);
+    const address = JSON.parse(account as string).address;
+    const password = "TheViper12"
+    const walletAddress = await getWalletAddress(password, address)
+    
+    const balance = await provider.getBalance(walletAddress.address)
+           const balanceObject: Balance = {
+            contractAddress: "eth",
+            amount: ethers.utils.formatEther(balance)
+           };
+       return await Promise.resolve(balanceObject)
+  }
   
   export async function getERC20Accounts(dispatch: any
   ){
@@ -139,7 +142,7 @@ export const sendEthTransaction = async (password: string, amount: string, recei
   
     try {
       contractAddress.forEach(async element => {
-            const data = await getEthAccountBalances(element.contractAddress)
+            const data = await getERC20Balances(element.contractAddress)
             dataArray.push( data)
         });
   
