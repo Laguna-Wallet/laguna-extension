@@ -170,7 +170,7 @@ export const sendEthTransaction = async (password: string, amountEth: string, re
 }
 
 export const getEthAccountBalances = async (walletAddress: string, contract: string): Promise<Balance> => {
-  const provider = new ethers.providers.JsonRpcProvider(`https://eth-mainnet.g.alchemy.com/v2/IFip5pZqfpAsi50-O2a0ZEJoA82E8KR_`)
+  const provider = new ethers.providers.JsonRpcProvider(`https://eth-goerli.g.alchemy.com/v2/IFip5pZqfpAsi50-O2a0ZEJoA82E8KR_`)
 
   const ERC20_ABI = [
     "function name() view returns (string)",
