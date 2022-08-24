@@ -84,6 +84,8 @@
     "yup": "^0.32.11"
   },
   "scripts": {
+    "lint:check": "./node_modules/.bin/eslint --ext .js,.ts,.tsx ./src",
+    "lint": "yarn lint:check --fix",
     "start": "react-scripts start",
     "test": "react-scripts test",
     "watch:build-cra": "cra-build-watch -v --build-path ../../dist/popup",
