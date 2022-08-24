@@ -18,13 +18,6 @@ const contractAddress = [
     }
   ]
 
-  const ERC20_ABI = [
-    "function name() view returns (string)",
-    "function symbol() view returns (string)",
-    "function totalSupply() view returns (uint256)",
-   "function balanceOf(address) view returns (uint)",
-];
-
 export const generateNewWalletAddress = (address: string): ethers.Wallet | string => {   
     const pair = keyring.getPair(address) 
     const wallet = ethers.Wallet.fromMnemonic(pair?.meta?.encodedSeed as string)
@@ -111,14 +104,14 @@ export const sendEthTransaction = async (password: string, amount: string, recei
   export const getERC20Balances = async (contract: string): Promise<Balance> => {
     const provider = new ethers.providers.JsonRpcProvider(`https://eth-mainnet.g.alchemy.com/v2/IFip5pZqfpAsi50-O2a0ZEJoA82E8KR_`)
     const abiFileName = "ERC20";
-    // const ERC20ABI = JSON.parse(fs.readFileSync(`./abi/${abiFileName}.json`, "utf-8"));
+    const ERC20ABI = JSON.parse(fs.readFileSync(`./abi/${abiFileName}.json`, "utf-8"));
     const account = await getFromStorage(StorageKeys.ActiveAccount);
     const address = JSON.parse(account as string).address;
     // TODO ask revaz how passwords are sourced
     const password = "Theviper12"
     const walletAddress = await getWalletAddress(password, address)
 
-    const etherContract = new ethers.Contract(contract, ERC20_ABI, provider)
+    const etherContract = new ethers.Contract(contract, ERC20ABI, provider)
     const balance = await etherContract.balanceOf(walletAddress.address)
   
     const balanceObject: Balance = {
@@ -187,10 +180,12 @@ export const sendEthTransaction = async (password: string, amount: string, recei
 export const getERC20AccountTransactions = async (contractAddress: string) => {
   const provider = new ethers.providers.JsonRpcProvider(`https://eth-mainnet.g.alchemy.com/v2/IFip5pZqfpAsi50-O2a0ZEJoA82E8KR_`)
   const account = await getFromStorage(StorageKeys.ActiveAccount);
+  const abiFileName = "ERC20";
+  const ERC20ABI = JSON.parse(fs.readFileSync(`./abi/${abiFileName}.json`, "utf-8"));
   const address = JSON.parse(account as string).address;
   const password = "Theviper12"
   const walletAddress = await getWalletAddress(password, address)
-  const etherContract = new ethers.Contract(contractAddress, ERC20_ABI, provider)
+  const etherContract = new ethers.Contract(contractAddress, ERC20ABI, provider)
 
   const transactions = etherContract.filters.transfer(walletAddress, null)
   return transactions
