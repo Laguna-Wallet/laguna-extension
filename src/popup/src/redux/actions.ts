@@ -1,4 +1,4 @@
-import { TokenData } from 'utils/ethereumUtils/ethereumTypes';
+import { TokenData } from 'utils/evm/interfaces';
 import { Asset, Token } from 'utils/types';
 
 // send token
