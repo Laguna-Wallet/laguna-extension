@@ -66,7 +66,6 @@ function App() {
 
   useEffect(() => {
     async function go() {
-      //       // Login State
       const AuthResponse = await browser.runtime.sendMessage({ type: Messages.AuthCheck });
 
       const PendingDappAuthResponse = await browser.runtime.sendMessage({
