@@ -1,3 +1,7 @@
+import BigNumber from "bignumber.js";
+import { EVMNetwork } from "./networks";
+import { EVMAssetType } from "./networks/asset";
+
  
  export interface ethereumHoldingState {
     list: TokenData[]
@@ -11,3 +15,36 @@
   contractAddress: string
   amount: string
  }
+
+ export interface IEVMNetwork {
+   chainId: number;
+   nodeUrl: string;
+   explorerUrlAddress: string;
+   explorerUrlTransaction: string;
+ }
+ 
+export interface IEVMAsset {
+  name: string;
+  symbol: string;
+  decimal: number;
+  assetType: EVMAssetType;
+}
+
+export interface IEVMAssetERC20 extends IEVMAsset {
+  contractAddress: string;
+}
+
+export interface IEVMBuildTransaction {
+  network: EVMNetwork, 
+  asset: IEVMAssetERC20, 
+  amount: BigNumber, 
+  fromAddress: string, 
+  toAddress: string, 
+  gasPriceInGwei: BigNumber,
+  numOfPendingTransaction: BigNumber, // TODO for adding up nonce, blocked by cache pending txn
+}
+
+export interface IEVMToBeSignTransaction {
+}
+export interface IEVMSignedTransaction extends IEVMToBeSignTransaction {
+}
