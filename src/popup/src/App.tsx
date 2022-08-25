@@ -58,7 +58,7 @@ function App() {
   useEffect(() => {
     async function go() {
       fetchAccountsBalances(dispatch);
-      getERC20Accounts(dispatch);
+      // getERC20Accounts(dispatch);
     }
 
     go();

@@ -6,6 +6,7 @@ import { ethers } from 'ethers';
 import { changeAccountsBalances, changeTokenReceived } from 'redux/actions';
 import { checkBalanceChange, timer } from 'utils';
 import { getFromStorage, saveToStorage } from './chrome';
+import { getETHAccountBalances } from './ethereumUtils/ethereumApi';
 import { recodeAddress } from './polkadot';
 import { networks, StorageKeys } from './types';
 
@@ -60,6 +61,8 @@ export async function fetchAccountsBalances(
 
     if (account) {
       const address = JSON.parse(account as string).address;
+      const ethAddress = JSON.parse(account as string)?.meta?.ethAddress;
+
       let result_obj: any = {};
       const temp_obj: Record<string, any> = {};
 
@@ -69,22 +72,36 @@ export async function fetchAccountsBalances(
         await timer(1000);
         const network = networks[i];
 
-        const resolved = await searchAccountBallance(
-          network.chain,
-          recodeAddress(address, network?.prefix, network?.encodeType)
-        );
-        // if (resolved.message !== "Success") return
-        if (resolved.message !== 'Success') {
-          if (resolved.message === 'Record Not Found' || resolved?.data?.account?.balance === 0) {
-            i++;
-          }
+        if (network.chain === 'ethereum' && !ethAddress) {
+          i++;
           continue;
         }
 
-        temp_obj[network.chain] = {
-          overall: Number(resolved.data.account.balance),
-          locked: Number(resolved.data.account.balance_lock)
-        };
+        if (network.chain === 'ethereum' && ethAddress) {
+          const ethBalance = await getETHAccountBalances(ethAddress);
+          console.log('~ ethBalance', ethBalance);
+          temp_obj[network.chain] = {
+            overall: Number(ethBalance.amount),
+            locked: Number(0) // todo change after eth 2.0 merge
+          };
+        } else {
+          const resolved = await searchAccountBallance(
+            network.chain,
+            recodeAddress(address, network?.prefix, network?.encodeType)
+          );
+          // if (resolved.message !== "Success") return
+          if (resolved.message !== 'Success') {
+            if (resolved.message === 'Record Not Found' || resolved?.data?.account?.balance === 0) {
+              i++;
+            }
+            continue;
+          }
+
+          temp_obj[network.chain] = {
+            overall: Number(resolved.data.account.balance),
+            locked: Number(resolved.data.account.balance_lock)
+          };
+        }
 
         if (parsedBalances.address === address) {
           const accountBalances = parsedBalances?.balances;
@@ -92,7 +109,6 @@ export async function fetchAccountsBalances(
         } else {
           result_obj = { ...temp_obj };
         }
-
         i++;
       }
 

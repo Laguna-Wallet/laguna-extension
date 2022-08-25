@@ -40,10 +40,10 @@ export enum StorageKeys {
 
 // Array of contract addresses specific to ERC-20 tokens (ETH is a native token so it does not have an address)
 export const contractAddresses = [
-  "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48", // USDC
-  "0xdAC17F958D2ee523a2206206994597C13D831ec7", // USDT
-  "eth" // Ethereum
-]
+  '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', // USDC
+  '0xdAC17F958D2ee523a2206206994597C13D831ec7', // USDT
+  'eth' // Ethereum
+];
 
 //==============================================================================
 // Polkadot
@@ -137,7 +137,7 @@ export enum TokenSymbols {
   moonbeam = 'glmr',
   shiden = 'sdn',
   astar = 'astr',
-  ethereum = "eth"
+  ethereum = 'eth'
 }
 
 export type Token =
@@ -250,7 +250,7 @@ export const chains = [
   // 'moonriver',
   //  'moonbeam',
   // 'shiden',
-  'astar',
+  'astar'
 ];
 
 export interface TokenInfo {
@@ -306,6 +306,14 @@ export const networks: Network[] = [
     node: 'wss://kusama-rpc.polkadot.io',
     prefix: 2
   },
+  {
+    name: 'Ethereum',
+    symbol: TokenSymbols.ethereum,
+    chain: 'ethereum',
+    node: 'wss://kusama-rpc.polkadot.io',
+    prefix: 2
+  }
+
   // {
   //   name: 'Moonriver',
   //   symbol: 'movr',
@@ -330,13 +338,13 @@ export const networks: Network[] = [
   //   node: 'wss://shiden.api.onfinality.io/public-ws',
   //   prefix: 5
   // },
-  {
-    name: 'Astar',
-    symbol: TokenSymbols.astar,
-    chain: 'astar',
-    node: 'wss://astar.api.onfinality.io/public-ws',
-    prefix: 5
-  },
+  // {
+  //   name: 'Astar',
+  //   symbol: TokenSymbols.astar,
+  //   chain: 'astar',
+  //   node: 'wss://astar.api.onfinality.io/public-ws',
+  //   prefix: 5
+  // }
   // {
   //   name: 'Astar',
   //   symbol: TokenSymbols.astar,

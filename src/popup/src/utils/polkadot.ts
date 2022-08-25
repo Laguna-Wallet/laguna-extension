@@ -233,12 +233,26 @@ export function getNetworks(
       prefix: 0
     },
     {
+      name: 'Ethereum',
+      symbol: TokenSymbols.ethereum,
+      chain: 'ethereum',
+      node: 'wss://eth-mainnet.g.alchemy.com/v2/IFip5pZqfpAsi50-O2a0ZEJoA82E8KR_',
+      prefix: 0
+    },
+    {
       name: 'Kusama',
       symbol: TokenSymbols.kusama,
       chain: 'kusama',
       node: 'wss://kusama-rpc.polkadot.io',
       prefix: 2
-    },
+    }
+    // {
+    //   name: 'Astar',
+    //   symbol: TokenSymbols.astar,
+    //   chain: 'astar',
+    //   node: 'wss://astar.api.onfinality.io/public-ws',
+    //   prefix: 5
+    // },
     // {
     //   name: 'Moonriver',
     //   symbol: 'movr',
@@ -260,20 +274,7 @@ export function getNetworks(
     //   chain: 'shiden',
     //   node: 'wss://shiden.api.onfinality.io/public-ws'
     // },
-    {
-      name: 'Astar',
-      symbol: TokenSymbols.astar,
-      chain: 'astar',
-      node: 'wss://astar.api.onfinality.io/public-ws',
-      prefix: 5
-    },
-    {
-      name: 'Ethereum',
-      symbol: TokenSymbols.ethereum,
-      chain: 'Ethereum',
-      node: 'wss://eth-mainnet.g.alchemy.com/v2/IFip5pZqfpAsi50-O2a0ZEJoA82E8KR_',
-      prefix: 0
-    }
+
     // wss://rpc.astar.network
 
     // {

@@ -147,16 +147,18 @@ export const getERC20Balances = async (contract: string): Promise<Balance> => {
   return await Promise.resolve(balanceObject);
 };
 
-export const getETHAccountBalances = async (): Promise<Balance> => {
+export const getETHAccountBalances = async (address: string): Promise<Balance> => {
   const provider = new ethers.providers.JsonRpcProvider(
-    `https://eth-goerli.g.alchemy.com/v2/IFip5pZqfpAsi50-O2a0ZEJoA82E8KR_`
+    'HTTP://127.0.0.1:7545'
+    // `https://eth-goerli.g.alchemy.com/v2/IFip5pZqfpAsi50-O2a0ZEJoA82E8KR_`
   );
 
-  const account = await getFromStorage(StorageKeys.ActiveAccount);
-  const address = JSON.parse(account as string).address;
-  const password = 'Theviper12';
-  const walletAddress = await getWalletAddress(password, address);
-  const balance = await provider.getBalance(walletAddress.address);
+  // const account = await getFromStorage(StorageKeys.ActiveAccount);
+  // const address = JSON.parse(account as string).address;
+  // const password = 'Theviper12';
+  // const walletAddress = await getWalletAddress(password, address);
+  // const balance = await provider.getBalance(walletAddress.address);
+  const balance = await provider.getBalance(address);
 
   const balanceObject: Balance = {
     contractAddress: 'ETH',
@@ -165,11 +167,11 @@ export const getETHAccountBalances = async (): Promise<Balance> => {
   return await Promise.resolve(balanceObject);
 };
 
-export async function getERC20Accounts(dispatch: any) {
+export async function getERC20Accounts(address: string, dispatch: any) {
   const dataArray: Balance[] = [];
 
   try {
-    dataArray.push(await getETHAccountBalances());
+    dataArray.push(await getETHAccountBalances(address));
 
     contractAddress.forEach(async (element) => {
       const data = await getERC20Balances(element.contractAddress);
@@ -200,9 +202,8 @@ export async function getERC20Accounts(dispatch: any) {
 // }
 
 export const getERC20AccountTransactions = async (contractAddress: string) => {
-  const provider = new ethers.providers.JsonRpcProvider(
-    `https://eth-mainnet.g.alchemy.com/v2/IFip5pZqfpAsi50-O2a0ZEJoA82E8KR_`
-  );
+  const provider = new ethers.providers.JsonRpcProvider();
+  `https://eth-mainnet.g.alchemy.com/v2/IFip5pZqfpAsi50-O2a0ZEJoA82E8KR_`;
   const account = await getFromStorage(StorageKeys.ActiveAccount);
   const address = JSON.parse(account as string).address;
   const password = 'Theviper12';

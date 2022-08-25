@@ -37,6 +37,12 @@ export default function Receive() {
       if (!selectedNetwork) return;
       // const api = await getApiInstance(selectedNetwork.chain);
       // const prefix = api.consts.system.ss58Prefix;
+
+      if (selectedNetwork.chain === 'ethereum' && activeAccount?.meta?.ethAddress) {
+        setRecoded(activeAccount?.meta?.ethAddress);
+        return;
+      }
+
       const recoded = recodeAddress(
         activeAccount.address,
         selectedNetwork?.prefix,
