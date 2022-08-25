@@ -2,7 +2,7 @@ import { ethers } from "ethers";
 import { useDispatch } from "react-redux";
 import { getFromStorage, saveToStorage } from "utils/chrome";
 import { changeAccountsBalances, changeEthereumBalances } from "../../redux/actions";
-import { TokenData, Balance } from "./ethereumTypes"
+import { TokenData, Balance } from "./interfaces"
 import { networks, StorageKeys } from '../types';
 import keyring from '@polkadot/ui-keyring';
 import fs from "fs";
