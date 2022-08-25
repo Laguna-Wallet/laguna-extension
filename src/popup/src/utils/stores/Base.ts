@@ -1,10 +1,11 @@
 // Copyright 2019-2022 @polkadot/extension-base authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+import browser from 'webextension-polyfill';
 
 type StoreValue = Record<string, unknown>;
 
 const lastError = (type: string): void => {
-  const error = chrome.runtime.lastError;
+  const error = browser.runtime.lastError;
 
   if (error) {
     return;
@@ -27,7 +28,7 @@ export default abstract class BaseStore<T> {
   }
 
   public allMap(update: (value: Record<string, T>) => void): void {
-    chrome.storage.local.get(null, (result: StoreValue): void => {
+    browser.storage.local.get(null).then((result: StoreValue): void => {
       lastError('all');
 
       const entries = Object.entries(result);
@@ -48,7 +49,7 @@ export default abstract class BaseStore<T> {
   public get(_key: string, update: (value: T) => void): void {
     const key = `${this.prefix}${_key}`;
 
-    chrome.storage.local.get([key], (result: StoreValue): void => {
+    browser.storage.local.get([key]).then((result: StoreValue): void => {
       lastError('get');
 
       update(result[key] as T);
@@ -58,7 +59,7 @@ export default abstract class BaseStore<T> {
   public remove(_key: string, update?: () => void): void {
     const key = `${this.prefix}${_key}`;
 
-    chrome.storage.local.remove(key, (): void => {
+    browser.storage.local.remove(key).then((): void => {
       lastError('remove');
 
       update && update();
@@ -68,7 +69,7 @@ export default abstract class BaseStore<T> {
   public set(_key: string, value: T, update?: () => void): void {
     const key = `${this.prefix}${_key}`;
 
-    chrome.storage.local.set({ [key]: value }, (): void => {
+    browser.storage.local.set({ [key]: value }).then((): void => {
       lastError('set');
 
       update && update();

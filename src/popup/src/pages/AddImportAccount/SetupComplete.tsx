@@ -1,9 +1,9 @@
 import styled from 'styled-components';
 import CheckMarkIcon from 'assets/svgComponents/CheckMarkIcon';
+import { useHistory } from 'react-router-dom';
+import { router } from 'router/router';
 
 import Button from 'components/primitives/Button';
-import Wallet from 'pages/Wallet/Wallet';
-import { goTo } from 'react-chrome-extension-router';
 
 import { SnackbarMessages } from 'utils/types';
 import DiscordIcon from 'assets/svgComponents/DiscordIcon';
@@ -13,8 +13,14 @@ import { reduxForm } from 'redux-form';
 import { useEnterClickListener } from 'hooks/useEnterClickListener';
 
 function SetupComplete() {
+  const history = useHistory();
+
   useEnterClickListener(
-    () => goTo(Wallet, { snackbar: { show: true, message: SnackbarMessages.WalletCreated } }),
+    () =>
+      history.push({
+        pathname: router.home,
+        state: { snackbar: { show: true, message: SnackbarMessages.WalletCreated } }
+      }),
     []
   );
 
@@ -35,22 +41,29 @@ function SetupComplete() {
         </Title>
         <LinksContainer>
           <LinkContainer>
-            <LinkIconContainer>
-              <DiscordIcon width={22} height={22} />
-            </LinkIconContainer>
-            <span>Join our Discord</span>
+            <a target="_blank" href="https://discord.com/invite/pWT49HTJJu" rel="noreferrer">
+              <LinkIconContainer>
+                <DiscordIcon width={22} height={22} />
+              </LinkIconContainer>
+              <span>Join our Discord</span>
+            </a>
           </LinkContainer>
           <LinkContainer>
-            <LinkIconContainer>
-              <TwitterIcon width={22} height={22} />
-            </LinkIconContainer>
-            <span>Follow us on Twitter</span>
+            <a target="_blank" href="https://twitter.com/lagunalabs" rel="noreferrer">
+              <LinkIconContainer>
+                <TwitterIcon width={22} height={22} />
+              </LinkIconContainer>
+              <span>Follow us on Twitter</span>
+            </a>
           </LinkContainer>
         </LinksContainer>
         <BottomSection>
           <Button
             onClick={() =>
-              goTo(Wallet, { snackbar: { show: true, message: SnackbarMessages.WalletCreated } })
+              history.push({
+                pathname: router.home,
+                state: { snackbar: { show: true, message: SnackbarMessages.WalletCreated } }
+              })
             }
             type="button"
             justify="center"
@@ -140,7 +153,7 @@ const LinksContainer = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  font-family: 'SFCompactDisplayRegular';
+  font-family: 'Inter';
   font-size: 14px;
   font-weight: 600;
   margin-top: 21px;
@@ -150,13 +163,21 @@ const LinkContainer = styled.div`
   width: 199px;
   height: 39px;
   display: flex;
-  align-items: center;
-  justify-content: center;
+
   background-color: #e6e8ec;
   box-sizing: border-box;
   border-radius: 25px;
   margin-top: 13px;
   cursor: pointer;
+
+  a {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: #fff;
+  }
 
   span {
     font-family: Inter;
@@ -169,6 +190,7 @@ const LinkContainer = styled.div`
 
 const LinkIconContainer = styled.div`
   margin-right: 12px;
+  height: 20px;
 `;
 
 const BottomSection = styled.div`

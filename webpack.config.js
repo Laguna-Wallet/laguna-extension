@@ -3,6 +3,7 @@ const { optimize } = require("webpack")
 const { join, resolve } = require("path")
 const NodePolyfillPlugin = require("node-polyfill-webpack-plugin")
 const Dotenv = require("dotenv-webpack")
+const CopyWebpackPlugin = require("copy-webpack-plugin")
 
 let prodPlugins = []
 if (process.env.NODE_ENV === "production") {
@@ -41,5 +42,21 @@ module.exports = {
   resolve: {
     extensions: [".ts", ".js", ".jsx"],
   },
-  plugins: [new CheckerPlugin(), new NodePolyfillPlugin(), new Dotenv(), ...prodPlugins],
+  plugins: [
+    new CheckerPlugin(),
+    new NodePolyfillPlugin(),
+    new Dotenv(),
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: "node_modules/webextension-polyfill/dist/browser-polyfill.js",
+        },
+        {
+          from: "src/popup/public/icons",
+          to: "icons",
+        },
+      ],
+    }),
+    ...prodPlugins,
+  ],
 }

@@ -6,6 +6,7 @@ import { changeDappAuthorization, changePendingToSign } from 'redux/actions';
 import CheckMarkIcon from 'assets/svgComponents/CheckMarkIcon';
 import { CheckIcon } from '@heroicons/react/outline';
 import { Messages } from 'utils/types';
+import browser from 'webextension-polyfill';
 
 export default function RequestToSignTransaction() {
   const { pendingToSign } = useSelector((state: any) => state.wallet);
@@ -13,7 +14,7 @@ export default function RequestToSignTransaction() {
   const dappName = pendingToSign?.data?.url;
 
   const handleApprove = () => {
-    chrome.runtime.sendMessage({
+    browser.runtime.sendMessage({
       type: Messages.SignRequest,
       payload: {
         approved: true,
@@ -28,7 +29,7 @@ export default function RequestToSignTransaction() {
   };
 
   const handleCancel = () => {
-    chrome.runtime.sendMessage({
+    browser.runtime.sendMessage({
       type: Messages.SignRequest,
       payload: { approved: false, data: pendingToSign }
     });

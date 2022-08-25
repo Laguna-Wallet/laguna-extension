@@ -234,7 +234,7 @@ export function getNetworks(
       chain: 'kusama',
       node: 'wss://kusama-rpc.polkadot.io',
       prefix: 2
-    },
+    }
     // {
     //   name: 'Moonriver',
     //   symbol: 'movr',
@@ -256,13 +256,13 @@ export function getNetworks(
     //   chain: 'shiden',
     //   node: 'wss://shiden.api.onfinality.io/public-ws'
     // },
-    {
-      name: 'Astar',
-      symbol: TokenSymbols.astar,
-      chain: 'astar',
-      node: 'wss://astar.api.onfinality.io/public-ws',
-      prefix: 5
-    }
+    // {
+    //   name: 'Astar',
+    //   symbol: TokenSymbols.astar,
+    //   chain: 'astar',
+    //   node: 'wss://astar.api.onfinality.io/public-ws',
+    //   prefix: 5
+    // }
 
     // wss://rpc.astar.network
 
@@ -359,7 +359,7 @@ export async function getAssets(
       const price = prices[chain]?.usd;
 
       // todo rename calculatedBalance
-      const calculatedPrice = new BigNumber(balance).multipliedBy(price || 0);
+      const calculatedPrice = new BigNumber(balance.overall).multipliedBy(price || 0);
 
       if (price) {
         overallBalance += calculatedPrice.toNumber();
@@ -468,13 +468,24 @@ export function encryptKeyringPairs(oldPassword: string, newPassword: string) {
 
   for (let i = 0; i < pairs.length; i++) {
     const pair = pairs[i];
-    pair.unlock(oldPassword);
 
-    keyring.forgetAccount(pair.address);
-    const { pair: newPair } = keyring.addPair(pair, newPassword);
+    pair.decodePkcs8(oldPassword);
 
-    newPair.setMeta(pair.meta);
-    keyring.saveAccountMeta(newPair, { ...pair.meta });
+    keyring.encryptAccount(pair, newPassword);
+
+    // keyring.addPair(pair, newPassword);
+
+    // const json = pair.toJson(newPassword);
+    // console.log('~ json', json);
+    // keyring.restoreAccount(json, newPassword);
+
+    // pair.unlock(oldPassword);
+    // keyring.forgetAccount(pair.address);
+    // const { pair: newPair } = keyring.addPair(pair, newPassword);
+
+    // console.log('~ newPair', newPair);
+    // newPair.setMeta(pair.meta);
+    // keyring.saveAccountMeta(newPair, { ...pair.meta });
   }
 }
 

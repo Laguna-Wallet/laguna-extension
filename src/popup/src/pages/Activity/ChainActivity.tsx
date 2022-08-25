@@ -3,7 +3,6 @@ import { useAccount } from 'context/AccountContext';
 import activityBg from 'assets/imgs/activity-bg.png';
 import Header from 'pages/Wallet/Header';
 import Footer from 'pages/Wallet/Footer';
-import { goTo } from 'react-chrome-extension-router';
 import { getLatestTransactionsForSingleChain } from 'utils/polkadot';
 import { useEffect, useState } from 'react';
 import ActivityInfo from './ActivityInfo';
@@ -13,16 +12,21 @@ import KusamaLogoIcon from 'assets/svgComponents/KusamaLogoIcon';
 import { Asset, Transaction } from 'utils/types';
 import Popup from 'components/Popup/Popup';
 import { ActivityItem } from './Activity';
-import TokenDashboard from 'pages/TokenDashboard/TokenDashboard';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import { useHistory, useLocation } from 'react-router-dom';
+import { router } from 'router/router';
 
-type Props = {
-  chain: string;
-  asset: Asset;
+type LocationState = {
+  chain?: string;
+  asset?: Asset;
 };
 
-export default function ChainActivity({ chain, asset }: Props) {
+export default function ChainActivity() {
   const account = useAccount();
+  const history = useHistory();
+
+  const location = useLocation<LocationState>();
+  const { chain, asset } = location.state || {};
 
   const wallet = useSelector((state: any) => state.wallet);
   // const transactions = wallet?.transactions[account.getActiveAccount().address];
@@ -46,12 +50,14 @@ export default function ChainActivity({ chain, asset }: Props) {
     async function go() {
       if (!address) return;
       setLoading(true);
-      const { transactions, count }: { count: number; transactions: Transaction[] } =
-        await getLatestTransactionsForSingleChain(address, chain, 0, 10);
+      if (chain) {
+        const { transactions, count }: { count: number; transactions: Transaction[] } =
+          await getLatestTransactionsForSingleChain(address, chain, 0, 10);
 
-      setTransactions(transactions);
-      setCount(count);
-      setLoading(false);
+        setTransactions(transactions);
+        setCount(count);
+        setLoading(false);
+      }
     }
 
     go();
@@ -66,11 +72,13 @@ export default function ChainActivity({ chain, asset }: Props) {
     if (!address) return;
 
     setLoading(true);
-    const { transactions, count }: { count: number; transactions: Transaction[] } =
-      await getLatestTransactionsForSingleChain(address, chain, page, 10);
-    setTransactions((prev) => [...prev, ...transactions]);
-    setLoading(false);
-    setPage((prev) => prev + 1);
+    if (chain) {
+      const { transactions, count }: { count: number; transactions: Transaction[] } =
+        await getLatestTransactionsForSingleChain(address, chain, page, 10);
+      setTransactions((prev) => [...prev, ...transactions]);
+      setLoading(false);
+      setPage((prev) => prev + 1);
+    }
   };
 
   return (
@@ -78,7 +86,7 @@ export default function ChainActivity({ chain, asset }: Props) {
       <Header
         title={`${chain}  Activity`}
         backAction={() => {
-          goTo(TokenDashboard, { asset });
+          history.push({ pathname: router.tokenDashboard, state: { asset } });
         }}
       />
 

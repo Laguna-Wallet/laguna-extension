@@ -7,8 +7,6 @@ import Button from 'components/primitives/Button';
 import HumbleInput from 'components/primitives/HumbleInput';
 import Snackbar from 'components/Snackbar/Snackbar';
 import WizardHeader from 'pages/AddImportAccount/WizardHeader';
-import SignUp from 'pages/SignUp/SignUp';
-import { goTo } from 'react-chrome-extension-router';
 import { useDropzone } from 'react-dropzone';
 import { useDispatch, useSelector } from 'react-redux';
 import { useWizard } from 'react-use-wizard';
@@ -23,8 +21,8 @@ import ButtonsIcon from 'assets/svgComponents/ButtonsIcon';
 import { KeyringPair$Json } from '@polkadot/keyring/types';
 import { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
 import { isHex } from '@polkadot/util';
-import WelcomeBack from 'pages/WelcomeBack/WelcomeBack';
-import AddImportForBoardedUser from '../AddImportForBoardedUser';
+import { useHistory } from 'react-router-dom';
+import { router } from 'router/router';
 
 type Props = {
   onClose: () => void;
@@ -55,6 +53,7 @@ const ImportPhase = ({
   valid
 }: InjectedFormProps<FormProps> & Props) => {
   const { nextStep } = useWizard();
+  const history = useHistory();
 
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
   const [snackbarError, setSnackbarError] = useState<string>('');
@@ -68,17 +67,20 @@ const ImportPhase = ({
   const dispatch = useDispatch();
 
   const onDrop = useCallback(async (acceptedFile: any) => {
-    if (!acceptedFile.length) return;
-    setIsLoading(true);
-    const json = await convertUploadedFileToJson(acceptedFile);
-    // isKeyringPairs$Json(json) ||
-    if (isKeyringJson(json)) {
-      setIsLoading(false);
-      setUploaded(true);
-      setIsFinishSlider(true);
-      dispatch(change('ImportPhase', 'file', json));
-    } else {
+    try {
+      if (!acceptedFile.length) return;
+      setIsLoading(true);
+      const json = await convertUploadedFileToJson(acceptedFile);
+      // isKeyringPairs$Json(json) ||
+      if (isKeyringJson(json)) {
+        setUploaded(true);
+        setIsLoading(false);
+        setIsFinishSlider(true);
+        dispatch(change('ImportPhase', 'file', json));
+      }
+    } catch (err) {
       setIsSnackbarOpen(true);
+      setIsLoading(false);
       setSnackbarError('Not A Valid JSON Backup File (.Json)');
     }
   }, []);
@@ -131,9 +133,9 @@ const ImportPhase = ({
 
   const onBack = () => {
     if (redirectedFromSignUp) {
-      goTo(SignUp);
+      history.push(router.signUp);
     } else if (redirectedFromForgotPassword) {
-      goTo(WelcomeBack);
+      history.push(router.welcomeBack);
     } else {
       if (seedPhase || file || isLoading) {
         dispatch(reset('ImportPhase'));
@@ -141,7 +143,7 @@ const ImportPhase = ({
         setIsSnackbarOpen(false);
         setIsLoading(false);
       } else {
-        goTo(AddImportForBoardedUser);
+        history.push(router.addImportForBoardedUser);
       }
     }
   };
@@ -240,7 +242,7 @@ const ImportPhase = ({
             </InputContainer>
           )}
         </DndContainer>
-        {!uploaded && !seedPhase && (
+        {!uploaded && !seedPhase && !isLoading && (
           <HelpButton onClick={() => setIsPopupOpen(true)}>
             <ButtonsIcon fill="#18191a" />
             <span>Help</span>
@@ -269,7 +271,7 @@ const ImportPhase = ({
           />
         )}
         {isPopupOpen && (
-          <Popup onClose={() => setIsPopupOpen(false)} bg={'rgba(0, 0, 0, 0.3)'}>
+          <Popup bg={'rgba(0, 0, 0, 0.3)'}>
             <HelpImport onClose={() => setIsPopupOpen(false)} />
           </Popup>
         )}

@@ -2,8 +2,8 @@ import { useWizard } from 'react-use-wizard';
 import styled from 'styled-components';
 import CloseIcon from 'assets/svgComponents/CloseIcon';
 import LeftArrowIcon from 'assets/svgComponents/LeftArrowIcon';
-import { goTo } from 'react-chrome-extension-router';
-import SignUp from 'pages/SignUp/SignUp';
+import { useHistory } from 'react-router-dom';
+import { router } from 'router/router';
 
 type Props = {
   activeStep: number;
@@ -16,11 +16,13 @@ const calcProgressBarSize = (activeStep: number): string | undefined => {
 };
 
 export default function WizardStepHeader() {
+  const history = useHistory();
+
   const { activeStep, previousStep, isFirstStep } = useWizard();
 
   const handleBack = () => {
     if (isFirstStep) {
-      goTo(SignUp);
+      history.push(router.signUp);
     }
     previousStep();
   };

@@ -1,4 +1,10 @@
 import axios from 'axios';
+import { changeAccountsBalances, changeTokenReceived } from 'redux/actions';
+import { AppDispatch } from 'redux/store';
+import { checkBalanceChange, timer } from 'utils';
+import { getFromStorage, saveToStorage } from './chrome';
+import { recodeAddress } from './polkadot';
+import { Messages, networks, StorageKeys } from './types';
 
 interface PriceConverter {
   symbol: string;
@@ -36,15 +42,93 @@ export async function getCoinInfo({ chains }: any) {
   return data;
 }
 
-// export async function Token_Meta({ chain, value, from, quote }: PriceConverter) {
-//   return await AXIOS_INSTANCE.post(
-//     `
-//       https://${chain}.api.subscan.io/api/scan/token`,
-//     {
-//       time: Date.now(),
-//       value: 1000,
-//       from: 'USD',
-//       quote: 'DOT'
-//     }
-//   );
-// }
+// todo proper typing
+export async function fetchAccountsBalances(
+  // dispatch: AppDispatch
+  dispatch: any
+) {
+  try {
+    // await timer(3000)
+
+    const account = await getFromStorage(StorageKeys.ActiveAccount);
+
+    const balances = await getFromStorage(StorageKeys.AccountBalances);
+    const parsedBalances = balances ? JSON.parse(balances) : {};
+
+    if (account) {
+      const address = JSON.parse(account as string).address;
+      let result_obj: any = {};
+      const temp_obj: Record<string, any> = {};
+
+      let i = 0;
+
+      while (i < networks.length) {
+        await timer(1000);
+        const network = networks[i];
+
+        const resolved = await searchAccountBallance(
+          network.chain,
+          recodeAddress(address, network?.prefix, network?.encodeType)
+        );
+        // if (resolved.message !== "Success") return
+        if (resolved.message !== 'Success') {
+          if (resolved.message === 'Record Not Found' || resolved?.data?.account?.balance === 0) {
+            i++;
+          }
+          continue;
+        }
+
+        temp_obj[network.chain] = {
+          overall: Number(resolved.data.account.balance),
+          locked: Number(resolved.data.account.balance_lock)
+        };
+
+        if (parsedBalances.address === address) {
+          const accountBalances = parsedBalances?.balances;
+          result_obj = { ...accountBalances, ...temp_obj };
+        } else {
+          result_obj = { ...temp_obj };
+        }
+
+        i++;
+      }
+
+      i = 0;
+
+      const hasReceived: boolean = await checkBalanceChange(result_obj, address);
+
+      saveToStorage({
+        key: StorageKeys.AccountBalances,
+        value: JSON.stringify({ address, balances: result_obj })
+      });
+
+      dispatch(changeAccountsBalances({ address, balances: result_obj }));
+
+      if (hasReceived) {
+        dispatch(changeTokenReceived({ tokenReceived: hasReceived }));
+      }
+    }
+
+    setTimeout(() => fetchAccountsBalances(dispatch), 3000);
+  } catch (err) {
+    setTimeout(() => fetchAccountsBalances(dispatch), 5000);
+    console.log('error while fetching balances:', err);
+  }
+}
+
+async function searchAccountBallance(chain: string, address: string) {
+  if (!chain) return;
+  const res = await fetch(`https://${chain}.api.subscan.io/api/v2/scan/search`, {
+    method: 'POST',
+    mode: 'cors',
+    cache: 'no-cache',
+    credentials: 'same-origin',
+    headers: {
+      'Content-Type': 'application/json'
+      // 'X-API-Key': process.env.REACT_APP_SUBSCAN_KEY || ''
+    },
+    body: JSON.stringify({ key: address, row: 1, page: 1 })
+  });
+
+  return await res.json();
+}

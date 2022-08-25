@@ -1,16 +1,7 @@
+import react from 'react';
 import styled from 'styled-components';
-import walletBG from 'assets/imgs/walletBG.jpg';
-import Header from 'pages/Wallet/Header';
 import SelectAsset from './SelectAsset';
-import BarcodeIcon from 'assets/svgComponents/BarcodeIcon';
-import SharpIcon from 'assets/svgComponents/SharpIcon';
-import WalletIcon from 'assets/svgComponents/WalletIcon';
-import ContactsIcon from 'assets/svgComponents/ContactsIcon';
-import HumbleInput from 'components/primitives/HumbleInput';
-import Button from 'components/primitives/Button';
-import RightArrow from 'assets/svgComponents/RightArrow';
 import Confirm from './Confirm';
-import { goTo, Link } from 'react-chrome-extension-router';
 import {
   getApiInstance,
   getAssets,
@@ -32,6 +23,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { PropsFromTokenDashboard } from 'pages/Recieve/Receive';
 import { selectAsset } from 'redux/actions';
 import { State } from 'redux/store';
+import { useLocation } from 'react-router-dom';
 
 export enum SendAccountFlowEnum {
   SendToTrustedContact = 'SendToTrustedContact',
@@ -48,16 +40,22 @@ export type FlowValue =
 
 type Props = {
   initialIsContactsPopupOpen?: boolean;
-  propsFromTokenDashboard: PropsFromTokenDashboard;
 };
 
-export default function Send({ initialIsContactsPopupOpen, propsFromTokenDashboard }: Props) {
+type LocationState = {
+  propsFromTokenDashboard?: PropsFromTokenDashboard;
+};
+
+function Send({ initialIsContactsPopupOpen }: Props) {
   const account = useAccount();
   const dispatch = useDispatch();
 
   const [flow, setFlow] = useState<FlowValue | undefined>(undefined);
   const [assets, setAssets] = useState<Asset[] | undefined>(undefined);
   const [accountMeta, setAccountMeta] = useState<AccountMeta>();
+
+  const location = useLocation<LocationState>();
+  const { propsFromTokenDashboard } = location?.state || {};
 
   const { prices, infos, accountsBalances, disabledTokens } = useSelector(
     (state: State) => state.wallet
@@ -97,8 +95,10 @@ export default function Send({ initialIsContactsPopupOpen, propsFromTokenDashboa
 
       setLoading(true);
       const api = await getApiInstance(reduxSendTokenState.selectedAsset.chain);
+
       const factor = new BigNumber(10).pow(new BigNumber(api.registry.chainDecimals[0]));
       const amount = new BigNumber(form.amount).multipliedBy(factor);
+
       const balance = await api.derive.balances.all(account.getActiveAccount().address);
       const available = `${balance.availableBalance}`;
       const prefix = api.consts.system.ss58Prefix;
@@ -116,14 +116,15 @@ export default function Send({ initialIsContactsPopupOpen, propsFromTokenDashboa
       const transfer = await api.tx.balances.transfer(form.address, amount.toString());
 
       const { partialFee, weight } = await transfer.paymentInfo(recoded);
+      // const info = await transfer.paymentInfo(recoded);
 
       const fees = new BigNumber(`${partialFee}`).multipliedBy(110).dividedBy(100);
 
       // todo check this
-      const total = amount.plus(fees).plus(api.consts.balances.existentialDeposit.toString());
+      const total = amount.plus(fees);
+      // .plus(api.consts.balances.existentialDeposit.toString());
 
       api.disconnect();
-
       if (total.gt(new BigNumber(available))) {
         setAbilityToTransfer(false);
       } else {
@@ -153,8 +154,10 @@ export default function Send({ initialIsContactsPopupOpen, propsFromTokenDashboa
           flow={flow}
           setFlow={setFlow}
           fee={fee}
+          setLoading={setLoading}
           loading={loading}
           abilityToTransfer={abilityToTransfer}
+          setAbilityToTransfer={setAbilityToTransfer}
           propsFromTokenDashboard={propsFromTokenDashboard}
           accountMeta={accountMeta}
           setAccountMeta={setAccountMeta}
@@ -173,6 +176,8 @@ export default function Send({ initialIsContactsPopupOpen, propsFromTokenDashboa
     </Container>
   );
 }
+
+export default react.memo(Send);
 
 const Container = styled.div<{ bg?: string }>`
   width: 100%;

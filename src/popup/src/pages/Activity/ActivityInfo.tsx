@@ -1,6 +1,4 @@
 import styled from 'styled-components';
-import { goTo } from 'react-chrome-extension-router';
-import Activity from './Activity';
 import { truncateString } from 'utils';
 import BigNumber from 'bignumber.js';
 import { useSelector } from 'react-redux';
@@ -10,6 +8,9 @@ import { CSVLink } from 'react-csv';
 import { format } from 'date-fns';
 import CloseArrowIcon from 'assets/svgComponents/CloseArrowIcon';
 import RightBigArrowIcon from 'assets/svgComponents/RightBigArrowIcon';
+import { useHistory } from 'react-router-dom';
+import { router } from 'router/router';
+import browser from 'webextension-polyfill';
 
 type Props = {
   transaction: Transaction;
@@ -17,6 +18,8 @@ type Props = {
 };
 
 export default function AccountInfo({ transaction, closeAction }: Props) {
+  const history = useHistory();
+
   const { from, to, nonce, amount, fee, chain, hash } = transaction;
   const prices = useSelector((state: any) => state.wallet.prices);
   const price = prices[chain];
@@ -28,7 +31,7 @@ export default function AccountInfo({ transaction, closeAction }: Props) {
   const decimal = tokenDecimals[symbol.toUpperCase()];
 
   const onClick = (hash: string, chain: string) => {
-    chrome.windows.create({ url: `https://${chain}.subscan.io/extrinsic/${hash}` });
+    browser.windows.create({ url: `https://${chain}.subscan.io/extrinsic/${hash}` });
   };
 
   const factor = new BigNumber(10).pow(decimal);
@@ -53,7 +56,8 @@ export default function AccountInfo({ transaction, closeAction }: Props) {
       <ContentItem>
         <Title>
           <span>Receive</span>
-          <CloseIconContainer onClick={() => (closeAction ? closeAction() : goTo(Activity))}>
+          <CloseIconContainer
+            onClick={() => (closeAction ? closeAction() : history.push(router.activity))}>
             <CloseArrowIcon />
           </CloseIconContainer>
         </Title>

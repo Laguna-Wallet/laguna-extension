@@ -11,12 +11,9 @@ import HumbleInput from 'components/primitives/HumbleInput';
 import { reduxForm, Field, getFormSyncErrors, InjectedFormProps } from 'redux-form';
 import { useSelector, connect } from 'react-redux';
 import WizardHeader from 'pages/AddImportAccount/WizardHeader';
-import { goTo } from 'react-chrome-extension-router';
-import Wallet from 'pages/Wallet/Wallet';
 import { checkPasswordStrength } from 'utils/checkPasswordStrength';
-import SignUp from 'pages/SignUp/SignUp';
-import WarningMark from 'assets/svgComponents/WarningMark';
-import WelcomeBack from 'pages/WelcomeBack/WelcomeBack';
+import { useHistory } from 'react-router-dom';
+import { router } from 'router/router';
 
 const validate = (values: { password: string; confirmPassword: string }) => {
   const errors: { password?: string; confirmPassword?: string } = {};
@@ -54,6 +51,8 @@ function CreatePassword({
   redirectedFromForgotPassword
 }: InjectedFormProps & Props) {
   const account = useAccount();
+  const history = useHistory();
+
   const { previousStep } = useWizard();
   const formValues = useSelector((state: any) => state?.form?.CreatePassword?.values);
 
@@ -85,9 +84,9 @@ function CreatePassword({
         <WizardHeader
           onClose={() => {
             if (redirectedFromSignUp) {
-              goTo(SignUp);
+              history.push(router.signUp);
             } else {
-              goTo(WelcomeBack);
+              history.push(router.welcomeBack);
             }
           }}
           onBack={() => {

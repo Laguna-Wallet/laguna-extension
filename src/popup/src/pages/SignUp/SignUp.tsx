@@ -1,16 +1,21 @@
 import Button from 'components/primitives/Button';
-import CreateAccount from 'pages/AddImportAccount/CreateAccount/CreateAccount';
-import { Link } from 'react-chrome-extension-router';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { PageContainer } from 'components/ui';
-
+import browser from 'webextension-polyfill';
 import signUpBg from 'assets/imgs/sign-up-bg.png';
 import mainLogoSvg from 'assets/imgs/main-logo-white.svg';
-import ImportAccount from 'pages/AddImportAccount/ImportAccount/ImportAccount';
+import { router } from 'router/router';
+import { Messages } from 'utils/types';
 
 // import ImportAccount from 'pages/AddImportAccount/ImportAccount';
 
 export default function SignUp() {
+  const handleClick = () => {
+    browser.runtime.sendMessage({
+      type: Messages.OpenSupport
+    });
+  };
   return (
     <PageContainer bgImage={signUpBg}>
       <IconSection>
@@ -19,7 +24,7 @@ export default function SignUp() {
       <MainSection>
         <Title>Laguna</Title>
         <Description>Unlock the Power of Polkadot</Description>
-        <StyledLink component={CreateAccount} props={{ redirectedFromSignUp: true }}>
+        <StyledLink to={{ pathname: router.createAccount, state: { redirectedFromSignUp: true } }}>
           <Button
             width="226px"
             text="Create New Account"
@@ -29,7 +34,7 @@ export default function SignUp() {
             boxShadow="0 4px 33px 0 rgba(30, 35, 53, 0.15)"
           />
         </StyledLink>
-        <StyledLink component={ImportAccount} props={{ redirectedFromSignUp: true }}>
+        <StyledLink to={{ pathname: router.importAccount, state: { redirectedFromSignUp: true } }}>
           <Button
             width="226px"
             text="Import Account"
@@ -41,7 +46,7 @@ export default function SignUp() {
             boxShadow="0 4px 50px 0 rgba(0, 0, 0, 0.1)"
           />
         </StyledLink>
-        <Text>Contact Support</Text>
+        <Text onClick={handleClick}>Contact Support</Text>
       </MainSection>
     </PageContainer>
   );
@@ -100,4 +105,6 @@ const Text = styled.div`
   margin-top: 20px;
   color: #777e90;
   font-size: 12px;
+  z-index: 9999;
+  cursor: pointer;
 `;

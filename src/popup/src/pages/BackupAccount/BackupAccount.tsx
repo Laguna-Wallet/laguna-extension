@@ -1,12 +1,10 @@
 import keyring from '@polkadot/ui-keyring';
 import { useAccount } from 'context/AccountContext';
-import Wallet from 'pages/Wallet/Wallet';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import AES from 'crypto-js/aes';
 import Utf8 from 'crypto-js/enc-utf8';
 import { exportAccount, validatePassword } from 'utils/polkadot';
-import { goTo } from 'react-chrome-extension-router';
 import MenuHeader from 'components/MenuHeader/MenuHeader';
 import ExclamationIcon from 'assets/svgComponents/ExclamationIcon';
 import LockIcon from 'assets/svgComponents/LockIcon';
@@ -18,6 +16,8 @@ import { useSelector } from 'react-redux';
 import { isObjectEmpty } from 'utils';
 import { copyToClipboard, exportJson, validPassword } from 'utils';
 import ButtonsIcon from 'assets/svgComponents/ButtonsIcon';
+import { useHistory } from 'react-router-dom';
+import { router } from 'router/router';
 
 type Props = {
   password: string;
@@ -25,6 +25,8 @@ type Props = {
 
 function BackupAccount({ handleSubmit, valid }: InjectedFormProps<Props>) {
   const account = useAccount();
+  const history = useHistory();
+
   const address = account?.getActiveAccount()?.address;
 
   const formValues = useSelector((state: any) => state?.form?.backupAccount?.values);
@@ -95,11 +97,11 @@ function BackupAccount({ handleSubmit, valid }: InjectedFormProps<Props>) {
         title="BACKUP ACCOUNT"
         onClose={() => {
           mnemonicHasBeenCopied && copyToClipboard('');
-          goTo(Wallet);
+          history.push(router.home);
         }}
         backAction={() => {
           mnemonicHasBeenCopied && copyToClipboard('');
-          goTo(Wallet, { isMenuOpen: true });
+          history.push({ pathname: router.home, state: { isMenuOpen: true } });
         }}
       />
 
@@ -174,7 +176,7 @@ function BackupAccount({ handleSubmit, valid }: InjectedFormProps<Props>) {
               bgColor="#fff"
               onClick={() => {
                 mnemonicHasBeenCopied && copyToClipboard('');
-                goTo(Wallet, { isMenuOpen: true });
+                history.push({ pathname: router.home, state: { isMenuOpen: true } });
               }}
             />
           </>
@@ -201,7 +203,7 @@ export default reduxForm<Record<string, unknown>, any>({
 
 const Container = styled.div<{ opened: boolean }>`
   width: 100%;
-  height: 600px;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   position: absolute;
@@ -280,7 +282,7 @@ const WarningContainer = styled.div<{ seedExists?: boolean }>`
   margin-top: auto;
   color: #fff;
   font-size: 16px;
-  font-family: SFCompactDisplayRegular;
+  font-family: Inter;
   text-align: center;
 `;
 
@@ -318,7 +320,7 @@ const CopyBtn = styled.div`
   margin-top: auto;
 
   span {
-    margin-left: 5px;
+    margin-right: 5px;
   }
 `;
 const ExportJson = styled.div`

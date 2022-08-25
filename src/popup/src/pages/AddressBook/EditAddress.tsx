@@ -2,10 +2,10 @@ import { useEffect, useState } from 'react';
 
 import styled from 'styled-components';
 import { useFormik } from 'formik';
-import { goTo } from 'react-chrome-extension-router';
+import { useHistory } from 'react-router-dom';
+import { router } from 'router/router';
 
 import MenuHeader from 'components/MenuHeader/MenuHeader';
-import Wallet from 'pages/Wallet/Wallet';
 
 import HumbleInput from 'components/primitives/HumbleInput';
 import Button from 'components/primitives/Button';
@@ -16,7 +16,6 @@ import Snackbar from 'components/Snackbar/Snackbar';
 import CloseIcon from 'assets/svgComponents/CloseIcon';
 import { objectValuesToArray } from 'utils';
 import keyring from '@polkadot/ui-keyring';
-import AddressBook from './AddressBook';
 
 type AddAddressFormikValues = {
   name: string;
@@ -25,6 +24,8 @@ type AddAddressFormikValues = {
 };
 
 export default function AddAddress() {
+  const history = useHistory();
+
   const [isOpen, setOpen] = useState<boolean>(true);
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
   const [snackbarError, setSnackbarError] = useState<string>('');
@@ -38,7 +39,7 @@ export default function AddAddress() {
     validationSchema: addAddressSchema,
     onSubmit: ({ address, name, memo }) => {
       keyring.saveAddress(address, { name, memo });
-      goTo(AddressBook);
+      history.push(router.addressBook);
     }
   });
 
@@ -56,7 +57,7 @@ export default function AddAddress() {
       <MenuHeader
         isOpen={isOpen}
         setOpen={setOpen}
-        onClose={() => goTo(Wallet)}
+        onClose={() => history.push(router.home)}
         title="Add Address"
       />
       <Content>
@@ -139,7 +140,7 @@ export default function AddAddress() {
 
 const Container = styled.div`
   width: 100%;
-  height: 600px;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   position: absolute;
