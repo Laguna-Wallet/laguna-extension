@@ -8,6 +8,7 @@ import keyring from '@polkadot/ui-keyring';
 import fs from "fs";
 import { AES } from "crypto-js";
 import Utf8 from "crypto-js/enc-utf8";
+import { ERC20ContractAddress, Network } from "./networks/production";
 
 
 
@@ -143,10 +144,11 @@ export const sendEthTransaction = async (password: string, amount: string, recei
   ){
     const dataArray: Balance[] = []
 
+
     try {
       dataArray.push(await getETHAccountBalances())
 
-      contractAddress.forEach(async element => {
+      Object.values(ERC20ContractAddress[Network.ETHEREUM]).forEach(async (element: any) => {
             const data = await getERC20Balances(element.contractAddress)
             dataArray.push( data)
         });
@@ -158,6 +160,7 @@ export const sendEthTransaction = async (password: string, amount: string, recei
         const storedBalance = {
             ethereum: tokenData
         }
+
   
         saveToStorage({
         key: StorageKeys.ethereumBalances,
