@@ -30,6 +30,7 @@ import * as AES from 'crypto-js/aes';
 import Utf8 from 'crypto-js/enc-utf8';
 import { fetchTransactions, transformTransfers } from './fetchTransactions';
 import { generateRandomBase64Avatar } from 'utils';
+import { generateNewWalletAddress, importWalletAddress } from './ethereumUtils/ethereumApi';
 
 // TODO appropriate typing
 
@@ -109,11 +110,14 @@ export async function importFromMnemonic(seed: string, password: string) {
   const encodedSeed = AES.encrypt(seed, password).toString();
   const { pair } = keyring.addUri(seed, password);
 
+  const ethAddress = generateNewWalletAddress(seed)?.address;
+
   const img = await generateRandomBase64Avatar();
   const newPair = addAccountMeta(pair.address, {
     encodedKey,
     encodedSeed,
     name: pair.address,
+    ethAddress,
     img
   });
 
@@ -269,7 +273,7 @@ export function getNetworks(
       chain: 'Ethereum',
       node: 'wss://eth-mainnet.g.alchemy.com/v2/IFip5pZqfpAsi50-O2a0ZEJoA82E8KR_',
       prefix: 0
-    },
+    }
     // wss://rpc.astar.network
 
     // {
@@ -298,7 +302,6 @@ export function getNetworks(
     //   symbol: 'EDG',
     //   chain: 'edgeware'
     // }
-    
   ];
 
   const ht = tokenInfos.reduce((acc: any, item: any) => {
