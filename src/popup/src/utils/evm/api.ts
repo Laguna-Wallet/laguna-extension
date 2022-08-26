@@ -24,6 +24,11 @@ export const getCheckSumAddress = (address: string): string => {
 }
 
 export const isValidEVMAddress = (address: string): boolean => {
+
+  if(!address.startsWith('0x')) {
+    return false
+  }
+
   const isAddressValid  = ethers.utils.isAddress(address) 
   return isAddressValid
 }
