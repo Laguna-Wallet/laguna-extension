@@ -18,6 +18,16 @@ import { EVMAssetType } from "./networks/asset";
 //     return wallet
 // }
 
+export const getCheckSumAddress = (address: string): string => {
+  const checksumAddress = ethers.utils.getAddress(address) // util returns checksum address
+  return checksumAddress
+}
+
+export const isValidEVMAddress = (address: string): boolean => {
+  const isAddressValid  = ethers.utils.isAddress(address) 
+  return isAddressValid
+}
+
 export const getProvider = (network: EVMNetwork): ethers.providers.JsonRpcProvider => {
   return new ethers.providers.JsonRpcProvider(networks[network].nodeUrl);
 }
