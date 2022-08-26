@@ -39,7 +39,7 @@ import Receive from 'pages/Recieve/Receive';
 import AddRemoveToken from 'pages/AddRemoveToken/AddRemoveToken';
 import { fetchAccountsBalances } from 'utils/Api';
 import { useAccount } from 'context/AccountContext';
-import { getERC20Accounts } from 'utils/ethereumUtils/ethereumApi';
+import { getERC20Accounts } from 'utils/evm/api';
 
 function App() {
   const dispatch = useDispatch();
