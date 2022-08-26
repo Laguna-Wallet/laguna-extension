@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import { IEVMAssetERC20, IEVMAsset, IEVMBuildTransaction, IEVMSignedTransaction } from "./interfaces"
+import { IEVMAssetERC20, IEVMAsset, IEVMBuildTransaction, IEVMToBeSignTransaction } from "./interfaces"
 import fs from "fs";
 import BigNumber from "bignumber.js";
 import { EVMNetwork, networks } from "./networks";
@@ -49,64 +49,35 @@ export const getGasPrice = async (network: EVMNetwork): Promise<BigNumber> => {
   return new BigNumber(gasPrice.toString());
 }
 
-export const getFeeData = async (network: EVMNetwork, contractAddress: string, ReceiverAddress: string, amount: string) => {
-    const provider = new ethers.providers.JsonRpcProvider(networks[network].nodeUrl)
-    const abiFileName = "ERC20";
-    const ERC20ABI = JSON.parse(fs.readFileSync(`./abi/${abiFileName}.json`, "utf-8"));
-    const contract = new ethers.Contract(contractAddress, ERC20ABI, provider)
-    const estimationData = await contract.estimateGas.transfer(ReceiverAddress, amount)
-    return estimationData
+export const estimateGas = async (network: EVMNetwork, toBeSignTransaction: IEVMToBeSignTransaction): Promise<BigNumber> => {
+  const provider = new ethers.providers.JsonRpcProvider(networks[network].nodeUrl)
+  const estimateResult = await provider.estimateGas(toBeSignTransaction);
+  return new BigNumber(estimateResult.toString())
 }
 
 export const buildTransaction = async (
   param: IEVMBuildTransaction
-  ) => {
+  ): Promise<IEVMToBeSignTransaction> => {
     const onChainNonce = await getNonce(param.network, param.fromAddress);
     const toBeSignTransaction = {
         to: param.toAddress,
         from: param.fromAddress,
-        value: param.amount.multipliedBy(`1E${param.asset.decimal}`),
-        gasPrice: param.gasPriceInGwei,
+        value: param.amount.multipliedBy(`1E${param.asset.decimal}`).toString(10),
+        gasPrice: param.gasPriceInGwei.toString(10),
         gasLimit: ethers.utils.hexlify(100000),
-        nonce: onChainNonce, // TODO plus numOfPendingTransaction
+        nonce: onChainNonce.toString(10), // TODO plus numOfPendingTransaction or using ethers.NonceManager
     }
     return toBeSignTransaction
 }
 
-export const broadcastTransaction = async (network: EVMNetwork, transaction: IEVMSignedTransaction): Promise<string> => {   
-  
-    // const account = await getFromStorage(StorageKeys.ActiveAccount);
-  
-    // if(account == null) {
-    //   return "could not find valid account"
-    // }
-  
-    // const provider = new ethers.providers.JsonRpcProvider(networks[network].nodeUrl)
-    // const address = JSON.parse(account as string).address;
-    // const abiFileName = "ERC20";
-    // const ERC20ABI = JSON.parse(fs.readFileSync(`./abi/${abiFileName}.json`, "utf-8"));
-    // const wallet = await getWalletAddress(password, address)
-  
-    // const gasPrice = provider.getGasPrice()
-    // const signer = wallet.connect(provider)
-  
-    // if(contractAddress == null) {
-    //   const tx = buildEthereumTransaction(receiverAddress, amount, gasPrice, wallet.address )
-    //   const transaction = await signer.sendTransaction(tx)
-    //   return transaction.hash;
-  
-    // } else if (contractAddress) {
-    //   getFeeData(contractAddress, receiverAddress, amount)
-    //   const contract = new ethers.Contract(contractAddress, ERC20ABI, provider)
-    //   const tokenSigner = contract.connect(signer)
-    //   const transaction =  await tokenSigner.transfer(receiverAddress, amount)
-    //   return transaction.hash;
-    // }
-  
-    // return "invalid contract type"
+export const broadcastTransaction = async (network: EVMNetwork, signedTx: string): Promise<string> => {   
+    // const signedTx = "0xf8690401825208945555763613a12d8f3e73be831dff8598089d3dca882b992b75cbeb600080820a95a01727bd07080a5d3586422edad86805918e9772adda231d51c32870a1f1cabffba07afc6be528befb79b9ed250356f6eacd63e853685091e9a3987a3d266c6cb26a";
+    const provider = getProvider(network);
+    const transactionReceipt = await provider.sendTransaction(signedTx);
+    return transactionReceipt.hash;
   }
 
-export const getBalance = async (network: EVMNetwork, address: string, asset: IEVMAsset | IEVMAssetERC20): BigNumber => {
+export const getBalance = async (network: EVMNetwork, address: string, asset: IEVMAsset | IEVMAssetERC20): Promise<BigNumber> => {
   const provider = getProvider(network);
   let balanceInBaseUnit;
   switch (asset.assetType) {

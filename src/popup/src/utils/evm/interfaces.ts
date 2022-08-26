@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import { BigNumberish, BytesLike } from "ethers";
 import { EVMNetwork } from "./networks";
 import { EVMAssetType } from "./networks/asset";
 
@@ -45,6 +46,17 @@ export interface IEVMBuildTransaction {
 }
 
 export interface IEVMToBeSignTransaction {
-}
-export interface IEVMSignedTransaction extends IEVMToBeSignTransaction {
+  to?: string,
+  from?: string,
+  nonce?: BigNumberish,
+  gasLimit?: BigNumberish,
+  gasPrice?: BigNumberish,
+  data?: BytesLike,
+  value?: BigNumberish,
+  chainId?: number
+  type?: number;
+  maxPriorityFeePerGas?: BigNumberish;
+  maxFeePerGas?: BigNumberish;
+  customData?: Record<string, any>;
+  ccipReadEnabled?: boolean;
 }
