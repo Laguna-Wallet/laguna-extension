@@ -18,8 +18,8 @@ import { EVMAssetType } from "./networks/asset";
 //     return wallet
 // }
 
-export const getCheckSumAddress = (address: string): string => {
-  const checksumAddress = ethers.utils.getAddress(address); // util returns checksum address
+export const toCheckSumAddress = (address: string): string => {
+  const checksumAddress = ethers.utils.getAddress(address); 
   return checksumAddress;
 }
 
