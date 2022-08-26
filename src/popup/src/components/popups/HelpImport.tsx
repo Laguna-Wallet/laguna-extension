@@ -1,6 +1,6 @@
-import styled from 'styled-components';
-import Button from 'components/primitives/Button';
-import { useEnterClickListener } from 'hooks/useEnterClickListener';
+import styled from "styled-components";
+import Button from "components/primitives/Button";
+import { useEnterClickListener } from "hooks/useEnterClickListener";
 
 type Props = {
   onClose: () => void;
@@ -33,7 +33,7 @@ export function HelpImport({ onClose }: Props) {
             color="#ffffff"
             justify="center"
             onClick={onClose}
-            text={'Close'}
+            text={"Close"}
           />
         </ButtonContainer>
       </MainContent>

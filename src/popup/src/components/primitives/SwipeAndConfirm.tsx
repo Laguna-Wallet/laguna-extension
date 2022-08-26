@@ -1,9 +1,9 @@
-import styled from 'styled-components';
-import { useSwipeable } from 'react-swipeable';
-import { useEffect, useRef, useState } from 'react';
-import RightArrow from 'assets/svgComponents/RightArrow';
-import { useMousePosition } from 'hooks/useMousePosition';
-import Bg from '../../assets/imgs/SwipeAndConfirmBg.png';
+import styled from "styled-components";
+import { useSwipeable } from "react-swipeable";
+import { useEffect, useRef, useState } from "react";
+import RightArrow from "assets/svgComponents/RightArrow";
+import { useMousePosition } from "hooks/useMousePosition";
+import Bg from "../../assets/imgs/SwipeAndConfirmBg.png";
 
 type Props = {
   handleConfirm: () => void;
@@ -53,8 +53,8 @@ export default function SwipeAndConfirm({ handleConfirm, loading, confirmed }: P
   }, [position.x]);
 
   const handleConfirmStatus = (confirmed: boolean, loading: boolean) => {
-    if (confirmed) return <span style={{ color: '#fff' }}>Confirmed</span>;
-    if (loading) return <span style={{ color: '#fff' }}>Confirming...</span>;
+    if (confirmed) return <span style={{ color: "#fff" }}>Confirmed</span>;
+    if (loading) return <span style={{ color: "#fff" }}>Confirming...</span>;
 
     return (
       <>
@@ -98,7 +98,7 @@ const Container = styled.div`
 
 const SwipeItem = styled.div<{ width: number; confirmed: boolean; confirming: boolean }>`
   width: ${({ width, confirmed, confirming }) =>
-    confirmed || confirming ? '345px' : `${width}px`};
+    confirmed || confirming ? "345px" : `${width}px`};
   min-width: 56px;
   max-width: 345px;
   height: 56px;

@@ -1,9 +1,9 @@
-import ErrorIcon from 'assets/svgComponents/ErrorIcon';
-import styled from 'styled-components/macro';
+import ErrorIcon from "assets/svgComponents/ErrorIcon";
+import styled from "styled-components/macro";
 
 type InputProps = {
   id: string;
-  type: 'text' | 'password' | 'textarea';
+  type: "text" | "password" | "textarea";
   placeholder?: string;
   label?: string;
   value: string;
@@ -33,13 +33,13 @@ export default function Input({
   touched,
   marginTop,
   marginBottom,
-  borderColor = '#f4f4f6',
+  borderColor = "#f4f4f6",
   height,
   fontSize,
   textAlign,
   bgColor,
   hideErrorMsg,
-  autoFocus
+  autoFocus,
 }: InputProps) {
   return (
     <Container marginBottom={marginBottom}>
@@ -50,7 +50,7 @@ export default function Input({
         bgColor={bgColor}
         height={height}>
         {label && <Label>{label}</Label>}
-        {type === 'textarea' ? (
+        {type === "textarea" ? (
           <StyledTextarea
             id={id}
             value={value}
@@ -87,7 +87,7 @@ const Container = styled.div<{ marginBottom?: string }>`
   width: 100%;
   display: flex;
   flex-direction: column;
-  margin-bottom: ${({ marginBottom }) => marginBottom || '0px'};
+  margin-bottom: ${({ marginBottom }) => marginBottom || "0px"};
 `;
 
 const InputContainer = styled.div<{
@@ -98,15 +98,15 @@ const InputContainer = styled.div<{
   bgColor?: string;
 }>`
   width: 100%;
-  height: ${({ height }) => (height ? height : 'auto')};
+  height: ${({ height }) => (height ? height : "auto")};
   display: flex;
   flex-direction: column;
   padding: 8px 8px 5px 16px;
   box-sizing: border-box;
   border: 1px solid;
-  border-color: ${({ error, borderColor }) => (error ? '#F05353' : borderColor)};
+  border-color: ${({ error, borderColor }) => (error ? "#F05353" : borderColor)};
   border-radius: 5px;
-  background-color: ${({ bgColor }) => bgColor || '#fff'};
+  background-color: ${({ bgColor }) => bgColor || "#fff"};
   margin-top: ${({ marginTop }) => marginTop || marginTop};
 `;
 
@@ -121,7 +121,7 @@ const StyledInput = styled.input<{ fontSize?: string }>`
   width: 100%;
   height: 100%;
   border: none;
-  font-size: ${({ fontSize }) => (fontSize ? fontSize : '12px')};
+  font-size: ${({ fontSize }) => (fontSize ? fontSize : "12px")};
   padding: 0;
   appearance: none;
   outline: none;
@@ -143,9 +143,9 @@ const StyledTextarea = styled.textarea<{
   width: 100%;
   height: 100%;
   border: none;
-  font-size: ${({ fontSize }) => (fontSize ? fontSize : '12px')};
-  text-align: ${({ textAlign }) => (textAlign ? textAlign : 'left')};
-  background-color: ${({ bgColor }) => bgColor || '#fff'};
+  font-size: ${({ fontSize }) => (fontSize ? fontSize : "12px")};
+  text-align: ${({ textAlign }) => (textAlign ? textAlign : "left")};
+  background-color: ${({ bgColor }) => bgColor || "#fff"};
   padding: 0;
   appearance: none;
   outline: none;

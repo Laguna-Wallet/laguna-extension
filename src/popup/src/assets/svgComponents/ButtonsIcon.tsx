@@ -1,4 +1,4 @@
-import * as React from 'react';
+import * as React from "react";
 
 function ButtonsIcon(props: React.SVGProps<SVGSVGElement> & { fill?: string }) {
   return (

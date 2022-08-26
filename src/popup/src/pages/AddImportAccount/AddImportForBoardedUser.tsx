@@ -1,13 +1,13 @@
-import { Wizard } from 'react-use-wizard';
-import { useHistory } from 'react-router-dom';
+import { Wizard } from "react-use-wizard";
+import { useHistory } from "react-router-dom";
 
-import RightArrow from 'assets/svgComponents/RightArrow';
-import Button from 'components/primitives/Button';
-import styled from 'styled-components';
-import { router } from 'router/router';
+import RightArrow from "assets/svgComponents/RightArrow";
+import Button from "components/primitives/Button";
+import styled from "styled-components";
+import { router } from "router/router";
 
-import WizardHeader from 'pages/AddImportAccount/WizardHeader';
-import AddBigIcon from 'assets/svgComponents/AddBigIcon';
+import WizardHeader from "pages/AddImportAccount/WizardHeader";
+import AddBigIcon from "assets/svgComponents/AddBigIcon";
 
 export default function AddImportForBoardedUser() {
   const history = useHistory();
@@ -16,7 +16,7 @@ export default function AddImportForBoardedUser() {
     <Wizard>
       <Container>
         <WizardHeader
-          title={'ADD / IMPORT ACCOUNT'}
+          title={"ADD / IMPORT ACCOUNT"}
           onBack={() => history.push(router.home)}
           onClose={() => history.push(router.signUp)}
           isHidden={false}
@@ -28,7 +28,7 @@ export default function AddImportForBoardedUser() {
           <Button
             type="button"
             Icon={<RightArrow width={23} />}
-            text={'Create New Account'}
+            text={"Create New Account"}
             justify="center"
             marginText="0 6px"
             onClick={() => history.push(router.createAccount)}
@@ -36,7 +36,7 @@ export default function AddImportForBoardedUser() {
           <Button
             type="button"
             Icon={<RightArrow width={23} />}
-            text={'Import Account'}
+            text={"Import Account"}
             margin="10px 0 0 0"
             justify="center"
             marginText="0 6px"

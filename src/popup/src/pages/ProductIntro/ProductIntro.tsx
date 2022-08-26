@@ -1,15 +1,15 @@
-import { useEffect, useRef, useState } from 'react';
-import { ArrowSmRightIcon } from '@heroicons/react/outline';
-import { Settings } from 'react-slick';
-import Slider from 'components/Slider/Slider';
-import { Link } from 'react-router-dom';
-import Button from 'components/primitives/Button';
-import SignUp from 'pages/SignUp/SignUp';
-import { PageContainer } from 'components/ui';
-import { saveToStorage } from 'utils/chrome';
-import RightArrow from 'assets/svgComponents/RightArrow';
-import styled from 'styled-components';
-import { router } from 'router/router';
+import { useEffect, useRef, useState } from "react";
+import { ArrowSmRightIcon } from "@heroicons/react/outline";
+import { Settings } from "react-slick";
+import Slider from "components/Slider/Slider";
+import { Link } from "react-router-dom";
+import Button from "components/primitives/Button";
+import SignUp from "pages/SignUp/SignUp";
+import { PageContainer } from "components/ui";
+import { saveToStorage } from "utils/chrome";
+import RightArrow from "assets/svgComponents/RightArrow";
+import styled from "styled-components";
+import { router } from "router/router";
 
 export default function ProductIntro() {
   const [activeIndex, setIndex] = useState<number>(0);
@@ -37,15 +37,15 @@ export default function ProductIntro() {
     },
     beforeChange: (prev, next) => {
       setIndex((prev) => next);
-    }
+    },
   };
 
   const handleClick = () => {
-    saveToStorage({ key: 'user-intro', value: 'true' });
+    saveToStorage({ key: "user-intro", value: "true" });
   };
 
   return (
-    <PageContainer paddingTop={'90px'}>
+    <PageContainer paddingTop={"90px"}>
       <Slider settings={sliderSettings}>
         <SliderItem>
           <SliderContent>
@@ -78,7 +78,7 @@ export default function ProductIntro() {
         <Description>The future of Banking</Description>
         {/* todo button separate shared component */}
         <StyledLink to={router.signUp}>
-          <Button onClick={handleClick} Icon={<RightArrow width={23} />} text={'Get Started'} />
+          <Button onClick={handleClick} Icon={<RightArrow width={23} />} text={"Get Started"} />
         </StyledLink>
       </MainSection>
     </PageContainer>
@@ -156,5 +156,5 @@ const MenuItem = styled.div<{ active?: boolean }>`
 
 const PagingItem = styled.div<{ active?: boolean }>`
   cursor: pointer;
-  color: ${({ active }) => (active ? '#111' : '#DFDFDF')};
+  color: ${({ active }) => (active ? "#111" : "#DFDFDF")};
 `;

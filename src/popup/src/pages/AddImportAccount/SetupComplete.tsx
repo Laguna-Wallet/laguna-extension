@@ -1,16 +1,16 @@
-import styled from 'styled-components';
-import CheckMarkIcon from 'assets/svgComponents/CheckMarkIcon';
-import { useHistory } from 'react-router-dom';
-import { router } from 'router/router';
+import styled from "styled-components";
+import CheckMarkIcon from "assets/svgComponents/CheckMarkIcon";
+import { useHistory } from "react-router-dom";
+import { router } from "router/router";
 
-import Button from 'components/primitives/Button';
+import Button from "components/primitives/Button";
 
-import { SnackbarMessages } from 'utils/types';
-import DiscordIcon from 'assets/svgComponents/DiscordIcon';
-import TwitterIcon from 'assets/svgComponents/twitterIcon';
-import Bg from '../../assets/imgs/SetupCompleted-bg.jpg';
-import { reduxForm } from 'redux-form';
-import { useEnterClickListener } from 'hooks/useEnterClickListener';
+import { SnackbarMessages } from "utils/types";
+import DiscordIcon from "assets/svgComponents/DiscordIcon";
+import TwitterIcon from "assets/svgComponents/twitterIcon";
+import Bg from "../../assets/imgs/SetupCompleted-bg.jpg";
+import { reduxForm } from "redux-form";
+import { useEnterClickListener } from "hooks/useEnterClickListener";
 
 function SetupComplete() {
   const history = useHistory();
@@ -19,9 +19,9 @@ function SetupComplete() {
     () =>
       history.push({
         pathname: router.home,
-        state: { snackbar: { show: true, message: SnackbarMessages.WalletCreated } }
+        state: { snackbar: { show: true, message: SnackbarMessages.WalletCreated } },
       }),
-    []
+    [],
   );
 
   return (
@@ -62,13 +62,13 @@ function SetupComplete() {
             onClick={() =>
               history.push({
                 pathname: router.home,
-                state: { snackbar: { show: true, message: SnackbarMessages.WalletCreated } }
+                state: { snackbar: { show: true, message: SnackbarMessages.WalletCreated } },
               })
             }
             type="button"
             justify="center"
             margin="10px 0 0 0"
-            text={'Finish'}
+            text={"Finish"}
           />
         </BottomSection>
       </Content>
@@ -77,8 +77,8 @@ function SetupComplete() {
 }
 
 export default reduxForm<Record<string, unknown>, Record<string, unknown>>({
-  form: 'SetupComplete',
-  destroyOnUnmount: false
+  form: "SetupComplete",
+  destroyOnUnmount: false,
 })(SetupComplete);
 
 const Container = styled.div<{ bg: string }>`

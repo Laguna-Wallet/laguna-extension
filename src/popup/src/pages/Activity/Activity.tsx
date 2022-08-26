@@ -1,26 +1,26 @@
-import styled from 'styled-components';
-import { useAccount } from 'context/AccountContext';
-import activityBg from 'assets/imgs/activity-bg.png';
-import Header from 'pages/Wallet/Header';
-import Footer from 'pages/Wallet/Footer';
-import { recodeAddress } from 'utils/polkadot';
-import { useEffect, useState } from 'react';
-import ThreeDotsIcon from 'assets/svgComponents/ThreeDotsIcon';
-import ActivityInfo from './ActivityInfo';
-import { useSelector } from 'react-redux';
-import { truncateString } from 'utils';
-import { format } from 'date-fns';
-import RightArrow from 'assets/svgComponents/RightArrow';
-import { PlusIcon } from '@heroicons/react/outline';
-import PolkadotLogoIcon from 'assets/svgComponents/PolkadotLogoIcon';
-import KusamaLogoIcon from 'assets/svgComponents/KusamaLogoIcon';
-import { TokenSymbols, Transaction } from 'utils/types';
-import { fetchAccountsTransactions } from 'utils/fetchTransactions';
-import Popup from 'components/Popup/Popup';
-import Loader from 'components/Loader/Loader';
-import InactiveField from 'components/InactiveField/InactiveField';
-import { router } from 'router/router';
-import { useHistory } from 'react-router-dom';
+import styled from "styled-components";
+import { useAccount } from "context/AccountContext";
+import activityBg from "assets/imgs/activity-bg.png";
+import Header from "pages/Wallet/Header";
+import Footer from "pages/Wallet/Footer";
+import { recodeAddress } from "utils/polkadot";
+import { useEffect, useState } from "react";
+import ThreeDotsIcon from "assets/svgComponents/ThreeDotsIcon";
+import ActivityInfo from "./ActivityInfo";
+import { useSelector } from "react-redux";
+import { truncateString } from "utils";
+import { format } from "date-fns";
+import RightArrow from "assets/svgComponents/RightArrow";
+import { PlusIcon } from "@heroicons/react/outline";
+import PolkadotLogoIcon from "assets/svgComponents/PolkadotLogoIcon";
+import KusamaLogoIcon from "assets/svgComponents/KusamaLogoIcon";
+import { TokenSymbols, Transaction } from "utils/types";
+import { fetchAccountsTransactions } from "utils/fetchTransactions";
+import Popup from "components/Popup/Popup";
+import Loader from "components/Loader/Loader";
+import InactiveField from "components/InactiveField/InactiveField";
+import { router } from "router/router";
+import { useHistory } from "react-router-dom";
 
 type Props = {
   isMenuOpen?: boolean;
@@ -59,13 +59,13 @@ export const ActivityItem = ({ transaction, onClick, bgColor }: Props) => {
       </Icon>
       <Info>
         <InfoTop>
-          {transaction.amount} <span>{TokenSymbols[transaction?.chain]} </span>{' '}
+          {transaction.amount} <span>{TokenSymbols[transaction?.chain]} </span>{" "}
         </InfoTop>
         <InfoBottom>
           {isSent
-            ? 'to ' + truncateString(transaction.to)
-            : 'from ' + truncateString(transaction.from)}
-          {'  '} {format(Number(transaction.timestamp) * 1000, 'dd MMM yyyy')}
+            ? "to " + truncateString(transaction.to)
+            : "from " + truncateString(transaction.from)}
+          {"  "} {format(Number(transaction.timestamp) * 1000, "dd MMM yyyy")}
         </InfoBottom>
       </Info>
       <Actions>
@@ -92,7 +92,7 @@ export default function Activity() {
   const sortedTransactions =
     transactions &&
     transactions.sort(
-      (a: any, b: any) => (new Date(b.timestamp) as any) - (new Date(a.timestamp) as any)
+      (a: any, b: any) => (new Date(b.timestamp) as any) - (new Date(a.timestamp) as any),
     );
 
   useEffect(() => {
@@ -150,21 +150,21 @@ export default function Activity() {
 
 function handleIcons(chain: any) {
   switch (chain) {
-    case 'westend':
+    case "westend":
       return (
         <PolkadotLogoIcon
         // width={20} height={20}
         />
       );
     // break;
-    case 'polkadot':
+    case "polkadot":
       return (
         <PolkadotLogoIcon
         //  width={20} height={20}
         />
       );
     // break;
-    case 'kusama':
+    case "kusama":
       return <KusamaLogoIcon fill="#111" stroke="#111" />;
     // break;
     default:
@@ -181,7 +181,7 @@ const Container = styled.div<{ bg: string; isEmpty: boolean }>`
   position: relative;
   background-image: ${({ bg }) => `url(${bg})`};
   background-size: cover;
-  padding-top: ${({ isEmpty }) => (isEmpty ? '88px' : '50px')};
+  padding-top: ${({ isEmpty }) => (isEmpty ? "88px" : "50px")};
   padding-bottom: 50px;
   overflow: hidden;
 `;
@@ -240,7 +240,7 @@ const ActivityItemContainer = styled.div<{ bgColor?: string }>`
   padding: 14px;
   box-sizing: border-box;
   text-decoration: none;
-  background-color: ${({ bgColor }) => bgColor || '#fff'};
+  background-color: ${({ bgColor }) => bgColor || "#fff"};
   border-radius: 4px;
   cursor: pointer;
 `;

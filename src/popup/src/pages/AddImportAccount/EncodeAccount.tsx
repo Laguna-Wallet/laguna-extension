@@ -1,18 +1,18 @@
-import CheckMarkIcon from 'assets/svgComponents/CheckMarkIcon';
-import Button from 'components/primitives/Button';
-import HumbleInput from 'components/primitives/HumbleInput';
-import Snackbar from 'components/Snackbar/Snackbar';
-import { useState } from 'react';
-import { useSelector } from 'react-redux';
-import styled from 'styled-components';
-import { validatePassword } from 'utils/polkadot';
-import encodeBg from 'assets/imgs/encode-bg.png';
-import { useWizard } from 'react-use-wizard';
-import { State } from 'redux/store';
-import { reduxForm, Field, InjectedFormProps } from 'redux-form';
-import { isObjectEmpty, validPassword } from 'utils';
-import { useHistory } from 'react-router-dom';
-import { router } from 'router/router';
+import CheckMarkIcon from "assets/svgComponents/CheckMarkIcon";
+import Button from "components/primitives/Button";
+import HumbleInput from "components/primitives/HumbleInput";
+import Snackbar from "components/Snackbar/Snackbar";
+import { useState } from "react";
+import { useSelector } from "react-redux";
+import styled from "styled-components";
+import { validatePassword } from "utils/polkadot";
+import encodeBg from "assets/imgs/encode-bg.png";
+import { useWizard } from "react-use-wizard";
+import { State } from "redux/store";
+import { reduxForm, Field, InjectedFormProps } from "redux-form";
+import { isObjectEmpty, validPassword } from "utils";
+import { useHistory } from "react-router-dom";
+import { router } from "router/router";
 
 type Props = {
   handleEncode: (password: string) => void;
@@ -29,12 +29,12 @@ function EncodeAccount({
   handleSubmit,
   title,
   valid,
-  descriptionText
+  descriptionText,
 }: InjectedFormProps<Form> & Props) {
   const { nextStep } = useWizard();
   const history = useHistory();
 
-  const [snackbarError, setSnackbarError] = useState<string>('');
+  const [snackbarError, setSnackbarError] = useState<string>("");
   const [isChangeValue, setIsChangeValue] = useState<boolean>(false);
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
 
@@ -56,7 +56,7 @@ function EncodeAccount({
         }
       } else {
         setIsSnackbarOpen(true);
-        setSnackbarError('Incorrect Password');
+        setSnackbarError("Incorrect Password");
         setIsChangeValue(true);
         return;
       }
@@ -80,19 +80,19 @@ function EncodeAccount({
             placeholder="Enter your password"
             component={HumbleInput}
             props={{
-              type: 'password',
-              height: '48px',
-              fontSize: '16px',
-              marginTop: '20px',
-              textAlign: 'center',
-              bgColor: '#f2f2f2',
-              color: '#b1b5c3',
-              placeholderColor: '#000',
+              type: "password",
+              height: "48px",
+              fontSize: "16px",
+              marginTop: "20px",
+              textAlign: "center",
+              bgColor: "#f2f2f2",
+              color: "#b1b5c3",
+              placeholderColor: "#000",
               autoFocus: true,
               isChangeValue,
               setIsChangeValue,
-              errorBorderColor: '#fb5a5a',
-              padding: '0 16px'
+              errorBorderColor: "#fb5a5a",
+              padding: "0 16px",
             }}
           />
           <Button
@@ -110,7 +110,7 @@ function EncodeAccount({
           close={() => setIsSnackbarOpen(false)}
           type="error"
           left="26px"
-          bottom={'138px'}
+          bottom={"138px"}
           transform="translateX(0)"
         />
       </Content>
@@ -119,8 +119,8 @@ function EncodeAccount({
 }
 
 export default reduxForm<Record<string, unknown>, any>({
-  form: 'EncodeAccount',
-  validate: validPassword
+  form: "EncodeAccount",
+  validate: validPassword,
 })(EncodeAccount);
 
 const Container = styled.div<{ bg?: string }>`

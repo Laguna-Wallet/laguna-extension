@@ -1,19 +1,19 @@
-import { useEffect, useState } from 'react';
-import { CheckIcon } from '@heroicons/react/outline';
-import ShareIcon from 'assets/svgComponents/ShareIcon';
-import MenuHeader from 'components/MenuHeader/MenuHeader';
-import Snackbar from 'components/Snackbar/Snackbar';
-import { useAccount } from 'context/AccountContext';
-import { useSelector } from 'react-redux';
-import styled from 'styled-components';
-import { Messages, SnackbarMessages } from 'utils/types';
-import { useHistory } from 'react-router-dom';
-import { router } from 'router/router';
-import browser from 'webextension-polyfill';
-import RevokeIcon from 'assets/svgComponents/RevokeIcon';
-import Button from 'components/primitives/Button';
-import { useDispatch } from 'react-redux';
-import { changeConnectedApps } from 'redux/actions';
+import { useEffect, useState } from "react";
+import { CheckIcon } from "@heroicons/react/outline";
+import ShareIcon from "assets/svgComponents/ShareIcon";
+import MenuHeader from "components/MenuHeader/MenuHeader";
+import Snackbar from "components/Snackbar/Snackbar";
+import { useAccount } from "context/AccountContext";
+import { useSelector } from "react-redux";
+import styled from "styled-components";
+import { Messages, SnackbarMessages } from "utils/types";
+import { useHistory } from "react-router-dom";
+import { router } from "router/router";
+import browser from "webextension-polyfill";
+import RevokeIcon from "assets/svgComponents/RevokeIcon";
+import Button from "components/primitives/Button";
+import { useDispatch } from "react-redux";
+import { changeConnectedApps } from "redux/actions";
 
 // todo proper typing
 type Props = {
@@ -27,7 +27,7 @@ function ConnectedSites({ handleSubmit }: Props) {
   const [isOpen, setOpen] = useState<boolean>(true);
 
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
-  const [snackbarMessage, setSnackbarMessage] = useState<string>('');
+  const [snackbarMessage, setSnackbarMessage] = useState<string>("");
 
   const account = useAccount();
   const activeAccount = account.getActiveAccount();
@@ -36,7 +36,7 @@ function ConnectedSites({ handleSubmit }: Props) {
 
   useEffect(() => {
     browser.runtime.sendMessage({
-      type: Messages.ConnectedApps
+      type: Messages.ConnectedApps,
     });
   }, []);
 

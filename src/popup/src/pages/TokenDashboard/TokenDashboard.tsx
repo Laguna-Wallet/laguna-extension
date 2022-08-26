@@ -1,25 +1,25 @@
-import Header from 'pages/Wallet/Header';
-import styled from 'styled-components';
-import { Asset, TokenInfo, Transaction } from 'utils/types';
-import dashboardBG from 'assets/imgs/dashboard-bg.jpg';
-import { useDispatch, useSelector } from 'react-redux';
-import NetworkIcons from 'components/primitives/NetworkIcons';
-import BigNumber from 'bignumber.js';
-import { selectAsset } from 'redux/actions';
-import { ActivityItem } from 'pages/Activity/Activity';
-import { useEffect, useState } from 'react';
-import { getLatestTransactionsForSingleChain } from 'utils/polkadot';
-import { useAccount } from 'context/AccountContext';
-import Footer from 'pages/Wallet/Footer';
-import ReceiveIcon from 'assets/svgComponents/ReceiveIcon';
-import SendIcon from 'assets/svgComponents/SendIIcon';
-import Popup from 'components/Popup/Popup';
-import ActivityInfo from 'pages/Activity/ActivityInfo';
-import InactiveField from 'components/InactiveField/InactiveField';
-import { useHistory, Link, useLocation } from 'react-router-dom';
-import { router } from 'router/router';
-import ToolTipIcon from 'assets/svgComponents/ToolTipIcon';
-import MappleToolTip from 'reactjs-mappletooltip';
+import Header from "pages/Wallet/Header";
+import styled from "styled-components";
+import { Asset, TokenInfo, Transaction } from "utils/types";
+import dashboardBG from "assets/imgs/dashboard-bg.jpg";
+import { useDispatch, useSelector } from "react-redux";
+import NetworkIcons from "components/primitives/NetworkIcons";
+import BigNumber from "bignumber.js";
+import { selectAsset } from "redux/actions";
+import { ActivityItem } from "pages/Activity/Activity";
+import { useEffect, useState } from "react";
+import { getLatestTransactionsForSingleChain } from "utils/polkadot";
+import { useAccount } from "context/AccountContext";
+import Footer from "pages/Wallet/Footer";
+import ReceiveIcon from "assets/svgComponents/ReceiveIcon";
+import SendIcon from "assets/svgComponents/SendIIcon";
+import Popup from "components/Popup/Popup";
+import ActivityInfo from "pages/Activity/ActivityInfo";
+import InactiveField from "components/InactiveField/InactiveField";
+import { useHistory, Link, useLocation } from "react-router-dom";
+import { router } from "router/router";
+import ToolTipIcon from "assets/svgComponents/ToolTipIcon";
+import MappleToolTip from "reactjs-mappletooltip";
 
 type LocationState = {
   asset: Asset;
@@ -42,7 +42,7 @@ export default function TokenDashboard() {
     prices,
     infos,
     accountsBalances,
-    loading: accountsChanging
+    loading: accountsChanging,
   } = useSelector((state: any) => state.wallet);
 
   const chain = asset?.chain;
@@ -57,18 +57,18 @@ export default function TokenDashboard() {
 
   const balanceInUsd = price ? new BigNumber(overallBalance).multipliedBy(price).toFormat(4) : 0;
 
-  const negativeValue = String(price_change_percentage_24h).includes('-');
+  const negativeValue = String(price_change_percentage_24h).includes("-");
   const renderPusSymbol =
     !negativeValue &&
-    !String(price_change_percentage_24h).includes('+') &&
+    !String(price_change_percentage_24h).includes("+") &&
     price_change_percentage_24h !== undefined &&
-    '+';
+    "+";
 
   const handleSendRoute = () => {
     if (asset) {
       history.push({
         pathname: router.send,
-        state: { propsFromTokenDashboard: { chain, fromTokenDashboard: true, asset } }
+        state: { propsFromTokenDashboard: { chain, fromTokenDashboard: true, asset } },
       });
       dispatch(selectAsset(asset));
     }
@@ -81,7 +81,7 @@ export default function TokenDashboard() {
           currAccountAddress,
           chain,
           0,
-          10
+          10,
         );
 
         setTransactions(transactions);
@@ -92,7 +92,7 @@ export default function TokenDashboard() {
   }, []);
 
   const handleChain = (chain: string) => {
-    if (chain === 'polkadot') return 'Polkadot Main Network';
+    if (chain === "polkadot") return "Polkadot Main Network";
     return `${chain} Network`;
   };
 
@@ -121,7 +121,7 @@ export default function TokenDashboard() {
                   <BalancesRow>
                     <span>Transferable</span>
                     <span>
-                      {new BigNumber(overallBalance).minus(lockedBalance).toString()}{' '}
+                      {new BigNumber(overallBalance).minus(lockedBalance).toString()}{" "}
                       {symbol?.toUpperCase()}
                     </span>
                   </BalancesRow>
@@ -143,7 +143,7 @@ export default function TokenDashboard() {
                   </BalancesRow>
                 </Balances>
                 <CardBottom>
-                  <Tag>{handleChain(chain || '')}</Tag>
+                  <Tag>{handleChain(chain || "")}</Tag>
                   <Rate negativeValue={negativeValue}>
                     {renderPusSymbol}
                     {price_change_percentage_24h
@@ -164,7 +164,7 @@ export default function TokenDashboard() {
               <StyledLink
                 to={{
                   pathname: router.receive,
-                  state: { propsFromTokenDashboard: { chain, fromTokenDashboard: true, asset } }
+                  state: { propsFromTokenDashboard: { chain, fromTokenDashboard: true, asset } },
                 }}>
                 {/* props={{ propsFromTokenDashboard: { chain, fromTokenDashboard: true, asset } }}> */}
                 <Button>
@@ -192,7 +192,7 @@ export default function TokenDashboard() {
                     <ActivityItem
                       key={`chain-actvity-${transaction.chain}-${index}`}
                       transaction={transaction}
-                      bgColor={'#f9fafb'}
+                      bgColor={"#f9fafb"}
                       onClick={() => handleClick(transaction)}
                     />
                   ))}
@@ -232,7 +232,7 @@ const Container = styled.div<{ bg: string }>`
 const Content = styled.div<{ isEmpty: boolean }>`
   width: 100%;
   height: 100%;
-  margin-top: ${({ isEmpty }) => (isEmpty ? '38px' : '60px')};
+  margin-top: ${({ isEmpty }) => (isEmpty ? "38px" : "60px")};
   box-sizing: border-box;
 `;
 
@@ -339,7 +339,7 @@ const Rate = styled.div<{ negativeValue: boolean }>`
   font-family: Inter;
   font-size: 14px;
   font-weight: 500;
-  color: ${({ negativeValue }) => (!negativeValue ? '#45b26b' : '#606060')};
+  color: ${({ negativeValue }) => (!negativeValue ? "#45b26b" : "#606060")};
 `;
 
 const ButtonsContainer = styled.div`
