@@ -3,14 +3,15 @@ import styled from 'styled-components';
 import { useIdleTimer } from 'react-idle-timer';
 import { sendMessagePromise } from 'utils/chrome';
 import { Messages } from 'utils/types';
+import browser from 'webextension-polyfill';
 
 export default function IdleTimeoutWrapper({ children }: { children: React.ReactChild }) {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
   useEffect(() => {
     async function go() {
-      const AuthResponse = await sendMessagePromise({ type: Messages.AuthCheck });
-      setIsLoggedIn(AuthResponse.payload.isLoggedIn);
+      const AuthResponse = await browser.runtime.sendMessage({ type: Messages.AuthCheck });
+      // setIsLoggedIn(AuthResponse.payload.isLoggedIn);
     }
 
     go();

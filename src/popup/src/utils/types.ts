@@ -54,7 +54,7 @@ export interface Asset {
   name: string;
   symbol: string;
   chain: string;
-  balance?: number;
+  balance?: { overall: number; locked: number };
   calculatedPrice?: number;
   price?: number;
   encodeType?: string;
@@ -107,7 +107,10 @@ export enum Messages {
   RevokeDapp = 'REVOKE_DAPP',
   TokenReceived = 'TOKEN_RECEIVED',
   Timeout = 'TIMEOUT',
-  ResetTimeout = 'RESET_TIMEOUT'
+  ResetTimeout = 'RESET_TIMEOUT',
+  FreezeAccountBalanceUpdate = 'FREEZE_ACCOUNT_BALANCE_UPDATE',
+  OpenSupport = 'OPEN_SUPPORT',
+  DisconnectAllSites = 'DISCONNECT_ALL_SITES'
 }
 
 //==============================================================================
@@ -270,3 +273,58 @@ export interface AccountMeta {
   notSecured?: boolean;
   encodedSeed?: string;
 }
+
+export const networks: Network[] = [
+  {
+    name: 'Polkadot',
+    symbol: TokenSymbols.westend,
+    chain: 'westend',
+    node: 'wss://westend-rpc.polkadot.io',
+    prefix: 42
+  },
+  {
+    name: 'Polkadot',
+    symbol: TokenSymbols.polkadot,
+    chain: 'polkadot',
+    node: 'wss://rpc.polkadot.io',
+    prefix: 0
+  },
+  {
+    name: 'Kusama',
+    symbol: TokenSymbols.kusama,
+    chain: 'kusama',
+    node: 'wss://kusama-rpc.polkadot.io',
+    prefix: 2
+  }
+  // {
+  //   name: 'Moonriver',
+  //   symbol: 'movr',
+  //   chain: 'moonriver',
+  //   node: 'wss://moonriver-rpc.polkadot.io',
+  //   prefix: 1285,
+  //   encodeType: 'ethereum'
+  // },
+  // {
+  //   name: 'Moonbeam',
+  //   symbol: 'glmr',
+  //   chain: 'moonbeam',
+  //   // chain: ' moonbeam-alpha',
+  //   node: 'wss://moonbeam-rpc.polkadot.io',
+  //   encodeType: 'ethereum',
+  //   prefix: 1284
+  // },
+  // {
+  //   name: 'Shiden',
+  //   symbol: 'sdn',
+  //   chain: 'shiden',
+  //   node: 'wss://shiden.api.onfinality.io/public-ws',
+  //   prefix: 5
+  // },
+  // {
+  //   name: 'Astar',
+  //   symbol: TokenSymbols.astar,
+  //   chain: 'astar',
+  //   node: 'wss://astar.api.onfinality.io/public-ws',
+  //   prefix: 5
+  // }
+];

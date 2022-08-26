@@ -1,13 +1,13 @@
 import '@polkadot/wasm-crypto/initOnlyAsm';
 import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
+import { HashRouter } from 'react-router-dom';
 
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
-import { Router } from 'react-chrome-extension-router';
 import GlobalStyles from './global.styles';
 import { AccountProvider } from 'context/AccountContext';
 import { Provider } from 'react-redux';
@@ -23,16 +23,16 @@ generateStore().then((store) => {
 
     ReactDOM.render(
       <React.StrictMode>
-        <React.StrictMode>
-          <Provider store={store}>
-            <IdleTimeoutWrapper>
-              <AccountProvider>
-                <GlobalStyles />
+        <Provider store={store}>
+          <IdleTimeoutWrapper>
+            <AccountProvider>
+              <GlobalStyles />
+              <HashRouter>
                 <App />
-              </AccountProvider>
-            </IdleTimeoutWrapper>
-          </Provider>
-        </React.StrictMode>
+              </HashRouter>
+            </AccountProvider>
+          </IdleTimeoutWrapper>
+        </Provider>
       </React.StrictMode>,
       document.getElementById('root')
     );

@@ -7,10 +7,10 @@ import { Dispatch, useEffect, useState } from 'react';
 // Todo Move ChainItem Into Shared
 import ChainItem from '../../pages/Wallet/ChainItem';
 import { useAccount } from 'context/AccountContext';
-import { getAssets } from 'utils/polkadot';
-import { goTo, Link } from 'react-chrome-extension-router';
 import { Asset } from 'utils/types';
 import { useWizard } from 'react-use-wizard';
+import { useHistory } from 'react-router-dom';
+import { router } from 'router/router';
 
 type Props = {
   assets: Asset[];
@@ -21,6 +21,8 @@ type Props = {
 export default function SelectAsset({ assets, selectedAsset, setSelectedAsset }: Props) {
   const account = useAccount();
   const { nextStep } = useWizard();
+  const history = useHistory();
+
   const [assetsFilter, setAssetsFilter] = useState<string>('');
 
   const handleClick = (asset: Asset) => {
@@ -34,7 +36,7 @@ export default function SelectAsset({ assets, selectedAsset, setSelectedAsset }:
 
   return (
     <Container bg={walletBG}>
-      <Header title="SELECT ASSET" backAction={() => goTo(Wallet)} />
+      <Header title="SELECT ASSET" backAction={() => history.push(router.home)} />
       <Content>
         <HumbleInput
           id="id"

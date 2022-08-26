@@ -2,24 +2,25 @@ import { useState } from 'react';
 import styled from 'styled-components';
 
 import Header from 'pages/Wallet/Header';
-import Wallet from 'pages/Wallet/Wallet';
 import HumbleInput from 'components/primitives/HumbleInput';
 // Todo Move ChainItem Into Shared
 import ChainItem from '../../pages/Wallet/ChainItem';
 import { useAccount } from 'context/AccountContext';
-import { goTo } from 'react-chrome-extension-router';
 import { Asset } from 'utils/types';
 import { useWizard } from 'react-use-wizard';
 import { useDispatch } from 'react-redux';
 import { selectAsset } from 'redux/actions';
 import { reset } from 'redux-form';
 import LoopIcon from 'assets/svgComponents/loopIcon';
+import { useHistory } from 'react-router-dom';
+import { router } from 'router/router';
 
 type Props = {
   assets: undefined | Asset[];
 };
 
 export default function SelectAsset({ assets }: Props) {
+  const history = useHistory();
   const account = useAccount();
   const dispatch = useDispatch();
 
@@ -35,18 +36,17 @@ export default function SelectAsset({ assets }: Props) {
     return assets.filter((asset) => asset.name.toLowerCase().includes(assetsFilter.toLowerCase()));
   };
 
+  const headerAction = () => {
+    dispatch(reset('sendToken'));
+    history.push(router.home);
+  };
+
   return (
     <Container>
       <Header
         title="SELECT ASSET"
-        closeAction={() => {
-          dispatch(reset('sendToken'));
-          goTo(Wallet);
-        }}
-        backAction={() => {
-          goTo(Wallet);
-          dispatch(reset('sendToken'));
-        }}
+        closeAction={headerAction}
+        backAction={headerAction}
         bgColor="#f2f2f2"
       />
 

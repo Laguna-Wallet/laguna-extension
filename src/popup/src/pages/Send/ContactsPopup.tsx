@@ -171,6 +171,7 @@ const AddressesContainer = styled.div`
   max-height: 336px;
   overflow-y: scroll;
   margin: 12px 0;
+  scrollbar-width: none;
 
   ::-webkit-scrollbar {
     display: none;
@@ -201,7 +202,7 @@ const AddAddressPopupContainer = styled.div`
 `;
 
 const Text = styled.div`
-  font-family: 'SFCompactDisplayRegular';
+  font-family: 'Inter';
   text-align: center;
   color: #111;
   font-size: 16px;

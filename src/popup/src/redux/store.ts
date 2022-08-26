@@ -15,7 +15,10 @@ export interface State {
     isLoggedIn: boolean | undefined;
     prices: Prices;
     infos: any[];
-    accountsBalances: any;
+    accountsBalances: {
+      address: string;
+      balances: Record<string, { transferable: number; locked: number }>;
+    };
     transactions: any[];
     idleTimeout: number;
     tokenReceived: boolean;
@@ -78,3 +81,5 @@ async function generateStore(): Promise<Store<any, any>> {
 }
 
 export default generateStore;
+
+export type AppDispatch = (arg: State) => State;

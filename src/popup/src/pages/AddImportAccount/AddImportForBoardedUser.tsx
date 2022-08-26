@@ -1,26 +1,24 @@
 import { Wizard } from 'react-use-wizard';
-import ImportAccount from './ImportAccount/ImportAccount';
-import CreateAccount from './CreateAccount/CreateAccount';
+import { useHistory } from 'react-router-dom';
 
-import PlusIcon from '@heroicons/react/outline/PlusIcon';
 import RightArrow from 'assets/svgComponents/RightArrow';
 import Button from 'components/primitives/Button';
-import Wallet from 'pages/Wallet/Wallet';
-import { goTo } from 'react-chrome-extension-router';
 import styled from 'styled-components';
-import SignUp from 'pages/SignUp/SignUp';
+import { router } from 'router/router';
 
 import WizardHeader from 'pages/AddImportAccount/WizardHeader';
 import AddBigIcon from 'assets/svgComponents/AddBigIcon';
 
 export default function AddImportForBoardedUser() {
+  const history = useHistory();
+
   return (
     <Wizard>
       <Container>
         <WizardHeader
           title={'ADD / IMPORT ACCOUNT'}
-          onBack={() => goTo(Wallet)}
-          onClose={() => goTo(SignUp)}
+          onBack={() => history.push(router.home)}
+          onClose={() => history.push(router.signUp)}
           isHidden={false}
         />
         <PlusIconContainer>
@@ -33,7 +31,7 @@ export default function AddImportForBoardedUser() {
             text={'Create New Account'}
             justify="center"
             marginText="0 6px"
-            onClick={() => goTo(CreateAccount)}
+            onClick={() => history.push(router.createAccount)}
           />
           <Button
             type="button"
@@ -42,7 +40,7 @@ export default function AddImportForBoardedUser() {
             margin="10px 0 0 0"
             justify="center"
             marginText="0 6px"
-            onClick={() => goTo(ImportAccount)}
+            onClick={() => history.push(router.importAccount)}
           />
         </ButtonContainer>
       </Container>

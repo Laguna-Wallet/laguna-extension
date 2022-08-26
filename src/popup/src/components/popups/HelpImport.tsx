@@ -22,8 +22,8 @@ export function HelpImport({ onClose }: Props) {
             space and double check the spelling carefully.
           </span>
           <span>
-            Entering a Polkadot address will import a &apos;Watch Only &apos; account. For more help
-            visit our <b>&apos;import a wallet&apos;</b> wiki page.
+            Entering a Polkadot address will import a &apos;Watch Only &apos; account.
+            {/* For more help visit our <b>&apos;import a wallet&apos;</b> wiki page. */}
           </span>
         </Description>
 
@@ -51,7 +51,7 @@ const Container = styled.div`
   position: absolute;
   top: 0;
   left: 0;
-  z-index: 9999;
+  z-index: 99999;
 `;
 
 const Indicator = styled.div`

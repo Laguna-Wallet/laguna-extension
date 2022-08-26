@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 
 import styled from 'styled-components';
 import { useFormik } from 'formik';
-import { goTo } from 'react-chrome-extension-router';
 import MenuHeader from 'components/MenuHeader/MenuHeader';
 import HumbleInput from 'components/primitives/HumbleInput';
 import Button from 'components/primitives/Button';
@@ -11,9 +10,10 @@ import Snackbar from 'components/Snackbar/Snackbar';
 import AddBigIcon from 'assets/svgComponents/AddBigIcon';
 import { objectValuesToArray } from 'utils';
 import keyring from '@polkadot/ui-keyring';
-import AddressBook from './AddressBook';
 import EditBigIcon from 'assets/svgComponents/EditBigIcon';
 import { addressExists, isValidPolkadotAddress } from 'utils/polkadot';
+import { useHistory } from 'react-router-dom';
+import { router } from 'router/router';
 import { SnackbarMessages } from 'utils/types';
 
 type AddAddressFormikValues = {
@@ -29,7 +29,7 @@ type Props = {
   edit?: boolean;
   redirectedFromSend?: boolean;
   backAction?: any;
-  closeAction: () => void;
+  closeAction?: () => void;
 };
 
 export default function AddAddress({
@@ -41,15 +41,22 @@ export default function AddAddress({
   closeAction,
   redirectedFromSend
 }: Props) {
+  const history = useHistory();
+  const { location } = history as any;
+
+  const editAddress = edit || location?.state?.edit;
+
+  const state = location?.state;
+
   const [isOpen, setOpen] = useState<boolean>(true);
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
   const [snackbarError, setSnackbarError] = useState<string>('');
 
   const formik = useFormik<AddAddressFormikValues>({
     initialValues: {
-      name: name || '',
-      address: address || '',
-      memo: memo || ''
+      name: name || state?.address?.name || '',
+      address: address || state?.address?.address || '',
+      memo: memo || state?.address?.memo || ''
     },
     validationSchema: addAddressSchema,
     onSubmit: ({ address: newAddress, name: newAddressName, memo: newMemo }) => {
@@ -63,13 +70,13 @@ export default function AddAddress({
         return;
       }
 
-      if (!edit && addressExists(newAddress)) {
+      if (!editAddress && addressExists(newAddress)) {
         setIsSnackbarOpen(true);
         setSnackbarError('Address already exists');
         return;
       }
 
-      if (edit && address) {
+      if (editAddress && address) {
         keyring.forgetAddress(address);
       }
 
@@ -78,7 +85,10 @@ export default function AddAddress({
       if (redirectedFromSend) {
         backAction();
       } else {
-        goTo(AddressBook, { snackbar: { show: true, message: SnackbarMessages.AddressAdded } });
+        history.push({
+          pathname: router.addressBook,
+          state: { snackbar: { show: true, message: SnackbarMessages.AddressAdded } }
+        });
       }
     }
   });
@@ -88,7 +98,7 @@ export default function AddAddress({
     if (redirectedFromSend) {
       backAction();
     } else {
-      goTo(AddressBook);
+      history.push(router.addressBook);
     }
   };
 
@@ -106,7 +116,10 @@ export default function AddAddress({
     if (redirectedFromSend) {
       backAction();
     } else {
-      goTo(AddressBook, { snackbar: { show: true, message: SnackbarMessages.AddressRemoved } });
+      history.push({
+        pathname: router.addressBook,
+        state: { snackbar: { show: true, message: SnackbarMessages.AddressRemoved } }
+      });
     }
   };
 
@@ -114,25 +127,28 @@ export default function AddAddress({
     if (redirectedFromSend) {
       backAction();
     } else {
-      goTo(AddressBook);
+      history.push(router.addressBook);
     }
   };
 
+  const walletLocation = () => {
+    history.push(router.home);
+    return { ...state.address };
+  };
+
   return (
-    <Container edit={edit}>
+    <Container edit={editAddress}>
       <MenuHeader
         isOpen={isOpen}
         setOpen={setOpen}
-        title={`${edit ? 'EDIT' : 'ADD'} ADDRESS`}
-        onClose={closeAction}
+        title={`${editAddress ? 'EDIT' : 'ADD'} ADDRESS`}
+        onClose={closeAction || walletLocation}
         backAction={back}
       />
       <Content>
         <Form onSubmit={formik.handleSubmit}>
-          <PlusIconContainer edit={edit}>
-            {edit ? (<EditBigIcon/>) : (
-              <AddBigIcon/>
-            )}
+          <PlusIconContainer edit={editAddress}>
+            {editAddress ? <EditBigIcon /> : <AddBigIcon />}
           </PlusIconContainer>
           <HumbleInput
             id={'name'}
@@ -162,7 +178,7 @@ export default function AddAddress({
             color="#fff"
             placeholderColor="#B1B5C3"
           />
-          {!edit && (
+          {!editAddress && (
             <HumbleInput
               id={'memo'}
               height="48px"
@@ -177,9 +193,9 @@ export default function AddAddress({
               placeholderColor="#B1B5C3"
             />
           )}
-          
+
           <ButtonContainer>
-            {!edit && (
+            {!editAddress && (
               <Button
                 onClick={handleCancel}
                 text="Cancel"
@@ -201,8 +217,11 @@ export default function AddAddress({
               // bgImage="linear-gradient(to right,#1cc3ce,#b9e260);"
             />
           </ButtonContainer>
-          {edit && address && (
-            <Remove onClick={() => removeAddress(address)}> Remove This Address</Remove>
+          {editAddress && (address || location?.state?.address) && (
+            <Remove onClick={() => removeAddress(address || location?.state?.address?.address)}>
+              {' '}
+              Remove This Address
+            </Remove>
           )}
         </Form>
         <Snackbar
@@ -211,9 +230,8 @@ export default function AddAddress({
           message={snackbarError}
           type="error"
           left="8.5px"
-          transform='translateX(0)'
-          bottom={edit ? "86px" : "56px"}>
-          </Snackbar>
+          transform="translateX(0)"
+          bottom={editAddress ? '86px' : '56px'}></Snackbar>
       </Content>
     </Container>
   );
@@ -221,7 +239,7 @@ export default function AddAddress({
 
 const Container = styled.div<{ redirectedFromSend?: boolean; edit?: boolean }>`
   width: 100%;
-  height: 600px;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   position: absolute;
@@ -270,7 +288,7 @@ const ButtonContainer = styled.div`
 `;
 
 const Remove = styled.div`
-  font-family: 'SFCompactDisplayRegular';
+  font-family: 'Inter';
   font-size: 13.4px;
   color: #fff;
   cursor: pointer;

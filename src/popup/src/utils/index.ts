@@ -4,10 +4,11 @@ import { KeyringPair$Json } from '@polkadot/keyring/types';
 import { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
 import type { KeyringPair } from '@polkadot/keyring/types';
 import bcrypt from 'bcryptjs';
-import { getFromStorage } from './chrome';
+import { getFromStorage, saveToStorage } from './chrome';
 import keyring from '@polkadot/ui-keyring';
 import Resizer from 'react-image-file-resizer';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
+import BigNumber from 'bignumber.js';
 
 //==============================================================================
 // Mnemonics
@@ -104,14 +105,18 @@ export async function convertUploadedFileToJson(
   acceptedFile: File[]
 ): Promise<KeyringPair$Json | KeyringPairs$Json> {
   try {
-    return await new Promise((resolve) => {
+    return await new Promise((resolve, reject) => {
       const fileReader = new FileReader();
       fileReader.readAsText(acceptedFile[0], 'UTF-8');
       fileReader.onload = (e: any) => {
-        resolve(JSON.parse(e.target.result));
+        try {
+          const parsed = JSON.parse(e.target.result);
+          resolve(parsed);
+        } catch (err) {
+          reject(err);
+        }
       };
     });
-    12;
   } catch (err: any) {
     throw new Error(err.message);
   }
@@ -170,6 +175,32 @@ export async function accountHasChanged(balances: Record<string, string>) {
   return false;
 }
 
+export async function updateBallanceCache(chain: string, amount: string, fee: string) {
+  const balances = await getFromStorage(StorageKeys.AccountBalances);
+
+  const parsed = balances && JSON.parse(balances);
+  const sum =
+    chain === 'westend'
+      ? new BigNumber(amount).plus(fee).plus('0.001').toNumber()
+      : new BigNumber(amount).plus(fee).toNumber();
+
+  const calculatedBalances = {
+    ...parsed.balances,
+    [chain]: {
+      overall: parsed.balances[chain].overall - sum,
+      locked: parsed.balances[chain].locked
+    }
+  };
+  const newBalances = { address: parsed.address, balances: calculatedBalances };
+
+  saveToStorage({
+    key: StorageKeys.AccountBalances,
+    value: JSON.stringify(newBalances)
+  });
+
+  return newBalances;
+}
+
 export function timer(ms: number) {
   return new Promise((res) => setTimeout(res, ms));
 }
@@ -216,15 +247,36 @@ export const enhancePasswordStrength = (string: string): string => {
   return '';
 };
 
-export const validPassword = (values: {password: string}) => {
-  const {password} = values;
+export const validPassword = (values: { password: string }) => {
+  const { password } = values;
   const errors: Record<string, string> = {};
   if (!password) {
     errors.password = 'Required';
   }
-  if(password?.length < 8){
-    errors.password = 'Must be at least 8 characters'
+  if (password?.length < 8) {
+    errors.password = 'Must be at least 8 characters';
   }
 
   return errors;
 };
+
+export async function checkBalanceChange(
+  newBalance: Record<string, any>,
+  newAddress: string
+): Promise<boolean> {
+  const oldBalance = await getFromStorage(StorageKeys.AccountBalances);
+  if (!oldBalance) return false;
+
+  const oldAddress = JSON.parse(oldBalance)?.address;
+  if (newAddress !== oldAddress) return false;
+
+  const parsedOldBallance = JSON.parse(oldBalance)?.balances;
+
+  for (const [key, balance] of Object.entries(newBalance)) {
+    if (balance?.overall > parsedOldBallance[key].overall) {
+      return true;
+    }
+  }
+
+  return false;
+}

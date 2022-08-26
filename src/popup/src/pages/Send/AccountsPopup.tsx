@@ -4,14 +4,14 @@ import AddressBookIcon from 'assets/svgComponents/AdressBookIcon';
 import HumbleInput from 'components/primitives/HumbleInput';
 import { useAccount } from 'context/AccountContext';
 import Header from 'pages/Wallet/Header';
-import Wallet from 'pages/Wallet/Wallet';
 import { useEffect, useState } from 'react';
-import { goTo } from 'react-chrome-extension-router';
 import { useSelector } from 'react-redux';
 import { truncateString } from 'utils';
 import { recodeAddress } from 'utils/polkadot';
 import { Prefixes } from 'utils/types';
 import LoopIcon from 'assets/svgComponents/loopIcon';
+import { useHistory } from 'react-router-dom';
+import { router } from 'router/router';
 
 type Props = {
   handleClickAccount: (address: string) => void;
@@ -19,6 +19,8 @@ type Props = {
 };
 
 export default function AccountsPopup({ handleClickAccount, onBack }: Props) {
+  const history = useHistory();
+
   const account = useAccount();
   const [accounts, setAccounts] = useState<any[] | undefined>(undefined);
   const [filter, setFilter] = useState<string>('');
@@ -56,7 +58,7 @@ export default function AccountsPopup({ handleClickAccount, onBack }: Props) {
       <Header
         title="SELECT ACCOUNT"
         bgColor="#f2f2f2"
-        closeAction={() => goTo(Wallet)}
+        closeAction={() => history.push(router.home)}
         iconStyle="LeftArrow"
         smallIcon
         backAction={onBack}
@@ -92,7 +94,7 @@ export default function AccountsPopup({ handleClickAccount, onBack }: Props) {
                     onClick={() => handleClickAccount(account.address)}>
                     <IconContainer img={account?.img} />
                     <Text>
-                      {truncateString(account.name, 3)}(
+                      {truncateString(account.name, 8)}(
                       {truncateString(recodeAddress(account.address, prefix))})
                     </Text>
                     {/* <AlternateEmail stroke="#111" /> */}
@@ -158,6 +160,8 @@ const AddressesContainer = styled.div`
   width: 100%;
   margin-top: 12px;
   overflow-y: scroll;
+  scrollbar-width: none;
+
   ::-webkit-scrollbar {
     display: none;
   }
@@ -199,7 +203,7 @@ const AddAddressPopupContainer = styled.div`
 `;
 
 const Text = styled.div`
-  font-family: 'SFCompactDisplayRegular';
+  font-family: 'Inter';
   text-align: center;
   color: #111;
   font-size: 16px;
