@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import { IEVMAssetERC20, IEVMAsset, IEVMBuildTransaction, IEVMToBeSignTransaction } from "./interfaces"
+import { IEVMAssetERC20, IEVMAsset, IEVMBuildTransaction, IEVMToBeSignTransaction, Response } from "./interfaces"
 import fs from "fs";
 import BigNumber from "bignumber.js";
 import { EVMNetwork, networks } from "./networks";
@@ -18,19 +18,33 @@ import { EVMAssetType } from "./networks/asset";
 //     return wallet
 // }
 
-export const getCheckSumAddress = (address: string): string => {
-  const checksumAddress = ethers.utils.getAddress(address) // util returns checksum address
-  return checksumAddress
+export const toCheckSumAddress = (address: string): string => {
+  const checksumAddress = ethers.utils.getAddress(address); 
+  return checksumAddress;
 }
 
-export const isValidEVMAddress = (address: string): boolean => {
-  if(!address.startsWith('0x')) {
-    return false
+export const isValidEVMAddress = (address: string): Response => {
+
+  try {
+    if(!address.startsWith('0x')) throw "EVM address should start with 0x";
+
+    if(address.length < 42) throw "invalid address length";
+    
+    if(!ethers.utils.isAddress(address)) throw "invalid EVM address";
+
+  } catch(err) {
+      return {
+        success: false,
+        message: `${err}`
+      }
   }
-
-  const isAddressValid  = ethers.utils.isAddress(address) 
-  return isAddressValid
+  return {
+    success: true,
+    message: "Valid EVM address"
+  }
 }
+
+
 
 export const getProvider = (network: EVMNetwork): ethers.providers.JsonRpcProvider => {
   return new ethers.providers.JsonRpcProvider(networks[network].nodeUrl);

@@ -60,3 +60,8 @@ export interface IEVMToBeSignTransaction {
   customData?: Record<string, any>;
   ccipReadEnabled?: boolean;
 }
+
+export interface Response {
+  success: boolean,
+  message: string
+}
