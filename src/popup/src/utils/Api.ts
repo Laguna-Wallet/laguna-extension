@@ -6,7 +6,7 @@ import { ethers } from 'ethers';
 import { changeAccountsBalances, changeTokenReceived } from 'redux/actions';
 import { checkBalanceChange, timer } from 'utils';
 import { getFromStorage, saveToStorage } from './chrome';
-import { getETHAccountBalances } from './ethereumUtils/ethereumApi';
+import { getEVMBalance } from './evm/api';
 import { recodeAddress } from './polkadot';
 import { networks, StorageKeys } from './types';
 
@@ -78,8 +78,8 @@ export async function fetchAccountsBalances(
         }
 
         if (network.chain === 'ethereum' && ethAddress) {
-          const ethBalance = await getETHAccountBalances(ethAddress);
-          console.log('~ ethBalance', ethBalance);
+          const ethBalance = await getEVMBalance(ethAddress);
+          
           temp_obj[network.chain] = {
             overall: Number(ethBalance.amount),
             locked: Number(0) // todo change after eth 2.0 merge

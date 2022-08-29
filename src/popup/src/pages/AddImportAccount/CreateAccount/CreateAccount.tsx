@@ -17,7 +17,7 @@ import { RouteComponentProps, useHistory } from 'react-router-dom';
 import { router } from 'router/router';
 import browser from 'webextension-polyfill';
 import { useLocation } from 'react-router-dom';
-import { generateNewWalletAddress } from 'utils/ethereumUtils/ethereumApi';
+import { generateNewWalletAddress } from 'utils/evm/api';
 
 type Props = {
   existingAccount?: boolean;
@@ -60,7 +60,7 @@ export default function CreateAccount({
       const mnemonicsStr = account?.mnemonics.join(' ');
       const encodedSeed = AES.encrypt(account?.mnemonics.join(' '), password).toString();
 
-      const ethAddress = generateNewWalletAddress(mnemonicsStr)?.address;
+      const ethAddress = generateNewWalletAddress(mnemonicsStr);
 
       const { pair } = keyring.addUri(mnemonicsStr, password, {
         encodedSeed,
@@ -91,7 +91,7 @@ export default function CreateAccount({
       const mnemonicsStr = account?.generateMnemonics().join(' ');
       const encodedSeed = AES.encrypt(mnemonicsStr, password).toString();
 
-      const ethAddress = generateNewWalletAddress(mnemonicsStr)?.address;
+      const ethAddress = generateNewWalletAddress(mnemonicsStr);
 
       const { pair } = keyring.addUri(mnemonicsStr, password, {
         encodedSeed,

@@ -25,7 +25,6 @@ import { isInPopup } from 'utils/chrome';
 import { isObjectEmpty } from 'utils';
 import keyring from '@polkadot/ui-keyring';
 import { ethereumEncode } from '@polkadot/util-crypto';
-import { generateNewWalletAddress } from 'utils/ethereumUtils/ethereumApi';
 
 export interface ShowSnackbar {
   message: string;
@@ -198,19 +197,6 @@ function Wallet({ snackbar }: Props) {
           })}
     </ListContentChild>
   );
-
-  // useEffect(() => {
-  //   const { pair } = keyring.addUri(
-  //     'inherit clap pledge rocket deliver chest wing afraid indoor panel woman payment'
-  //   );
-
-  //   const wallet = generateNewWalletAddress(
-  //     'inherit clap pledge rocket deliver chest wing afraid indoor panel woman payment'
-  //   );
-
-  //   console.log('~ wallet', wallet);
-  //   console.log('~ pair', ethereumEncode(pair.addressRaw));
-  // }, []);
 
   return (
     <Container bg={dashboardBG}>

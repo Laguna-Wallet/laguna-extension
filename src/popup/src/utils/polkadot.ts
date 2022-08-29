@@ -30,7 +30,9 @@ import * as AES from 'crypto-js/aes';
 import Utf8 from 'crypto-js/enc-utf8';
 import { fetchTransactions, transformTransfers } from './fetchTransactions';
 import { generateRandomBase64Avatar } from 'utils';
-import { generateNewWalletAddress, importWalletAddress } from './ethereumUtils/ethereumApi';
+import { generateNewWalletAddress } from './evm/api';
+import { EVMNetwork } from './evm/networks';
+import { EVMAssetType } from './evm/networks/asset';
 
 // TODO appropriate typing
 
@@ -110,7 +112,7 @@ export async function importFromMnemonic(seed: string, password: string) {
   const encodedSeed = AES.encrypt(seed, password).toString();
   const { pair } = keyring.addUri(seed, password);
 
-  const ethAddress = generateNewWalletAddress(seed)?.address;
+  const ethAddress = generateNewWalletAddress(seed);
 
   const img = await generateRandomBase64Avatar();
   const newPair = addAccountMeta(pair.address, {
@@ -233,19 +235,66 @@ export function getNetworks(
       prefix: 0
     },
     {
-      name: 'Ethereum',
-      symbol: TokenSymbols.ethereum,
-      chain: 'ethereum',
-      node: 'wss://eth-mainnet.g.alchemy.com/v2/IFip5pZqfpAsi50-O2a0ZEJoA82E8KR_',
-      prefix: 0
-    },
-    {
       name: 'Kusama',
       symbol: TokenSymbols.kusama,
       chain: 'kusama',
       node: 'wss://kusama-rpc.polkadot.io',
       prefix: 2
+    },
+    {
+      name: 'Ethereum',
+      symbol: TokenSymbols.ethereum,
+      chain: EVMNetwork.ETHEREUM,
+      decimal: 18,
+      assetType: EVMAssetType.NATIVE
+    },
+    {
+      name: 'USD Coin',
+      symbol: TokenSymbols.USDC,
+      chain: EVMNetwork.ETHEREUM,
+      decimal: 6,
+      assetType: EVMAssetType.ERC20,
+      contractAddress: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'
+    },
+    {
+      name: 'Tether USD',
+      symbol: TokenSymbols.USDT,
+      chain: EVMNetwork.ETHEREUM,
+      decimal: 6,
+      assetType: EVMAssetType.ERC20,
+      contractAddress: '0xdAC17F958D2ee523a2206206994597C13D831ec7'
+    },
+    {
+      name: 'Ethereum',
+      symbol: TokenSymbols.ethereum,
+      chain: EVMNetwork.ETHEREUM_TESTNET_GOERLI,
+      decimal: 18,
+      assetType: EVMAssetType.NATIVE
+    },
+    {
+      name: 'TBC',
+      symbol: TokenSymbols.TBC,
+      chain: EVMNetwork.ETHEREUM_TESTNET_GOERLI,
+      decimal: 18,
+      assetType: EVMAssetType.ERC20,
+      contractAddress: 'TBC'
+    },
+    {
+      name: 'Avalanche',
+      chain: EVMNetwork.AVALANCHE_TESTNET_FUJI,
+      symbol: TokenSymbols.AVAX,
+      decimal: 18,
+      assetType: EVMAssetType.NATIVE
+    },
+    {
+      name: 'Dexalot Token',
+      symbol: TokenSymbols.ALOT,
+      chain: EVMNetwork.AVALANCHE_TESTNET_FUJI,
+      decimal: 18,
+      assetType: EVMAssetType.ERC20,
+      contractAddress: '0x9983F755Bbd60d1886CbfE103c98C272AA0F03d6'
     }
+
     // {
     //   name: 'Astar',
     //   symbol: TokenSymbols.astar,
@@ -526,12 +575,8 @@ export function encryptMetaData(oldPassword: string, newPassword: string) {
     // decode seed and encode with new password
     if (meta?.encodedSeed) {
       const decodedSeedBytes = AES.decrypt(meta?.encodedSeed as string, oldPassword);
-      console.log('~ decodedSeedBytes', decodedSeedBytes);
       const decodedSeed = decodedSeedBytes.toString(Utf8);
-      console.log('~ decodedSeed', decodedSeed);
-
       const reEncodedSeed = AES.encrypt(decodedSeed, newPassword).toString();
-      console.log('~ reEncodedSeed', reEncodedSeed);
 
       keyring.saveAccountMeta(pair, { ...pair.meta, encodedSeed: reEncodedSeed });
       pair.setMeta({ ...pair.meta, encodedSeed: reEncodedSeed });

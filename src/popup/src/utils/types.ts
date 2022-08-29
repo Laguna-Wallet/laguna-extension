@@ -2,6 +2,7 @@ import { KeypairType } from '@polkadot/util-crypto/types';
 import type { Signer as InjectedSigner } from '@polkadot/api/types';
 import type { ExtDef } from '@polkadot/types/extrinsic/signedExtensions/types';
 import type { ProviderInterface } from '@polkadot/rpc-provider/types';
+import { EVMAssetType } from './evm/networks/asset';
 
 export enum SecurityOptionsEnum {
   Secured = 'Secured',
@@ -52,11 +53,14 @@ export interface Network {
   name: string;
   symbol: Token;
   chain: string;
-  node: string;
+  node?: string;
   price_change_percentage_24h?: number;
   marketCap?: number;
   encodeType?: string;
   prefix?: number;
+  decimal?: number;
+  assetType?: EVMAssetType.NATIVE | EVMAssetType.ERC20;
+  contractAddress?: string;
 }
 
 export interface Asset {
@@ -137,7 +141,12 @@ export enum TokenSymbols {
   moonbeam = 'glmr',
   shiden = 'sdn',
   astar = 'astr',
-  ethereum = 'eth'
+  ethereum = 'ETH',
+  USDC = 'USDC',
+  USDT = 'USDT',
+  TBC = 'TBC',
+  ALOT = 'ALOT',
+  AVAX = 'AVAX'
 }
 
 export type Token =
@@ -145,7 +154,12 @@ export type Token =
   | TokenSymbols.polkadot
   | TokenSymbols.kusama
   | TokenSymbols.astar
-  | TokenSymbols.ethereum;
+  | TokenSymbols.ethereum
+  | TokenSymbols.USDC
+  | TokenSymbols.USDT
+  | TokenSymbols.TBC
+  | TokenSymbols.ALOT
+  | TokenSymbols.AVAX;
 
 // todo move chain names to enum
 export interface Transaction {
