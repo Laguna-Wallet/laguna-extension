@@ -82,9 +82,12 @@ export const buildTransaction = async (
     return toBeSignTransaction
 }
 
-export const signTransaction = async (wallet: ethers.Wallet, transaction: IEVMToBeSignTransaction): Promise<string> => {
- const transactionHash = wallet.signTransaction(transaction);
- return transactionHash;
+export const signTransaction = async (network: EVMNetwork, wallet: ethers.Wallet, transaction: IEVMToBeSignTransaction): Promise<string> => {
+  // TODO decide were wallet is generated from
+  const provider = getProvider(network);
+  const signer = wallet.connect(provider)
+  const signedTx = signer.signTransaction(transaction);
+ return signedTx;
 };
 
 export const broadcastTransaction = async (network: EVMNetwork, signedTx: string): Promise<string> => {   
