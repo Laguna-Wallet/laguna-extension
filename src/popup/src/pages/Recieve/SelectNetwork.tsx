@@ -1,19 +1,19 @@
-import { useEffect, useState } from 'react';
-import styled from 'styled-components';
+import { useEffect, useState } from "react";
+import styled from "styled-components";
 
-import Header from 'pages/Wallet/Header';
-import HumbleInput from 'components/primitives/HumbleInput';
+import Header from "pages/Wallet/Header";
+import HumbleInput from "components/primitives/HumbleInput";
 // Todo Move ChainItem Into Shared
-import ChainItem from '../../pages/Wallet/ChainItem';
-import { useAccount } from 'context/AccountContext';
-import { Asset, Network } from 'utils/types';
-import { useWizard } from 'react-use-wizard';
-import { useSelector } from 'react-redux';
-import LoopIcon from 'assets/svgComponents/loopIcon';
-import { State } from 'redux/store';
-import { getAssets } from 'utils/polkadot';
-import { useHistory } from 'react-router-dom';
-import { router } from 'router/router';
+import ChainItem from "../../pages/Wallet/ChainItem";
+import { useAccount } from "context/AccountContext";
+import { Asset, Network } from "utils/types";
+import { useWizard } from "react-use-wizard";
+import { useSelector } from "react-redux";
+import LoopIcon from "assets/svgComponents/loopIcon";
+import { State } from "redux/store";
+import { getAssets } from "utils/polkadot";
+import { useHistory } from "react-router-dom";
+import { router } from "router/router";
 
 type Props = {
   setSelectedNetwork: (network: Network & Asset) => void;
@@ -26,10 +26,10 @@ export default function SelectNetwork({ setSelectedNetwork }: Props) {
 
   const accountAddress = account.getActiveAccount()?.address;
   const [assets, setAssets] = useState<(Asset[] & Network[]) | undefined>(undefined);
-  const [networksFilter, setNetworksFilter] = useState<string>('');
+  const [networksFilter, setNetworksFilter] = useState<string>("");
 
   const { prices, infos, accountsBalances, disabledTokens } = useSelector(
-    (state: State) => state.wallet
+    (state: State) => state.wallet,
   );
 
   const balances = accountsBalances?.balances;
@@ -45,7 +45,7 @@ export default function SelectNetwork({ setSelectedNetwork }: Props) {
 
   const renderNetwork = (assets: Asset[] & Network[], networksFilter: string) => {
     return assets.filter((asset) =>
-      asset.name.toLowerCase().includes(networksFilter.toLowerCase())
+      asset.name.toLowerCase().includes(networksFilter.toLowerCase()),
     );
   };
 
@@ -73,8 +73,8 @@ export default function SelectNetwork({ setSelectedNetwork }: Props) {
           onChange={(e: any) => {
             setNetworksFilter(e.target.value);
           }}
-          bgColor={'#f2f2f2'}
-          borderColor={'#f2f2f2'}
+          bgColor={"#f2f2f2"}
+          borderColor={"#f2f2f2"}
           color="#777e90"
           placeholderColor="#777e90"
           placeholder="Search"
@@ -89,7 +89,7 @@ export default function SelectNetwork({ setSelectedNetwork }: Props) {
         <List>
           {assets
             ? assets.length === 0
-              ? 'no assets'
+              ? "no assets"
               : renderNetwork(assets, networksFilter).map((asset: any) => {
                   return (
                     <ChainItemContainer key={asset.chain}>
@@ -102,7 +102,7 @@ export default function SelectNetwork({ setSelectedNetwork }: Props) {
                     </ChainItemContainer>
                   );
                 })
-            : 'Loading...'}
+            : "Loading..."}
         </List>
       </Content>
     </Container>

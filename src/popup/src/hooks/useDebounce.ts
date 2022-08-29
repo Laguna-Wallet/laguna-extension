@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from "react";
 
 export const useDebounce = (callback: any, delay: number) => {
   // todo proper typing

@@ -1,10 +1,10 @@
-import ArrowSmRightIcon from '@heroicons/react/outline/ArrowSmRightIcon';
-import Button from 'components/primitives/Button';
-import Checkbox from 'components/primitives/Checkbox';
-import { PageContainer } from 'components/ui';
-import { useEnterClickListener } from 'hooks/useEnterClickListener';
-import { useWizard } from 'react-use-wizard';
-import styled from 'styled-components/macro';
+import ArrowSmRightIcon from "@heroicons/react/outline/ArrowSmRightIcon";
+import Button from "components/primitives/Button";
+import Checkbox from "components/primitives/Checkbox";
+import { PageContainer } from "components/ui";
+import { useEnterClickListener } from "hooks/useEnterClickListener";
+import { useWizard } from "react-use-wizard";
+import styled from "styled-components/macro";
 
 type Props = {
   onClose: () => void;
@@ -32,7 +32,7 @@ export function MnemonicsDescription({ onClose }: Props) {
           </Description>
         </TopContent>
         <ButtonContainer>
-          <Button onClick={onClose} text={'I Understand'} justify="center" color="#fff" />
+          <Button onClick={onClose} text={"I Understand"} justify="center" color="#fff" />
         </ButtonContainer>
       </MainContent>
     </Container>

@@ -1,22 +1,22 @@
-import DownArrowIcon from 'assets/svgComponents/DownArrowIcon';
-import styled from 'styled-components/macro';
-import { Turn as Hamburger } from 'hamburger-react';
-import { useEffect, useRef, useState } from 'react';
-import Popup from 'components/Popup/Popup';
-import Accounts from 'components/popups/Accounts';
-import { useAccount } from 'context/AccountContext';
-import Menu from 'components/Menu/Menu';
-import BackIcon from 'assets/svgComponents/BackIcon';
-import CloseArrowIcon from 'assets/svgComponents/CloseArrowIcon';
-import { truncateString } from 'utils';
-import CloseSmallIcon from 'assets/svgComponents/CloseSmallIcon';
-import ExpandIcon from 'assets/svgComponents/ExpandIcon';
+import DownArrowIcon from "assets/svgComponents/DownArrowIcon";
+import styled from "styled-components/macro";
+import { Turn as Hamburger } from "hamburger-react";
+import { useEffect, useRef, useState } from "react";
+import Popup from "components/Popup/Popup";
+import Accounts from "components/popups/Accounts";
+import { useAccount } from "context/AccountContext";
+import Menu from "components/Menu/Menu";
+import BackIcon from "assets/svgComponents/BackIcon";
+import CloseArrowIcon from "assets/svgComponents/CloseArrowIcon";
+import { truncateString } from "utils";
+import CloseSmallIcon from "assets/svgComponents/CloseSmallIcon";
+import ExpandIcon from "assets/svgComponents/ExpandIcon";
 
 type Props = {
   title?: string;
   backAction?: () => void;
   closeAction?: () => void;
-  iconStyle?: 'Close' | 'LeftArrow';
+  iconStyle?: "Close" | "LeftArrow";
   menuInitialOpenState?: boolean;
   bgColor?: string;
   stroke?: string;
@@ -31,7 +31,7 @@ export default function Header({
   menuInitialOpenState,
   bgColor,
   stroke,
-  smallIcon = false
+  smallIcon = false,
 }: Props) {
   const account = useAccount();
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -108,7 +108,7 @@ const Container = styled.div<{ bgColor?: string }>`
   position: absolute;
   top: 0;
   z-index: 5;
-  background-color: ${({ bgColor }) => bgColor || 'transparent'};
+  background-color: ${({ bgColor }) => bgColor || "transparent"};
 `;
 
 const Content = styled.div`
@@ -177,7 +177,7 @@ const TopIconContainer = styled.div`
 `;
 
 const CloseIconContainer = styled.div<{ smallIcon: boolean }>`
-  margin-right: ${({ smallIcon }) => (smallIcon ? '6px' : '0')};
+  margin-right: ${({ smallIcon }) => (smallIcon ? "6px" : "0")};
   cursor: pointer;
 `;
 

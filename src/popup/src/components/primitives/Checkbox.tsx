@@ -1,5 +1,5 @@
-import CheckBoxCheckMarkIcon from 'assets/svgComponents/CheckboxCheckmarkIcon';
-import styled from 'styled-components';
+import CheckBoxCheckMarkIcon from "assets/svgComponents/CheckboxCheckmarkIcon";
+import styled from "styled-components";
 
 type Props = {
   value: any;
@@ -26,7 +26,7 @@ const Container = styled.div`
 const CheckboxContainer = styled.div<{ checked: boolean }>`
   width: 14px;
   height: 14px;
-  background-color: ${({ checked }) => (checked ? '#111' : '#fff')};
+  background-color: ${({ checked }) => (checked ? "#111" : "#fff")};
   border: 1px solid #111;
   border-radius: 3px;
   margin-top: 4px;

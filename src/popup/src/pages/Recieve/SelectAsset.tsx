@@ -1,16 +1,16 @@
-import Header from 'pages/Wallet/Header';
-import styled from 'styled-components';
-import walletBG from 'assets/imgs/walletBG.jpg';
-import Wallet from 'pages/Wallet/Wallet';
-import HumbleInput from 'components/primitives/HumbleInput';
-import { Dispatch, useEffect, useState } from 'react';
+import Header from "pages/Wallet/Header";
+import styled from "styled-components";
+import walletBG from "assets/imgs/walletBG.jpg";
+import Wallet from "pages/Wallet/Wallet";
+import HumbleInput from "components/primitives/HumbleInput";
+import { Dispatch, useEffect, useState } from "react";
 // Todo Move ChainItem Into Shared
-import ChainItem from '../../pages/Wallet/ChainItem';
-import { useAccount } from 'context/AccountContext';
-import { Asset } from 'utils/types';
-import { useWizard } from 'react-use-wizard';
-import { useHistory } from 'react-router-dom';
-import { router } from 'router/router';
+import ChainItem from "../../pages/Wallet/ChainItem";
+import { useAccount } from "context/AccountContext";
+import { Asset } from "utils/types";
+import { useWizard } from "react-use-wizard";
+import { useHistory } from "react-router-dom";
+import { router } from "router/router";
 
 type Props = {
   assets: Asset[];
@@ -23,7 +23,7 @@ export default function SelectAsset({ assets, selectedAsset, setSelectedAsset }:
   const { nextStep } = useWizard();
   const history = useHistory();
 
-  const [assetsFilter, setAssetsFilter] = useState<string>('');
+  const [assetsFilter, setAssetsFilter] = useState<string>("");
 
   const handleClick = (asset: Asset) => {
     setSelectedAsset(asset);
@@ -45,8 +45,8 @@ export default function SelectAsset({ assets, selectedAsset, setSelectedAsset }:
           onChange={(e: any) => {
             setAssetsFilter(e.target.value);
           }}
-          bgColor={'#ececec'}
-          borderColor={'#ececec'}
+          bgColor={"#ececec"}
+          borderColor={"#ececec"}
           placeholder="search"
           height="38.9px"
           marginTop="20px"
@@ -54,7 +54,7 @@ export default function SelectAsset({ assets, selectedAsset, setSelectedAsset }:
         <List>
           {assets
             ? assets.length === 0
-              ? 'no assets'
+              ? "no assets"
               : renderAssets(assets, assetsFilter).map((asset: Asset) => {
                   return (
                     <ChainItemContainer key={asset.symbol}>
@@ -66,7 +66,7 @@ export default function SelectAsset({ assets, selectedAsset, setSelectedAsset }:
                     </ChainItemContainer>
                   );
                 })
-            : 'Loading...'}
+            : "Loading..."}
         </List>
       </Content>
     </Container>

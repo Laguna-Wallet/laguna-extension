@@ -1,16 +1,16 @@
-import styled from 'styled-components';
-import { useEffect, useState } from 'react';
-import { copyToClipboard } from 'utils';
-import ButtonsIcon from 'assets/svgComponents/ButtonsIcon';
-import Button from 'components/primitives/Button';
-import { useWizard } from 'react-use-wizard';
-import { useAccount } from 'context/AccountContext';
-import WizardHeader from 'pages/AddImportAccount/WizardHeader';
-import Snackbar from 'components/Snackbar/Snackbar';
-import { MnemonicsDescription } from 'components/popups/MnemonicsDescription';
-import { useEnterClickListener } from 'hooks/useEnterClickListener';
-import { useHistory } from 'react-router-dom';
-import { router } from 'router/router';
+import styled from "styled-components";
+import { useEffect, useState } from "react";
+import { copyToClipboard } from "utils";
+import ButtonsIcon from "assets/svgComponents/ButtonsIcon";
+import Button from "components/primitives/Button";
+import { useWizard } from "react-use-wizard";
+import { useAccount } from "context/AccountContext";
+import WizardHeader from "pages/AddImportAccount/WizardHeader";
+import Snackbar from "components/Snackbar/Snackbar";
+import { MnemonicsDescription } from "components/popups/MnemonicsDescription";
+import { useEnterClickListener } from "hooks/useEnterClickListener";
+import { useHistory } from "react-router-dom";
+import { router } from "router/router";
 
 type Props = {
   redirectedFromSignUp?: boolean;
@@ -24,7 +24,7 @@ export default function MnemonicsSeed({ redirectedFromSignUp, redirectedFromDash
   const [mnemonics, setMnemonics] = useState<string[]>([]);
 
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
-  const [snackbarMessage, setSnackbarMessage] = useState<string>('');
+  const [snackbarMessage, setSnackbarMessage] = useState<string>("");
   const [isMnemonicDescriptionOpen, setIsMnemonicDescriptionOpen] = useState<boolean>();
 
   handleStep(() => {
@@ -43,14 +43,14 @@ export default function MnemonicsSeed({ redirectedFromSignUp, redirectedFromDash
   }, []);
 
   const handleCopy = () => {
-    copyToClipboard(mnemonics?.join(' '));
+    copyToClipboard(mnemonics?.join(" "));
     setIsSnackbarOpen(true);
-    setSnackbarMessage('Mnemonics Copied');
+    setSnackbarMessage("Mnemonics Copied");
   };
 
   useEnterClickListener(
     () => !isMnemonicDescriptionOpen && nextStep(),
-    [isMnemonicDescriptionOpen]
+    [isMnemonicDescriptionOpen],
   );
 
   return (
@@ -70,8 +70,8 @@ export default function MnemonicsSeed({ redirectedFromSignUp, redirectedFromDash
       <MainContent>
         <Title>Backup Seed Phrase</Title>
         <Description>
-          To secure your accounts please write down this 12 word{' '}
-          <span onClick={() => setIsMnemonicDescriptionOpen(true)}> mnemonic seed phrase.</span>{' '}
+          To secure your accounts please write down this 12 word{" "}
+          <span onClick={() => setIsMnemonicDescriptionOpen(true)}> mnemonic seed phrase.</span>{" "}
           Store this in a safe place. It&apos;s the only way to recover your account if you get
           locked out or get a new device.
         </Description>
@@ -108,7 +108,7 @@ export default function MnemonicsSeed({ redirectedFromSignUp, redirectedFromDash
       <ButtonContainer>
         <Button
           onClick={nextStep}
-          text={'Continue'}
+          text={"Continue"}
           justify="center"
           // Icon={<RightArrow width={23} />}
         />

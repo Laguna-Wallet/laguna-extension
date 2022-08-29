@@ -1,13 +1,13 @@
-import Button from 'components/primitives/Button';
-import Input from 'components/primitives/Input';
-import { PageContainer } from 'components/ui';
-import { useFormik } from 'formik';
-import styled from 'styled-components';
-import { exportJson } from 'utils';
-import { exportAccount } from 'utils/polkadot';
-import { exportAccountSchema } from 'utils/validations';
-import { useHistory, Link } from 'react-router-dom';
-import { router } from 'router/router';
+import Button from "components/primitives/Button";
+import Input from "components/primitives/Input";
+import { PageContainer } from "components/ui";
+import { useFormik } from "formik";
+import styled from "styled-components";
+import { exportJson } from "utils";
+import { exportAccount } from "utils/polkadot";
+import { exportAccountSchema } from "utils/validations";
+import { useHistory, Link } from "react-router-dom";
+import { router } from "router/router";
 
 type Props = {
   address: string;
@@ -18,7 +18,7 @@ export default function ExportAccount({ address }: Props) {
 
   const formik = useFormik({
     initialValues: {
-      password: ''
+      password: "",
     },
     validationSchema: exportAccountSchema,
     onSubmit: async (values) => {
@@ -30,7 +30,7 @@ export default function ExportAccount({ address }: Props) {
         // todo add snackbar
         console.log(err);
       }
-    }
+    },
   });
 
   return (
@@ -39,14 +39,14 @@ export default function ExportAccount({ address }: Props) {
         <Title>You are exporting your account. Keep it safe and dont share it with anyone.</Title>
         <Form onSubmit={formik.handleSubmit}>
           <Input
-            id={'password'}
-            value={formik.values['password']}
+            id={"password"}
+            value={formik.values["password"]}
             onChange={formik.handleChange}
             type="password"
             height="50px"
             borderColor="#cccccd"
-            error={formik.errors['password']}
-            touched={formik.touched['password']}
+            error={formik.errors["password"]}
+            touched={formik.touched["password"]}
             label="PASSWORD FOR THIS ACCOUNT"
             autoFocus={true}
           />

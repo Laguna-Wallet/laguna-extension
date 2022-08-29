@@ -1,8 +1,8 @@
-import { createStore, Store } from 'redux';
-import { getFromChromeStorage, getFromStorage } from 'utils/chrome';
-import { Prices, StorageKeys, Token } from 'utils/types';
-import { string } from 'yup/lib/locale';
-import rootReducer from './reducer';
+import { createStore, Store } from "redux";
+import { getFromChromeStorage, getFromStorage } from "utils/chrome";
+import { Prices, StorageKeys, Token } from "utils/types";
+import { string } from "yup/lib/locale";
+import rootReducer from "./reducer";
 
 export interface State {
   wallet: {
@@ -58,8 +58,8 @@ async function handleInitialState(): Promise<State> {
       idleTimeout: Number(idleTimeout) || 10,
       tokenReceived: false,
       disabledTokens: disabledTokens ? JSON.parse(disabledTokens) : [],
-      onboarding: onboarding ? JSON.parse(onboarding) : false
-    }
+      onboarding: onboarding ? JSON.parse(onboarding) : false,
+    },
   };
 }
 
@@ -68,7 +68,7 @@ async function generateStore(): Promise<Store<any, any>> {
 
   const store: Store<any, any> = createStore(
     rootReducer,
-    initialState
+    initialState,
     // todo maybe inject redux dev tools
     //   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
   ) as any;

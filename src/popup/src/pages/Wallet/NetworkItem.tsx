@@ -1,7 +1,7 @@
-import BigNumber from 'bignumber.js';
-import NetworkIcons from 'components/primitives/NetworkIcons';
-import styled from 'styled-components';
-import { Asset } from 'utils/types';
+import BigNumber from "bignumber.js";
+import NetworkIcons from "components/primitives/NetworkIcons";
+import styled from "styled-components";
+import { Asset } from "utils/types";
 
 type Props = {
   isMarketCap?: boolean;
@@ -22,15 +22,15 @@ export default function NetworkItem({ network, isMarketCap = false }: Props) {
       </ListItemText>
       <ListItemText>
         <Title>
-          ${' '}
+          ${" "}
           {!isMarketCap
             ? calculatedPrice
               ? new BigNumber(calculatedPrice).toFormat(2, 1)
               : 0
             : (marketCap &&
                 String(marketCap)
-                  .replace(/,/g, '')
-                  .replace(/\B(?=(\d{3})+(?!\d))/g, ',')) ||
+                  .replace(/,/g, "")
+                  .replace(/\B(?=(\d{3})+(?!\d))/g, ",")) ||
               0}
         </Title>
       </ListItemText>
