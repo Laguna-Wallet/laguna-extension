@@ -1,7 +1,7 @@
 import "@polkadot/wasm-crypto/initOnlyAsm"
 // import "@polkadot/wasm-crypto/initWasmAsm"
 
-import { chains, Messages, networks, StorageKeys } from "./types"
+import { Messages, networks, StorageKeys } from "./types"
 import { ApiPromise, WsProvider } from "@polkadot/api"
 import { checkBalanceChange, getAccountAddresses, getFromStorage, recodeAddress, recodeToPolkadotAddress, saveToStorage, transformTransfers } from "./utils"
 // import { decodePair } from "@polkadot/keyring/pair/decode"
@@ -12,7 +12,6 @@ import { checkBalanceChange, getAccountAddresses, getFromStorage, recodeAddress,
 import { cryptoWaitReady } from "@polkadot/util-crypto"
 // import { initWasm } from "@polkadot/wasm-crypto/initOnlyAsm"
 import browser from "webextension-polyfill"
-import { rename } from "fs"
 
 export async function Retrieve_balance_change_rates() {
   // const balances = getFromStorage()
@@ -23,8 +22,6 @@ export async function sendTransaction(pairs, { sendTo, sendFrom, amount, chain }
     const pair = pairs.find((pair) => {
       return recodeToPolkadotAddress(pair.address) === recodeToPolkadotAddress(sendFrom)
     })
-    
-    console.log("~ pair", pair)
 
     await cryptoWaitReady()
     const wsProvider = new WsProvider(`wss://${chain}.api.onfinality.io/public-ws?apikey=${process.env.ONFINALITY_KEY}`)
