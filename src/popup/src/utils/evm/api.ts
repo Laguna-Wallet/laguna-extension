@@ -3,12 +3,14 @@ import {
   IEVMAssetERC20,
   IEVMAsset,
   IEVMBuildTransaction,
-  IEVMToBeSignTransaction
+  IEVMToBeSignTransaction,
+  Response
 } from './interfaces';
 import fs from 'fs';
 import BigNumber from 'bignumber.js';
 import { EVMNetwork, networks } from './networks';
 import { EVMAssetType } from './networks/asset';
+import ERC20ABI from './abi/ERC20.json';
 
 export const generateNewWalletAddress = (mnemonicSeed: string): string => {
   const wallet = ethers.Wallet.fromMnemonic(mnemonicSeed as string);
@@ -21,18 +23,28 @@ export const generateNewWalletAddress = (mnemonicSeed: string): string => {
 //     return wallet
 // }
 
-export const getCheckSumAddress = (address: string): string => {
-  const checksumAddress = ethers.utils.getAddress(address); // util returns checksum address
+export const toCheckSumAddress = (address: string): string => {
+  const checksumAddress = ethers.utils.getAddress(address);
   return checksumAddress;
 };
 
-export const isValidEVMAddress = (address: string): boolean => {
-  if (!address.startsWith('0x')) {
-    return false;
-  }
+export const isValidEVMAddress = (address: string): Response => {
+  try {
+    if (!address.startsWith('0x')) throw 'EVM address should start with 0x';
 
-  const isAddressValid = ethers.utils.isAddress(address);
-  return isAddressValid;
+    if (address.length < 42) throw 'invalid address length';
+
+    if (!ethers.utils.isAddress(address)) throw 'invalid EVM address';
+  } catch (err) {
+    return {
+      success: false,
+      message: `${err}`
+    };
+  }
+  return {
+    success: true,
+    message: 'Valid EVM address'
+  };
 };
 
 export const getProvider = (network: EVMNetwork): ethers.providers.JsonRpcProvider => {
@@ -94,12 +106,13 @@ export const getEVMBalance = async (
   let balanceInBaseUnit;
   switch (asset.assetType) {
     case EVMAssetType.NATIVE: {
+      console.log('~ address', address);
       balanceInBaseUnit = await provider.getBalance(address);
       break;
     }
     case EVMAssetType.ERC20: {
       const abiFileName = 'ERC20';
-      const ERC20ABI = JSON.parse(fs.readFileSync(`./abi/${abiFileName}.json`, 'utf-8'));
+      // const ERC20ABI = JSON.parse(fs.readFileSync(`./abi/${abiFileName}.json`, 'utf-8'));
       const contract = new ethers.Contract(
         (asset as IEVMAssetERC20).contractAddress,
         ERC20ABI,
@@ -109,5 +122,6 @@ export const getEVMBalance = async (
       break;
     }
   }
-  return new BigNumber(balanceInBaseUnit).dividedBy(`1E${asset.decimal}`);
+  return balanceInBaseUnit;
+  // return new BigNumber(balanceInBaseUnit).dividedBy(`1E${asset.decimal}`);
 };

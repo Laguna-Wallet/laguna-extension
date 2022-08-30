@@ -3,6 +3,7 @@ import type { Signer as InjectedSigner } from '@polkadot/api/types';
 import type { ExtDef } from '@polkadot/types/extrinsic/signedExtensions/types';
 import type { ProviderInterface } from '@polkadot/rpc-provider/types';
 import { EVMAssetType } from './evm/networks/asset';
+import { EVMNetwork } from './evm/networks';
 
 export enum SecurityOptionsEnum {
   Secured = 'Secured',
@@ -52,7 +53,7 @@ export const contractAddresses = [
 export interface Network {
   name: string;
   symbol: Token;
-  chain: string;
+  chain: EVMNetwork | 'westend' | 'polkadot' | 'kusama';
   node?: string;
   price_change_percentage_24h?: number;
   marketCap?: number;
@@ -323,17 +324,69 @@ export const networks: Network[] = [
   {
     name: 'Ethereum',
     symbol: TokenSymbols.ethereum,
-    chain: 'ethereum',
-    node: 'wss://kusama-rpc.polkadot.io',
-    prefix: 2
+    chain: EVMNetwork.ETHEREUM,
+    decimal: 18,
+    assetType: EVMAssetType.NATIVE
   }
+  // {
+  //   name: 'USD Coin',
+  //   symbol: TokenSymbols.USDC,
+  //   chain: EVMNetwork.ETHEREUM,
+  //   decimal: 6,
+  //   assetType: EVMAssetType.ERC20,
+  //   contractAddress: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'
+  // },
+  // {
+  //   name: 'Tether USD',
+  //   symbol: TokenSymbols.USDT,
+  //   chain: EVMNetwork.ETHEREUM,
+  //   decimal: 6,
+  //   assetType: EVMAssetType.ERC20,
+  //   contractAddress: '0xdAC17F958D2ee523a2206206994597C13D831ec7'
+  // },
+  // {
+  //   name: 'Ethereum',
+  //   symbol: TokenSymbols.ethereum,
+  //   chain: EVMNetwork.ETHEREUM_TESTNET_GOERLI,
+  //   decimal: 18,
+  //   assetType: EVMAssetType.NATIVE
+  // },
+  // {
+  //   name: 'TBC',
+  //   symbol: TokenSymbols.TBC,
+  //   chain: EVMNetwork.ETHEREUM_TESTNET_GOERLI,
+  //   decimal: 18,
+  //   assetType: EVMAssetType.ERC20,
+  //   contractAddress: 'TBC'
+  // },
+  // {
+  //   name: 'Avalanche',
+  //   chain: EVMNetwork.AVALANCHE_TESTNET_FUJI,
+  //   symbol: TokenSymbols.AVAX,
+  //   decimal: 18,
+  //   assetType: EVMAssetType.NATIVE
+  // },
+  // {
+  //   name: 'Dexalot Token',
+  //   symbol: TokenSymbols.ALOT,
+  //   chain: EVMNetwork.AVALANCHE_TESTNET_FUJI,
+  //   decimal: 18,
+  //   assetType: EVMAssetType.ERC20,
+  //   contractAddress: '0x9983F755Bbd60d1886CbfE103c98C272AA0F03d6'
+  // }
 
+  // {
+  //   name: 'Astar',
+  //   symbol: TokenSymbols.astar,
+  //   chain: 'astar',
+  //   node: 'wss://astar.api.onfinality.io/public-ws',
+  //   prefix: 5
+  // },
   // {
   //   name: 'Moonriver',
   //   symbol: 'movr',
   //   chain: 'moonriver',
   //   node: 'wss://moonriver-rpc.polkadot.io',
-  //   prefix: 1285,
   //   encodeType: 'ethereum'
   // },
   // {
@@ -342,28 +395,41 @@ export const networks: Network[] = [
   //   chain: 'moonbeam',
   //   // chain: ' moonbeam-alpha',
   //   node: 'wss://moonbeam-rpc.polkadot.io',
-  //   encodeType: 'ethereum',
-  //   prefix: 1284
+  //   encodeType: 'ethereum'
   // },
   // {
   //   name: 'Shiden',
   //   symbol: 'sdn',
   //   chain: 'shiden',
-  //   node: 'wss://shiden.api.onfinality.io/public-ws',
-  //   prefix: 5
+  //   node: 'wss://shiden.api.onfinality.io/public-ws'
+  // },
+
+  // wss://rpc.astar.network
+
+  // {
+  //   name: 'Acala',
+  //   symbol: 'ACA',
+  //   chain: 'acala-testnet' //todo revise test-net?
   // },
   // {
-  //   name: 'Astar',
-  //   symbol: TokenSymbols.astar,
-  //   chain: 'astar',
-  //   node: 'wss://astar.api.onfinality.io/public-ws',
-  //   prefix: 5
-  // }
+  //   name: 'Karura',
+  //   symbol: 'KAR',
+  //   chain: 'karura'
+  // },
   // {
-  //   name: 'Astar',
-  //   symbol: TokenSymbols.astar,
-  //   chain: 'astar',
-  //   node: 'wss://astar.api.onfinality.io/public-ws',
-  //   prefix: 5
+  //   name: 'Altair',
+  //   symbol: 'AIR',
+  //   chain: 'altair'
+  // },
+
+  // {
+  //   name: 'Bifrost',
+  //   symbol: 'BNC',
+  //   chain: 'bifrost-parachain'
+  // },
+  // {
+  //   name: 'Edgeware',
+  //   symbol: 'EDG',
+  //   chain: 'edgeware'
   // }
 ];

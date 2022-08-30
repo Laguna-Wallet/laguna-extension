@@ -9,6 +9,7 @@ import { useSelector } from 'react-redux';
 import SelectNetwork from './SelectNetwork';
 import { State } from 'redux/store';
 import { useLocation } from 'react-router-dom';
+import { EVMNetwork } from 'utils/evm/networks';
 export interface PropsFromTokenDashboard {
   fromTokenDashboard?: boolean;
   asset?: Asset;
@@ -38,7 +39,7 @@ export default function Receive() {
       // const api = await getApiInstance(selectedNetwork.chain);
       // const prefix = api.consts.system.ss58Prefix;
 
-      if (selectedNetwork.chain === 'ethereum' && activeAccount?.meta?.ethAddress) {
+      if (selectedNetwork.chain === EVMNetwork.ETHEREUM && activeAccount?.meta?.ethAddress) {
         setRecoded(activeAccount?.meta?.ethAddress);
         return;
       }

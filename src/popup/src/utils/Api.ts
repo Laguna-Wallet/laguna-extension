@@ -7,6 +7,8 @@ import { changeAccountsBalances, changeTokenReceived } from 'redux/actions';
 import { checkBalanceChange, timer } from 'utils';
 import { getFromStorage, saveToStorage } from './chrome';
 import { getEVMBalance } from './evm/api';
+import { EVMNetwork } from './evm/networks';
+import { EvmAssets } from './evm/networks/asset';
 import { recodeAddress } from './polkadot';
 import { networks, StorageKeys } from './types';
 
@@ -72,16 +74,25 @@ export async function fetchAccountsBalances(
         await timer(1000);
         const network = networks[i];
 
-        if (network.chain === 'ethereum' && !ethAddress) {
+        if (network.chain === EVMNetwork.ETHEREUM && !ethAddress) {
           i++;
           continue;
         }
 
-        if (network.chain === 'ethereum' && ethAddress) {
-          const ethBalance = await getEVMBalance(ethAddress);
-          
+        if (
+          network.chain === EVMNetwork.ETHEREUM ||
+          network.chain === EVMNetwork.AVALANCHE_TESTNET_FUJI ||
+          (network.chain === EVMNetwork.ETHEREUM_TESTNET_GOERLI && ethAddress)
+        ) {
+          const ethBalance = await getEVMBalance(
+            network.chain,
+            ethAddress,
+            EvmAssets[network.chain][network.symbol]
+          );
+          console.log('~ ethBalance', ethBalance);
+
           temp_obj[network.chain] = {
-            overall: Number(ethBalance.amount),
+            overall: ethBalance.toNumber(),
             locked: Number(0) // todo change after eth 2.0 merge
           };
         } else {

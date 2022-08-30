@@ -8,7 +8,7 @@ export enum EVMAssetType {
   // ERC1155 = "ERC1155",
 }
 
-export const assets: {
+export const EvmAssets: {
   [network: string]: {
     [assetId: string]: IEVMAsset | IEVMAssetERC20;
   };
