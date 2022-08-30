@@ -78,6 +78,7 @@ export const buildTransaction = async (
         gasPrice: param.gasPriceInGwei.toString(10),
         gasLimit: ethers.utils.hexlify(100000),
         nonce: onChainNonce.toString(10), // TODO plus numOfPendingTransaction or using ethers.NonceManager
+        chainId: networks[param.network].chainId,
     }
     return toBeSignTransaction
 }
