@@ -89,10 +89,9 @@ export async function fetchAccountsBalances(
             ethAddress,
             EvmAssets[network.chain][network.symbol]
           );
-          console.log('~ ethBalance', ethBalance);
 
           temp_obj[network.chain] = {
-            overall: ethBalance.toNumber(),
+            overall: ethers.utils.formatEther(ethBalance.toString()),
             locked: Number(0) // todo change after eth 2.0 merge
           };
         } else {

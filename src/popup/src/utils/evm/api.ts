@@ -6,7 +6,7 @@ import {
   IEVMToBeSignTransaction,
   Response
 } from './interfaces';
-import fs from 'fs';
+// import fs from 'fs';
 import BigNumber from 'bignumber.js';
 import { EVMNetwork, networks } from './networks';
 import { EVMAssetType } from './networks/asset';
@@ -48,7 +48,9 @@ export const isValidEVMAddress = (address: string): Response => {
 };
 
 export const getProvider = (network: EVMNetwork): ethers.providers.JsonRpcProvider => {
-  return new ethers.providers.JsonRpcProvider(networks[network].nodeUrl);
+  return new ethers.providers.JsonRpcProvider('HTTP://127.0.0.1:7545');
+
+  // networks[network].nodeUrl
 };
 
 export const getNonce = async (network: EVMNetwork, address: string): Promise<BigNumber> => {
@@ -57,7 +59,7 @@ export const getNonce = async (network: EVMNetwork, address: string): Promise<Bi
   return new BigNumber(nonce);
 };
 
-export const getGasPrice = async (network: EVMNetwork): Promise<BigNumber> => {
+export const getEvmGasPrice = async (network: EVMNetwork): Promise<BigNumber> => {
   const provider = new ethers.providers.JsonRpcProvider(networks[network].nodeUrl);
   const gasPrice = await provider.getGasPrice();
   return new BigNumber(gasPrice.toString());
@@ -67,42 +69,57 @@ export const estimateGas = async (
   network: EVMNetwork,
   toBeSignTransaction: IEVMToBeSignTransaction
 ): Promise<BigNumber> => {
+  console.log(1);
   const provider = new ethers.providers.JsonRpcProvider(networks[network].nodeUrl);
+  console.log(2);
+  console.log('~ toBeSignTransaction', toBeSignTransaction);
   const estimateResult = await provider.estimateGas(toBeSignTransaction);
+  console.log(3);
   return new BigNumber(estimateResult.toString());
 };
 
-export const buildTransaction = async (
+export const buildEvmTransaction = async (
   param: IEVMBuildTransaction
-  ): Promise<IEVMToBeSignTransaction> => {
-    const onChainNonce = await getNonce(param.network, param.fromAddress);
-    const toBeSignTransaction = {
-        to: param.toAddress,
-        from: param.fromAddress,
-        value: param.amount.multipliedBy(`1E${param.asset.decimal}`).toString(10),
-        gasPrice: param.gasPriceInGwei.toString(10),
-        gasLimit: ethers.utils.hexlify(100000),
-        nonce: onChainNonce.toString(10), // TODO plus numOfPendingTransaction or using ethers.NonceManager
-    }
-    return toBeSignTransaction
-}
+): Promise<IEVMToBeSignTransaction> => {
+  const onChainNonce = await getNonce(param.network, param.fromAddress);
+  const toBeSignTransaction = {
+    to: param.toAddress,
+    from: param.fromAddress,
+    value: param.amount.multipliedBy(`1E${param.asset.decimal}`).toString(10),
+    gasPrice: param.gasPriceInGwei.toString(10),
+    gasLimit: ethers.utils.hexlify(100000),
+    nonce: onChainNonce.toString(10) // TODO plus numOfPendingTransaction or using ethers.NonceManager
+  };
+  return toBeSignTransaction;
+};
 
-export const signTransaction = async (network: EVMNetwork, wallet: ethers.Wallet, toBeSignTransaction: IEVMToBeSignTransaction): Promise<string> => {
+export const signTransaction = async (
+  network: EVMNetwork,
+  wallet: ethers.Wallet,
+  toBeSignTransaction: IEVMToBeSignTransaction
+): Promise<string> => {
   // TODO decide were wallet is generated from
   const provider = getProvider(network);
   const signer = wallet.connect(provider);
   const signedTx = signer.signTransaction(toBeSignTransaction);
- return signedTx;
+  return signedTx;
 };
 
-export const broadcastTransaction = async (network: EVMNetwork, signedTx: string): Promise<string> => {   
-    // const signedTx = "0xf8690401825208945555763613a12d8f3e73be831dff8598089d3dca882b992b75cbeb600080820a95a01727bd07080a5d3586422edad86805918e9772adda231d51c32870a1f1cabffba07afc6be528befb79b9ed250356f6eacd63e853685091e9a3987a3d266c6cb26a";
-    const provider = getProvider(network);
-    const transactionReceipt = await provider.sendTransaction(signedTx);
-    return transactionReceipt.hash;
-  }
+export const broadcastTransaction = async (
+  network: EVMNetwork,
+  signedTx: string
+): Promise<string> => {
+  // const signedTx = "0xf8690401825208945555763613a12d8f3e73be831dff8598089d3dca882b992b75cbeb600080820a95a01727bd07080a5d3586422edad86805918e9772adda231d51c32870a1f1cabffba07afc6be528befb79b9ed250356f6eacd63e853685091e9a3987a3d266c6cb26a";
+  const provider = getProvider(network);
+  const transactionReceipt = await provider.sendTransaction(signedTx);
+  return transactionReceipt.hash;
+};
 
-export const getBalance = async (network: EVMNetwork, address: string, asset: IEVMAsset | IEVMAssetERC20): Promise<BigNumber> => {
+export const getEVMBalance = async (
+  network: EVMNetwork,
+  address: string,
+  asset: IEVMAsset | IEVMAssetERC20
+): Promise<BigNumber> => {
   const provider = getProvider(network);
   let balanceInBaseUnit;
   switch (asset.assetType) {

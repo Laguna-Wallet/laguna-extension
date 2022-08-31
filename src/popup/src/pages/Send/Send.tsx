@@ -24,6 +24,8 @@ import { PropsFromTokenDashboard } from 'pages/Recieve/Receive';
 import { selectAsset } from 'redux/actions';
 import { State } from 'redux/store';
 import { useLocation } from 'react-router-dom';
+import { buildEvmTransaction, estimateGas, getEvmGasPrice } from 'utils/evm/api';
+import { EvmAssets } from 'utils/evm/networks/asset';
 
 export enum SendAccountFlowEnum {
   SendToTrustedContact = 'SendToTrustedContact',
@@ -63,6 +65,8 @@ function Send({ initialIsContactsPopupOpen }: Props) {
 
   const balances = accountsBalances?.balances;
 
+  const activeAccount = account.getActiveAccount();
+
   // TODO REFETCH NETWORKS FROM STORAGE
   useEffect(() => {
     async function go() {
@@ -84,8 +88,9 @@ function Send({ initialIsContactsPopupOpen }: Props) {
   const reduxSendTokenState = useSelector((state: any) => state.sendToken);
   const form = useSelector((state: any) => state?.form?.sendToken?.values);
 
+  console.log('~ form.amount', form?.amount);
   useEffect(() => {
-    async function go() {
+    async function goPolkadot() {
       if (
         !reduxSendTokenState.selectedAsset ||
         !isValidPolkadotAddress(form?.address) ||
@@ -99,7 +104,7 @@ function Send({ initialIsContactsPopupOpen }: Props) {
       const factor = new BigNumber(10).pow(new BigNumber(api.registry.chainDecimals[0]));
       const amount = new BigNumber(form.amount).multipliedBy(factor);
 
-      const balance = await api.derive.balances.all(account.getActiveAccount().address);
+      const balance = await api.derive.balances.all(activeAccount?.address);
       const available = `${balance.availableBalance}`;
       const prefix = api.consts.system.ss58Prefix;
 
@@ -137,7 +142,40 @@ function Send({ initialIsContactsPopupOpen }: Props) {
       setLoading(false);
     }
 
-    go();
+    async function goEthereum() {
+      if (
+        !reduxSendTokenState.selectedAsset ||
+        // !isValidPolkadotAddress(form?.address) ||
+        !form?.amount
+      )
+        return;
+
+      const ethNetwork = reduxSendTokenState?.selectedAsset?.chain;
+      const gasPrice = await getEvmGasPrice(ethNetwork);
+
+      const ethAsset = EvmAssets[ethNetwork][reduxSendTokenState?.selectedAsset?.symbol];
+
+      const toBeSignTransaction = await buildEvmTransaction({
+        network: ethNetwork,
+        asset: ethAsset,
+        amount: new BigNumber(form?.amount),
+        fromAddress: activeAccount?.meta?.ethAddress,
+        toAddress: form?.address,
+        gasPriceInGwei: gasPrice
+        // numOfPendingTransaction: BigNumber; // TODO for adding up nonce, blocked by cache pending txn
+      });
+      console.log('~ toBeSignTransaction', toBeSignTransaction);
+
+      const estimatedGas = await estimateGas(ethNetwork, toBeSignTransaction);
+      console.log('~ estimatedGas', estimatedGas);
+
+      //   // setFee(`${new BigNumber(partialFee.toString()).div(factor)}`);
+      //   // setTransfer(transfer);
+      //   // setLoading(false);
+    }
+
+    // goPolkadot();
+    goEthereum();
   }, [reduxSendTokenState.selectedAsset, form?.address, form?.amount]);
 
   useEffect(() => {

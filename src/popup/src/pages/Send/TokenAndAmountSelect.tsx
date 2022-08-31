@@ -6,6 +6,7 @@ import SelectSmallIcon from 'assets/svgComponents/SelectSmallIcon';
 import useOnClickOutside from 'hooks/useOnClickOutside';
 // import debounce from 'lodash.debounce';
 import { useEffect } from 'react';
+import debounce from 'lodash.debounce';
 
 type Props = {
   Icon: any;
@@ -66,7 +67,7 @@ const Input = ({ input: { value, onChange }, onChangeCallback }: any) => {
     onChange(parseNumeric(event.target.value));
   };
 
-  // const debouncedChangeHandler = useMemo(() => debounce(changeHandler, 3000), []);
+  const debouncedChangeHandler = useMemo(() => debounce(changeHandler, 3000), []);
 
   useEffect(() => {
     return () => {
@@ -86,8 +87,9 @@ const Input = ({ input: { value, onChange }, onChangeCallback }: any) => {
       // }}
       // todo proper typing
       onChange={(e) => {
+        // onChange(e);
         onChangeCallback();
-        // debouncedChangeHandler(e);
+        debouncedChangeHandler(e);
       }}
       placeholder="Enter Amount"
       // debounceTimeout={600}

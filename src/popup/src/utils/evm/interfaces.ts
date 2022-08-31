@@ -36,12 +36,12 @@ export interface IEVMAssetERC20 extends IEVMAsset {
 
 export interface IEVMBuildTransaction {
   network: EVMNetwork;
-  asset: IEVMAssetERC20;
+  asset: IEVMAsset | IEVMAssetERC20;
   amount: BigNumber;
   fromAddress: string;
   toAddress: string;
   gasPriceInGwei: BigNumber;
-  numOfPendingTransaction: BigNumber; // TODO for adding up nonce, blocked by cache pending txn
+  numOfPendingTransaction?: BigNumber; // TODO for adding up nonce, blocked by cache pending txn
 }
 
 export interface IEVMToBeSignTransaction {
@@ -61,6 +61,6 @@ export interface IEVMToBeSignTransaction {
 }
 
 export interface Response {
-  success: boolean,
-  message: string
+  success: boolean;
+  message: string;
 }
