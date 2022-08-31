@@ -25,10 +25,6 @@ export default function Accounts({ userContainerWidth }: Props) {
   const [accounts, setAccounts] = useState<KeyringPair[]>(keyring.getPairs());
   const [isConnected, setIsConnected] = useState<boolean>(true);
 
-  const formatName = (name: string) => {
-    return name.length > 12 ? truncateString(name) : name;
-  };
-
   const handleSetActiveAccount = (e: React.MouseEvent<HTMLDivElement>, account: unknown) => {
     e.stopPropagation();
     accountCtx.saveActiveAccount(account);
@@ -37,9 +33,6 @@ export default function Accounts({ userContainerWidth }: Props) {
 
   return (
     <Container>
-      <TriangleContainer userContainerWidth={userContainerWidth}>
-        <TriangleIcon />
-      </TriangleContainer>
 
       <Header>
         <HeaderItem>ACCOUNTS</HeaderItem>
@@ -171,7 +164,7 @@ const Connected = styled.div`
   padding: 3px 8px;
   border-radius: 50px;
   background-color: #f2f2f2;
-  hight: 22px;
+  height: 22px;
   position: relative;
 `;
 
