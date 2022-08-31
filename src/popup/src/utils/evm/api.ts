@@ -67,19 +67,36 @@ export const estimateGas = async (network: EVMNetwork, toBeSignTransaction: IEVM
   return new BigNumber(estimateResult.toString())
 }
 
+export const isSmartContractAddress = async (network: EVMNetwork, address: string): Promise<boolean> => {
+  const provider = new ethers.providers.JsonRpcProvider(networks[network].nodeUrl)
+  const code =  await provider.getCode(toCheckSumAddress(address));
+  return (!code);
+}
+
+export const calculateTransactionFeeInNormalUnit = (toBeSignTransaction: IEVMToBeSignTransaction): BigNumber => {
+  return new BigNumber(toBeSignTransaction.gasLimit).multipliedBy(toBeSignTransaction.gasPrice).dividedBy(`1E18`);
+}
+
 export const buildTransaction = async (
   param: IEVMBuildTransaction
   ): Promise<IEVMToBeSignTransaction> => {
     const onChainNonce = await getNonce(param.network, param.fromAddress);
-    const toBeSignTransaction = {
-        to: param.toAddress,
-        from: param.fromAddress,
-        value: param.amount.multipliedBy(`1E${param.asset.decimal}`).toString(10),
-        gasPrice: param.gasPriceInGwei.toString(10),
-        gasLimit: ethers.utils.hexlify(100000),
-        nonce: onChainNonce.toString(10), // TODO plus numOfPendingTransaction or using ethers.NonceManager
-        chainId: networks[param.network].chainId,
+
+    const toBeSignTransaction: IEVMToBeSignTransaction = {
+      to: param.toAddress,
+      from: param.fromAddress,
+      value: param.amount.multipliedBy(`1E${param.asset.decimal}`).toString(10),
+      gasPrice: param.gasPriceInGwei.toString(10),
+      nonce: onChainNonce.toString(10), // TODO plus numOfPendingTransaction or using ethers.NonceManager
+      chainId: networks[param.network].chainId,
+  };
+    let gasLimit: BigNumber;
+    if (!(await isSmartContractAddress(param.network, param.toAddress))) {
+      gasLimit = new BigNumber(21000);
+    } else {
+      gasLimit = await estimateGas(param.network, toBeSignTransaction);
     }
+    toBeSignTransaction.gasLimit = gasLimit.toString(10);
     return toBeSignTransaction
 }
 
