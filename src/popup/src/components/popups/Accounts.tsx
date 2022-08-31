@@ -70,7 +70,7 @@ export default function Accounts({ userContainerWidth }: Props) {
                 key={account.address}>
                 <Avatar img={getAccountImage(account.address)} />
                 <span>
-                  {(account?.meta?.name as string) && formatName(account?.meta?.name as string)}
+                  {(account?.meta?.name as string) && account?.meta?.name as string}
                 </span>
 
                 <Icons>
@@ -221,13 +221,18 @@ const Account = styled.div`
   margin: 14px 0 0;
   cursor: pointer;
   span {
+    max-width: 200px;
     font-family: IBM Plex Sans;
     font-size: 17px;
     font-weight: 500;
     line-height: 23px;
+    text-overflow: ellipsis;
+    overflow-x: hidden;
+    white-space: nowrap;
     margin-left: 10px;
     color: #18191a;
   }
+  
 `;
 
 const AccountIcon = styled.div`
