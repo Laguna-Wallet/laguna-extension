@@ -1,4 +1,4 @@
-import * as React from "react"
+import * as React from "react";
 function LockIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg width={156} height={156} fill="none" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" {...props}>
@@ -15,6 +15,6 @@ function LockIcon(props: React.SVGProps<SVGSVGElement>) {
         />
       </defs>
     </svg>
-  )
+  );
 }
-export default LockIcon
+export default LockIcon;

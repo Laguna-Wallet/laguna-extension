@@ -1,14 +1,14 @@
-import { MnemonicsTriple, StorageKeys } from './types';
-import { saveAs } from 'file-saver';
-import { KeyringPair$Json } from '@polkadot/keyring/types';
-import { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
-import type { KeyringPair } from '@polkadot/keyring/types';
-import bcrypt from 'bcryptjs';
-import { getFromStorage, saveToStorage } from './chrome';
-import keyring from '@polkadot/ui-keyring';
-import Resizer from 'react-image-file-resizer';
-import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
-import BigNumber from 'bignumber.js';
+import { MnemonicsTriple, StorageKeys } from "./types";
+import { saveAs } from "file-saver";
+import { KeyringPair$Json } from "@polkadot/keyring/types";
+import { KeyringPairs$Json } from "@polkadot/ui-keyring/types";
+import type { KeyringPair } from "@polkadot/keyring/types";
+import bcrypt from "bcryptjs";
+import { getFromStorage, saveToStorage } from "./chrome";
+import keyring from "@polkadot/ui-keyring";
+import Resizer from "react-image-file-resizer";
+import { decodeAddress, encodeAddress } from "@polkadot/util-crypto";
+import BigNumber from "bignumber.js";
 
 //==============================================================================
 // Mnemonics
@@ -27,7 +27,7 @@ export function generateThreeRandomMnemonicIndexes(): MnemonicsTriple {
 export function validateMnemonicChoice(
   mnemonics: string[],
   chosenArr: string[],
-  targetIndexes: MnemonicsTriple
+  targetIndexes: MnemonicsTriple,
 ): boolean {
   if (chosenArr.length !== 3) return false;
 
@@ -44,9 +44,9 @@ export function validateMnemonicChoice(
 }
 
 export function generateNumberAbbreviation(num: number): string {
-  if (num === 1) return '1st word';
-  if (num === 2) return '2nd word';
-  if (num === 3) return '3rd word';
+  if (num === 1) return "1st word";
+  if (num === 2) return "2nd word";
+  if (num === 3) return "3rd word";
   return `${num}th word`;
 }
 
@@ -87,27 +87,27 @@ export function copyToClipboard(text: string): void {
 }
 
 export function calculatePasswordCheckerColor(passwordLength: string) {
-  if (passwordLength === 'Poor') return '#FB5A5A';
-  if (passwordLength === 'Fair') return '#FFC44C';
-  if (passwordLength === 'Good') return '#458FFF';
-  if (passwordLength === 'Excellent') return '#00A47C';
-  return '#FB5A5A';
+  if (passwordLength === "Poor") return "#FB5A5A";
+  if (passwordLength === "Fair") return "#FFC44C";
+  if (passwordLength === "Good") return "#458FFF";
+  if (passwordLength === "Excellent") return "#00A47C";
+  return "#FB5A5A";
 }
 
 export function exportJson(json: any) {
   const blob = new Blob([JSON.stringify(json)], {
-    type: 'application/json; charset=utf-8'
+    type: "application/json; charset=utf-8",
   });
   saveAs(blob, `exported_accounts_${Date.now()}.json`);
 }
 
 export async function convertUploadedFileToJson(
-  acceptedFile: File[]
+  acceptedFile: File[],
 ): Promise<KeyringPair$Json | KeyringPairs$Json> {
   try {
     return await new Promise((resolve, reject) => {
       const fileReader = new FileReader();
-      fileReader.readAsText(acceptedFile[0], 'UTF-8');
+      fileReader.readAsText(acceptedFile[0], "UTF-8");
       fileReader.onload = (e: any) => {
         try {
           const parsed = JSON.parse(e.target.result);
@@ -145,7 +145,7 @@ export function encryptPassword({ password }: { password: string }) {
 export function truncateString(string: string, length?: number): string {
   if (!string) return string;
   if (string.length <= (length || 4 * 2)) return string;
-  const part1 = string.slice(0, length || 4).concat('...');
+  const part1 = string.slice(0, length || 4).concat("...");
   const part2 = string.substring(string.length - ((length && length + 2) || 4), string.length);
   return `${part1}${part2}`;
 }
@@ -180,22 +180,22 @@ export async function updateBallanceCache(chain: string, amount: string, fee: st
 
   const parsed = balances && JSON.parse(balances);
   const sum =
-    chain === 'westend'
-      ? new BigNumber(amount).plus(fee).plus('0.001').toNumber()
+    chain === "westend"
+      ? new BigNumber(amount).plus(fee).plus("0.001").toNumber()
       : new BigNumber(amount).plus(fee).toNumber();
 
   const calculatedBalances = {
     ...parsed.balances,
     [chain]: {
       overall: parsed.balances[chain].overall - sum,
-      locked: parsed.balances[chain].locked
-    }
+      locked: parsed.balances[chain].locked,
+    },
   };
   const newBalances = { address: parsed.address, balances: calculatedBalances };
 
   saveToStorage({
     key: StorageKeys.AccountBalances,
-    value: JSON.stringify(newBalances)
+    value: JSON.stringify(newBalances),
   });
 
   return newBalances;
@@ -229,32 +229,32 @@ export const resizeFile = (file: File) =>
       file,
       300,
       300,
-      'JPEG',
+      "JPEG",
       100,
       0,
       (uri) => {
         resolve(uri);
       },
-      'base64'
+      "base64",
     );
   });
 
 export const enhancePasswordStrength = (string: string): string => {
-  if (string === 'Too weak') return 'Poor';
-  if (string === 'Weak') return 'Fair';
-  if (string === 'Medium') return 'Good';
-  if (string === 'Strong') return 'Excellent';
-  return '';
+  if (string === "Too weak") return "Poor";
+  if (string === "Weak") return "Fair";
+  if (string === "Medium") return "Good";
+  if (string === "Strong") return "Excellent";
+  return "";
 };
 
 export const validPassword = (values: { password: string }) => {
   const { password } = values;
   const errors: Record<string, string> = {};
   if (!password) {
-    errors.password = 'Required';
+    errors.password = "Required";
   }
   if (password?.length < 8) {
-    errors.password = 'Must be at least 8 characters';
+    errors.password = "Must be at least 8 characters";
   }
 
   return errors;
@@ -262,7 +262,7 @@ export const validPassword = (values: { password: string }) => {
 
 export async function checkBalanceChange(
   newBalance: Record<string, any>,
-  newAddress: string
+  newAddress: string,
 ): Promise<boolean> {
   const oldBalance = await getFromStorage(StorageKeys.AccountBalances);
   if (!oldBalance) return false;

@@ -1,14 +1,14 @@
-import { useWizard, Wizard } from 'react-use-wizard';
-import { SecurityLevelEnum } from '../CreateAccount';
-import ChooseSecurityLevel from './chooseSecurityLevel';
-import CreatePassword from '../CreatePassword/CreatePassword';
-import DecodeToViewSeed from './decodeToVeiwSeed';
-import MnemonicsSeed from './mnemonicsSeed';
-import { useAccount } from 'context/AccountContext';
-import ConfirmSeed from './confirmSeed';
-import SetupComplete from 'pages/AddImportAccount/SetupComplete';
-import { useHistory } from 'react-router-dom';
-import { router } from 'router/router';
+import { useWizard, Wizard } from "react-use-wizard";
+import { SecurityLevelEnum } from "../CreateAccount";
+import ChooseSecurityLevel from "./chooseSecurityLevel";
+import CreatePassword from "../CreatePassword/CreatePassword";
+import DecodeToViewSeed from "./decodeToVeiwSeed";
+import MnemonicsSeed from "./mnemonicsSeed";
+import { useAccount } from "context/AccountContext";
+import ConfirmSeed from "./confirmSeed";
+import SetupComplete from "pages/AddImportAccount/SetupComplete";
+import { useHistory } from "react-router-dom";
+import { router } from "router/router";
 
 type Props = {
   redirectedFromSignUp?: boolean;
@@ -21,7 +21,7 @@ export default function SecureWallet({
   level,
   setLevel,
   redirectedFromSignUp,
-  redirectedFromDashboard
+  redirectedFromDashboard,
 }: Props) {
   const history = useHistory();
 

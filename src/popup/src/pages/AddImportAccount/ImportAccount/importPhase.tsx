@@ -1,28 +1,28 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from "react";
 
-import FileUploadIcon from 'assets/svgComponents/FileUploadIcon';
-import RightArrow from 'assets/svgComponents/RightArrow';
-import UploadFinishedIcon from 'assets/svgComponents/UploadFinishedIcon';
-import Button from 'components/primitives/Button';
-import HumbleInput from 'components/primitives/HumbleInput';
-import Snackbar from 'components/Snackbar/Snackbar';
-import WizardHeader from 'pages/AddImportAccount/WizardHeader';
-import { useDropzone } from 'react-dropzone';
-import { useDispatch, useSelector } from 'react-redux';
-import { useWizard } from 'react-use-wizard';
-import { reduxForm, change, reset, Field, InjectedFormProps } from 'redux-form';
-import styled, { keyframes } from 'styled-components';
-import { convertUploadedFileToJson } from 'utils';
-import { isKeyringJson, isValidKeyringPassword, isValidPolkadotAddress } from 'utils/polkadot';
-import { mnemonicValidate } from '@polkadot/util-crypto';
-import Popup from 'components/Popup/Popup';
-import { HelpImport } from 'components/popups/HelpImport';
-import ButtonsIcon from 'assets/svgComponents/ButtonsIcon';
-import { KeyringPair$Json } from '@polkadot/keyring/types';
-import { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
-import { isHex } from '@polkadot/util';
-import { useHistory } from 'react-router-dom';
-import { router } from 'router/router';
+import FileUploadIcon from "assets/svgComponents/FileUploadIcon";
+import RightArrow from "assets/svgComponents/RightArrow";
+import UploadFinishedIcon from "assets/svgComponents/UploadFinishedIcon";
+import Button from "components/primitives/Button";
+import HumbleInput from "components/primitives/HumbleInput";
+import Snackbar from "components/Snackbar/Snackbar";
+import WizardHeader from "pages/AddImportAccount/WizardHeader";
+import { useDropzone } from "react-dropzone";
+import { useDispatch, useSelector } from "react-redux";
+import { useWizard } from "react-use-wizard";
+import { reduxForm, change, reset, Field, InjectedFormProps } from "redux-form";
+import styled, { keyframes } from "styled-components";
+import { convertUploadedFileToJson } from "utils";
+import { isKeyringJson, isValidKeyringPassword, isValidPolkadotAddress } from "utils/polkadot";
+import { mnemonicValidate } from "@polkadot/util-crypto";
+import Popup from "components/Popup/Popup";
+import { HelpImport } from "components/popups/HelpImport";
+import ButtonsIcon from "assets/svgComponents/ButtonsIcon";
+import { KeyringPair$Json } from "@polkadot/keyring/types";
+import { KeyringPairs$Json } from "@polkadot/ui-keyring/types";
+import { isHex } from "@polkadot/util";
+import { useHistory } from "react-router-dom";
+import { router } from "router/router";
 
 type Props = {
   onClose: () => void;
@@ -39,7 +39,7 @@ const validate = (values: { password: string }) => {
   const { password } = values;
   const errors: Record<string, string> = {};
   if (!password) {
-    errors.password = 'Required';
+    errors.password = "Required";
   }
 
   return errors;
@@ -50,13 +50,13 @@ const ImportPhase = ({
   redirectedFromSignUp,
   redirectedFromForgotPassword,
   onClose,
-  valid
+  valid,
 }: InjectedFormProps<FormProps> & Props) => {
   const { nextStep } = useWizard();
   const history = useHistory();
 
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
-  const [snackbarError, setSnackbarError] = useState<string>('');
+  const [snackbarError, setSnackbarError] = useState<string>("");
   const [uploaded, setUploaded] = useState<boolean>(false);
   const [isFinishSlider, setIsFinishSlider] = useState(false);
   const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false);
@@ -76,19 +76,19 @@ const ImportPhase = ({
         setUploaded(true);
         setIsLoading(false);
         setIsFinishSlider(true);
-        dispatch(change('ImportPhase', 'file', json));
+        dispatch(change("ImportPhase", "file", json));
       }
     } catch (err) {
       setIsSnackbarOpen(true);
       setIsLoading(false);
-      setSnackbarError('Not A Valid JSON Backup File (.Json)');
+      setSnackbarError("Not A Valid JSON Backup File (.Json)");
     }
   }, []);
 
   const { getRootProps, getInputProps, open } = useDropzone({
     onDrop,
     noClick: true,
-    accept: '.json'
+    accept: ".json",
   });
 
   const submit = async (values: FormProps) => {
@@ -99,7 +99,7 @@ const ImportPhase = ({
       } else {
         if (values?.password) {
           setIsSnackbarOpen(true);
-          setSnackbarError('Incorrect password');
+          setSnackbarError("Incorrect password");
         }
       }
     } else if (!isDisabled) {
@@ -108,7 +108,7 @@ const ImportPhase = ({
   };
 
   useEffect(() => {
-    const seedLength = seedPhase?.split(' ').filter((item: string) => item?.length).length;
+    const seedLength = seedPhase?.split(" ").filter((item: string) => item?.length).length;
 
     /* eslint-disable */
     if (seedPhase && /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(seedPhase)) {

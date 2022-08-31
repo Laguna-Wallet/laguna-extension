@@ -1,1 +1,1 @@
-declare module 'reactjs-mappletooltip';
+declare module "reactjs-mappletooltip";

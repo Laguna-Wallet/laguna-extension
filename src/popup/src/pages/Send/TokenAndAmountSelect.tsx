@@ -1,11 +1,11 @@
-import { useMemo, useRef, useState } from 'react';
-import styled from 'styled-components';
-import { Field } from 'redux-form';
-import { parseNumeric } from 'utils/validations';
-import SelectSmallIcon from 'assets/svgComponents/SelectSmallIcon';
-import useOnClickOutside from 'hooks/useOnClickOutside';
+import { useMemo, useRef, useState } from "react";
+import styled from "styled-components";
+import { Field } from "redux-form";
+import { parseNumeric } from "utils/validations";
+import SelectSmallIcon from "assets/svgComponents/SelectSmallIcon";
+import useOnClickOutside from "hooks/useOnClickOutside";
 // import debounce from 'lodash.debounce';
-import { useEffect } from 'react';
+import { useEffect } from "react";
 
 type Props = {
   Icon: any;
@@ -141,10 +141,10 @@ const OptionContainer = styled.div`
 `;
 
 const StyledInput = styled.input<{ isvalue: boolean }>`
-  width: ${({ isvalue }) => (isvalue ? '100%' : 'calc(100% - 40px)')};
+  width: ${({ isvalue }) => (isvalue ? "100%" : "calc(100% - 40px)")};
   padding-right: 12px;
   height: 48px;
-  /* margin-left: ${({ isvalue }) => (isvalue ? '2px' : '14px')}; */
+  /* margin-left: ${({ isvalue }) => (isvalue ? "2px" : "14px")}; */
   margin-left: 10px;
   border: 0;
   border-top-left-radius: 5px;

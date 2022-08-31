@@ -1,20 +1,20 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
-import styled from 'styled-components';
-import { useFormik } from 'formik';
-import MenuHeader from 'components/MenuHeader/MenuHeader';
-import HumbleInput from 'components/primitives/HumbleInput';
-import Button from 'components/primitives/Button';
-import { addAddressSchema } from 'utils/validations';
-import Snackbar from 'components/Snackbar/Snackbar';
-import AddBigIcon from 'assets/svgComponents/AddBigIcon';
-import { objectValuesToArray } from 'utils';
-import keyring from '@polkadot/ui-keyring';
-import EditBigIcon from 'assets/svgComponents/EditBigIcon';
-import { addressExists, isValidPolkadotAddress } from 'utils/polkadot';
-import { useHistory } from 'react-router-dom';
-import { router } from 'router/router';
-import { SnackbarMessages } from 'utils/types';
+import styled from "styled-components";
+import { useFormik } from "formik";
+import MenuHeader from "components/MenuHeader/MenuHeader";
+import HumbleInput from "components/primitives/HumbleInput";
+import Button from "components/primitives/Button";
+import { addAddressSchema } from "utils/validations";
+import Snackbar from "components/Snackbar/Snackbar";
+import AddBigIcon from "assets/svgComponents/AddBigIcon";
+import { objectValuesToArray } from "utils";
+import keyring from "@polkadot/ui-keyring";
+import EditBigIcon from "assets/svgComponents/EditBigIcon";
+import { addressExists, isValidPolkadotAddress } from "utils/polkadot";
+import { useHistory } from "react-router-dom";
+import { router } from "router/router";
+import { SnackbarMessages } from "utils/types";
 
 type AddAddressFormikValues = {
   name: string;
@@ -39,7 +39,7 @@ export default function AddAddress({
   edit,
   backAction,
   closeAction,
-  redirectedFromSend
+  redirectedFromSend,
 }: Props) {
   const history = useHistory();
   const { location } = history as any;
@@ -50,13 +50,13 @@ export default function AddAddress({
 
   const [isOpen, setOpen] = useState<boolean>(true);
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
-  const [snackbarError, setSnackbarError] = useState<string>('');
+  const [snackbarError, setSnackbarError] = useState<string>("");
 
   const formik = useFormik<AddAddressFormikValues>({
     initialValues: {
-      name: name || state?.address?.name || '',
-      address: address || state?.address?.address || '',
-      memo: memo || state?.address?.memo || ''
+      name: name || state?.address?.name || "",
+      address: address || state?.address?.address || "",
+      memo: memo || state?.address?.memo || "",
     },
     validationSchema: addAddressSchema,
     onSubmit: ({ address: newAddress, name: newAddressName, memo: newMemo }) => {
@@ -66,13 +66,13 @@ export default function AddAddress({
       const isValidAddress = isValidPolkadotAddress(newAddress);
       if (!isValidAddress) {
         setIsSnackbarOpen(true);
-        setSnackbarError('Enter correct address');
+        setSnackbarError("Enter correct address");
         return;
       }
 
       if (!editAddress && addressExists(newAddress)) {
         setIsSnackbarOpen(true);
-        setSnackbarError('Address already exists');
+        setSnackbarError("Address already exists");
         return;
       }
 
@@ -87,10 +87,10 @@ export default function AddAddress({
       } else {
         history.push({
           pathname: router.addressBook,
-          state: { snackbar: { show: true, message: SnackbarMessages.AddressAdded } }
+          state: { snackbar: { show: true, message: SnackbarMessages.AddressAdded } },
         });
       }
-    }
+    },
   });
 
   // todo refactor backAction props would be enough
@@ -118,7 +118,7 @@ export default function AddAddress({
     } else {
       history.push({
         pathname: router.addressBook,
-        state: { snackbar: { show: true, message: SnackbarMessages.AddressRemoved } }
+        state: { snackbar: { show: true, message: SnackbarMessages.AddressRemoved } },
       });
     }
   };
@@ -141,7 +141,7 @@ export default function AddAddress({
       <MenuHeader
         isOpen={isOpen}
         setOpen={setOpen}
-        title={`${editAddress ? 'EDIT' : 'ADD'} ADDRESS`}
+        title={`${editAddress ? "EDIT" : "ADD"} ADDRESS`}
         onClose={closeAction || walletLocation}
         backAction={back}
       />
@@ -151,7 +151,7 @@ export default function AddAddress({
             {editAddress ? <EditBigIcon /> : <AddBigIcon />}
           </PlusIconContainer>
           <HumbleInput
-            id={'name'}
+            id={"name"}
             height="48px"
             marginTop="12px"
             placeholder="Name of Address"
@@ -165,7 +165,7 @@ export default function AddAddress({
             placeholderColor="#B1B5C3"
           />
           <HumbleInput
-            id={'address'}
+            id={"address"}
             height="48px"
             marginTop="12px"
             type="text"
@@ -180,7 +180,7 @@ export default function AddAddress({
           />
           {!editAddress && (
             <HumbleInput
-              id={'memo'}
+              id={"memo"}
               height="48px"
               marginTop="12px"
               type="text"
@@ -219,7 +219,7 @@ export default function AddAddress({
           </ButtonContainer>
           {editAddress && (address || location?.state?.address) && (
             <Remove onClick={() => removeAddress(address || location?.state?.address?.address)}>
-              {' '}
+              {" "}
               Remove This Address
             </Remove>
           )}
@@ -231,7 +231,7 @@ export default function AddAddress({
           type="error"
           left="8.5px"
           transform="translateX(0)"
-          bottom={editAddress ? '86px' : '56px'}></Snackbar>
+          bottom={editAddress ? "86px" : "56px"}></Snackbar>
       </Content>
     </Container>
   );
@@ -246,9 +246,9 @@ const Container = styled.div<{ redirectedFromSend?: boolean; edit?: boolean }>`
   top: 0;
   left: 0;
   z-index: 999;
-  padding: ${({ edit }) => (edit ? '0 17.5px 33px' : '0 17.5px 44px')};
+  padding: ${({ edit }) => (edit ? "0 17.5px 33px" : "0 17.5px 44px")};
   box-sizing: border-box;
-  background-color: ${({ redirectedFromSend }) => (redirectedFromSend ? '#fff' : '#18191A')};
+  background-color: ${({ redirectedFromSend }) => (redirectedFromSend ? "#fff" : "#18191A")};
   z-index: 99999;
 `;
 
@@ -270,7 +270,7 @@ const PlusIconContainer = styled.div<{ redirectedFromSend?: boolean; edit?: bool
   align-items: center;
   border-radius: 100%;
   background-color: #000000;
-  margin: ${({ edit }) => (edit ? '22.3px 0 20.7px' : '26px 0 17px')};
+  margin: ${({ edit }) => (edit ? "22.3px 0 20.7px" : "26px 0 17px")};
 `;
 
 const Form = styled.form`

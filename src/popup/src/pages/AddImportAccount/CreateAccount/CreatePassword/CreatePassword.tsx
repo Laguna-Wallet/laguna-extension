@@ -1,36 +1,36 @@
-import styled from 'styled-components';
-import Button from 'components/primitives/Button';
-import { useWizard } from 'react-use-wizard';
-import { passwordStrength } from 'check-password-strength';
-import { calculatePasswordCheckerColor, isObjectEmpty } from 'utils';
-import Snackbar from 'components/Snackbar/Snackbar';
-import { useAccount } from 'context/AccountContext';
-import { useState } from 'react';
-import RightArrow from 'assets/svgComponents/RightArrow';
-import HumbleInput from 'components/primitives/HumbleInput';
-import { reduxForm, Field, getFormSyncErrors, InjectedFormProps } from 'redux-form';
-import { useSelector, connect } from 'react-redux';
-import WizardHeader from 'pages/AddImportAccount/WizardHeader';
-import { checkPasswordStrength } from 'utils/checkPasswordStrength';
-import { useHistory } from 'react-router-dom';
-import { router } from 'router/router';
+import styled from "styled-components";
+import Button from "components/primitives/Button";
+import { useWizard } from "react-use-wizard";
+import { passwordStrength } from "check-password-strength";
+import { calculatePasswordCheckerColor, isObjectEmpty } from "utils";
+import Snackbar from "components/Snackbar/Snackbar";
+import { useAccount } from "context/AccountContext";
+import { useState } from "react";
+import RightArrow from "assets/svgComponents/RightArrow";
+import HumbleInput from "components/primitives/HumbleInput";
+import { reduxForm, Field, getFormSyncErrors, InjectedFormProps } from "redux-form";
+import { useSelector, connect } from "react-redux";
+import WizardHeader from "pages/AddImportAccount/WizardHeader";
+import { checkPasswordStrength } from "utils/checkPasswordStrength";
+import { useHistory } from "react-router-dom";
+import { router } from "router/router";
 
 const validate = (values: { password: string; confirmPassword: string }) => {
   const errors: { password?: string; confirmPassword?: string } = {};
   if (!values.password) {
-    errors.password = 'Please fill out this field';
+    errors.password = "Please fill out this field";
   } else if (values?.password?.length < 8) {
-    errors.password = 'Must be at least 8 characters';
+    errors.password = "Must be at least 8 characters";
   } else if (!values.confirmPassword) {
-    errors.confirmPassword = 'Please fill out this field';
+    errors.confirmPassword = "Please fill out this field";
   } else if (values?.confirmPassword?.length < 8) {
-    errors.confirmPassword = 'Must be at least 8 characters';
+    errors.confirmPassword = "Must be at least 8 characters";
   } else if (
     values.confirmPassword &&
     values.password &&
     values.confirmPassword !== values.password
   ) {
-    errors.confirmPassword = 'Passwords do not match';
+    errors.confirmPassword = "Passwords do not match";
   }
 
   return errors;
@@ -48,7 +48,7 @@ function CreatePassword({
   errors,
   handleEncode,
   redirectedFromSignUp,
-  redirectedFromForgotPassword
+  redirectedFromForgotPassword,
 }: InjectedFormProps & Props) {
   const account = useAccount();
   const history = useHistory();
@@ -57,7 +57,7 @@ function CreatePassword({
   const formValues = useSelector((state: any) => state?.form?.CreatePassword?.values);
 
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
-  const [snackbarMessage, setSnackbarMessage] = useState<string>('');
+  const [snackbarMessage, setSnackbarMessage] = useState<string>("");
 
   const passwordLength = passwordStrength(formValues?.password, checkPasswordStrength).value;
 
@@ -73,7 +73,7 @@ function CreatePassword({
       // from stepper CreatePassword is removed therefore the next page is rendered
       // nextStep();
     } else {
-      setSnackbarMessage('Please fix the existing errors');
+      setSnackbarMessage("Please fix the existing errors");
       setIsSnackbarOpen(true);
     }
   };
@@ -110,17 +110,17 @@ function CreatePassword({
             placeholder="Password"
             component={HumbleInput}
             props={{
-              type: 'password',
-              marginTop: '24px',
-              height: '48.7px',
-              borderColor: '#e6e8ec',
-              fontSize: '14px',
-              color: '#b1b5c3',
-              placeholderColor: '#b1b5c3',
-              errorColor: '#FB5A5A',
-              errorBorderColor: '#FB5A5A',
+              type: "password",
+              marginTop: "24px",
+              height: "48.7px",
+              borderColor: "#e6e8ec",
+              fontSize: "14px",
+              color: "#b1b5c3",
+              placeholderColor: "#b1b5c3",
+              errorColor: "#FB5A5A",
+              errorBorderColor: "#FB5A5A",
               showError: true,
-              autoFocus: true
+              autoFocus: true,
             }}
           />
 
@@ -141,17 +141,17 @@ function CreatePassword({
             placeholder="Confirm new password"
             component={HumbleInput}
             props={{
-              type: 'password',
-              marginTop: formValues?.password?.length ? '12px' : '32px',
-              marginBottom: errors && errors['confirmPassword'] ? '0' : '18px',
-              height: '48.7px',
-              borderColor: '#e6e8ec',
-              fontSize: '14px',
-              color: '#b1b5c3',
-              placeholderColor: '#b1b5c3',
-              errorColor: '#FB5A5A',
-              errorBorderColor: '#FB5A5A',
-              showError: true
+              type: "password",
+              marginTop: formValues?.password?.length ? "12px" : "32px",
+              marginBottom: errors && errors["confirmPassword"] ? "0" : "18px",
+              height: "48.7px",
+              borderColor: "#e6e8ec",
+              fontSize: "14px",
+              color: "#b1b5c3",
+              placeholderColor: "#b1b5c3",
+              errorColor: "#FB5A5A",
+              errorBorderColor: "#FB5A5A",
+              showError: true,
             }}
           />
         </MainContent>
@@ -167,7 +167,7 @@ function CreatePassword({
         <Button
           type="submit"
           Icon={<RightArrow width={23} />}
-          text={'Create Password'}
+          text={"Create Password"}
           margin="auto 0px 0px 0px"
           justify="center"
           disabled={!isObjectEmpty(errors || {})}
@@ -178,12 +178,12 @@ function CreatePassword({
 }
 
 export default connect((state: any) => ({
-  errors: getFormSyncErrors('CreatePassword')(state)
+  errors: getFormSyncErrors("CreatePassword")(state),
 }))(
   reduxForm<Record<string, unknown>, Record<string, unknown>>({
-    form: 'CreatePassword',
-    validate
-  })(CreatePassword)
+    form: "CreatePassword",
+    validate,
+  })(CreatePassword),
 );
 
 const Container = styled.div`
@@ -199,7 +199,7 @@ const Container = styled.div`
 const Form = styled.form<{ redirectedFromForgotPassword?: boolean }>`
   width: 100%;
   height: ${({ redirectedFromForgotPassword }) =>
-    redirectedFromForgotPassword ? '100%' : 'calc(100% - 24px)'};
+    redirectedFromForgotPassword ? "100%" : "calc(100% - 24px)"};
   display: flex;
   flex-direction: column;
   justify-content: center;

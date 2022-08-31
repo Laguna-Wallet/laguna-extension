@@ -1,11 +1,11 @@
-import CheckMarkIcon from 'assets/svgComponents/CheckMarkIcon';
-import LockIcon from 'assets/svgComponents/LockIcon';
-import Button from 'components/primitives/Button';
-import { memo } from 'react';
-import { Link } from 'react-router-dom';
-import styled from 'styled-components';
-import RightArrow from 'assets/svgComponents/RightArrow';
-import { router } from 'router/router';
+import CheckMarkIcon from "assets/svgComponents/CheckMarkIcon";
+import LockIcon from "assets/svgComponents/LockIcon";
+import Button from "components/primitives/Button";
+import { memo } from "react";
+import { Link } from "react-router-dom";
+import styled from "styled-components";
+import RightArrow from "assets/svgComponents/RightArrow";
+import { router } from "router/router";
 
 export default memo(function CongratsSecuringWallet() {
   return (
@@ -25,10 +25,10 @@ export default memo(function CongratsSecuringWallet() {
           Remember to keep your seed phrase safe. HydroX cannot recover your wallet should you lose
           it. You can view your seed phrase under
         </Description>
-        <HelperText>settings {'>'} security & privacy</HelperText>
+        <HelperText>settings {">"} security & privacy</HelperText>
       </MainContent>
       <StyledLink to={router.home}>
-        <Button text={'Continue'} Icon={<RightArrow width={23} />}></Button>
+        <Button text={"Continue"} Icon={<RightArrow width={23} />}></Button>
       </StyledLink>
     </Container>
   );

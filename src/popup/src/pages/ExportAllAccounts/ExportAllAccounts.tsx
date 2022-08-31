@@ -1,27 +1,27 @@
-import Button from 'components/primitives/Button';
-import Input from 'components/primitives/Input';
-import { PageContainer } from 'components/ui';
-import { useFormik } from 'formik';
-import styled from 'styled-components';
-import { exportJson } from 'utils';
-import { exportAll } from 'utils/polkadot';
-import { exportAllSchema } from 'utils/validations';
-import { useHistory, Link } from 'react-router-dom';
-import { router } from 'router/router';
+import Button from "components/primitives/Button";
+import Input from "components/primitives/Input";
+import { PageContainer } from "components/ui";
+import { useFormik } from "formik";
+import styled from "styled-components";
+import { exportJson } from "utils";
+import { exportAll } from "utils/polkadot";
+import { exportAllSchema } from "utils/validations";
+import { useHistory, Link } from "react-router-dom";
+import { router } from "router/router";
 
 export default function ExportAllAccounts() {
   const history = useHistory();
 
   const formik = useFormik({
     initialValues: {
-      password: ''
+      password: "",
     },
     validationSchema: exportAllSchema,
     onSubmit: async (values) => {
       const json = await exportAll(values.password);
       await exportJson(json);
       history.push(router.home);
-    }
+    },
   });
 
   return (
@@ -30,14 +30,14 @@ export default function ExportAllAccounts() {
         <Title>PASSWORD FOR ENCRYPTING ALL ACCOUNTS</Title>
         <Form onSubmit={formik.handleSubmit}>
           <Input
-            id={'password'}
-            value={formik.values['password']}
+            id={"password"}
+            value={formik.values["password"]}
             onChange={formik.handleChange}
             type="text"
             height="50px"
             borderColor="#cccccd"
-            error={formik.errors['password']}
-            touched={formik.touched['password']}
+            error={formik.errors["password"]}
+            touched={formik.touched["password"]}
             autoFocus={true}
           />
           <Button type="submit" text="Export All Accounts" justify="center" />

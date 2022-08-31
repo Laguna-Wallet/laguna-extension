@@ -1,24 +1,24 @@
-import { KeypairType } from '@polkadot/util-crypto/types';
-import type { Signer as InjectedSigner } from '@polkadot/api/types';
-import type { ExtDef } from '@polkadot/types/extrinsic/signedExtensions/types';
-import type { ProviderInterface } from '@polkadot/rpc-provider/types';
+import { KeypairType } from "@polkadot/util-crypto/types";
+import type { Signer as InjectedSigner } from "@polkadot/api/types";
+import type { ExtDef } from "@polkadot/types/extrinsic/signedExtensions/types";
+import type { ProviderInterface } from "@polkadot/rpc-provider/types";
 
 export enum SecurityOptionsEnum {
-  Secured = 'Secured',
-  None = 'None'
+  Secured = "Secured",
+  None = "None"
 }
 
-export type SecurityOptions = 'Secured' | 'None' | undefined;
+export type SecurityOptions = "Secured" | "None" | undefined;
 
 export type MnemonicsTriple = [number, number, number];
 export enum ImportTypeEnum {
-  SEED = 'Seed',
-  JSON = 'Json'
+  SEED = "Seed",
+  JSON = "Json"
 }
 
 export type ImportType = ImportTypeEnum.SEED | ImportTypeEnum.JSON;
 
-export const DEFAULT_TYPE: KeypairType = 'ed25519';
+export const DEFAULT_TYPE: KeypairType = "ed25519";
 export const SEED_LENGTHS = [12, 24];
 
 export enum StorageKeys {
@@ -89,37 +89,37 @@ export enum Prefixes {
 //==============================================================================
 
 export enum Messages {
-  PriceUpdated = 'PRICES_UPDATED',
-  CoinInfoUpdated = 'COIN_INFO_UPDATED',
-  AccountsBalanceUpdated = 'ACCOUNTS_BALANCE_UPDATED',
-  TransactionsUpdated = 'TRANSACTIONS_UPDATED',
-  AuthCheck = 'AUTH_CHECK',
-  AuthUser = 'AUTH_USER',
-  LogOutUser = 'LOG_OUT_USER',
-  TokenDecimalsUpdated = 'TOKEN_DECIMALS_UPDATED',
-  ChangeInterval = 'CHANGE_INTERVAL',
-  SendTransaction = 'SEND_TRANSACTION',
-  TransactionSuccess = 'TRANSACTION_SUCCESS',
-  SignRawRequest = 'SIGN_RAW_REQUEST',
-  ForgotPassword = 'FORGOT_PASSWORD',
-  ReopenKeyPairs = 'REOPEN_KEYPAIRS',
-  AddToKeyring = 'ADD_TO_KEYRING',
-  RemoveFromKeyring = 'REMOVE_FROM_KEYRING',
-  ReEncryptPairs = 'RE_ENCRYPT_PAIRS',
-  DappAuthorization = 'DAPP_AUTHORIZATION',
-  CheckPendingDappAuth = 'CHECK_PENDING_DAPP_AUTH',
-  CheckPendingSign = 'CHECK_PENDING_SIGN',
-  CheckPendingSignRaw = 'CHECK_PENDING_SIGN_RAW',
-  SignRequest = 'SIGN_REQUEST',
-  DappAuthRequest = 'DAPP_AUTH_REQUEST',
-  ConnectedApps = 'CONNECTED_APPS',
-  RevokeDapp = 'REVOKE_DAPP',
-  TokenReceived = 'TOKEN_RECEIVED',
-  Timeout = 'TIMEOUT',
-  ResetTimeout = 'RESET_TIMEOUT',
-  FreezeAccountBalanceUpdate = 'FREEZE_ACCOUNT_BALANCE_UPDATE',
-  OpenSupport = 'OPEN_SUPPORT',
-  DisconnectAllSites = 'DISCONNECT_ALL_SITES'
+  PriceUpdated = "PRICES_UPDATED",
+  CoinInfoUpdated = "COIN_INFO_UPDATED",
+  AccountsBalanceUpdated = "ACCOUNTS_BALANCE_UPDATED",
+  TransactionsUpdated = "TRANSACTIONS_UPDATED",
+  AuthCheck = "AUTH_CHECK",
+  AuthUser = "AUTH_USER",
+  LogOutUser = "LOG_OUT_USER",
+  TokenDecimalsUpdated = "TOKEN_DECIMALS_UPDATED",
+  ChangeInterval = "CHANGE_INTERVAL",
+  SendTransaction = "SEND_TRANSACTION",
+  TransactionSuccess = "TRANSACTION_SUCCESS",
+  SignRawRequest = "SIGN_RAW_REQUEST",
+  ForgotPassword = "FORGOT_PASSWORD",
+  ReopenKeyPairs = "REOPEN_KEYPAIRS",
+  AddToKeyring = "ADD_TO_KEYRING",
+  RemoveFromKeyring = "REMOVE_FROM_KEYRING",
+  ReEncryptPairs = "RE_ENCRYPT_PAIRS",
+  DappAuthorization = "DAPP_AUTHORIZATION",
+  CheckPendingDappAuth = "CHECK_PENDING_DAPP_AUTH",
+  CheckPendingSign = "CHECK_PENDING_SIGN",
+  CheckPendingSignRaw = "CHECK_PENDING_SIGN_RAW",
+  SignRequest = "SIGN_REQUEST",
+  DappAuthRequest = "DAPP_AUTH_REQUEST",
+  ConnectedApps = "CONNECTED_APPS",
+  RevokeDapp = "REVOKE_DAPP",
+  TokenReceived = "TOKEN_RECEIVED",
+  Timeout = "TIMEOUT",
+  ResetTimeout = "RESET_TIMEOUT",
+  FreezeAccountBalanceUpdate = "FREEZE_ACCOUNT_BALANCE_UPDATE",
+  OpenSupport = "OPEN_SUPPORT",
+  DisconnectAllSites = "DISCONNECT_ALL_SITES"
 }
 
 //==============================================================================
@@ -137,8 +137,7 @@ export enum TokenSymbols {
   moonriver = 'movr',
   moonbeam = 'glmr',
   shiden = 'sdn',
-  astar = 'astr',
-  ethereum = "eth"
+  astar = 'astr'
 }
 
 export type Token =
@@ -150,7 +149,7 @@ export type Token =
 
 // todo move chain names to enum
 export interface Transaction {
-  chain: 'westend' | 'polkadot' | 'kusama' | 'moonriver' | 'moonbeam' | 'shiden' | 'astar';
+  chain: "westend" | "polkadot" | "kusama" | "moonriver" | "moonbeam" | "shiden" | "astar";
   amount: string;
   fee: string;
   from: string;
@@ -161,16 +160,16 @@ export interface Transaction {
 }
 
 export enum SnackbarMessages {
-  WalletCreated = 'New Account Created',
-  AddressCopied = 'Address Copied',
-  TransactionSent = 'Transaction Sent',
-  AddressAdded = 'New Address Added',
-  AddressRemoved = 'Address Removed',
-  AutoLockUpdated = 'Auto-Lock Updated',
-  WalletRemoved = 'Account Removed',
-  AccessRevoked = 'Access Revoked',
-  DepositReceived = 'New Deposit Received',
-  PasswordChanged = 'Password Changed'
+  WalletCreated = "New Account Created",
+  AddressCopied = "Address Copied",
+  TransactionSent = "Transaction Sent",
+  AddressAdded = "New Address Added",
+  AddressRemoved = "Address Removed",
+  AutoLockUpdated = "Auto-Lock Updated",
+  WalletRemoved = "Account Removed",
+  AccessRevoked = "Access Revoked",
+  DepositReceived = "New Deposit Received",
+  PasswordChanged = "Password Changed"
 }
 
 //==============================================================================
@@ -201,7 +200,7 @@ export interface MetadataDefBase {
   genesisHash: string;
   icon: string;
   ss58Format: number;
-  chainType?: 'substrate' | 'ethereum';
+  chainType?: "substrate" | "ethereum";
 }
 
 export interface MetadataDef extends MetadataDefBase {
@@ -223,7 +222,7 @@ export interface ProviderMeta {
   // Network of the provider
   network: string;
   // Light or full node
-  node: 'full' | 'light';
+  node: "full" | "light";
   // The extension source
   source: string;
   // Provider transport: 'WsProvider' etc.
@@ -245,13 +244,13 @@ export interface Injected {
 }
 
 export const chains = [
-  'westend',
-  'polkadot',
-  'kusama',
+  "westend",
+  "polkadot",
+  "kusama",
   // 'moonriver',
   //  'moonbeam',
   // 'shiden',
-  'astar',
+  'astar'
 ];
 
 export interface TokenInfo {
@@ -287,26 +286,26 @@ export interface AccountMeta {
 
 export const networks: Network[] = [
   {
-    name: 'Polkadot',
+    name: "Polkadot",
     symbol: TokenSymbols.westend,
-    chain: 'westend',
-    node: 'wss://westend-rpc.polkadot.io',
-    prefix: 42
+    chain: "westend",
+    node: "wss://westend-rpc.polkadot.io",
+    prefix: 42,
   },
   {
-    name: 'Polkadot',
+    name: "Polkadot",
     symbol: TokenSymbols.polkadot,
-    chain: 'polkadot',
-    node: 'wss://rpc.polkadot.io',
-    prefix: 0
+    chain: "polkadot",
+    node: "wss://rpc.polkadot.io",
+    prefix: 0,
   },
   {
-    name: 'Kusama',
+    name: "Kusama",
     symbol: TokenSymbols.kusama,
     chain: 'kusama',
     node: 'wss://kusama-rpc.polkadot.io',
     prefix: 2
-  },
+  }
   // {
   //   name: 'Moonriver',
   //   symbol: 'movr',

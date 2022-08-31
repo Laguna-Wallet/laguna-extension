@@ -1,18 +1,18 @@
-import { useState } from 'react';
-import styled from 'styled-components';
-import { useDispatch, useSelector } from 'react-redux';
-import { useHistory } from 'react-router-dom';
-import { router } from 'router/router';
+import { useState } from "react";
+import styled from "styled-components";
+import { useDispatch, useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
+import { router } from "router/router";
 
-import Header from 'pages/Wallet/Header';
-import HumbleInput from 'components/primitives/HumbleInput';
+import Header from "pages/Wallet/Header";
+import HumbleInput from "components/primitives/HumbleInput";
 
-import { getNetworks } from 'utils/polkadot';
+import { getNetworks } from "utils/polkadot";
 
-import { Network } from 'utils/types';
+import { Network } from "utils/types";
 
-import TokenItem from './TokenItem';
-import LoopIcon from 'assets/svgComponents/loopIcon';
+import TokenItem from "./TokenItem";
+import LoopIcon from "assets/svgComponents/loopIcon";
 
 export default function AddRemoveToken() {
   const dispatch = useDispatch();
@@ -22,18 +22,18 @@ export default function AddRemoveToken() {
     prices,
     infos,
     accountsBalances: { balances },
-    disabledTokens
+    disabledTokens,
   } = useSelector((state: any) => state.wallet);
 
   const [networks, setNetworks] = useState<Network[]>(getNetworks(prices, infos));
 
-  const [networksFilter, setNetworksFilter] = useState<string>('');
+  const [networksFilter, setNetworksFilter] = useState<string>("");
 
   const renderNetworks = (networks: Network[], networksFilter: string) => {
     return networks.filter(
       (network) =>
         network.name.toLowerCase().includes(networksFilter?.toLowerCase()) ||
-        network.chain.toLowerCase().includes(networksFilter?.toLowerCase())
+        network.chain.toLowerCase().includes(networksFilter?.toLowerCase()),
     );
   };
 
@@ -55,8 +55,8 @@ export default function AddRemoveToken() {
           onChange={(e: any) => {
             setNetworksFilter(e.target.value);
           }}
-          bgColor={'#f2f2f2'}
-          borderColor={'#f2f2f2'}
+          bgColor={"#f2f2f2"}
+          borderColor={"#f2f2f2"}
           placeholderColor="#777e90"
           color="#777e90"
           placeholder="Search"
@@ -68,7 +68,7 @@ export default function AddRemoveToken() {
         <List>
           {networks
             ? networks?.length === 0
-              ? 'no assets'
+              ? "no assets"
               : renderNetworks(networks, networksFilter).map((network: Network, index: number) => {
                   return (
                     <TokenItem
@@ -78,7 +78,7 @@ export default function AddRemoveToken() {
                     />
                   );
                 })
-            : 'Loading...'}
+            : "Loading..."}
         </List>
       </Content>
     </Container>

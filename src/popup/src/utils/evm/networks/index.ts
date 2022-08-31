@@ -32,4 +32,4 @@ export const networks :{[network: string]: IEVMNetwork} = {
     explorerUrlAddress: "https://testnet.snowtrace.io/address/{{hash}}",
     explorerUrlTransaction: "https://testnet.snowtrace.io/tx/{{hash}}",
   },
-}
+};

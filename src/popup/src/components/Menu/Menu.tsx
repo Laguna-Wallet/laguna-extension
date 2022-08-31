@@ -1,17 +1,17 @@
-import { useState } from 'react';
-import styled from 'styled-components';
-import MenuHeader from 'components/MenuHeader/MenuHeader';
-import AddressMenuIcon from 'assets/svgComponents/MenuIcons/AddressMenuIcon';
-import ConnectedSitesMenuIcon from 'assets/svgComponents/MenuIcons/ConnectedSitesMenuIcon';
-import AutoLockTimerMenuIcon from 'assets/svgComponents/MenuIcons/AutoLockTimerMenuIcon';
-import ChangePasswordMenuIcon from 'assets/svgComponents/MenuIcons/ChangePasswordMenuIcon';
-import BackupMenuIcon from 'assets/svgComponents/MenuIcons/BackupMenuIcon';
-import RemoveWalletMenuIcon from 'assets/svgComponents/MenuIcons/RemoveWalletMenuIcon';
-import RightArrowMenuIcon from 'assets/svgComponents/MenuIcons/RightArrowMenuIcon';
-import { useAccount } from 'context/AccountContext';
+import { useState } from "react";
+import styled from "styled-components";
+import MenuHeader from "components/MenuHeader/MenuHeader";
+import AddressMenuIcon from "assets/svgComponents/MenuIcons/AddressMenuIcon";
+import ConnectedSitesMenuIcon from "assets/svgComponents/MenuIcons/ConnectedSitesMenuIcon";
+import AutoLockTimerMenuIcon from "assets/svgComponents/MenuIcons/AutoLockTimerMenuIcon";
+import ChangePasswordMenuIcon from "assets/svgComponents/MenuIcons/ChangePasswordMenuIcon";
+import BackupMenuIcon from "assets/svgComponents/MenuIcons/BackupMenuIcon";
+import RemoveWalletMenuIcon from "assets/svgComponents/MenuIcons/RemoveWalletMenuIcon";
+import RightArrowMenuIcon from "assets/svgComponents/MenuIcons/RightArrowMenuIcon";
+import { useAccount } from "context/AccountContext";
 
-import { Link } from 'react-router-dom';
-import { router } from 'router/router';
+import { Link } from "react-router-dom";
+import { router } from "router/router";
 
 type Props = {
   onClose: () => void;
@@ -25,7 +25,7 @@ export default function Menu({ onClose }: Props) {
 
   const backupLocation = {
     pathname: activeUser?.meta?.notSecured ? router.createAccount : router.backupAccount,
-    state: { redirectedFromDashboard: true }
+    state: { redirectedFromDashboard: true },
   };
 
   return (
@@ -211,7 +211,7 @@ const StyledLink = styled(Link)<{ color?: string }>`
   cursor: pointer;
   font-family: Inter;
   font-size: 18px;
-  color: ${({ color }) => color || '#efeeeee2'};
+  color: ${({ color }) => color || "#efeeeee2"};
 
   ${ListItem}:hover & {
     color: #fff;

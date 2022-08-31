@@ -1,18 +1,18 @@
-import { useState } from 'react';
-import { PlusIcon } from '@heroicons/react/outline';
-import CheckedIcon from 'assets/svgComponents/CheckedIcon';
-import TriangleIcon from 'assets/svgComponents/TriangleIcon';
-import Button from 'components/primitives/Button';
-import { useAccount } from 'context/AccountContext';
-import type { KeyringPair } from '@polkadot/keyring/types';
-import { Link } from 'react-router-dom';
-import styled from 'styled-components';
-import AddImportForBoardedUser from 'pages/AddImportAccount/AddImportForBoardedUser';
-import { getAccountImage, truncateString } from 'utils';
-import { useDispatch } from 'react-redux';
-import { toggleLoading } from 'redux/actions';
-import keyring from '@polkadot/ui-keyring';
-import { router } from 'router/router';
+import { useState } from "react";
+import { PlusIcon } from "@heroicons/react/outline";
+import CheckedIcon from "assets/svgComponents/CheckedIcon";
+import TriangleIcon from "assets/svgComponents/TriangleIcon";
+import Button from "components/primitives/Button";
+import { useAccount } from "context/AccountContext";
+import type { KeyringPair } from "@polkadot/keyring/types";
+import { Link } from "react-router-dom";
+import styled from "styled-components";
+import AddImportForBoardedUser from "pages/AddImportAccount/AddImportForBoardedUser";
+import { getAccountImage, truncateString } from "utils";
+import { useDispatch } from "react-redux";
+import { toggleLoading } from "redux/actions";
+import keyring from "@polkadot/ui-keyring";
+import { router } from "router/router";
 
 type Props = {
   userContainerWidth: number;
@@ -91,8 +91,8 @@ export default function Accounts({ userContainerWidth }: Props) {
           text="Add / Import Account"
           bgColor="#18191a"
           color="#fff"
-          justify={'center'}
-          direction={'row-reverse'}
+          justify={"center"}
+          direction={"row-reverse"}
           fontFamily="Inter"
           fontSize="12px"
           height="37px"
@@ -155,7 +155,7 @@ const MouseOverText = styled.p<{ width?: string }>`
   font-size: 10px;
   display: none;
   position: absolute;
-  min-width: ${({ width }) => width || '171px'};
+  min-width: ${({ width }) => width || "171px"};
   top: 24px;
   right: 0;
 
@@ -189,7 +189,7 @@ const Avatar = styled.div<{ img: string }>`
 const ConnectedRibbon = styled.div<{ isConnected?: boolean }>`
   width: 7.5px;
   height: 7.5px;
-  background-color: ${({ isConnected }) => (!isConnected ? '#e6e8ec' : '#68dd65')};
+  background-color: ${({ isConnected }) => (!isConnected ? "#e6e8ec" : "#68dd65")};
   border-radius: 100%;
   margin-right: 6px;
 `;

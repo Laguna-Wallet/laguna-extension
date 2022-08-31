@@ -1,45 +1,45 @@
-import './App.css';
-import '@polkadot/wasm-crypto/initOnlyAsm';
-import browser from 'webextension-polyfill';
-import { getFromStorage } from 'utils/chrome';
-import { Messages, StorageKeys } from 'utils/types';
-import { useEffect, useState } from 'react';
-import { MessageListener } from 'utils/messageListener';
-import { useDispatch, useSelector } from 'react-redux';
-import RequestToSignRaw from 'pages/RequestToSignRaw/RequestToSignRaw';
-import { changeTokenReceived } from 'redux/actions';
-import Snackbar from 'components/Snackbar/Snackbar';
-import { State } from 'redux/store';
-import { Route, Switch, useHistory } from 'react-router-dom';
-import { router } from 'router/router';
-import SignUp from 'pages/SignUp/SignUp';
-import WelcomeBack from 'pages/WelcomeBack/WelcomeBack';
-import Wallet from 'pages/Wallet/Wallet';
-import RequestToConnect from 'pages/RequestToConnect/RequestToConnect';
-import RequestToSign from 'pages/RequestToSignTransaction';
-import ImportAccount from 'pages/AddImportAccount/ImportAccount/ImportAccount';
-import ImportPhase from 'pages/AddImportAccount/ImportAccount/importPhase';
-import EncodeAccount from 'pages/AddImportAccount/EncodeAccount';
-import CreatePassword from 'pages/AddImportAccount/CreateAccount/CreatePassword/CreatePassword';
-import SetupComplete from 'pages/AddImportAccount/SetupComplete';
-import AddressBook from 'pages/AddressBook/AddressBook';
-import ConnectedSites from 'pages/ConnectedSites/ConnectedSites';
-import AutoLockTimer from 'pages/AutoLockTimer/AutoLockTimer';
-import ChangePassword from 'pages/ChangePassword/ChangePassword';
-import CreateAccount from 'pages/AddImportAccount/CreateAccount/CreateAccount';
-import BackupAccount from 'pages/BackupAccount/BackupAccount';
-import RemoveAccount from 'pages/RemoveAccount/RemoveAccount';
-import Activity from 'pages/Activity/Activity';
-import TokenDashboard from 'pages/TokenDashboard/TokenDashboard';
-import AddImportForBoardedUser from 'pages/AddImportAccount/AddImportForBoardedUser';
-import AddAddress from 'pages/AddressBook/AddAddress';
-import Send from 'pages/Send/Send';
-import ChainActivity from 'pages/Activity/ChainActivity';
-import Receive from 'pages/Recieve/Receive';
-import AddRemoveToken from 'pages/AddRemoveToken/AddRemoveToken';
-import { fetchAccountsBalances } from 'utils/Api';
-import { useAccount } from 'context/AccountContext';
-import keyring from '@polkadot/ui-keyring';
+import "./App.css";
+import "@polkadot/wasm-crypto/initOnlyAsm";
+import browser from "webextension-polyfill";
+import { getFromStorage } from "utils/chrome";
+import { Messages, StorageKeys } from "utils/types";
+import { useEffect, useState } from "react";
+import { MessageListener } from "utils/messageListener";
+import { useDispatch, useSelector } from "react-redux";
+import RequestToSignRaw from "pages/RequestToSignRaw/RequestToSignRaw";
+import { changeTokenReceived } from "redux/actions";
+import Snackbar from "components/Snackbar/Snackbar";
+import { State } from "redux/store";
+import { Route, Switch, useHistory } from "react-router-dom";
+import { router } from "router/router";
+import SignUp from "pages/SignUp/SignUp";
+import WelcomeBack from "pages/WelcomeBack/WelcomeBack";
+import Wallet from "pages/Wallet/Wallet";
+import RequestToConnect from "pages/RequestToConnect/RequestToConnect";
+import RequestToSign from "pages/RequestToSignTransaction";
+import ImportAccount from "pages/AddImportAccount/ImportAccount/ImportAccount";
+import ImportPhase from "pages/AddImportAccount/ImportAccount/importPhase";
+import EncodeAccount from "pages/AddImportAccount/EncodeAccount";
+import CreatePassword from "pages/AddImportAccount/CreateAccount/CreatePassword/CreatePassword";
+import SetupComplete from "pages/AddImportAccount/SetupComplete";
+import AddressBook from "pages/AddressBook/AddressBook";
+import ConnectedSites from "pages/ConnectedSites/ConnectedSites";
+import AutoLockTimer from "pages/AutoLockTimer/AutoLockTimer";
+import ChangePassword from "pages/ChangePassword/ChangePassword";
+import CreateAccount from "pages/AddImportAccount/CreateAccount/CreateAccount";
+import BackupAccount from "pages/BackupAccount/BackupAccount";
+import RemoveAccount from "pages/RemoveAccount/RemoveAccount";
+import Activity from "pages/Activity/Activity";
+import TokenDashboard from "pages/TokenDashboard/TokenDashboard";
+import AddImportForBoardedUser from "pages/AddImportAccount/AddImportForBoardedUser";
+import AddAddress from "pages/AddressBook/AddAddress";
+import Send from "pages/Send/Send";
+import ChainActivity from "pages/Activity/ChainActivity";
+import Receive from "pages/Recieve/Receive";
+import AddRemoveToken from "pages/AddRemoveToken/AddRemoveToken";
+import { fetchAccountsBalances } from "utils/Api";
+import { useAccount } from "context/AccountContext";
+import keyring from "@polkadot/ui-keyring";
 
 function App() {
   const dispatch = useDispatch();
@@ -92,15 +92,15 @@ function App() {
       const AuthResponse = await browser.runtime.sendMessage({ type: Messages.AuthCheck });
 
       const PendingDappAuthResponse = await browser.runtime.sendMessage({
-        type: Messages.CheckPendingDappAuth
+        type: Messages.CheckPendingDappAuth,
       });
 
       const CheckPendingDappSign = await browser.runtime.sendMessage({
-        type: Messages.CheckPendingSign
+        type: Messages.CheckPendingSign,
       });
 
       const CheckPendingDappSignRaw = await browser.runtime.sendMessage({
-        type: Messages.CheckPendingSignRaw
+        type: Messages.CheckPendingSignRaw,
       });
 
       //       // If user is not logged in redirect to WelcomeBack or SignUp
@@ -235,7 +235,7 @@ function App() {
         width="194.9px"
         isOpen={tokenReceived}
         close={() => dispatch(changeTokenReceived({ tokenReceived: false }))}
-        message={'New Deposit Received'}
+        message={"New Deposit Received"}
         type="success"
         // left="110px"
         bottom="70px"

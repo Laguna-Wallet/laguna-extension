@@ -1,14 +1,14 @@
-import CheckMarkIcon from 'assets/svgComponents/CheckMarkIcon';
-import LockIcon from 'assets/svgComponents/LockIcon';
-import Button from 'components/primitives/Button';
-import Wallet from 'pages/Wallet/Wallet';
-import { memo, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import styled from 'styled-components';
-import RightArrow from 'assets/svgComponents/RightArrow';
-import { useAccount } from 'context/AccountContext';
-import { addAccountMeta } from 'utils/polkadot';
-import { router } from 'router/router';
+import CheckMarkIcon from "assets/svgComponents/CheckMarkIcon";
+import LockIcon from "assets/svgComponents/LockIcon";
+import Button from "components/primitives/Button";
+import Wallet from "pages/Wallet/Wallet";
+import { memo, useEffect } from "react";
+import { Link } from "react-router-dom";
+import styled from "styled-components";
+import RightArrow from "assets/svgComponents/RightArrow";
+import { useAccount } from "context/AccountContext";
+import { addAccountMeta } from "utils/polkadot";
+import { router } from "router/router";
 
 export default memo(function CongratsBackingUp() {
   const account = useAccount();
@@ -16,7 +16,7 @@ export default memo(function CongratsBackingUp() {
   useEffect(() => {
     async function go() {
       const newAccount = await addAccountMeta(account.getActiveAccount()?.address, {
-        notSecured: false
+        notSecured: false,
       });
       account.saveActiveAccount(newAccount);
     }
@@ -41,10 +41,10 @@ export default memo(function CongratsBackingUp() {
           Remember to keep your seed phrase safe. HydroX cannot recover your wallet should you lose
           it. You can view your seed phrase under
         </Description>
-        <HelperText>settings {'>'} security & privacy</HelperText>
+        <HelperText>settings {">"} security & privacy</HelperText>
       </MainContent>
       <StyledLink to={router.home}>
-        <Button text={'Continue'} Icon={<RightArrow width={23} />}></Button>
+        <Button text={"Continue"} Icon={<RightArrow width={23} />}></Button>
       </StyledLink>
     </Container>
   );
