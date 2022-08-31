@@ -26,6 +26,7 @@ import { State } from 'redux/store';
 import { useLocation } from 'react-router-dom';
 import { buildEvmTransaction, estimateGas, getEvmGasPrice } from 'utils/evm/api';
 import { EvmAssets } from 'utils/evm/networks/asset';
+import { ethers } from 'ethers';
 
 export enum SendAccountFlowEnum {
   SendToTrustedContact = 'SendToTrustedContact',
@@ -158,7 +159,7 @@ function Send({ initialIsContactsPopupOpen }: Props) {
       const toBeSignTransaction = await buildEvmTransaction({
         network: ethNetwork,
         asset: ethAsset,
-        amount: new BigNumber(form?.amount),
+        amount: new BigNumber(form.amount),
         fromAddress: activeAccount?.meta?.ethAddress,
         toAddress: form?.address,
         gasPriceInGwei: gasPrice
