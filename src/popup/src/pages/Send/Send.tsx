@@ -165,14 +165,15 @@ function Send({ initialIsContactsPopupOpen }: Props) {
         gasPriceInGwei: gasPrice
         // numOfPendingTransaction: BigNumber; // TODO for adding up nonce, blocked by cache pending txn
       });
-      console.log('~ toBeSignTransaction', toBeSignTransaction);
 
       const estimatedGas = await estimateGas(ethNetwork, toBeSignTransaction);
-      console.log('~ estimatedGas', estimatedGas);
+      const ethValue = await ethers.utils.formatUnits(estimatedGas.toNumber());
 
-      //   // setFee(`${new BigNumber(partialFee.toString()).div(factor)}`);
+      setFee(ethValue);
+      setLoading(false);
+      setAbilityToTransfer(true);
+
       //   // setTransfer(transfer);
-      //   // setLoading(false);
     }
 
     // goPolkadot();

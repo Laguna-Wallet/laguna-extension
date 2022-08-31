@@ -48,8 +48,8 @@ export const isValidEVMAddress = (address: string): Response => {
 };
 
 export const getProvider = (network: EVMNetwork): ethers.providers.JsonRpcProvider => {
-  // return new ethers.providers.JsonRpcProvider('HTTP://127.0.0.1:7545');
-  return new ethers.providers.JsonRpcProvider(networks[network].nodeUrl);
+  return new ethers.providers.JsonRpcProvider('HTTP://127.0.0.1:7545');
+  // return new ethers.providers.JsonRpcProvider(networks[network].nodeUrl);
 };
 
 export const getNonce = async (network: EVMNetwork, address: string): Promise<BigNumber> => {
@@ -68,12 +68,9 @@ export const estimateGas = async (
   network: EVMNetwork,
   toBeSignTransaction: IEVMToBeSignTransaction
 ): Promise<BigNumber> => {
-  console.log(1);
-  const provider = new ethers.providers.JsonRpcProvider(networks[network].nodeUrl);
-  console.log(2);
-  console.log('~ toBeSignTransaction', toBeSignTransaction);
+  // const provider = new ethers.providers.JsonRpcProvider(networks[network].nodeUrl);
+  const provider = getProvider(network);
   const estimateResult = await provider.estimateGas(toBeSignTransaction);
-  console.log(3);
   return new BigNumber(estimateResult.toString());
 };
 

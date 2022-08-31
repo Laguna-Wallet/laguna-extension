@@ -127,8 +127,6 @@ function SendToken({
     setAccountMeta({ name: pair?.meta?.name as string, img: pair?.meta?.img as string });
   };
 
-
-
   // const handleCloseAccount = () => {
   //   setIsAccountsPopupOpen(false);
   //   setFlow(undefined);
@@ -361,8 +359,7 @@ function SendToken({
             <InfoRow>
               <span>Estimated Fee</span>
               <span>
-                {loading ? '...' : new BigNumber(fee).toString()}{' '}
-                {selectedAsset?.symbol.toUpperCase()}
+                {loading ? '...' : fee} {selectedAsset?.symbol.toUpperCase()}
               </span>
             </InfoRow>
           </Info>
