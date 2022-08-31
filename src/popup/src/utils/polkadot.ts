@@ -1,4 +1,4 @@
-import { assert, hexToU8a, u8aToHex, isHex, u8aToString } from "@polkadot/util";
+import { assert, hexToU8a, u8aToHex, isHex } from "@polkadot/util";
 import {
   keyExtractSuri,
   mnemonicValidate,
@@ -15,7 +15,6 @@ import {
   SEED_LENGTHS,
   StorageKeys,
   Token,
-  TokenSymbols,
   Transaction,
 } from "./types";
 import { KeyringPair$Json } from "@polkadot/keyring/types";
@@ -30,6 +29,7 @@ import * as AES from "crypto-js/aes";
 import Utf8 from "crypto-js/enc-utf8";
 import { fetchTransactions, transformTransfers } from "./fetchTransactions";
 import { generateRandomBase64Avatar } from "utils";
+import { substrateNetworks } from "../config/substrate/network";
 
 // TODO appropriate typing
 
@@ -213,86 +213,7 @@ export function getNetworks(
 ): Network[] {
   if (!prices || !tokenInfos) return [];
 
-  const networks: Network[] = [
-    {
-      name: "Polkadot",
-      symbol: TokenSymbols.westend,
-      chain: "westend",
-      node: "wss://westend-rpc.polkadot.io",
-      prefix: 42,
-    },
-    {
-      name: "Polkadot",
-      symbol: TokenSymbols.polkadot,
-      chain: "polkadot",
-      node: "wss://rpc.polkadot.io",
-      prefix: 0,
-    },
-    {
-      name: "Kusama",
-      symbol: TokenSymbols.kusama,
-      chain: "kusama",
-      node: "wss://kusama-rpc.polkadot.io",
-      prefix: 2,
-    },
-    // {
-    //   name: 'Moonriver',
-    //   symbol: 'movr',
-    //   chain: 'moonriver',
-    //   node: 'wss://moonriver-rpc.polkadot.io',
-    //   encodeType: 'ethereum'
-    // },
-    // {
-    //   name: 'Moonbeam',
-    //   symbol: 'glmr',
-    //   chain: 'moonbeam',
-    //   // chain: ' moonbeam-alpha',
-    //   node: 'wss://moonbeam-rpc.polkadot.io',
-    //   encodeType: 'ethereum'
-    // },
-    // {
-    //   name: 'Shiden',
-    //   symbol: 'sdn',
-    //   chain: 'shiden',
-    //   node: 'wss://shiden.api.onfinality.io/public-ws'
-    // },
-    // {
-    //   name: 'Astar',
-    //   symbol: TokenSymbols.astar,
-    //   chain: 'astar',
-    //   node: 'wss://astar.api.onfinality.io/public-ws',
-    //   prefix: 5
-    // }
-
-    // wss://rpc.astar.network
-
-    // {
-    //   name: 'Acala',
-    //   symbol: 'ACA',
-    //   chain: 'acala-testnet' //todo revise test-net?
-    // },
-    // {
-    //   name: 'Karura',
-    //   symbol: 'KAR',
-    //   chain: 'karura'
-    // },
-    // {
-    //   name: 'Altair',
-    //   symbol: 'AIR',
-    //   chain: 'altair'
-    // },
-
-    // {
-    //   name: 'Bifrost',
-    //   symbol: 'BNC',
-    //   chain: 'bifrost-parachain'
-    // },
-    // {
-    //   name: 'Edgeware',
-    //   symbol: 'EDG',
-    //   chain: 'edgeware'
-    // }
-  ];
+  const networks: Network[] = substrateNetworks;
 
   const ht = tokenInfos.reduce((acc: any, item: any) => {
     acc[item.symbol] = item;
