@@ -86,8 +86,8 @@ function ChangePassword({ handleSubmit, valid }: InjectedFormProps<Form>) {
       setSnackbarError('Incorrect current password');
       setIsSnackbarOpen(true);
     } else {
-      encryptMetaData(values?.currentPassword, values?.newPassword);
       encryptKeyringPairs(values?.currentPassword, values?.newPassword);
+      encryptMetaData(values?.currentPassword, values?.newPassword);
 
       const newEncryptedPassword = encryptPassword({ password: values?.newPassword });
       saveToStorage({ key: StorageKeys.Encoded, value: newEncryptedPassword });
@@ -104,6 +104,7 @@ function ChangePassword({ handleSubmit, valid }: InjectedFormProps<Form>) {
           metaData: keyring.getPairs().map((pair) => ({ address: pair.address, meta: pair.meta }))
         }
       });
+
       history.push({
         pathname: router.home,
         state: { snackbar: { show: true, message: SnackbarMessages.PasswordChanged } }

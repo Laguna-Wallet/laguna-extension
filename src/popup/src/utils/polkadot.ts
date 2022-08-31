@@ -478,13 +478,17 @@ export function encryptKeyringPairs(oldPassword: string, newPassword: string) {
 
     pair.decodePkcs8(oldPassword);
 
+    keyring.encryptAccount(pair, newPassword);
+
+    // keyring.addPair(pair, newPassword);
+
     // const json = pair.toJson(newPassword);
     // console.log('~ json', json);
     // keyring.restoreAccount(json, newPassword);
 
     // pair.unlock(oldPassword);
-    keyring.forgetAccount(pair.address);
-    const { pair: newPair } = keyring.addPair(pair, newPassword);
+    // keyring.forgetAccount(pair.address);
+    // const { pair: newPair } = keyring.addPair(pair, newPassword);
 
     // console.log('~ newPair', newPair);
     // newPair.setMeta(pair.meta);
@@ -522,12 +526,9 @@ export function encryptMetaData(oldPassword: string, newPassword: string) {
     // decode seed and encode with new password
     if (meta?.encodedSeed) {
       const decodedSeedBytes = AES.decrypt(meta?.encodedSeed as string, oldPassword);
-      console.log('~ decodedSeedBytes', decodedSeedBytes);
       const decodedSeed = decodedSeedBytes.toString(Utf8);
-      console.log('~ decodedSeed', decodedSeed);
 
       const reEncodedSeed = AES.encrypt(decodedSeed, newPassword).toString();
-      console.log('~ reEncodedSeed', reEncodedSeed);
 
       keyring.saveAccountMeta(pair, { ...pair.meta, encodedSeed: reEncodedSeed });
       pair.setMeta({ ...pair.meta, encodedSeed: reEncodedSeed });

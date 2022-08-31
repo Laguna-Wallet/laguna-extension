@@ -118,7 +118,8 @@ export enum Messages {
   Timeout = 'TIMEOUT',
   ResetTimeout = 'RESET_TIMEOUT',
   FreezeAccountBalanceUpdate = 'FREEZE_ACCOUNT_BALANCE_UPDATE',
-  OpenSupport = 'OPEN_SUPPORT'
+  OpenSupport = 'OPEN_SUPPORT',
+  DisconnectAllSites = 'DISCONNECT_ALL_SITES'
 }
 
 //==============================================================================
