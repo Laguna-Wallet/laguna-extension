@@ -119,7 +119,6 @@ export const getEVMBalance = async (
   let balanceInBaseUnit;
   switch (asset.assetType) {
     case EVMAssetType.NATIVE: {
-      console.log('~ address', address);
       balanceInBaseUnit = await provider.getBalance(address);
       break;
     }

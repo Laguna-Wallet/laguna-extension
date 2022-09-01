@@ -1,3 +1,4 @@
+import { BigNumber } from 'bignumber.js';
 import keyring from '@polkadot/ui-keyring';
 import axios from 'axios';
 import { AES } from 'crypto-js';
@@ -89,6 +90,11 @@ export async function fetchAccountsBalances(
             ethAddress,
             EvmAssets[network.chain][network.symbol]
           );
+
+          if (new BigNumber(ethBalance.toString()).isEqualTo(0)) {
+            i++;
+            continue;
+          }
 
           temp_obj[network.chain] = {
             overall: ethers.utils.formatEther(ethBalance.toString()),

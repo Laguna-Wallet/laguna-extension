@@ -273,7 +273,7 @@ export async function checkBalanceChange(
   const parsedOldBallance = JSON.parse(oldBalance)?.balances;
 
   for (const [key, balance] of Object.entries(newBalance)) {
-    if (balance?.overall > parsedOldBallance[key].overall) {
+    if (balance?.overall > parsedOldBallance[key]?.overall) {
       return true;
     }
   }

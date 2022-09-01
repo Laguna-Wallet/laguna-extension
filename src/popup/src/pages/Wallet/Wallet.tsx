@@ -67,6 +67,7 @@ function Wallet({ snackbar }: Props) {
   } = useSelector((state: State) => state.wallet);
 
   const balances = accountsBalances?.balances;
+  console.log('~ balances', balances);
   const isEmpty = balances && Object.keys(balances).length === 0;
 
   const handleActiveTab = (activeTab: number): void => {
