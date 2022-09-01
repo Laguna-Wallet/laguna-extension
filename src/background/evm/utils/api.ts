@@ -10,9 +10,8 @@ export const getProvider = (network: EVMNetwork): ethers.providers.JsonRpcProvid
 
 
 export const signTransaction = async (network: EVMNetwork, wallet: ethers.Wallet, toBeSignTransaction: IEVMToBeSignTransaction): Promise<string> => {
-    // TODO decide were wallet is generated from
     const provider = getProvider(network);
-    const signer = wallet.connect(provider);2
+    const signer = wallet.connect(provider);
     const signedTx = signer.signTransaction(toBeSignTransaction);
    return signedTx;
   };
