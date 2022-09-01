@@ -1,9 +1,9 @@
-import Button from 'components/primitives/Button';
-import Header from 'pages/Wallet/Header';
-import styled from 'styled-components';
+import Button from "components/primitives/Button";
+import Header from "pages/Wallet/Header";
+import styled from "styled-components";
 // import QrReader from 'react-qr-reader';
-import { BrowserQRCodeReader } from '@zxing/browser';
-import { useEffect } from 'react';
+import { BrowserQRCodeReader } from "@zxing/browser";
+import { useEffect } from "react";
 
 type Props = {
   handleCloseQR: () => void;
@@ -15,7 +15,7 @@ export default function QRPopup({ handleCloseQR }: Props) {
 
     // const videoInputDevices = await ZXingBrowser.BrowserCodeReader.listVideoInputDevices();
 
-    codeReader.decodeFromVideoDevice(undefined, 'webcam-preview', (result) => {
+    codeReader.decodeFromVideoDevice(undefined, "webcam-preview", (result) => {
       result;
     });
   });

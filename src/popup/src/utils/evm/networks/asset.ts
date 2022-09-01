@@ -25,15 +25,15 @@ export const assets: {
       symbol: "USDC",
       decimal: 6,
       assetType: EVMAssetType.ERC20,
-      contractAddress: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+      contractAddress: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
     },
     "USDT": {
       name: "Tether USD",
       symbol: "USDT",
       decimal: 6,
       assetType: EVMAssetType.ERC20,
-      contractAddress: "0xdAC17F958D2ee523a2206206994597C13D831ec7"
-    }
+      contractAddress: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+    },
   },
   [EVMNetwork.ETHEREUM_TESTNET_GOERLI]: {
     "ETH": {
@@ -47,7 +47,7 @@ export const assets: {
       symbol: "TBC",
       decimal: 18,
       assetType: EVMAssetType.ERC20,
-      contractAddress: "TBC"
+      contractAddress: "TBC",
     },
   },
   [EVMNetwork.AVALANCHE_TESTNET_FUJI]: {
@@ -62,7 +62,7 @@ export const assets: {
       symbol: "ALOT",
       decimal: 18,
       assetType: EVMAssetType.ERC20,
-      contractAddress: "0x9983F755Bbd60d1886CbfE103c98C272AA0F03d6"
+      contractAddress: "0x9983F755Bbd60d1886CbfE103c98C272AA0F03d6",
     },
-  }
-}
+  },
+};

@@ -1,23 +1,23 @@
-import keyring from '@polkadot/ui-keyring';
-import { useAccount } from 'context/AccountContext';
-import { useEffect, useState } from 'react';
-import styled from 'styled-components';
-import AES from 'crypto-js/aes';
-import Utf8 from 'crypto-js/enc-utf8';
-import { exportAccount, validatePassword } from 'utils/polkadot';
-import MenuHeader from 'components/MenuHeader/MenuHeader';
-import ExclamationIcon from 'assets/svgComponents/ExclamationIcon';
-import LockIcon from 'assets/svgComponents/LockIcon';
-import HumbleInput from 'components/primitives/HumbleInput';
-import Button from 'components/primitives/Button';
-import Snackbar from 'components/Snackbar/Snackbar';
-import { Field, reduxForm, InjectedFormProps } from 'redux-form';
-import { useSelector } from 'react-redux';
-import { isObjectEmpty } from 'utils';
-import { copyToClipboard, exportJson, validPassword } from 'utils';
-import ButtonsIcon from 'assets/svgComponents/ButtonsIcon';
-import { useHistory } from 'react-router-dom';
-import { router } from 'router/router';
+import keyring from "@polkadot/ui-keyring";
+import { useAccount } from "context/AccountContext";
+import { useEffect, useState } from "react";
+import styled from "styled-components";
+import AES from "crypto-js/aes";
+import Utf8 from "crypto-js/enc-utf8";
+import { exportAccount, validatePassword } from "utils/polkadot";
+import MenuHeader from "components/MenuHeader/MenuHeader";
+import ExclamationIcon from "assets/svgComponents/ExclamationIcon";
+import LockIcon from "assets/svgComponents/LockIcon";
+import HumbleInput from "components/primitives/HumbleInput";
+import Button from "components/primitives/Button";
+import Snackbar from "components/Snackbar/Snackbar";
+import { Field, reduxForm, InjectedFormProps } from "redux-form";
+import { useSelector } from "react-redux";
+import { isObjectEmpty } from "utils";
+import { copyToClipboard, exportJson, validPassword } from "utils";
+import ButtonsIcon from "assets/svgComponents/ButtonsIcon";
+import { useHistory } from "react-router-dom";
+import { router } from "router/router";
 
 type Props = {
   password: string;
@@ -31,13 +31,13 @@ function BackupAccount({ handleSubmit, valid }: InjectedFormProps<Props>) {
 
   const formValues = useSelector((state: any) => state?.form?.backupAccount?.values);
 
-  const [seed, setSeed] = useState<string>('');
+  const [seed, setSeed] = useState<string>("");
   const [isOpen, setOpen] = useState<boolean>(true);
   const [opened, setOpened] = useState<boolean>(false);
   const [seedExists, setSeedExists] = useState<boolean>(false);
-  const [snackbarType, setSnackbarType] = useState<'error' | 'success' | 'warning'>('error');
+  const [snackbarType, setSnackbarType] = useState<"error" | "success" | "warning">("error");
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
-  const [snackbarMessage, setSnackbarMessage] = useState<string>('');
+  const [snackbarMessage, setSnackbarMessage] = useState<string>("");
   const [mnemonicHasBeenCopied, setMnemonicHasBeenCopied] = useState<boolean>(false);
 
   const submit = async (values: Props) => {
@@ -61,7 +61,7 @@ function BackupAccount({ handleSubmit, valid }: InjectedFormProps<Props>) {
         }
       } else {
         setIsSnackbarOpen(true);
-        setSnackbarMessage('Incorrect Password');
+        setSnackbarMessage("Incorrect Password");
       }
     }
   };
@@ -74,8 +74,8 @@ function BackupAccount({ handleSubmit, valid }: InjectedFormProps<Props>) {
   const handleCopy = () => {
     copyToClipboard(seed);
     setIsSnackbarOpen(true);
-    setSnackbarMessage('Mnemonics Copied');
-    setSnackbarType('success');
+    setSnackbarMessage("Mnemonics Copied");
+    setSnackbarType("success");
     setMnemonicHasBeenCopied(true);
   };
 
@@ -96,11 +96,11 @@ function BackupAccount({ handleSubmit, valid }: InjectedFormProps<Props>) {
         setOpen={setOpen}
         title="BACKUP ACCOUNT"
         onClose={() => {
-          mnemonicHasBeenCopied && copyToClipboard('');
+          mnemonicHasBeenCopied && copyToClipboard("");
           history.push(router.home);
         }}
         backAction={() => {
-          mnemonicHasBeenCopied && copyToClipboard('');
+          mnemonicHasBeenCopied && copyToClipboard("");
           history.push({ pathname: router.home, state: { isMenuOpen: true } });
         }}
       />
@@ -120,8 +120,8 @@ function BackupAccount({ handleSubmit, valid }: InjectedFormProps<Props>) {
           <>
             <WarningContainer seedExists={!seedExists}>
               {seedExists
-                ? `Warning: Do not share your seed phrase. This phrase grants full control of your account.`
-                : 'Account has not been secured, only Json file can be exported'}
+                ? "Warning: Do not share your seed phrase. This phrase grants full control of your account."
+                : "Account has not been secured, only Json file can be exported"}
             </WarningContainer>
             <Form onSubmit={handleSubmit(submit)}>
               <Field
@@ -132,22 +132,22 @@ function BackupAccount({ handleSubmit, valid }: InjectedFormProps<Props>) {
                 placeholder="Enter your password"
                 component={HumbleInput}
                 props={{
-                  type: 'password',
-                  padding: '15px 11px 15px 16px',
-                  color: '#fff',
-                  placeholderColor: '#b1b5c3',
-                  bgColor: '#303030',
-                  borderColor: '#303030',
-                  height: '48px',
-                  marginTop: '12px',
-                  errorBorderColor: '#fb5a5a',
+                  type: "password",
+                  padding: "15px 11px 15px 16px",
+                  color: "#fff",
+                  placeholderColor: "#b1b5c3",
+                  bgColor: "#303030",
+                  borderColor: "#303030",
+                  height: "48px",
+                  marginTop: "12px",
+                  errorBorderColor: "#fb5a5a",
                   autoFocus: true,
-                  isPassword: true
+                  isPassword: true,
                 }}
               />
               <Button
                 type="submit"
-                text={`Reveal ${seedExists ? 'Seed Phrase' : 'Json export'}`}
+                text={`Reveal ${seedExists ? "Seed Phrase" : "Json export"}`}
                 color="#111"
                 disabledBgColor="rgba(255,255,255,0.6)"
                 borderColor="#111"
@@ -175,7 +175,7 @@ function BackupAccount({ handleSubmit, valid }: InjectedFormProps<Props>) {
               margin="15px 0 0 0"
               bgColor="#fff"
               onClick={() => {
-                mnemonicHasBeenCopied && copyToClipboard('');
+                mnemonicHasBeenCopied && copyToClipboard("");
                 history.push({ pathname: router.home, state: { isMenuOpen: true } });
               }}
             />
@@ -197,8 +197,8 @@ function BackupAccount({ handleSubmit, valid }: InjectedFormProps<Props>) {
 }
 
 export default reduxForm<Record<string, unknown>, any>({
-  form: 'backupAccount',
-  validate: validPassword
+  form: "backupAccount",
+  validate: validPassword,
 })(BackupAccount);
 
 const Container = styled.div<{ opened: boolean }>`
@@ -210,7 +210,7 @@ const Container = styled.div<{ opened: boolean }>`
   top: 0;
   left: 0;
   z-index: 999;
-  padding: ${({ opened }) => (opened ? '0 17.5px 24px' : '0 17.5px 32px')};
+  padding: ${({ opened }) => (opened ? "0 17.5px 24px" : "0 17.5px 32px")};
   padding: 0 17.5px 28px;
   box-sizing: border-box;
   background-color: #18191a;
@@ -274,7 +274,7 @@ const WarningContainer = styled.div<{ seedExists?: boolean }>`
   height: 60px;
   border: 1px solid #fffa7d;
   border-radius: 5px;
-  padding: ${({ seedExists }) => (seedExists ? '11px 5px 11px 10px' : '11px 5px')};
+  padding: ${({ seedExists }) => (seedExists ? "11px 5px 11px 10px" : "11px 5px")};
   box-sizing: border-box;
   display: flex;
   justify-content: center;

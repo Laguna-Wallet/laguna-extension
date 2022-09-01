@@ -1,6 +1,6 @@
-import { ConfirmSecuritySkip } from 'components/popups/ConfirmSecuritySkip';
-import { MnemonicsDescription } from 'components/popups/MnemonicsDescription';
-import { SecurityOptions, SecurityOptionsEnum } from 'utils/types';
+import { ConfirmSecuritySkip } from "components/popups/ConfirmSecuritySkip";
+import { MnemonicsDescription } from "components/popups/MnemonicsDescription";
+import { SecurityOptions, SecurityOptionsEnum } from "utils/types";
 
 type Props = {
   securityType: SecurityOptions;

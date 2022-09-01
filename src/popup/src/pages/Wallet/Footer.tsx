@@ -1,19 +1,19 @@
-import LightingIcon from 'assets/svgComponents/LightingIcon';
-import WalletIcon from 'assets/svgComponents/WalletIcon';
-import { Link } from 'react-router-dom';
-import styled from 'styled-components';
-import { router } from 'router/router';
+import LightingIcon from "assets/svgComponents/LightingIcon";
+import WalletIcon from "assets/svgComponents/WalletIcon";
+import { Link } from "react-router-dom";
+import styled from "styled-components";
+import { router } from "router/router";
 
 // todo move to enum
 type Props = {
-  activeItem?: 'wallet' | 'activity';
+  activeItem?: "wallet" | "activity";
 };
 
 export default function Footer({ activeItem }: Props) {
   return (
     <Container>
       <StyledLink to={router.home}>
-        {activeItem === 'wallet' ? (
+        {activeItem === "wallet" ? (
           <WalletIcon stroke="#18191a" />
         ) : (
           <WalletIcon stroke="#b1b5c3" />
@@ -23,7 +23,7 @@ export default function Footer({ activeItem }: Props) {
         <ArrowsIcon stroke="#b1b5c3" />
       </StyledLink> */}
       <StyledLink to={router.activity}>
-        {activeItem === 'activity' ? <LightingIcon fill="#18191a" /> : <LightingIcon />}
+        {activeItem === "activity" ? <LightingIcon fill="#18191a" /> : <LightingIcon />}
       </StyledLink>
     </Container>
   );

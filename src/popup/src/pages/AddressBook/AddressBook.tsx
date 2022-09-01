@@ -1,16 +1,16 @@
-import keyring from '@polkadot/ui-keyring';
-import AddressBookIcon from 'assets/svgComponents/AdressBookIcon';
-import AlternateEmail from 'assets/svgComponents/AlternateEmailIcon';
-import AddIcon from 'assets/svgComponents/AddIcon';
-import MenuHeader from 'components/MenuHeader/MenuHeader';
-import Button from 'components/primitives/Button';
-import Snackbar from 'components/Snackbar/Snackbar';
-import { ShowSnackbar } from 'pages/Wallet/Wallet';
-import { useEffect, useState } from 'react';
-import styled from 'styled-components';
-import { truncateString } from 'utils';
-import { useHistory, Link } from 'react-router-dom';
-import { router } from 'router/router';
+import keyring from "@polkadot/ui-keyring";
+import AddressBookIcon from "assets/svgComponents/AdressBookIcon";
+import AlternateEmail from "assets/svgComponents/AlternateEmailIcon";
+import AddIcon from "assets/svgComponents/AddIcon";
+import MenuHeader from "components/MenuHeader/MenuHeader";
+import Button from "components/primitives/Button";
+import Snackbar from "components/Snackbar/Snackbar";
+import { ShowSnackbar } from "pages/Wallet/Wallet";
+import { useEffect, useState } from "react";
+import styled from "styled-components";
+import { truncateString } from "utils";
+import { useHistory, Link } from "react-router-dom";
+import { router } from "router/router";
 
 type Props = {
   snackbar?: ShowSnackbar;
@@ -25,7 +25,7 @@ export default function AddressBook({ snackbar }: Props) {
   const [addresses, setAddresses] = useState<any[] | undefined>(undefined);
 
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
-  const [snackbarMessage, setSnackbarMessage] = useState<string>('');
+  const [snackbarMessage, setSnackbarMessage] = useState<string>("");
 
   useEffect(() => {
     // todo proper typing
@@ -71,13 +71,13 @@ export default function AddressBook({ snackbar }: Props) {
                   pathname: router.addAddress,
                   state: {
                     edit: true,
-                    address: { ...address }
-                  }
+                    address: { ...address },
+                  },
                 }}
                 key={address.address}>
                 <AddressComponent>
                   <Text>
-                    {address.name}({truncateString(address.address)}){' '}
+                    {address.name}({truncateString(address.address)}){" "}
                   </Text>
                   <AlternateEmail />
                 </AddressComponent>

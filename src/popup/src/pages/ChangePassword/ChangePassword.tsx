@@ -1,20 +1,20 @@
-import keyring from '@polkadot/ui-keyring';
-import LockLogoIcon from 'assets/svgComponents/LockLogoIcon';
-import MenuHeader from 'components/MenuHeader/MenuHeader';
-import Button from 'components/primitives/Button';
-import HumbleInput from 'components/primitives/HumbleInput';
-import Snackbar from 'components/Snackbar/Snackbar';
-import { useAccount } from 'context/AccountContext';
-import { useState } from 'react';
-import { Field, InjectedFormProps, reduxForm } from 'redux-form';
-import styled from 'styled-components';
-import { encryptPassword, isObjectEmpty, objectToArray } from 'utils';
-import { saveToStorage } from 'utils/chrome';
-import { encryptKeyringPairs, encryptMetaData, validatePassword } from 'utils/polkadot';
-import { Messages, SnackbarMessages, StorageKeys } from 'utils/types';
-import { useHistory } from 'react-router-dom';
-import { router } from 'router/router';
-import browser from 'webextension-polyfill';
+import keyring from "@polkadot/ui-keyring";
+import LockLogoIcon from "assets/svgComponents/LockLogoIcon";
+import MenuHeader from "components/MenuHeader/MenuHeader";
+import Button from "components/primitives/Button";
+import HumbleInput from "components/primitives/HumbleInput";
+import Snackbar from "components/Snackbar/Snackbar";
+import { useAccount } from "context/AccountContext";
+import { useState } from "react";
+import { Field, InjectedFormProps, reduxForm } from "redux-form";
+import styled from "styled-components";
+import { encryptPassword, isObjectEmpty, objectToArray } from "utils";
+import { saveToStorage } from "utils/chrome";
+import { encryptKeyringPairs, encryptMetaData, validatePassword } from "utils/polkadot";
+import { Messages, SnackbarMessages, StorageKeys } from "utils/types";
+import { useHistory } from "react-router-dom";
+import { router } from "router/router";
+import browser from "webextension-polyfill";
 
 type Form = {
   currentPassword: string;
@@ -26,27 +26,27 @@ const validate = (values: Form) => {
   const errors: Record<string, string> = {};
 
   if (!values.currentPassword) {
-    errors.currentPassword = 'Please enter current password';
+    errors.currentPassword = "Please enter current password";
   }
 
   if (values.currentPassword && values.currentPassword.length < 8) {
-    errors.currentPassword = 'Password should be minimum 8 characters length';
+    errors.currentPassword = "Password should be minimum 8 characters length";
   }
 
   if (!values.newPassword) {
-    errors.newPassword = 'Please enter new password';
+    errors.newPassword = "Please enter new password";
   }
 
   if (values.newPassword && values.newPassword.length < 8) {
-    errors.newPassword = 'New Password Must be at least 8 characters';
+    errors.newPassword = "New Password Must be at least 8 characters";
   }
 
   if (!values.confirmNewPassword) {
-    errors.confirmNewPassword = 'Please confirm new password';
+    errors.confirmNewPassword = "Please confirm new password";
   }
 
   if (values.confirmNewPassword && values.confirmNewPassword.length < 8) {
-    errors.confirmNewPassword = 'New Password Must be at least 8 characters';
+    errors.confirmNewPassword = "New Password Must be at least 8 characters";
   }
 
   if (
@@ -54,7 +54,7 @@ const validate = (values: Form) => {
     values.confirmNewPassword &&
     values.newPassword !== values.confirmNewPassword
   ) {
-    errors.confirmNewPassword = 'New Passwords do not match';
+    errors.confirmNewPassword = "New Passwords do not match";
   }
 
   return errors;
@@ -67,7 +67,7 @@ function ChangePassword({ handleSubmit, valid }: InjectedFormProps<Form>) {
   const activeAccount = account.getActiveAccount();
 
   const [isOpen, setOpen] = useState<boolean>(true);
-  const [snackbarError, setSnackbarError] = useState<string>('');
+  const [snackbarError, setSnackbarError] = useState<string>("");
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
 
   // todo proper typing
@@ -83,11 +83,11 @@ function ChangePassword({ handleSubmit, valid }: InjectedFormProps<Form>) {
     }
 
     if (values.currentPassword && !(await validatePassword(values.currentPassword))) {
-      setSnackbarError('Incorrect current password');
+      setSnackbarError("Incorrect current password");
       setIsSnackbarOpen(true);
     } else {
-      encryptMetaData(values?.currentPassword, values?.newPassword);
       encryptKeyringPairs(values?.currentPassword, values?.newPassword);
+      encryptMetaData(values?.currentPassword, values?.newPassword);
 
       const newEncryptedPassword = encryptPassword({ password: values?.newPassword });
       saveToStorage({ key: StorageKeys.Encoded, value: newEncryptedPassword });
@@ -101,12 +101,13 @@ function ChangePassword({ handleSubmit, valid }: InjectedFormProps<Form>) {
         payload: {
           oldPassword: values?.currentPassword,
           newPassword: values?.newPassword,
-          metaData: keyring.getPairs().map((pair) => ({ address: pair.address, meta: pair.meta }))
-        }
+          metaData: keyring.getPairs().map((pair) => ({ address: pair.address, meta: pair.meta })),
+        },
       });
+
       history.push({
         pathname: router.home,
-        state: { snackbar: { show: true, message: SnackbarMessages.PasswordChanged } }
+        state: { snackbar: { show: true, message: SnackbarMessages.PasswordChanged } },
       });
     }
   };
@@ -137,18 +138,18 @@ function ChangePassword({ handleSubmit, valid }: InjectedFormProps<Form>) {
               placeholder="Current password"
               component={HumbleInput}
               props={{
-                type: 'password',
-                bgColor: '#303030',
-                padding: '15px 11px 15px 16px',
-                color: '#fff',
-                placeholderColor: '#b1b5c3',
-                errorBorderColor: '#fb5a5a',
-                height: '48px',
-                marginTop: '12px',
-                borderColor: '#303030',
+                type: "password",
+                bgColor: "#303030",
+                padding: "15px 11px 15px 16px",
+                color: "#fff",
+                placeholderColor: "#b1b5c3",
+                errorBorderColor: "#fb5a5a",
+                height: "48px",
+                marginTop: "12px",
+                borderColor: "#303030",
                 // showError: true,
                 // errorColor: '#FB5A5A'
-                isPassword: true
+                isPassword: true,
               }}
             />
             <Field
@@ -159,17 +160,17 @@ function ChangePassword({ handleSubmit, valid }: InjectedFormProps<Form>) {
               placeholder="New password"
               component={HumbleInput}
               props={{
-                type: 'password',
-                bgColor: '#303030',
-                color: '#fff',
-                placeholderColor: '#b1b5c3',
-                errorBorderColor: '#fb5a5a',
-                height: '48px',
-                marginTop: '12px',
-                borderColor: '#303030',
+                type: "password",
+                bgColor: "#303030",
+                color: "#fff",
+                placeholderColor: "#b1b5c3",
+                errorBorderColor: "#fb5a5a",
+                height: "48px",
+                marginTop: "12px",
+                borderColor: "#303030",
                 showError: true,
-                errorColor: '#FB5A5A',
-                isPassword: true
+                errorColor: "#FB5A5A",
+                isPassword: true,
               }}
             />
             <Field
@@ -180,17 +181,17 @@ function ChangePassword({ handleSubmit, valid }: InjectedFormProps<Form>) {
               placeholder="Confirm new password"
               component={HumbleInput}
               props={{
-                type: 'password',
-                bgColor: '#303030',
-                color: '#fff',
-                placeholderColor: '#b1b5c3',
-                height: '48px',
-                marginTop: '12px',
-                borderColor: '#303030',
-                errorBorderColor: '#fb5a5a',
+                type: "password",
+                bgColor: "#303030",
+                color: "#fff",
+                placeholderColor: "#b1b5c3",
+                height: "48px",
+                marginTop: "12px",
+                borderColor: "#303030",
+                errorBorderColor: "#fb5a5a",
                 showError: true,
-                errorColor: '#FB5A5A',
-                isPassword: true
+                errorColor: "#FB5A5A",
+                isPassword: true,
               }}
             />
           </FieldsContainer>
@@ -239,8 +240,8 @@ function ChangePassword({ handleSubmit, valid }: InjectedFormProps<Form>) {
 }
 
 export default reduxForm<Record<string, unknown>, any>({
-  form: 'changePassword',
-  validate
+  form: "changePassword",
+  validate,
 })(ChangePassword);
 
 const Container = styled.div`

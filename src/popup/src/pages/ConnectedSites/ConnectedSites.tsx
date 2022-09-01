@@ -1,16 +1,19 @@
-import { useEffect, useState } from 'react';
-import { CheckIcon } from '@heroicons/react/outline';
-import ShareIcon from 'assets/svgComponents/ShareIcon';
-import MenuHeader from 'components/MenuHeader/MenuHeader';
-import Snackbar from 'components/Snackbar/Snackbar';
-import { useAccount } from 'context/AccountContext';
-import { useSelector } from 'react-redux';
-import styled from 'styled-components';
-import { Messages, SnackbarMessages } from 'utils/types';
-import { useHistory } from 'react-router-dom';
-import { router } from 'router/router';
-import browser from 'webextension-polyfill';
-import RevokeIcon from 'assets/svgComponents/RevokeIcon';
+import { useEffect, useState } from "react";
+import { CheckIcon } from "@heroicons/react/outline";
+import ShareIcon from "assets/svgComponents/ShareIcon";
+import MenuHeader from "components/MenuHeader/MenuHeader";
+import Snackbar from "components/Snackbar/Snackbar";
+import { useAccount } from "context/AccountContext";
+import { useSelector } from "react-redux";
+import styled from "styled-components";
+import { Messages, SnackbarMessages } from "utils/types";
+import { useHistory } from "react-router-dom";
+import { router } from "router/router";
+import browser from "webextension-polyfill";
+import RevokeIcon from "assets/svgComponents/RevokeIcon";
+import Button from "components/primitives/Button";
+import { useDispatch } from "react-redux";
+import { changeConnectedApps } from "redux/actions";
 
 // todo proper typing
 type Props = {
@@ -19,11 +22,12 @@ type Props = {
 
 function ConnectedSites({ handleSubmit }: Props) {
   const history = useHistory();
+  const dispatch = useDispatch();
 
   const [isOpen, setOpen] = useState<boolean>(true);
 
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
-  const [snackbarMessage, setSnackbarMessage] = useState<string>('');
+  const [snackbarMessage, setSnackbarMessage] = useState<string>("");
 
   const account = useAccount();
   const activeAccount = account.getActiveAccount();
@@ -32,7 +36,7 @@ function ConnectedSites({ handleSubmit }: Props) {
 
   useEffect(() => {
     browser.runtime.sendMessage({
-      type: Messages.ConnectedApps
+      type: Messages.ConnectedApps,
     });
   }, []);
 
@@ -40,6 +44,11 @@ function ConnectedSites({ handleSubmit }: Props) {
     browser.runtime.sendMessage({ type: Messages.RevokeDapp, payload: { dappName } });
     setIsSnackbarOpen(true);
     setSnackbarMessage(SnackbarMessages.AccessRevoked);
+  };
+
+  const handleDisconnectAllSites = () => {
+    dispatch(changeConnectedApps([] as any));
+    browser.runtime.sendMessage({ type: Messages.DisconnectAllSites });
   };
 
   return (
@@ -55,11 +64,12 @@ function ConnectedSites({ handleSubmit }: Props) {
       />
 
       <Content>
-        <HeroText>
-          &rsquo;&rsquo;Account Name&rsquo;&rsquo; is connected to these sites. They can view your
-          account address
-        </HeroText>
-
+        {connectedApps?.connectedApps?.length && (
+          <HeroText>
+            &rsquo;&rsquo;{activeAccount?.meta?.name}&rsquo;&rsquo; is connected to these sites.
+            They can view your account address
+          </HeroText>
+        )}
         {connectedApps?.connectedApps?.length ? (
           connectedApps?.connectedApps.map((item: string, index: number) => (
             <ConnectedAppItem key={`${item}-${index}`}>
@@ -78,6 +88,17 @@ function ConnectedSites({ handleSubmit }: Props) {
             </IconContainer>
             <Text>No Trusted Apps</Text>
           </>
+        )}
+
+        {connectedApps?.connectedApps?.length && (
+          <Button
+            margin="auto 0px 0px 0px"
+            text="Disconnect all sites"
+            color="#111"
+            bgColor="#fff"
+            justify="center"
+            onClick={handleDisconnectAllSites}
+          />
         )}
       </Content>
       <Snackbar
@@ -137,6 +158,7 @@ const ConnectedAppItem = styled.div`
   background: #303030;
   align-items: center;
   display: flex;
+  margin-bottom: 10px;
 `;
 
 const AppName = styled.div`

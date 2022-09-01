@@ -1,4 +1,4 @@
-import Slider, { Settings } from 'react-slick';
+import Slider, { Settings } from "react-slick";
 
 interface Props {
   children: any;
@@ -11,7 +11,7 @@ export default function SimpleSlider({ children, settings }: Props) {
     infinite: false,
     speed: 500,
     slidesToShow: 1,
-    slidesToScroll: 1
+    slidesToScroll: 1,
   };
 
   return (

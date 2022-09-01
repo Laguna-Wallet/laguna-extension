@@ -1,5 +1,5 @@
-import * as React from 'react';
-import { SVGProps } from 'react';
+import * as React from "react";
+import { SVGProps } from "react";
 
 const ExportTransactionIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg width={15} height={16} fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
