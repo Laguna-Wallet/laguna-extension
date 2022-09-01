@@ -234,11 +234,9 @@ export function recodeToPolkadotAddress(address: string): string {
 }
 // todo proper typing
 export function renewMetaToKeyPairs(pairs: KeyringPair[], metaData: { address: string; meta: AccountMeta }[]): KeyringPair[] {
-  console.log("~ metaData", metaData)
   return pairs.map((pair) => {
     const foundPair = metaData.find((item) => recodeToPolkadotAddress(item.address) === recodeToPolkadotAddress(pair.address))
     if (foundPair) {
-      console.log("~ foundPair.meta", foundPair.meta)
       pair.setMeta({ ...pair.meta, ...foundPair.meta })
       keyring.saveAccountMeta(pair, { ...foundPair.meta })
     }

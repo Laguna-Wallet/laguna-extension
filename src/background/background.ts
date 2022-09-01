@@ -456,6 +456,7 @@ browser.runtime.onStartup.addListener(async () => {
     type: Messages.CoinInfoUpdated,
     payload: JSON.stringify(Infos),
   })
+
   saveToStorage({ key: StorageKeys.TokenInfos, value: JSON.stringify(Infos) })
 
   // browser.alarms.create("refresh", { periodInMinutes: 1 })

@@ -25,9 +25,7 @@ export async function sendTransaction(pairs, ethWallets, payload) {
         return wallet.address === payload.toBeSignTransaction.from
       })
 
-      console.log("~ wallet", wallet)
       const signedTx = await signTransaction(payload.chain, wallet, payload.toBeSignTransaction)
-      console.log("~ signedTx", signedTx)
     } else {
       const pair = pairs.find((pair) => {
         return recodeToPolkadotAddress(pair.address) === recodeToPolkadotAddress(payload.sendFrom)
@@ -59,7 +57,7 @@ export async function Retrieve_Coin_Prices() {
   // moonbeam,
   // shiden,
   // astar
-  const data = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=polkadot,kusama,&vs_currencies=usd`)
+  const data = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=polkadot,kusama,ethereum&vs_currencies=usd`)
   const json = await data.json()
   return json
 }
@@ -67,8 +65,8 @@ export async function Retrieve_Coin_Prices() {
 // todo proper typing and get rid of unneeded fields from the return object
 export async function Retrieve_Coin_Infos() {
   // moonriver, moonbeam,მო სულიკო რაზედ მოგიცკენიააა    shiden, astar
-  const data = await fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=polkadot,kusama,&order=market_cap_desc&per_page=100&page=1&sparkline=false`)
-
+  const data = await fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=polkadot,kusama,ethereum&order=market_cap_desc&per_page=100&page=1&sparkline=false`)
+  console.log("~ data.json()", await data.json())
   return await data.json()
 }
 

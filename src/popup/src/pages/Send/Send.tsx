@@ -24,7 +24,7 @@ import { PropsFromTokenDashboard } from 'pages/Recieve/Receive';
 import { selectAsset } from 'redux/actions';
 import { State } from 'redux/store';
 import { useLocation } from 'react-router-dom';
-import { buildEvmTransaction, estimateGas, getEvmGasPrice } from 'utils/evm/api';
+import { buildEvmTransaction, estimateGas, getEvmGasPrice, isValidEVMAddress } from 'utils/evm/api';
 import { EvmAssets } from 'utils/evm/networks/asset';
 import { ethers } from 'ethers';
 import { IEVMBuildTransaction, IEVMToBeSignTransaction } from 'utils/evm/interfaces';
@@ -145,9 +145,10 @@ function Send({ initialIsContactsPopupOpen }: Props) {
     }
 
     async function goEthereum() {
+      // todo not valid eth address error
       if (
         !reduxSendTokenState.selectedAsset ||
-        // !isValidPolkadotAddress(form?.address) ||
+        !isValidEVMAddress(form?.address)?.success ||
         !form?.amount
       )
         return;
@@ -172,7 +173,10 @@ function Send({ initialIsContactsPopupOpen }: Props) {
 
       setToBeSignTransaction(toSignTransaction);
       setFee(ethValue);
+      setRecoded(form?.address);
       setLoading(false);
+
+      // todo check if balance is enough
       setAbilityToTransfer(true);
 
       //   // setTransfer(transfer);

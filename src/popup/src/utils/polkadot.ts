@@ -231,14 +231,15 @@ export function getNetworks(
     : networks;
 
   const enhancedNetworks: Network[] = filteredNetworks.map((network) => {
-    if (!ht[network.symbol]) {
+    if (!ht[network?.symbol?.toLowerCase()]) {
       return network;
     }
 
     return {
       ...network,
-      price_change_percentage_24h: ht[network.symbol].price_change_percentage_24h as number,
-      marketCap: ht[network.symbol].market_cap as number
+      price_change_percentage_24h: ht[network.symbol.toLowerCase()]
+        .price_change_percentage_24h as number,
+      marketCap: ht[network.symbol.toLowerCase()].market_cap as number
     };
   });
 
@@ -281,7 +282,7 @@ export async function getAssets(
       if (showZeroBalanceAssets) {
         balance = !balance ? 0 : balance;
       }
-      const price = prices[chain]?.usd;
+      const price = prices[chain.toLowerCase()]?.usd;
 
       // todo rename calculatedBalance
       const calculatedPrice = new BigNumber(balance.overall).multipliedBy(price || 0);

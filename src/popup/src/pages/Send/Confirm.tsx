@@ -331,12 +331,14 @@ const BottomSection = styled.div`
 
 const Tag = styled.div`
   text-transform: capitalize;
-  width: 97px;
+  /* width: 97px; */
   height: 23px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 60px;
+  padding: 0 10px;
+  box-sizing: border-box;
   font-family: 'IBM Plex Sans';
   font-size: 10px;
   color: #000;
