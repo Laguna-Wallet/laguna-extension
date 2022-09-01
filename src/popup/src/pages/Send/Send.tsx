@@ -28,6 +28,7 @@ import { buildEvmTransaction, estimateGas, getEvmGasPrice, isValidEVMAddress } f
 import { EvmAssets } from 'utils/evm/networks/asset';
 import { ethers } from 'ethers';
 import { IEVMBuildTransaction, IEVMToBeSignTransaction } from 'utils/evm/interfaces';
+import { EVMNetwork } from 'utils/evm/networks';
 
 export enum SendAccountFlowEnum {
   SendToTrustedContact = 'SendToTrustedContact',
@@ -153,6 +154,8 @@ function Send({ initialIsContactsPopupOpen }: Props) {
       )
         return;
 
+      setLoading(true);
+
       const ethNetwork = reduxSendTokenState?.selectedAsset?.chain;
       const gasPrice = await getEvmGasPrice(ethNetwork);
 
@@ -174,16 +177,20 @@ function Send({ initialIsContactsPopupOpen }: Props) {
       setToBeSignTransaction(toSignTransaction);
       setFee(ethValue);
       setRecoded(form?.address);
-      setLoading(false);
-
       // todo check if balance is enough
       setAbilityToTransfer(true);
+
+      setLoading(false);
+      setAmountToSend(ethValue.toString());
 
       //   // setTransfer(transfer);
     }
 
-    // goPolkadot();
-    goEthereum();
+    if (reduxSendTokenState?.selectedAsset?.chain === EVMNetwork.ETHEREUM) {
+      goEthereum();
+    } else {
+      goPolkadot();
+    }
   }, [reduxSendTokenState.selectedAsset, form?.address, form?.amount]);
 
   useEffect(() => {

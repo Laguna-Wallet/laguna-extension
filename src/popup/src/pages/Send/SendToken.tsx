@@ -182,6 +182,7 @@ function SendToken({
   };
 
   useEffect(() => {
+    console.log('~ abilityToTransfer', abilityToTransfer);
     if (!abilityToTransfer && !loading) {
       setSnackbarError('No enough funds to make transfer');
       setIsSnackbarOpen(true);

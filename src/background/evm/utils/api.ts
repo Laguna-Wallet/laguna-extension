@@ -15,7 +15,10 @@ export const generateNewEvmWallet = (mnemonicSeed: string): ethers.Wallet => {
 
 export const signTransaction = async (network: EVMNetwork, wallet: ethers.Wallet, toBeSignTransaction: IEVMToBeSignTransaction): Promise<string> => {
   const provider = getProvider(network)
-  const signer = wallet.connect(provider)
-  const signedTx = await signer.signTransaction(toBeSignTransaction)
+  // const signer = wallet.connect(provider)
+  console.log(1)
+  console.log("~ toBeSignTransaction", toBeSignTransaction)
+  const signedTx = await wallet.signTransaction(toBeSignTransaction)
+  console.log(2)
   return signedTx
 }
