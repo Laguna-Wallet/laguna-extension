@@ -137,7 +137,8 @@ export enum TokenSymbols {
   moonriver = 'movr',
   moonbeam = 'glmr',
   shiden = 'sdn',
-  astar = 'astr'
+  astar = 'astr',
+  ethereum = 'eth'
 }
 
 export type Token =
@@ -305,7 +306,7 @@ export const networks: Network[] = [
     chain: 'kusama',
     node: 'wss://kusama-rpc.polkadot.io',
     prefix: 2
-  }
+  },
   // {
   //   name: 'Moonriver',
   //   symbol: 'movr',
