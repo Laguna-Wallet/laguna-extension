@@ -27,6 +27,7 @@ import { useLocation } from 'react-router-dom';
 import { buildEvmTransaction, estimateGas, getEvmGasPrice } from 'utils/evm/api';
 import { EvmAssets } from 'utils/evm/networks/asset';
 import { ethers } from 'ethers';
+import { IEVMBuildTransaction, IEVMToBeSignTransaction } from 'utils/evm/interfaces';
 
 export enum SendAccountFlowEnum {
   SendToTrustedContact = 'SendToTrustedContact',
@@ -85,11 +86,11 @@ function Send({ initialIsContactsPopupOpen }: Props) {
   const [loading, setLoading] = useState<any>();
   const [abilityToTransfer, setAbilityToTransfer] = useState<boolean>(true);
   const [blockHash, setBlockHash] = useState<string>('');
+  const [toBeSignTransaction, setToBeSignTransaction] = useState<IEVMToBeSignTransaction>();
 
   const reduxSendTokenState = useSelector((state: any) => state.sendToken);
   const form = useSelector((state: any) => state?.form?.sendToken?.values);
 
-  console.log('~ form.amount', form?.amount);
   useEffect(() => {
     async function goPolkadot() {
       if (
@@ -156,7 +157,7 @@ function Send({ initialIsContactsPopupOpen }: Props) {
 
       const ethAsset = EvmAssets[ethNetwork][reduxSendTokenState?.selectedAsset?.symbol];
 
-      const toBeSignTransaction = await buildEvmTransaction({
+      const toSignTransaction: IEVMToBeSignTransaction = await buildEvmTransaction({
         network: ethNetwork,
         asset: ethAsset,
         amount: new BigNumber(form.amount),
@@ -166,9 +167,10 @@ function Send({ initialIsContactsPopupOpen }: Props) {
         // numOfPendingTransaction: BigNumber; // TODO for adding up nonce, blocked by cache pending txn
       });
 
-      const estimatedGas = await estimateGas(ethNetwork, toBeSignTransaction);
+      const estimatedGas = await estimateGas(ethNetwork, toSignTransaction);
       const ethValue = await ethers.utils.formatUnits(estimatedGas.toNumber());
 
+      setToBeSignTransaction(toSignTransaction);
       setFee(ethValue);
       setLoading(false);
       setAbilityToTransfer(true);
@@ -203,6 +205,7 @@ function Send({ initialIsContactsPopupOpen }: Props) {
           setAccountMeta={setAccountMeta}
         />
 
+        {/* todo pass one payload prop for all the chains   */}
         <Confirm
           setBlockHash={setBlockHash}
           amountToSend={amountToSend}
@@ -210,6 +213,7 @@ function Send({ initialIsContactsPopupOpen }: Props) {
           fee={fee}
           transfer={transfer}
           flow={flow}
+          toBeSignTransaction={toBeSignTransaction}
         />
         <TransactionSent blockHash={blockHash} />
       </Wizard>

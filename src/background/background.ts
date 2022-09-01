@@ -2,6 +2,8 @@
 import { Messages, StorageKeys } from "./types"
 import { u8aToHex } from "@polkadot/util"
 import { wrapBytes } from "@polkadot/extension-dapp/wrapBytes"
+import { ethers } from "ethers"
+
 import {
   fetchAccountsBalances,
   // fetchAccountsTransactions,
@@ -47,6 +49,9 @@ import { userInfo } from "os"
 
 let isLoggedIn = false
 let keyPairs: KeyringPair[] = []
+
+let ethWallets: ethers.Wallet[] = []
+
 let signRequestPending = false
 let signRequest = {}
 let signRawRequestPending = false
@@ -274,7 +279,10 @@ browser.runtime.onMessage.addListener(async (msg, _sender) => {
       if (validatePassword(msg.payload.password)) {
         isLoggedIn = true
         timeoutStart = Date.now()
-        keyPairs = unlockKeyPairs(msg.payload.password)
+        const { substratePairs, openedEthWallets } = unlockKeyPairs(msg.payload.password)
+
+        keyPairs = substratePairs
+        ethWallets = openedEthWallets
       }
       break
     case Messages.CheckPendingDappAuth:
@@ -294,6 +302,7 @@ browser.runtime.onMessage.addListener(async (msg, _sender) => {
     case Messages.LogOutUser:
       isLoggedIn = false
       keyPairs = []
+      ethWallets = []
       break
 
     case Messages.CheckPendingSign:
@@ -368,7 +377,7 @@ browser.runtime.onMessage.addListener(async (msg, _sender) => {
       break
     case Messages.SendTransaction:
       if (msg?.payload) {
-        await sendTransaction(keyPairs, msg.payload)
+        await sendTransaction(keyPairs, ethWallets, msg.payload)
       }
       break
     case Messages.AddToKeyring:

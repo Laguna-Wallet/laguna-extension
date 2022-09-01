@@ -11,7 +11,6 @@ import BigNumber from 'bignumber.js';
 import { EVMNetwork, networks } from './networks';
 import { EVMAssetType } from './networks/asset';
 import ERC20ABI from './abi/ERC20.json';
-
 export const generateNewWalletAddress = (mnemonicSeed: string): string => {
   const wallet = ethers.Wallet.fromMnemonic(mnemonicSeed as string);
   return wallet.address;

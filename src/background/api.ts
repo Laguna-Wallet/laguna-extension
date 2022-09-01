@@ -12,29 +12,39 @@ import { checkBalanceChange, getAccountAddresses, getFromStorage, recodeAddress,
 import { cryptoWaitReady } from "@polkadot/util-crypto"
 // import { initWasm } from "@polkadot/wasm-crypto/initOnlyAsm"
 import browser from "webextension-polyfill"
+import { signTransaction } from "./evm/utils/api"
 
 export async function Retrieve_balance_change_rates() {
   // const balances = getFromStorage()
 }
 
-export async function sendTransaction(pairs, { sendTo, sendFrom, amount, chain }) {
+export async function sendTransaction(pairs, ethWallets, payload) {
   try {
-    const pair = pairs.find((pair) => {
-      return recodeToPolkadotAddress(pair.address) === recodeToPolkadotAddress(sendFrom)
-    })
+    if (payload.chain === "ETHEREUM") {
+      const wallet = ethWallets.find((wallet) => {
+        return wallet.address === payload.toBeSignTransaction.from
+      })
 
-    await cryptoWaitReady()
-    const wsProvider = new WsProvider(`wss://${chain}.api.onfinality.io/public-ws?apikey=${process.env.ONFINALITY_KEY}`)
-    const api = await ApiPromise.create({ provider: wsProvider })
-    const unsub = await api.tx.balances.transfer(sendTo, amount).signAndSend(pair, ({ status }: any) => {
-      if (status.isInBlock) {
-        chrome.runtime.sendMessage({ type: Messages.TransactionSuccess, payload: { amount, chain, block: status?.asInBlock?.toString() } })
-        unsub()
+      console.log("~ wallet", wallet)
+      const signedTx = await signTransaction(payload.chain, wallet, payload.toBeSignTransaction)
+      console.log("~ signedTx", signedTx)
+    } else {
+      const pair = pairs.find((pair) => {
+        return recodeToPolkadotAddress(pair.address) === recodeToPolkadotAddress(payload.sendFrom)
+      })
 
-        api.disconnect()
-      }
-    })
+      await cryptoWaitReady()
+      const wsProvider = new WsProvider(`wss://${payload.chain}.api.onfinality.io/public-ws?apikey=${process.env.ONFINALITY_KEY}`)
+      const api = await ApiPromise.create({ provider: wsProvider })
+      const unsub = await api.tx.balances.transfer(payload.sendTo, payload.amount).signAndSend(pair, ({ status }: any) => {
+        if (status.isInBlock) {
+          chrome.runtime.sendMessage({ type: Messages.TransactionSuccess, payload: { amount: payload.amount, chain: payload.chain, block: status?.asInBlock?.toString() } })
+          unsub()
 
+          api.disconnect()
+        }
+      })
+    }
     // setTimeout(() => {
     //   unsub()
     // }, 30000)

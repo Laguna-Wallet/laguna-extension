@@ -24,6 +24,8 @@ import browser from 'webextension-polyfill';
 import { changeAccountsBalances } from 'redux/actions';
 import { recodeAddress } from 'utils/polkadot';
 import { sendMessagePromise } from 'utils/chrome';
+import { IEVMBuildTransaction, IEVMToBeSignTransaction } from 'utils/evm/interfaces';
+import { EVMNetwork } from 'utils/evm/networks';
 
 type Props = {
   fee: string;
@@ -32,9 +34,18 @@ type Props = {
   recoded: string;
   setBlockHash: (blockHash: string) => void;
   flow: FlowValue | undefined;
+  toBeSignTransaction: IEVMToBeSignTransaction | undefined;
 };
 
-function Confirm({ fee, transfer, amountToSend, recoded, setBlockHash, flow }: Props) {
+function Confirm({
+  fee,
+  transfer,
+  amountToSend,
+  recoded,
+  setBlockHash,
+  flow,
+  toBeSignTransaction
+}: Props) {
   const { nextStep, previousStep } = useWizard();
   const account = useAccount();
   const history = useHistory();
@@ -61,15 +72,22 @@ function Confirm({ fee, transfer, amountToSend, recoded, setBlockHash, flow }: P
   const name = account?.getActiveAccount()?.meta?.name;
 
   const handleClick = async () => {
-    browser.runtime.sendMessage({
-      type: Messages.SendTransaction,
-      payload: {
-        sendTo: recoded,
-        sendFrom: activeAccountAddress,
-        amount: amountToSend,
-        chain
-      }
-    });
+    if (chain === EVMNetwork.ETHEREUM) {
+      browser.runtime.sendMessage({
+        type: Messages.SendTransaction,
+        payload: { chain, toBeSignTransaction }
+      });
+    } else {
+      browser.runtime.sendMessage({
+        type: Messages.SendTransaction,
+        payload: {
+          sendTo: recoded,
+          sendFrom: activeAccountAddress,
+          amount: amountToSend,
+          chain
+        }
+      });
+    }
 
     setLoadingTransaction(true);
     chrome.runtime.sendMessage({
