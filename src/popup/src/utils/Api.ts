@@ -75,21 +75,30 @@ export async function fetchAccountsBalances(
         await timer(1000);
         const network = networks[i];
 
-        if (network.chain === EVMNetwork.ETHEREUM && !ethAddress) {
+        if (
+          (network.chain === EVMNetwork.ETHEREUM ||
+            network.chain === EVMNetwork.AVALANCHE_TESTNET_FUJI ||
+            network.chain === EVMNetwork.ETHEREUM_TESTNET_GOERLI) &&
+          !ethAddress
+        ) {
           i++;
           continue;
         }
 
         if (
-          network.chain === EVMNetwork.ETHEREUM ||
-          network.chain === EVMNetwork.AVALANCHE_TESTNET_FUJI ||
-          (network.chain === EVMNetwork.ETHEREUM_TESTNET_GOERLI && ethAddress)
+          (network.chain === EVMNetwork.ETHEREUM ||
+            network.chain === EVMNetwork.AVALANCHE_TESTNET_FUJI ||
+            network.chain === EVMNetwork.ETHEREUM_TESTNET_GOERLI) &&
+          ethAddress
         ) {
           const ethBalance = await getEVMBalance(
             network.chain,
             ethAddress,
             EvmAssets[network.chain][network.symbol]
           );
+
+          console.log('~ network.chain', network.chain);
+          console.log('~ ethBalance', ethBalance);
 
           if (new BigNumber(ethBalance.toString()).isEqualTo(0)) {
             i++;

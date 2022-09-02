@@ -1,7 +1,49 @@
 import { timer } from 'utils';
 import { chains, Transaction } from './types';
 
-export async function fetchAccountsTransactions(address: string) {
+// export async function fetchAllAccountsTransactions(address: string) {
+//   try {
+//     let result_arr: Transaction[] = [];
+//     let results = [];
+//     let retrieved_count = 0;
+//     let page = 0;
+//     //   let accountTransfers = [];
+
+//     for (let i = 0; i < chains.length; i++) {
+//       await timer(1000);
+
+//       const res = await fetchTransactions(address, chains[i], 30, page);
+
+//       if (!res?.data?.transfers) continue;
+
+//       results = [...res.data.transfers];
+//       retrieved_count = res?.data?.count;
+//       page++;
+
+//       while (results.length < retrieved_count) {
+//         try {
+//           await timer(1000);
+//           const data = await fetchTransactions(address, chains[i], 30, page);
+//           results = [...results, ...data.data.transfers];
+//           page++;
+//         } catch (err) {
+//           console.log(err);
+//         }
+//       }
+
+//       retrieved_count = 0;
+//       page = 0;
+
+//       result_arr = [...result_arr, ...transformTransfers(results, chains[i])];
+//     }
+
+//     return result_arr;
+//   } catch (err) {
+//     console.log(err);
+//   }
+// }
+
+export async function fetchAccountTransactionsByChain(address: string, chain: string) {
   try {
     let result_arr: Transaction[] = [];
     let results = [];
@@ -9,33 +51,29 @@ export async function fetchAccountsTransactions(address: string) {
     let page = 0;
     //   let accountTransfers = [];
 
-    for (let i = 0; i < chains.length; i++) {
-      await timer(1000);
+    const res = await fetchTransactions(address, chain, 30, page);
 
-      const res = await fetchTransactions(address, chains[i], 30, page);
+    // if (!res?.data?.transfers) continue;
 
-      if (!res?.data?.transfers) continue;
+    results = [...res.data.transfers];
+    retrieved_count = res?.data?.count;
+    page++;
 
-      results = [...res.data.transfers];
-      retrieved_count = res?.data?.count;
-      page++;
-
-      while (results.length < retrieved_count) {
-        try {
-          await timer(1000);
-          const data = await fetchTransactions(address, chains[i], 30, page);
-          results = [...results, ...data.data.transfers];
-          page++;
-        } catch (err) {
-          console.log(err);
-        }
+    while (results.length < retrieved_count) {
+      try {
+        await timer(1000);
+        const data = await fetchTransactions(address, chain, 30, page);
+        results = [...results, ...data.data.transfers];
+        page++;
+      } catch (err) {
+        console.log(err);
       }
-
-      retrieved_count = 0;
-      page = 0;
-
-      result_arr = [...result_arr, ...transformTransfers(results, chains[i])];
     }
+
+    retrieved_count = 0;
+    page = 0;
+
+    result_arr = [...result_arr, ...transformTransfers(results, chain)];
 
     return result_arr;
   } catch (err) {

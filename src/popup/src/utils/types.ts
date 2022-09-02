@@ -358,7 +358,7 @@ export const networks: Network[] = [
   //   decimal: 18,
   //   assetType: EVMAssetType.ERC20,
   //   contractAddress: 'TBC'
-  // },
+  // }
   // {
   //   name: 'Avalanche',
   //   chain: EVMNetwork.AVALANCHE_TESTNET_FUJI,

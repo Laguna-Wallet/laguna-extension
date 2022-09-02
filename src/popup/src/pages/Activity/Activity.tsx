@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import { useAccount } from 'context/AccountContext';
 import activityBg from 'assets/imgs/activity-bg.png';
 import Header from 'pages/Wallet/Header';
@@ -14,13 +14,14 @@ import RightArrow from 'assets/svgComponents/RightArrow';
 import { PlusIcon } from '@heroicons/react/outline';
 import PolkadotLogoIcon from 'assets/svgComponents/PolkadotLogoIcon';
 import KusamaLogoIcon from 'assets/svgComponents/KusamaLogoIcon';
-import { TokenSymbols, Transaction } from 'utils/types';
-import { fetchAccountsTransactions } from 'utils/fetchTransactions';
+import { networks, TokenSymbols, Transaction } from 'utils/types';
+import { fetchAccountTransactionsByChain } from 'utils/fetchTransactions';
 import Popup from 'components/Popup/Popup';
 import Loader from 'components/Loader/Loader';
 import InactiveField from 'components/InactiveField/InactiveField';
 import { router } from 'router/router';
 import { useHistory } from 'react-router-dom';
+import Select, { components } from 'react-select';
 
 type Props = {
   isMenuOpen?: boolean;
@@ -86,6 +87,7 @@ export default function Activity() {
   const [transaction, setTransaction] = useState<Transaction>();
   const [loading, setLoading] = useState<boolean>(false);
   const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false);
+  const [chain, setChain] = useState<string>('polkadot');
 
   const address = account.getActiveAccount().address;
 
@@ -98,7 +100,7 @@ export default function Activity() {
   useEffect(() => {
     async function go() {
       setLoading(true);
-      const transactions = (await fetchAccountsTransactions(address)) as Transaction[];
+      const transactions = (await fetchAccountTransactionsByChain(address, chain)) as Transaction[];
       setTransactions(transactions);
       setLoading(false);
     }
@@ -111,12 +113,35 @@ export default function Activity() {
     setTransaction(transaction);
   };
 
+  const { Option } = components;
+
+  const options = networks.map((network) => ({
+    value: network.chain,
+    label: network.chain.toUpperCase(),
+    icon: ''
+  }));
+
+  const IconOption = (props: any) => (
+    <Option {...props}>
+      <img
+        // src={require('./' + props?.options?.icon)}
+        style={{ width: 36 }}
+      />
+      {console.log(props)}
+      <SelectLabel>{props?.data?.label}</SelectLabel>
+    </Option>
+  );
+
   return (
     <Container bg={activityBg} isEmpty={!transactions.length}>
       <Header backAction={() => history.push(router.home)} title="Activity" />
       {transactions.length ? (
         <>
           <Content>
+            <SelectContainer>
+              <span>Network</span>
+              <Select options={options} components={{ Option: IconOption }} />
+            </SelectContainer>
             <ListContentParent>
               <ListContentChild>
                 {sortedTransactions.map((transaction: any) => {
@@ -195,13 +220,35 @@ const Content = styled.div`
   box-sizing: border-box;
 `;
 
+const SelectContainer = styled.div`
+  width: 100% !important;
+  display: flex;
+  align-items: space-between;
+  margin-top: 45px;
+  align-items: center;
+  span {
+    letter-spacing: 0.25px;
+    color: #62768a;
+    font-size: 14px;
+    margin-right: auto;
+  }
+`;
+
+const SelectLabel = styled.span`
+  font-family: 'Inter';
+  font-weight: 500;
+  font-size: 14px;
+  letter-spacing: 0.25px;
+  color: #000000;
+`;
+
 const ListContentParent = styled.div`
   width: 100%;
   height: 570px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  margin-top: 45px;
+  margin-top: 15px;
   overflow-y: hidden;
   position: relative;
 `;
@@ -231,8 +278,6 @@ const ListContentChild = styled.div`
 // `;
 
 const ActivityItemContainer = styled.div<{ bgColor?: string }>`
-  /* width: 345px; */
-  width: 325px;
   height: 60px;
   margin-top: 10px;
   display: flex;
