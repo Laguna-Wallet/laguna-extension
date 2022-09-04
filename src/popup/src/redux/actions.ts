@@ -1,4 +1,4 @@
-import { TokenData } from 'utils/evm/interfaces';
+import { TokenData } from '../../../background/utils/evm/interfaces';
 import { Asset, Token } from 'utils/types';
 
 // send token
