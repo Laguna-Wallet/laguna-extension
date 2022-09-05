@@ -145,8 +145,10 @@ export default function Activity() {
 
   const customSingleValue = ({ data }: any) => (
     <ValueContainer>
-      <SelectIcon>{data?.icon}</SelectIcon>
-      <SelectLabel>{data?.label}</SelectLabel>
+      <ValueContentContainer>
+        <SelectIcon>{data?.icon}</SelectIcon>
+        <SelectLabel>{data?.label}</SelectLabel>
+      </ValueContentContainer>
     </ValueContainer>
   );
 
@@ -291,6 +293,15 @@ const SelectLabel = styled.span`
 
 const ValueContainer = styled.div`
   display: flex;
+  position: relative;
+  min-width: 120px;
+`;
+
+const ValueContentContainer = styled.div`
+  display: flex;
+  position: absolute;
+  top: -15px;
+  left: 5px;
 `;
 
 const ListContentParent = styled.div`
