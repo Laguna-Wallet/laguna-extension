@@ -4,7 +4,7 @@ import activityBg from 'assets/imgs/activity-bg.png';
 import Header from 'pages/Wallet/Header';
 import Footer from 'pages/Wallet/Footer';
 import { recodeAddress } from 'utils/polkadot';
-import { useEffect, useState } from 'react';
+import { ReactChild, useEffect, useState } from 'react';
 import ThreeDotsIcon from 'assets/svgComponents/ThreeDotsIcon';
 import ActivityInfo from './ActivityInfo';
 import { useSelector } from 'react-redux';
@@ -22,6 +22,7 @@ import InactiveField from 'components/InactiveField/InactiveField';
 import { router } from 'router/router';
 import { useHistory } from 'react-router-dom';
 import Select, { components } from 'react-select';
+import NetworkIcons from 'components/primitives/NetworkIcons';
 
 type Props = {
   isMenuOpen?: boolean;
@@ -87,7 +88,11 @@ export default function Activity() {
   const [transaction, setTransaction] = useState<Transaction>();
   const [loading, setLoading] = useState<boolean>(false);
   const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false);
-  const [chain, setChain] = useState<string>('polkadot');
+  const [chain, setChain] = useState<{ value: string; label: string; icon: ReactChild }>({
+    value: 'polkadot',
+    label: 'polkadot',
+    icon: <NetworkIcons isSmallIcon={true} width="20px" height="20px" chain={'polkadot'} />
+  });
 
   const address = account.getActiveAccount().address;
 
@@ -100,13 +105,16 @@ export default function Activity() {
   useEffect(() => {
     async function go() {
       setLoading(true);
-      const transactions = (await fetchAccountTransactionsByChain(address, chain)) as Transaction[];
+      const transactions = (await fetchAccountTransactionsByChain(
+        address,
+        chain.value
+      )) as Transaction[];
       setTransactions(transactions);
       setLoading(false);
     }
 
     go();
-  }, [address]);
+  }, [address, chain]);
 
   const handleClick = (transaction: Transaction) => {
     setIsPopupOpen(true);
@@ -118,19 +126,36 @@ export default function Activity() {
   const options = networks.map((network) => ({
     value: network.chain,
     label: network.chain.toUpperCase(),
-    icon: ''
+    icon: <NetworkIcons isSmallIcon={true} width="20px" height="20px" chain={network.chain} />
   }));
+
+  // useEffect(() => {
+  //   setChain(options.find((option) => option.value === 'polkadot') as any);
+  // }, []);
 
   const IconOption = (props: any) => (
     <Option {...props}>
-      <img
-        // src={require('./' + props?.options?.icon)}
-        style={{ width: 36 }}
-      />
-      {console.log(props)}
-      <SelectLabel>{props?.data?.label}</SelectLabel>
+      {/* <img src={require('./' + props?.data?.icon)} style={{ width: 36 }} /> */}
+      <SelectIconsContainer>
+        <SelectIcon>{props?.data?.icon}</SelectIcon>
+        <SelectLabel>{props?.data?.label}</SelectLabel>
+      </SelectIconsContainer>
     </Option>
   );
+
+  const customSingleValue = ({ data }: any) => (
+    <ValueContainer>
+      <SelectIcon>{data?.icon}</SelectIcon>
+      <SelectLabel>{data?.label}</SelectLabel>
+    </ValueContainer>
+  );
+
+  const styles = {
+    singleValue: (provided: any, state: any) => ({
+      ...provided,
+      display: 'flex'
+    })
+  };
 
   return (
     <Container bg={activityBg} isEmpty={!transactions.length}>
@@ -140,7 +165,29 @@ export default function Activity() {
           <Content>
             <SelectContainer>
               <span>Network</span>
-              <Select options={options} components={{ Option: IconOption }} />
+              <Select
+                styles={styles}
+                isSearchable={false}
+                menuPlacement="auto"
+                menuPosition="fixed"
+                onChange={(value: any) => {
+                  setChain(value);
+                }}
+                value={{
+                  value: chain.value,
+                  label: chain.label,
+                  icon: (
+                    <NetworkIcons
+                      isSmallIcon={true}
+                      width="15px"
+                      height="15px"
+                      chain={chain.value}
+                    />
+                  )
+                }}
+                options={options}
+                components={{ Option: IconOption, SingleValue: customSingleValue }}
+              />
             </SelectContainer>
             <ListContentParent>
               <ListContentChild>
@@ -242,6 +289,10 @@ const SelectLabel = styled.span`
   color: #000000;
 `;
 
+const ValueContainer = styled.div`
+  display: flex;
+`;
+
 const ListContentParent = styled.div`
   width: 100%;
   height: 570px;
@@ -264,6 +315,13 @@ const ListContentChild = styled.div`
   overflow: scroll;
   padding-bottom: 15px;
   /* padding-right: 20px; */
+`;
+
+const SelectIconsContainer = styled.div`
+  display: flex;
+`;
+const SelectIcon = styled.div`
+  margin-right: 5px;
 `;
 
 // const ActivityItemsContainer = styled.div`

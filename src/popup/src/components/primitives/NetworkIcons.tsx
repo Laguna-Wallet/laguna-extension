@@ -1,6 +1,6 @@
-import KusamaIcon from 'assets/svgComponents/KusamaIcon';
+import KusamaIcon from 'assets/imgs/NetworkIcons/KusamaCircle.png';
 import MoonriverIcon from 'assets/svgComponents/MoonriverIcon';
-import PolkadotIcon from 'assets/svgComponents/PolkadotIcon';
+import PolkadotIcon from 'assets/imgs/NetworkIcons/polkadotPink.png';
 import AstarIcon from '../../assets/imgs/NetworkIcons/AstarIcon.png';
 import SmallPolkadotIcon from 'assets/svgComponents/SmallPolkadotIcon';
 import SmallKusamaIcon from 'assets/svgComponents/SmallKusamaIcon';
@@ -18,13 +18,13 @@ type Props = {
 
 export default function NetworkIcons({ width, height, chain, isSmallIcon = false, fill }: Props) {
   if (chain === 'polkadot' || chain === 'westend') {
-    return isSmallIcon ? <SmallPolkadotIcon fill={fill} /> : <PolkadotIcon />;
+    return <IconContainer width={width} height={height} img={PolkadotIcon} />;
   }
 
   if (chain === 'kusama') {
-    return isSmallIcon ? <SmallKusamaIcon /> : <KusamaIcon />;
+    return <IconContainer width={width} height={height} img={KusamaIcon} />;
   }
-
+  
   if (chain === 'moonriver') {
     return isSmallIcon ? <SmallMonriverIcon /> : <MoonriverIcon />;
   }
