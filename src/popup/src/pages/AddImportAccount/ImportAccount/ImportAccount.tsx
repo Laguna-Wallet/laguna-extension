@@ -89,7 +89,7 @@ function ImportAccount() {
     if (seedPhase) {
       if (mnemonicValidate(seedPhase)) {
         const pair = await importFromMnemonic(seedPhase, password);
-        console.log(pair);
+        
         if (redirectPassword) {
           clearAccountsFromStorage(pair.address);
           dispatch(toggleLoading(true));

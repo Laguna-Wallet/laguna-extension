@@ -114,13 +114,11 @@ export async function importFromMnemonic(seed: string, password: string) {
   const newPair = addAccountMeta(pair.address, {
     encodedKey,
     encodedSeed,
-    name:`Account ${accounts.length + 1}`,
+    name:`Account ${accounts.length}`,
     img,
   });
 
-  console.log(newPair);
-
-  newPair.setMeta({ encodedKey, encodedSeed, name:`Account ${accounts.length + 1}`, img });
+  newPair.setMeta({ encodedKey, encodedSeed, name:`Account ${accounts.length}`, img });
 
   return newPair;
 }
