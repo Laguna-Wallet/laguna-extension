@@ -54,12 +54,15 @@ export async function fetchAccountTransactionsByChain(address: string, chain: st
     const res = await fetchTransactions(address, chain, 30, page);
 
     // if (!res?.data?.transfers) continue;
+    if (!res?.data?.transfers) return;
+    console.log('~ res?.data?.transfers', res?.data?.transfers);
 
     results = [...res.data.transfers];
+    console.log('~ results', results);
     retrieved_count = res?.data?.count;
     page++;
 
-    while (results.length < retrieved_count) {
+    while (results?.length < retrieved_count) {
       try {
         await timer(1000);
         const data = await fetchTransactions(address, chain, 30, page);

@@ -174,7 +174,7 @@ function Confirm({
             <AddressesInfoItem>
               <span>Total</span>
               <span>
-                {new BigNumber(fee).plus(amount).toFormat(4)} {token.toUpperCase()}
+                {new BigNumber(fee).plus(amount).toString()} {token.toUpperCase()}
               </span>
             </AddressesInfoItem>
           </AddressesInfo>
@@ -192,8 +192,9 @@ function Confirm({
         <InfoItem>
           <span>Fee</span>
           <span>
-            {new BigNumber(fee).toString() + ` ${token.toUpperCase()}`}
-            (${new BigNumber(fee).times(price || 0).toFormat(4)})
+            {fee.toString() +
+              ` ${token.toUpperCase()} (${new BigNumber(fee).multipliedBy(price || 0).toFixed(18)}`}
+            $)
           </span>
         </InfoItem>
       </Info>
@@ -259,6 +260,7 @@ const TextContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: space-between;
   font-family: Inter;
   font-size: 18px;
   line-height: 1.35;
@@ -286,7 +288,7 @@ const Text = styled.div`
   }
 
   span {
-    margin-left: 5px;
+    display: flex;
   }
 `;
 
@@ -371,4 +373,10 @@ const InfoItem = styled.div`
   font-size: 14px;
   color: #18191a;
   margin-top: 5px;
+
+  :nth-child(2) {
+    span {
+      text-align: right;
+    }
+  }
 `;

@@ -11,6 +11,7 @@ import BigNumber from 'bignumber.js';
 import { EVMNetwork, networks } from './networks';
 import { EVMAssetType } from './networks/asset';
 import ERC20ABI from './abi/ERC20.json';
+
 export const generateNewWalletAddress = (mnemonicSeed: string): string => {
   const wallet = ethers.Wallet.fromMnemonic(mnemonicSeed as string);
   return wallet.address;
@@ -47,8 +48,8 @@ export const isValidEVMAddress = (address: string): Response => {
 };
 
 export const getProvider = (network: EVMNetwork): ethers.providers.JsonRpcProvider => {
-  // return new ethers.providers.JsonRpcProvider('HTTP://127.0.0.1:7545');
-  return new ethers.providers.JsonRpcProvider(networks[network].nodeUrl);
+  return new ethers.providers.JsonRpcProvider('HTTP://127.0.0.1:7545');
+  // return new ethers.providers.JsonRpcProvider(networks[network].nodeUrl);
 };
 
 export const getNonce = async (network: EVMNetwork, address: string): Promise<BigNumber> => {

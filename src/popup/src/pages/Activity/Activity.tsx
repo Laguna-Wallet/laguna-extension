@@ -160,9 +160,9 @@ export default function Activity() {
   };
 
   return (
-    <Container bg={activityBg} isEmpty={!transactions.length}>
+    <Container bg={activityBg} isEmpty={!transactions?.length}>
       <Header backAction={() => history.push(router.home)} title="Activity" />
-      {transactions.length ? (
+      {transactions?.length ? (
         <>
           <Content>
             <SelectContainer>
