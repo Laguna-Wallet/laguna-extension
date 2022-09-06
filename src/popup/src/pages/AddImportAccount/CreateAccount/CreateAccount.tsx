@@ -69,10 +69,8 @@ export default function CreateAccount({
 
 
       const newPair = addAccountMeta(pair.address, {
-        name: `Default account ${accounts.length + 1}`,
+        name: `Account ${accounts.length + 1}`,
       });
-
-      console.log(newPair);
 
       if (!activeAccount || (activeAccount && isObjectEmpty(activeAccount))) {
         account.saveActiveAccount(newPair);
@@ -100,7 +98,7 @@ export default function CreateAccount({
       });
 
       const newPair = addAccountMeta(pair.address, {
-        name: `Default account ${accounts.length + 1}`,
+        name: `Account ${accounts.length + 1}`,
       });
 
       if (!activeAccount || (activeAccount && isObjectEmpty(activeAccount))) {
