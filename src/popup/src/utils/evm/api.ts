@@ -4,6 +4,7 @@ import fs from "fs";
 import BigNumber from "bignumber.js";
 import { EVMNetwork, networks } from "./networks";
 import { EVMAssetType } from "./networks/asset";
+import  axios  from "axios";
 
 // // ?? remove ?
 // export const generateNewWalletAddress = (address: string): ethers.Wallet | string => {   
@@ -75,6 +76,45 @@ export const isSmartContractAddress = async (network: EVMNetwork, address: strin
 
 export const calculateTransactionFeeInNormalUnit = (toBeSignTransaction: IEVMToBeSignTransaction): BigNumber => {
   return new BigNumber(toBeSignTransaction.gasLimit).multipliedBy(toBeSignTransaction.gasPrice).dividedBy("1E18");
+};
+
+export const getEVMTransactions = (address: string, network: EVMNetwork) => {
+
+  if(!isValidEVMAddress(address)) {
+    return;
+  }
+
+  const options = {
+    method: "POST",
+    headers: {Accept: "application/json", "Content-Type": "application/json"},
+    body: JSON.stringify({
+      id: 1,
+      jsonrpc: "2.0",
+      method: "alchemy_getAssetTransfers",
+      params: [
+        {
+          fromBlock: "0x0",
+          toBlock: "latest",
+          category: ["erc20"],
+          withMetadata: false,
+          excludeZeroValue: true,
+          maxCount: "0x3e8",
+          fromAddress: address,
+        },
+      ],
+    }),
+  };
+  
+ const transactions = fetch(networks[network].nodeUrl, options)
+    .then(response => {
+      if(response.ok) {
+        return response.json();
+      }
+      return Promise.reject(response); })
+
+    .catch(err => console.error(err));
+
+  return transactions;
 };
 
 export const buildTransaction = async (  param: IEVMBuildTransaction  ): Promise<IEVMToBeSignTransaction> => {
