@@ -45,6 +45,43 @@ export interface IEVMBuildTransaction {
   numOfPendingTransaction: BigNumber, // TODO for adding up nonce, blocked by cache pending txn
 }
 
+export interface TransactionState {
+  success: boolean,
+  transfers: TransfersList | null
+}
+
+export interface TransfersList {
+  id: number,
+  jsonrpc: string,
+  result: Result
+}
+
+export interface Result {
+  pageKey: string,
+  transfers: Transfer[]
+}
+
+export interface Transfer {
+  blockNum: string,
+  uniqueId: string,
+  hash: string,
+  from: string,
+  to: string,
+  value: number,
+  erc721TokenId: string | null,
+  erc1155Metadata: string | null,
+  tokenId: string | null,
+  asset: string,
+  category: string
+  rawContract: RawContract
+}
+
+export interface RawContract {
+  value: string,
+  address: string | null,
+  decimal: string
+}
+
 export interface IEVMToBeSignTransaction {
   to: string,
   from: string,

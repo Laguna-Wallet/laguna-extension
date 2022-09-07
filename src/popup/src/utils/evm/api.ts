@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import { IEVMAssetERC20, IEVMAsset, IEVMBuildTransaction, IEVMToBeSignTransaction, Response } from "./interfaces";
+import { IEVMAssetERC20, IEVMAsset, IEVMBuildTransaction, IEVMToBeSignTransaction, Response, TransfersList, TransactionState } from "./interfaces";
 import fs from "fs";
 import BigNumber from "bignumber.js";
 import { EVMNetwork, networks } from "./networks";
@@ -77,7 +77,7 @@ export const calculateTransactionFeeInNormalUnit = (toBeSignTransaction: IEVMToB
   return new BigNumber(toBeSignTransaction.gasLimit).multipliedBy(toBeSignTransaction.gasPrice).dividedBy("1E18");
 };
 
-export const getEVMTransactions = (address: string, network: EVMNetwork) => {
+export const getEVMTransactions = async (address: string, network: EVMNetwork): Promise<TransactionState> => {
 
   const options = {
     method: "POST",
@@ -90,7 +90,7 @@ export const getEVMTransactions = (address: string, network: EVMNetwork) => {
         {
           fromBlock: "0x0",
           toBlock: "latest",
-          category: ["erc20"],
+          category: ["internal", "erc20", "external"],
           withMetadata: false,
           excludeZeroValue: true,
           maxCount: "0x3e8",
@@ -99,15 +99,21 @@ export const getEVMTransactions = (address: string, network: EVMNetwork) => {
       ],
     }),
   };
-  
- const transactions = fetch(networks[network].nodeUrl, options)
-    .then(response => {
-      if(response.ok) {
-        return response.json();
-      }
-      return Promise.reject(response); })
-    .catch(err => console.error(err));
-  return transactions;
+
+  try {
+    const res = await fetch(networks[network].nodeUrl, options);
+    const data = await res.json();
+    return {
+      success: true,
+      transfers: data,
+    };
+  } catch(err) {
+    console.error(err);
+    return {
+      success: false,
+      transfers: null,
+    };
+  }
 };
 
 export const buildTransaction = async (  param: IEVMBuildTransaction  ): Promise<IEVMToBeSignTransaction> => {
