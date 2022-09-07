@@ -88,7 +88,7 @@ export const getEVMTransactions = async (address: string, network: EVMNetwork): 
       method: "alchemy_getAssetTransfers",
       params: [
         {
-          fromBlock: "0x0",
+          fromBlock: "latest",
           toBlock: "latest",
           category: ["internal", "erc20", "external"],
           withMetadata: false,
