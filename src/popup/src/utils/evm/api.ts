@@ -79,10 +79,6 @@ export const calculateTransactionFeeInNormalUnit = (toBeSignTransaction: IEVMToB
 
 export const getEVMTransactions = (address: string, network: EVMNetwork) => {
 
-  if(!isValidEVMAddress(address)) {
-    return;
-  }
-
   const options = {
     method: "POST",
     headers: {Accept: "application/json", "Content-Type": "application/json"},
