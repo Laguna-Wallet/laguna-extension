@@ -4,7 +4,6 @@ import fs from "fs";
 import BigNumber from "bignumber.js";
 import { EVMNetwork, networks } from "./networks";
 import { EVMAssetType } from "./networks/asset";
-import  axios  from "axios";
 
 // // ?? remove ?
 // export const generateNewWalletAddress = (address: string): ethers.Wallet | string => {   
