@@ -106,9 +106,7 @@ export const getEVMTransactions = (address: string, network: EVMNetwork) => {
         return response.json();
       }
       return Promise.reject(response); })
-
     .catch(err => console.error(err));
-
   return transactions;
 };
 
