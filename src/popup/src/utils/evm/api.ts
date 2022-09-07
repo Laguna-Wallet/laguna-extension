@@ -83,7 +83,7 @@ export const buildTransaction = async (  param: IEVMBuildTransaction  ): Promise
   const toBeSignTransaction: IEVMToBeSignTransaction = {
     to: param.toAddress,
     from: param.fromAddress,
-    value: param.amount.multipliedBy(`1E${param.asset.decimal}`).toString(16),
+    value: `0x${param.amount.multipliedBy(`1E${param.asset.decimal}`).toString(16)}`,
     gasPrice: param.gasPriceInGwei.toString(10),
     gasLimit: new BigNumber(21000).toString(10),
     nonce: onChainNonce.toString(10), // TODO plus numOfPendingTransaction or using ethers.NonceManager
