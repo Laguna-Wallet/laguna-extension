@@ -56,6 +56,7 @@ export default function CreateAccount({
     // note for now seed creation flow saves mnemonic in Account Context
     // would be better to refactor and save data in redux, (just for flow)
     const accounts = keyring.getPairs();
+    const name = `Account ${accounts.length + 1}`;
 
     if (securityLevel === SecurityLevelEnum.Secured && account?.mnemonics) {
       const mnemonicsStr = account?.mnemonics.join(" ");
@@ -69,7 +70,7 @@ export default function CreateAccount({
 
 
       const newPair = addAccountMeta(pair.address, {
-        name: `Account ${accounts.length + 1}`,
+       name,
       });
 
       if (!activeAccount || (activeAccount && isObjectEmpty(activeAccount))) {
@@ -98,7 +99,7 @@ export default function CreateAccount({
       });
 
       const newPair = addAccountMeta(pair.address, {
-        name: `Account ${accounts.length + 1}`,
+        name,
       });
 
       if (!activeAccount || (activeAccount && isObjectEmpty(activeAccount))) {
