@@ -377,11 +377,15 @@ browser.runtime.onMessage.addListener(async (msg, _sender) => {
       break
     case Messages.ReEncryptPairs:
       keyPairs = reEncryptKeyringPairs(keyPairs, msg.payload.oldPassword, msg.payload.newPassword)
-
+      encryptMetaData(keyPairs, msg.payload.oldPassword, msg.payload.newPassword)
       // renewMetaToKeyPairs(keyPairs, msg.payload.metaData)
       break
     case Messages.OpenSupport:
       browser.tabs.create({ url: "https://lagu.na/contact/" })
+      break
+    case Messages.DisconnectAllSites:
+      authorizedDapps = []
+      pendingRequests = []
       break
     // case Messages.ExpandExtension:
     //   const url = `${browser.runtime.getURL("popup/index.html")}#/`

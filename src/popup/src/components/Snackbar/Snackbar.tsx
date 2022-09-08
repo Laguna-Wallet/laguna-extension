@@ -1,9 +1,9 @@
-import { useEffect, memo } from 'react';
-import styled from 'styled-components';
-import { CSSTransition } from 'react-transition-group';
-import '../../App.css';
-import CloseIcon from 'assets/svgComponents/CloseIcon';
-import CheckedIcon from 'assets/svgComponents/CheckedIcon';
+import { useEffect, memo } from "react";
+import styled from "styled-components";
+import { CSSTransition } from "react-transition-group";
+import "../../App.css";
+import CloseIcon from "assets/svgComponents/CloseIcon";
+import CheckedIcon from "assets/svgComponents/CheckedIcon";
 
 type Props = {
   children?: React.ReactNode;
@@ -13,7 +13,7 @@ type Props = {
   right?: string;
   isOpen: boolean;
   close: () => void;
-  type: 'error' | 'success' | 'warning';
+  type: "error" | "success" | "warning";
   message?: string;
   transform?: string;
   align?: string;
@@ -21,9 +21,9 @@ type Props = {
 };
 
 function detectColor(type: string) {
-  if (type === 'error') return '#fb5a5a';
-  if (type === 'warning') return '#ecd335';
-  return '#fff';
+  if (type === "error") return "#fb5a5a";
+  if (type === "warning") return "#ecd335";
+  return "#fff";
 }
 
 function Snackbar({
@@ -38,7 +38,7 @@ function Snackbar({
   message,
   transform,
   align,
-  width
+  width,
 }: Props) {
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -47,8 +47,8 @@ function Snackbar({
     return () => clearTimeout(timer);
   }, [isOpen]);
 
-  const renderContent = (type: 'error' | 'success' | 'warning') => {
-    if (type === 'error') {
+  const renderContent = (type: "error" | "success" | "warning") => {
+    if (type === "error") {
       return (
         <>
           <CloseIconContainer onClick={close}>
@@ -57,7 +57,7 @@ function Snackbar({
           <ErrorMessage align={align}>{message}</ErrorMessage>
         </>
       );
-    } else if (type === 'success') {
+    } else if (type === "success") {
       return (
         <>
           <CheckIconContainer>
@@ -66,7 +66,7 @@ function Snackbar({
           <Message>{message}</Message>
         </>
       );
-    } else if (type === 'warning') {
+    } else if (type === "warning") {
       return (
         <>
           <WarningContainer>
@@ -104,22 +104,22 @@ const Container = styled.div<{
   left?: string;
   right?: string;
   padding?: string;
-  type?: 'error' | 'success' | 'warning';
+  type?: "error" | "success" | "warning";
   transform?: string;
   isOpen?: boolean;
 }>`
-  width: ${({ width }) => width || '323px'};
+  width: ${({ width }) => width || "323px"};
   display: block;
-  height: ${({ isOpen }) => (isOpen ? '48px' : '0px')};
+  height: ${({ isOpen }) => (isOpen ? "48px" : "0px")};
   box-sizing: border-box;
   position: absolute;
   border-radius: 5px;
-  padding: ${({ padding }) => padding || '0px'};
+  padding: ${({ padding }) => padding || "0px"};
   box-sizing: border-box;
   top: ${({ top }) => top && top};
   bottom: ${({ bottom }) => bottom && bottom};
-  left: ${({ left }) => left || '50%'};
-  transform: ${({ transform }) => transform || 'translateX(-50%)'};
+  left: ${({ left }) => left || "50%"};
+  transform: ${({ transform }) => transform || "translateX(-50%)"};
   right: ${({ right }) => right && right};
   z-index: 99999;
 `;
@@ -146,7 +146,7 @@ const ErrorMessage = styled.div<{ align?: string }>`
   font-weight: 500;
   color: #fff;
   margin-left: 10px;
-  text-align: ${({ align }) => align || 'center'};
+  text-align: ${({ align }) => align || "center"};
 `;
 
 const Message = styled.div`

@@ -1,12 +1,12 @@
-import styled from 'styled-components';
-import walletBG from 'assets/imgs/walletBG.jpg';
-import Button from 'components/primitives/Button';
-import { useDispatch, useSelector } from 'react-redux';
-import { changeDappAuthorization } from 'redux/actions';
-import CheckMarkIcon from 'assets/svgComponents/CheckMarkIcon';
-import { CheckIcon } from '@heroicons/react/outline';
-import { Messages } from 'utils/types';
-import browser from 'webextension-polyfill';
+import styled from "styled-components";
+import walletBG from "assets/imgs/walletBG.jpg";
+import Button from "components/primitives/Button";
+import { useDispatch, useSelector } from "react-redux";
+import { changeDappAuthorization } from "redux/actions";
+import CheckMarkIcon from "assets/svgComponents/CheckMarkIcon";
+import { CheckIcon } from "@heroicons/react/outline";
+import { Messages } from "utils/types";
+import browser from "webextension-polyfill";
 
 export default function RequestToConnect() {
   const { pendingDappAuthorization } = useSelector((state: any) => state.wallet);
@@ -20,7 +20,7 @@ export default function RequestToConnect() {
   const handleApprove = () => {
     browser.runtime.sendMessage({
       type: Messages.DappAuthRequest,
-      payload: { approved: true, pendingDapp, POPUP_CONTENT: process.env.REACT_APP_POPUP_CONTENT }
+      payload: { approved: true, pendingDapp, POPUP_CONTENT: process.env.REACT_APP_POPUP_CONTENT },
     });
 
     dispatch(changeDappAuthorization({}));
@@ -30,7 +30,7 @@ export default function RequestToConnect() {
   const handleCancel = () => {
     browser.runtime.sendMessage({
       type: Messages.DappAuthRequest,
-      payload: { approved: false, pendingDapp }
+      payload: { approved: false, pendingDapp },
     });
 
     dispatch(changeDappAuthorization({}));
@@ -59,7 +59,7 @@ export default function RequestToConnect() {
         <Text fSize="14px" marginTop="10px">
           <CheckContainer>
             <CheckIcon stroke="#62c660" width={25} height={25} />
-          </CheckContainer>{' '}
+          </CheckContainer>{" "}
           View your wallet balance & activity
         </Text>
       </Content>
@@ -168,10 +168,10 @@ const Text = styled.div<{
   align-items: center;
   font-size: 16px;
   margin-top: ${({ marginTop }) => marginTop};
-  font-weight: ${({ fWeight }) => fWeight || '400'};
+  font-weight: ${({ fWeight }) => fWeight || "400"};
   letter-spacing: ${({ spacing }) => spacing};
-  font-size: ${({ fSize }) => fSize || '16px'};
-  font-size: ${({ color }) => color || '#18191A'};
+  font-size: ${({ fSize }) => fSize || "16px"};
+  font-size: ${({ color }) => color || "#18191A"};
 `;
 
 const Warning = styled.div`

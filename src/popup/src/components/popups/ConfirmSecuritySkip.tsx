@@ -1,9 +1,9 @@
-import ArrowSmRightIcon from '@heroicons/react/outline/ArrowSmRightIcon';
-import Button from 'components/primitives/Button';
-import Checkbox from 'components/primitives/Checkbox';
-import { SecurityLevelEnum } from 'pages/AddImportAccount/CreateAccount/CreateAccount';
-import { useState } from 'react';
-import styled from 'styled-components';
+import ArrowSmRightIcon from "@heroicons/react/outline/ArrowSmRightIcon";
+import Button from "components/primitives/Button";
+import Checkbox from "components/primitives/Checkbox";
+import { SecurityLevelEnum } from "pages/AddImportAccount/CreateAccount/CreateAccount";
+import { useState } from "react";
+import styled from "styled-components";
 
 type Props = {
   nextStep: () => void;
@@ -49,7 +49,7 @@ export function ConfirmSecuritySkip({ nextStep, nextStepFromParent, setLevel }: 
             disabledBorderColor="#ECEFF2"
             disabledColor="#cbced1"
             disabled={!checked}
-            text={'Skip'}
+            text={"Skip"}
             fontWeight="600"
           />
           <Gap />
@@ -59,7 +59,7 @@ export function ConfirmSecuritySkip({ nextStep, nextStepFromParent, setLevel }: 
             color="#ffffff"
             onClick={handleSecure}
             // Icon={<ArrowSmRightIcon width={23} />}
-            text={'Secure Now'}
+            text={"Secure Now"}
             justify="center"
           />
         </ButtonContainer>

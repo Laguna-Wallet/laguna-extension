@@ -1,35 +1,35 @@
-import react from 'react';
-import styled from 'styled-components';
-import SelectAsset from './SelectAsset';
-import Confirm from './Confirm';
+import react from "react";
+import styled from "styled-components";
+import SelectAsset from "./SelectAsset";
+import Confirm from "./Confirm";
 import {
   getApiInstance,
   getAssets,
   getNetworks,
   isValidPolkadotAddress,
   recodeAddress,
-  recodeAddressForTransaction
-} from 'utils/polkadot';
-import { useEffect, useReducer, useState } from 'react';
-import { AccountMeta, Asset, Network, SelectType } from 'utils/types';
-import { useWizard, Wizard } from 'react-use-wizard';
-import TransactionSent from './TransactionSent';
-import SendToken from './SendToken';
-import { useAccount } from 'context/AccountContext';
-import { useFormik } from 'formik';
-import { isNumeric, sendTokenSchema } from 'utils/validations';
-import BigNumber from 'bignumber.js';
-import { useDispatch, useSelector } from 'react-redux';
-import { PropsFromTokenDashboard } from 'pages/Recieve/Receive';
-import { selectAsset } from 'redux/actions';
-import { State } from 'redux/store';
-import { useLocation } from 'react-router-dom';
+  recodeAddressForTransaction,
+} from "utils/polkadot";
+import { useEffect, useReducer, useState } from "react";
+import { AccountMeta, Asset, Network, SelectType } from "utils/types";
+import { useWizard, Wizard } from "react-use-wizard";
+import TransactionSent from "./TransactionSent";
+import SendToken from "./SendToken";
+import { useAccount } from "context/AccountContext";
+import { useFormik } from "formik";
+import { isNumeric, sendTokenSchema } from "utils/validations";
+import BigNumber from "bignumber.js";
+import { useDispatch, useSelector } from "react-redux";
+import { PropsFromTokenDashboard } from "pages/Recieve/Receive";
+import { selectAsset } from "redux/actions";
+import { State } from "redux/store";
+import { useLocation } from "react-router-dom";
 
 export enum SendAccountFlowEnum {
-  SendToTrustedContact = 'SendToTrustedContact',
-  SendToAddress = 'SendToAddress',
-  SendToAccount = 'SendToAccount',
-  ScanQR = 'ScanQR'
+  SendToTrustedContact = "SendToTrustedContact",
+  SendToAddress = "SendToAddress",
+  SendToAccount = "SendToAccount",
+  ScanQR = "ScanQR"
 }
 
 export type FlowValue =
@@ -58,7 +58,7 @@ function Send({ initialIsContactsPopupOpen }: Props) {
   const { propsFromTokenDashboard } = location?.state || {};
 
   const { prices, infos, accountsBalances, disabledTokens } = useSelector(
-    (state: State) => state.wallet
+    (state: State) => state.wallet,
   );
 
   const balances = accountsBalances?.balances;
@@ -75,11 +75,11 @@ function Send({ initialIsContactsPopupOpen }: Props) {
 
   const [transfer, setTransfer] = useState<any>();
   const [fee, setFee] = useState<any>();
-  const [amountToSend, setAmountToSend] = useState<string>('');
-  const [recoded, setRecoded] = useState<string>('');
+  const [amountToSend, setAmountToSend] = useState<string>("");
+  const [recoded, setRecoded] = useState<string>("");
   const [loading, setLoading] = useState<any>();
   const [abilityToTransfer, setAbilityToTransfer] = useState<boolean>(true);
-  const [blockHash, setBlockHash] = useState<string>('');
+  const [blockHash, setBlockHash] = useState<string>("");
 
   const reduxSendTokenState = useSelector((state: any) => state.sendToken);
   const form = useSelector((state: any) => state?.form?.sendToken?.values);
@@ -106,7 +106,7 @@ function Send({ initialIsContactsPopupOpen }: Props) {
       const recoded = recodeAddress(
         form.address,
         prefix,
-        reduxSendTokenState.selectedAsset.encodeType
+        reduxSendTokenState.selectedAsset.encodeType,
       );
 
       // const recoded = recodeAddressForTransaction(form.address, prefix);

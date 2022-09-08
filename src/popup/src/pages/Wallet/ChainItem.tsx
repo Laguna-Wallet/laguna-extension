@@ -1,8 +1,8 @@
-import BigNumber from 'bignumber.js';
-import NetworkIcons from 'components/primitives/NetworkIcons';
-import { Link } from 'react-router-dom';
-import styled from 'styled-components';
-import { Asset } from 'utils/types';
+import BigNumber from "bignumber.js";
+import NetworkIcons from "components/primitives/NetworkIcons";
+import { Link } from "react-router-dom";
+import styled from "styled-components";
+import { Asset } from "utils/types";
 
 type Props = {
   accountAddress: string;
@@ -14,7 +14,7 @@ type Props = {
 
 export default function ChainItem({ asset, handleClick, iconSize }: Props) {
   const { chain, symbol, balance, calculatedPrice } = asset;
-  const iconCurrentSize = iconSize || '36px';
+  const iconCurrentSize = iconSize || "36px";
   return (
     // <StyledLink to={router.tokenDashboard} props={{ asset }}>
     <Container onClick={handleClick}>
@@ -59,8 +59,8 @@ const Container = styled.div`
 `;
 
 const ListItemIcon = styled.div<{ iconSize?: string }>`
-  width: ${({ iconSize }) => iconSize || '36px'};
-  height: ${({ iconSize }) => iconSize || '36px'};
+  width: ${({ iconSize }) => iconSize || "36px"};
+  height: ${({ iconSize }) => iconSize || "36px"};
   background-color: #eeeeee;
   border-radius: 100%;
 `;

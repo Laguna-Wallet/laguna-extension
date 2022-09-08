@@ -1,15 +1,15 @@
-import { PlusIcon } from '@heroicons/react/outline';
-import keyring from '@polkadot/ui-keyring';
-import AddressBookIcon from 'assets/svgComponents/AdressBookIcon';
-import ContactsIcon from 'assets/svgComponents/ContactsIcon';
-import LoopIcon from 'assets/svgComponents/loopIcon';
-import Button from 'components/primitives/Button';
-import HumbleInput from 'components/primitives/HumbleInput';
-import AddAddress from 'pages/AddressBook/AddAddress';
-import Header from 'pages/Wallet/Header';
-import { useEffect, useState } from 'react';
-import styled from 'styled-components';
-import { truncateString } from 'utils';
+import { PlusIcon } from "@heroicons/react/outline";
+import keyring from "@polkadot/ui-keyring";
+import AddressBookIcon from "assets/svgComponents/AdressBookIcon";
+import ContactsIcon from "assets/svgComponents/ContactsIcon";
+import LoopIcon from "assets/svgComponents/loopIcon";
+import Button from "components/primitives/Button";
+import HumbleInput from "components/primitives/HumbleInput";
+import AddAddress from "pages/AddressBook/AddAddress";
+import Header from "pages/Wallet/Header";
+import { useEffect, useState } from "react";
+import styled from "styled-components";
+import { truncateString } from "utils";
 
 type Props = {
   handleCloseContacts: (address: string) => void;
@@ -19,7 +19,7 @@ type Props = {
 
 export default function ContactsPopup({ handleCloseContacts, onBack, closeAction }: Props) {
   const [accounts, setAccounts] = useState<any[] | undefined>(undefined);
-  const [filter, setFilter] = useState<string>('');
+  const [filter, setFilter] = useState<string>("");
   const [isAddAddressOpen, setIsAddAddressOpen] = useState<boolean>(false);
 
   useEffect(() => {
@@ -38,7 +38,7 @@ export default function ContactsPopup({ handleCloseContacts, onBack, closeAction
     return accounts.filter(
       (account) =>
         account.name.toLowerCase().includes(filterWord.toLowerCase()) ||
-        account.address.toLowerCase().includes(filterWord.toLowerCase())
+        account.address.toLowerCase().includes(filterWord.toLowerCase()),
     );
   };
 
@@ -64,7 +64,7 @@ export default function ContactsPopup({ handleCloseContacts, onBack, closeAction
               color="#111"
               value={filter}
               onChange={(e: any) => setFilter(e.target.value)}
-              IconAlignment={'left'}
+              IconAlignment={"left"}
               Icon={<LoopIcon />}
             />
           )}
@@ -83,7 +83,7 @@ export default function ContactsPopup({ handleCloseContacts, onBack, closeAction
                     key={address.address}
                     onClick={() => handleCloseContacts(address.address)}>
                     <Text>
-                      {address.name}({truncateString(address.address)}){' '}
+                      {address.name}({truncateString(address.address)}){" "}
                     </Text>
                     <ContactsIcon stroke="#111" />
                   </AddressComponent>

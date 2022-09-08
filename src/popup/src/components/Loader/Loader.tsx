@@ -1,8 +1,8 @@
-import styled from 'styled-components';
-import { ClassicSpinner } from 'react-spinners-kit';
+import styled from "styled-components";
+import { ClassicSpinner } from "react-spinners-kit";
 
-import Popup from 'components/Popup/Popup';
-import loadingTransactionBg from 'assets/imgs/loading-transaction.jpg';
+import Popup from "components/Popup/Popup";
+import loadingTransactionBg from "assets/imgs/loading-transaction.jpg";
 
 const Loader = () => {
   return (

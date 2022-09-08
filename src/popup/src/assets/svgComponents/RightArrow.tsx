@@ -1,4 +1,4 @@
-import * as React from 'react';
+import * as React from "react";
 
 function RightArrow(props: React.SVGProps<SVGSVGElement> | { stroke: string }) {
   return (
@@ -7,7 +7,7 @@ function RightArrow(props: React.SVGProps<SVGSVGElement> | { stroke: string }) {
       className="prefix__h-6 prefix__w-6"
       fill="none"
       viewBox="0 0 24 24"
-      stroke={props.stroke || 'currentColor'}
+      stroke={props.stroke || "currentColor"}
       {...props}>
       <path
         strokeLinecap="round"

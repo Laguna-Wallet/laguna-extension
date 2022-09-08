@@ -1,23 +1,23 @@
-import keyring from '@polkadot/ui-keyring';
-import RemoveAccountIcon from 'assets/svgComponents/RemoveAccountIcon';
-import MenuHeader from 'components/MenuHeader/MenuHeader';
-import Button from 'components/primitives/Button';
-import HumbleInput from 'components/primitives/HumbleInput';
-import Snackbar from 'components/Snackbar/Snackbar';
-import { useAccount } from 'context/AccountContext';
-import { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { Field, InjectedFormProps, reduxForm } from 'redux-form';
-import { toggleLoading } from 'redux/actions';
-import styled from 'styled-components';
-import { truncateString, validPassword } from 'utils';
-import { clearFromStorage } from 'utils/chrome';
-import { validatePassword } from 'utils/polkadot';
-import { Messages, SnackbarMessages, StorageKeys } from 'utils/types';
-import { isObjectEmpty } from 'utils';
-import { useHistory } from 'react-router-dom';
-import { router } from 'router/router';
-import browser from 'webextension-polyfill';
+import keyring from "@polkadot/ui-keyring";
+import RemoveAccountIcon from "assets/svgComponents/RemoveAccountIcon";
+import MenuHeader from "components/MenuHeader/MenuHeader";
+import Button from "components/primitives/Button";
+import HumbleInput from "components/primitives/HumbleInput";
+import Snackbar from "components/Snackbar/Snackbar";
+import { useAccount } from "context/AccountContext";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { Field, InjectedFormProps, reduxForm } from "redux-form";
+import { toggleLoading } from "redux/actions";
+import styled from "styled-components";
+import { truncateString, validPassword } from "utils";
+import { clearFromStorage } from "utils/chrome";
+import { validatePassword } from "utils/polkadot";
+import { Messages, SnackbarMessages, StorageKeys } from "utils/types";
+import { isObjectEmpty } from "utils";
+import { useHistory } from "react-router-dom";
+import { router } from "router/router";
+import browser from "webextension-polyfill";
 
 type Props = {
   password: string;
@@ -32,7 +32,7 @@ const RemoveAccount = ({ handleSubmit, valid }: InjectedFormProps<Props>) => {
   const address = activeAccount?.address;
 
   const [isOpen, setOpen] = useState<boolean>(true);
-  const [snackbarError, setSnackbarError] = useState<string>('');
+  const [snackbarError, setSnackbarError] = useState<string>("");
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
   const accounts = keyring.getPairs();
 
@@ -54,7 +54,7 @@ const RemoveAccount = ({ handleSubmit, valid }: InjectedFormProps<Props>) => {
           account.saveActiveAccount(first);
           history.push({
             pathname: router.home,
-            state: { snackbar: { show: true, message: SnackbarMessages.WalletRemoved } }
+            state: { snackbar: { show: true, message: SnackbarMessages.WalletRemoved } },
           });
         } else {
           account.saveActiveAccount({});
@@ -64,11 +64,11 @@ const RemoveAccount = ({ handleSubmit, valid }: InjectedFormProps<Props>) => {
 
         browser.runtime.sendMessage({
           type: Messages.RemoveFromKeyring,
-          payload: { address }
+          payload: { address },
         });
       } else {
         setIsSnackbarOpen(true);
-        setSnackbarError('Incorrect password');
+        setSnackbarError("Incorrect password");
       }
     }
   };
@@ -91,12 +91,12 @@ const RemoveAccount = ({ handleSubmit, valid }: InjectedFormProps<Props>) => {
         </IconContainer>
 
         <Text>
-          {`This will remove ${accounts.length === 1 ? 'your only' : 'the current'} account `}
+          {`This will remove ${accounts.length === 1 ? "your only" : "the current"} account `}
           <span>
-            {name?.length > 12 ? truncateString(name) : name} ({address && truncateString(address)}){' '}
+            {name?.length > 12 ? truncateString(name) : name} ({address && truncateString(address)}){" "}
           </span>
           {`${
-            accounts.length === 1 ? 'and log you out of the wallet' : 'from your wallet'
+            accounts.length === 1 ? "and log you out of the wallet" : "from your wallet"
           }. Please confirm below.`}
         </Text>
         <Form onSubmit={handleSubmit(submit)}>
@@ -108,17 +108,17 @@ const RemoveAccount = ({ handleSubmit, valid }: InjectedFormProps<Props>) => {
             placeholder="Enter your password"
             component={HumbleInput}
             props={{
-              type: 'password',
-              color: '#fff',
-              padding: '15px 11px 15px 16px',
-              placeholderColor: '#b1b5c3',
-              height: '48px',
-              marginTop: '0',
-              borderColor: '#color',
-              errorBorderColor: '#fb5a5a',
-              bgColor: '#303030',
+              type: "password",
+              color: "#fff",
+              padding: "15px 11px 15px 16px",
+              placeholderColor: "#b1b5c3",
+              height: "48px",
+              marginTop: "0",
+              borderColor: "#color",
+              errorBorderColor: "#fb5a5a",
+              bgColor: "#303030",
               autoFocus: true,
-              isPassword: true
+              isPassword: true,
             }}
           />
           <ButtonContainer>
@@ -162,8 +162,8 @@ const RemoveAccount = ({ handleSubmit, valid }: InjectedFormProps<Props>) => {
 };
 
 export default reduxForm<Record<string, unknown>, any>({
-  form: 'removeAccount',
-  validate: validPassword
+  form: "removeAccount",
+  validate: validPassword,
 })(RemoveAccount);
 
 const Container = styled.div`

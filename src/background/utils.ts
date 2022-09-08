@@ -217,11 +217,9 @@ export function recodeToPolkadotAddress(address: string): string {
 }
 // todo proper typing
 export function renewMetaToKeyPairs(pairs: KeyringPair[], metaData: { address: string; meta: AccountMeta }[]): KeyringPair[] {
-  console.log("~ metaData", metaData)
   return pairs.map((pair) => {
     const foundPair = metaData.find((item) => recodeToPolkadotAddress(item.address) === recodeToPolkadotAddress(pair.address))
     if (foundPair) {
-      console.log("~ foundPair.meta", foundPair.meta)
       pair.setMeta({ ...pair.meta, ...foundPair.meta })
       keyring.saveAccountMeta(pair, { ...foundPair.meta })
     }
@@ -231,30 +229,29 @@ export function renewMetaToKeyPairs(pairs: KeyringPair[], metaData: { address: s
 
 // todo proper typing
 export function reEncryptKeyringPairs(pairs: any, oldPassword: string, newPassword: string): KeyringPair[] {
-  const encryptedPairs = encryptMetaData(pairs, oldPassword, newPassword)
+  // const encryptedPairs = encryptMetaData(pairs, oldPassword, newPassword)
   const newPairs = encryptKeyringPairs(pairs, oldPassword, newPassword)
   return newPairs
 }
 
 export function encryptKeyringPairs(pairs, oldPassword: string, newPassword: string) {
-  // const pairs = keyring.getPairs()
+  try {
+    // const pairs = keyring.getPairs()
+    const newPairs = []
 
-  const newPairs = []
+    for (let i = 0; i < pairs.length; i++) {
+      const pair = pairs[i]
+      pair.decodePkcs8(oldPassword)
+      keyring.encryptAccount(pair, newPassword)
+      const newPair = keyring.getPair(pair.address)
+      newPair.unlock(newPassword)
+      newPairs.push(newPair)
+    }
 
-  for (let i = 0; i < pairs.length; i++) {
-    const pair = pairs[i]
-    pair.unlock(oldPassword)
-
-    keyring.forgetAccount(pair.address)
-    const { pair: newPair } = keyring.addPair(pair, newPassword)
-
-    // newPair.setMeta({ ...pair.meta })
-    // keyring.saveAccountMeta(newPair, { ...pair.meta })
-
-    newPairs.push(newPair)
+    return newPairs
+  } catch (err) {
+    console.log("err", err)
   }
-
-  return newPairs
 }
 
 export function recodeAddress(address: string, prefix: any, type?: string): string {
@@ -269,29 +266,32 @@ export function recodeAddress(address: string, prefix: any, type?: string): stri
 
 export function encryptMetaData(pairs, oldPassword: string, newPassword: string) {
   // const pairs = keyring.getPairs()
+  try {
+    for (let i = 0; i < pairs.length; i++) {
+      const pair = pairs[i]
+      const meta = pair.meta
+      // decode key and encode with new password
+      // if (meta?.encodedKey) {
+      //   const decodedKeyBytes = AES.decrypt(meta?.encodedKey as string, oldPassword)
+      //   const decodedKey = decodedKeyBytes.toString(Utf8)
 
-  for (let i = 0; i < pairs.length; i++) {
-    const pair = pairs[i]
-    const meta = pair.meta
-    // decode key and encode with new password
-    // if (meta?.encodedKey) {
-    //   const decodedKeyBytes = AES.decrypt(meta?.encodedKey as string, oldPassword)
-    //   const decodedKey = decodedKeyBytes.toString(Utf8)
+      //   const reEncodedKey = AES.encrypt(decodedKey, newPassword).toString()
+      //   pair.setMeta({ ...pair.meta, encodedKey: reEncodedKey })
+      //   keyring.saveAccountMeta(pair, { ...pair.meta, encodedKey: reEncodedKey })
+      // }
 
-    //   const reEncodedKey = AES.encrypt(decodedKey, newPassword).toString()
-    //   pair.setMeta({ ...pair.meta, encodedKey: reEncodedKey })
-    //   keyring.saveAccountMeta(pair, { ...pair.meta, encodedKey: reEncodedKey })
-    // }
+      // decode seed and encode with new password
+      if (meta?.encodedSeed) {
+        const decodedSeedBytes = AES.decrypt(meta?.encodedSeed as string, oldPassword)
+        const decodedSeed = decodedSeedBytes.toString(Utf8)
+        const reEncodedSeed = AES.encrypt(decodedSeed, newPassword).toString()
 
-    // decode seed and encode with new password
-    if (meta?.encodedSeed) {
-      const decodedSeedBytes = AES.decrypt(meta?.encodedSeed as string, oldPassword)
-      const decodedSeed = decodedSeedBytes.toString(Utf8)
-      const reEncodedSeed = AES.encrypt(decodedSeed, newPassword).toString()
-
-      pair.setMeta({ ...pair.meta, encodedSeed: reEncodedSeed })
-      keyring.saveAccountMeta(pair, { ...pair.meta, encodedSeed: reEncodedSeed })
+        // pair.setMeta({ ...pair.meta, encodedSeed: reEncodedSeed })
+        keyring.saveAccountMeta(pair, { ...pair.meta, encodedSeed: reEncodedSeed })
+      }
     }
+  } catch (err) {
+    console.log("err", err)
   }
 
   return pairs

@@ -1,18 +1,18 @@
-import { useState } from 'react';
-import { PlusIcon } from '@heroicons/react/outline';
-import CheckedIcon from 'assets/svgComponents/CheckedIcon';
-import TriangleIcon from 'assets/svgComponents/TriangleIcon';
-import Button from 'components/primitives/Button';
-import { useAccount } from 'context/AccountContext';
-import type { KeyringPair } from '@polkadot/keyring/types';
-import { Link } from 'react-router-dom';
-import styled from 'styled-components';
-import AddImportForBoardedUser from 'pages/AddImportAccount/AddImportForBoardedUser';
-import { getAccountImage, truncateString } from 'utils';
-import { useDispatch } from 'react-redux';
-import { toggleLoading } from 'redux/actions';
-import keyring from '@polkadot/ui-keyring';
-import { router } from 'router/router';
+import { useState } from "react";
+import { PlusIcon } from "@heroicons/react/outline";
+import CheckedIcon from "assets/svgComponents/CheckedIcon";
+import TriangleIcon from "assets/svgComponents/TriangleIcon";
+import Button from "components/primitives/Button";
+import { useAccount } from "context/AccountContext";
+import type { KeyringPair } from "@polkadot/keyring/types";
+import { Link } from "react-router-dom";
+import styled from "styled-components";
+import AddImportForBoardedUser from "pages/AddImportAccount/AddImportForBoardedUser";
+import { getAccountImage, truncateString } from "utils";
+import { useDispatch } from "react-redux";
+import { toggleLoading } from "redux/actions";
+import keyring from "@polkadot/ui-keyring";
+import { router } from "router/router";
 
 type Props = {
   userContainerWidth: number;
@@ -25,10 +25,6 @@ export default function Accounts({ userContainerWidth }: Props) {
   const [accounts, setAccounts] = useState<KeyringPair[]>(keyring.getPairs());
   const [isConnected, setIsConnected] = useState<boolean>(true);
 
-  const formatName = (name: string) => {
-    return name.length > 12 ? truncateString(name) : name;
-  };
-
   const handleSetActiveAccount = (e: React.MouseEvent<HTMLDivElement>, account: unknown) => {
     e.stopPropagation();
     accountCtx.saveActiveAccount(account);
@@ -37,9 +33,6 @@ export default function Accounts({ userContainerWidth }: Props) {
 
   return (
     <Container>
-      <TriangleContainer userContainerWidth={userContainerWidth}>
-        <TriangleIcon />
-      </TriangleContainer>
 
       <Header>
         <HeaderItem>ACCOUNTS</HeaderItem>
@@ -70,7 +63,7 @@ export default function Accounts({ userContainerWidth }: Props) {
                 key={account.address}>
                 <Avatar img={getAccountImage(account.address)} />
                 <span>
-                  {(account?.meta?.name as string) && formatName(account?.meta?.name as string)}
+                  {(account?.meta?.name as string) && account?.meta?.name as string}
                 </span>
 
                 <Icons>
@@ -91,8 +84,8 @@ export default function Accounts({ userContainerWidth }: Props) {
           text="Add / Import Account"
           bgColor="#18191a"
           color="#fff"
-          justify={'center'}
-          direction={'row-reverse'}
+          justify={"center"}
+          direction={"row-reverse"}
           fontFamily="Inter"
           fontSize="12px"
           height="37px"
@@ -155,7 +148,7 @@ const MouseOverText = styled.p<{ width?: string }>`
   font-size: 10px;
   display: none;
   position: absolute;
-  min-width: ${({ width }) => width || '171px'};
+  min-width: ${({ width }) => width || "171px"};
   top: 24px;
   right: 0;
 
@@ -171,7 +164,7 @@ const Connected = styled.div`
   padding: 3px 8px;
   border-radius: 50px;
   background-color: #f2f2f2;
-  hight: 22px;
+  height: 22px;
   position: relative;
 `;
 
@@ -189,7 +182,7 @@ const Avatar = styled.div<{ img: string }>`
 const ConnectedRibbon = styled.div<{ isConnected?: boolean }>`
   width: 7.5px;
   height: 7.5px;
-  background-color: ${({ isConnected }) => (!isConnected ? '#e6e8ec' : '#68dd65')};
+  background-color: ${({ isConnected }) => (!isConnected ? "#e6e8ec" : "#68dd65")};
   border-radius: 100%;
   margin-right: 6px;
 `;
@@ -221,13 +214,18 @@ const Account = styled.div`
   margin: 14px 0 0;
   cursor: pointer;
   span {
+    max-width: 200px;
     font-family: IBM Plex Sans;
     font-size: 17px;
     font-weight: 500;
     line-height: 23px;
+    text-overflow: ellipsis;
+    overflow-x: hidden;
+    white-space: nowrap;
     margin-left: 10px;
     color: #18191a;
   }
+  
 `;
 
 const AccountIcon = styled.div`

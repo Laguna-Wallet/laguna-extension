@@ -1,19 +1,19 @@
-import Button from 'components/primitives/Button';
-import styled from 'styled-components';
-import { PageContainer } from 'components/ui';
-import { Messages } from 'utils/types';
-import { useState } from 'react';
-import Snackbar from 'components/Snackbar/Snackbar';
-import HumbleInput from 'components/primitives/HumbleInput';
-import { validatePassword } from 'utils/polkadot';
-import { useSelector } from 'react-redux';
-import backgroundImage from 'assets/imgs/sign-up-bg.png';
-import mainLogoSvg from 'assets/imgs/main-logo-white.svg';
-import { Field, reduxForm, InjectedFormProps } from 'redux-form';
-import { isObjectEmpty, validPassword } from 'utils';
-import { useHistory } from 'react-router-dom';
-import { router } from 'router/router';
-import browser from 'webextension-polyfill';
+import Button from "components/primitives/Button";
+import styled from "styled-components";
+import { PageContainer } from "components/ui";
+import { Messages } from "utils/types";
+import { useState } from "react";
+import Snackbar from "components/Snackbar/Snackbar";
+import HumbleInput from "components/primitives/HumbleInput";
+import { validatePassword } from "utils/polkadot";
+import { useSelector } from "react-redux";
+import backgroundImage from "assets/imgs/sign-up-bg.png";
+import mainLogoSvg from "assets/imgs/main-logo-white.svg";
+import { Field, reduxForm, InjectedFormProps } from "redux-form";
+import { isObjectEmpty, validPassword } from "utils";
+import { useHistory } from "react-router-dom";
+import { router } from "router/router";
+import browser from "webextension-polyfill";
 
 type Props = {
   password: string;
@@ -29,9 +29,8 @@ function WelcomeBack({ handleSubmit, valid }: InjectedFormProps<Props>) {
   const pendingDapps = pendingDappAuthorization?.pendingDappAuthorization;
 
   const handleOpenSupport = () => {
-    console.log(1);
     browser.runtime.sendMessage({
-      type: Messages.OpenSupport
+      type: Messages.OpenSupport,
     });
   };
 
@@ -45,7 +44,7 @@ function WelcomeBack({ handleSubmit, valid }: InjectedFormProps<Props>) {
       if (isValid) {
         browser.runtime.sendMessage({
           type: Messages.AuthUser,
-          payload: { password }
+          payload: { password },
         });
 
         if (pendingDapps?.length > 0) {
@@ -56,7 +55,7 @@ function WelcomeBack({ handleSubmit, valid }: InjectedFormProps<Props>) {
           history.push(router.home);
         }
       } else {
-        setSnackbarError('Incorrect Password');
+        setSnackbarError("Incorrect Password");
         setIsSnackbarOpen(true);
       }
     }
@@ -78,15 +77,15 @@ function WelcomeBack({ handleSubmit, valid }: InjectedFormProps<Props>) {
             placeholder="Enter your password"
             component={HumbleInput}
             props={{
-              type: 'password',
-              color: '#18191a',
-              placeholderColor: '#777e90',
-              height: '50px',
-              marginTop: '12px',
-              borderColor: '#e6e8ec',
-              errorBorderColor: '#fb5a5a',
-              bgColor: 'transparent',
-              autoFocus: true
+              type: "password",
+              color: "#18191a",
+              placeholderColor: "#777e90",
+              height: "50px",
+              marginTop: "12px",
+              borderColor: "#e6e8ec",
+              errorBorderColor: "#fb5a5a",
+              bgColor: "transparent",
+              autoFocus: true,
             }}
           />
           <Button
@@ -106,7 +105,7 @@ function WelcomeBack({ handleSubmit, valid }: InjectedFormProps<Props>) {
             onClick={() => {
               history.push({
                 pathname: router.importAccount,
-                state: { redirectedFromForgotPassword: true }
+                state: { redirectedFromForgotPassword: true },
               });
             }}>
             Forgot your password?
@@ -128,8 +127,8 @@ function WelcomeBack({ handleSubmit, valid }: InjectedFormProps<Props>) {
 }
 
 export default reduxForm<Record<string, unknown>, any>({
-  form: 'welcomeBack',
-  validate: validPassword
+  form: "welcomeBack",
+  validate: validPassword,
 })(WelcomeBack);
 
 const IconSection = styled.div`

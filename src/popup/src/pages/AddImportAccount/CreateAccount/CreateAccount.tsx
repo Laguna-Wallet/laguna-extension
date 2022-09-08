@@ -30,14 +30,14 @@ type LocationState = {
 };
 
 export enum SecurityLevelEnum {
-  Secured = 'Secured',
-  Skipped = 'Skipped'
+  Secured = "Secured",
+  Skipped = "Skipped"
 }
 
 export default function CreateAccount({
   // redirectedFromSignUp,
   // redirectedFromDashboard,
-  encodePhase
+  encodePhase,
 }: Props & Partial<RouteComponentProps>) {
   const account = useAccount();
   const activeAccount = account.getActiveAccount();
@@ -55,21 +55,25 @@ export default function CreateAccount({
   const handleEncode = async (password: string) => {
     // note for now seed creation flow saves mnemonic in Account Context
     // would be better to refactor and save data in redux, (just for flow)
+    const accounts = keyring.getPairs();
+    const name = `Account ${accounts.length + 1}`;
 
     if (securityLevel === SecurityLevelEnum.Secured && account?.mnemonics) {
-      const mnemonicsStr = account?.mnemonics.join(' ');
-      const encodedSeed = AES.encrypt(account?.mnemonics.join(' '), password).toString();
+      const mnemonicsStr = account?.mnemonics.join(" ");
+      const encodedSeed = AES.encrypt(account?.mnemonics.join(" "), password).toString();
 
       const ethAddress = generateNewWalletAddress(mnemonicsStr)?.address;
 
       const { pair } = keyring.addUri(mnemonicsStr, password, {
         encodedSeed,
         img: await generateRandomBase64Avatar(),
-        ethAddress
+        ethAddress,
       });
 
+
+
       const newPair = addAccountMeta(pair.address, {
-        name: pair.address
+       name,
       });
 
       if (!activeAccount || (activeAccount && isObjectEmpty(activeAccount))) {
@@ -78,12 +82,12 @@ export default function CreateAccount({
 
       browser.runtime.sendMessage({
         type: Messages.AddToKeyring,
-        payload: { seed: mnemonicsStr, password, meta: newPair.meta }
+        payload: { seed: mnemonicsStr, password, meta: newPair.meta },
       });
 
       browser.runtime.sendMessage({
         type: Messages.AuthUser,
-        payload: { password }
+        payload: { password },
       });
 
       saveToStorage({ key: StorageKeys.OnBoarding, value: true });

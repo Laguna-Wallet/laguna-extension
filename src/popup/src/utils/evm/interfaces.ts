@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
-import { BigNumberish, BytesLike } from "ethers";
-import { EVMNetwork } from "./networks";
-import { EVMAssetType } from "./networks/asset";
+import { BytesLike } from "ethers";
+import { EVMNetwork } from "../../networks/evm";
+import { EVMAssetType } from "../../networks/evm/asset";
 
  
  export interface ethereumHoldingState {
@@ -22,6 +22,7 @@ import { EVMAssetType } from "./networks/asset";
    nodeUrl: string;
    explorerUrlAddress: string;
    explorerUrlTransaction: string;
+   nativeCurreny: string;
  }
  
 export interface IEVMAsset {
@@ -35,28 +36,37 @@ export interface IEVMAssetERC20 extends IEVMAsset {
   contractAddress: string;
 }
 
+export interface IEVMBuildTransactionOnChainParam {
+  nonce: BigNumber,
+  gasPriceInGwei: BigNumber,
+  nativeCurrenyBalance: BigNumber,
+  assetBalance: BigNumber,
+}
+
 export interface IEVMBuildTransaction {
   network: EVMNetwork, 
   asset: IEVMAssetERC20, 
   amount: BigNumber, 
   fromAddress: string, 
   toAddress: string, 
+  nonce: BigNumber,
   gasPriceInGwei: BigNumber,
+  gasLimit: BigNumber,
   numOfPendingTransaction: BigNumber, // TODO for adding up nonce, blocked by cache pending txn
 }
 
 export interface IEVMToBeSignTransaction {
-  to?: string,
-  from?: string,
-  nonce?: BigNumberish,
-  gasLimit?: BigNumberish,
-  gasPrice?: BigNumberish,
+  to: string,
+  from: string,
+  nonce: string,
+  gasLimit: string,
+  gasPrice: string,
   data?: BytesLike,
-  value?: BigNumberish,
-  chainId?: number
+  value: string,
+  chainId: number
   type?: number;
-  maxPriorityFeePerGas?: BigNumberish;
-  maxFeePerGas?: BigNumberish;
+  maxPriorityFeePerGas?: string;
+  maxFeePerGas?: string;
   customData?: Record<string, any>;
   ccipReadEnabled?: boolean;
 }
