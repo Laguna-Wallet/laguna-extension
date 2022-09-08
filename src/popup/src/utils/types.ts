@@ -22,28 +22,28 @@ export const DEFAULT_TYPE: KeypairType = "ed25519";
 export const SEED_LENGTHS = [12, 24];
 
 export enum StorageKeys {
-  SignedIn = 'signed-in',
-  Encoded = 'encoded',
-  ActiveAccount = 'active-account',
-  TokenPrices = 'token-prices',
-  TokenInfos = 'token-infos',
-  AccountBalances = 'account-balances',
-  ethereumBalances = 'ethereum-balances',
-  Transactions = 'transactions',
-  EthereumTransactions = 'ethereum-transactions',
-  IdleTimeout = 'idle-timeout',
-  UnlockedPairs = 'unlocked-pairs',
-  TokenDecimals = 'token-decimals',
-  DisabledTokens = 'disabled-tokens',
-  OnBoarding = 'onboarding'
+  SignedIn = "signed-in",
+  Encoded = "encoded",
+  ActiveAccount = "active-account",
+  TokenPrices = "token-prices",
+  TokenInfos = "token-infos",
+  AccountBalances = "account-balances",
+  ethereumBalances = "ethereum-balances",
+  Transactions = "transactions",
+  EthereumTransactions = "ethereum-transactions",
+  IdleTimeout = "idle-timeout",
+  UnlockedPairs = "unlocked-pairs",
+  TokenDecimals = "token-decimals",
+  DisabledTokens = "disabled-tokens",
+  OnBoarding = "onboarding"
 }
 
 // Array of contract addresses specific to ERC-20 tokens (ETH is a native token so it does not have an address)
 export const contractAddresses = [
   "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48", // USDC
   "0xdAC17F958D2ee523a2206206994597C13D831ec7", // USDT
-  "eth" // Ethereum
-]
+  "eth", // Ethereum
+];
 
 //==============================================================================
 // Polkadot
@@ -131,14 +131,14 @@ export interface SelectType {
 }
 
 export enum TokenSymbols {
-  westend = 'wnd',
-  polkadot = 'dot',
-  kusama = 'ksm',
-  moonriver = 'movr',
-  moonbeam = 'glmr',
-  shiden = 'sdn',
-  astar = 'astr',
-  ethereum = 'eth'
+  westend = "wnd",
+  polkadot = "dot",
+  kusama = "ksm",
+  moonriver = "movr",
+  moonbeam = "glmr",
+  shiden = "sdn",
+  astar = "astr",
+  ethereum = "eth"
 }
 
 export type Token =
@@ -251,7 +251,7 @@ export const chains = [
   // 'moonriver',
   //  'moonbeam',
   // 'shiden',
-  'astar'
+  "astar",
 ];
 
 export interface TokenInfo {
@@ -303,9 +303,9 @@ export const networks: Network[] = [
   {
     name: "Kusama",
     symbol: TokenSymbols.kusama,
-    chain: 'kusama',
-    node: 'wss://kusama-rpc.polkadot.io',
-    prefix: 2
+    chain: "kusama",
+    node: "wss://kusama-rpc.polkadot.io",
+    prefix: 2,
   },
   // {
   //   name: 'Moonriver',
@@ -332,11 +332,11 @@ export const networks: Network[] = [
   //   prefix: 5
   // },
   {
-    name: 'Astar',
+    name: "Astar",
     symbol: TokenSymbols.astar,
-    chain: 'astar',
-    node: 'wss://astar.api.onfinality.io/public-ws',
-    prefix: 5
+    chain: "astar",
+    node: "wss://astar.api.onfinality.io/public-ws",
+    prefix: 5,
   },
   // {
   //   name: 'Astar',

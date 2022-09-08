@@ -42,13 +42,6 @@ export const assets: {
       decimal: 18,
       assetType: EVMAssetType.NATIVE,
     },
-    "TBC": { // TODO by Evelyn
-      name: "TBC",
-      symbol: "TBC",
-      decimal: 18,
-      assetType: EVMAssetType.ERC20,
-      contractAddress: "TBC",
-    },
   },
   [EVMNetwork.AVALANCHE_TESTNET_FUJI]: {
     "AVAX": {
