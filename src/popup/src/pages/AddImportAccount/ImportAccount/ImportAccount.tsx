@@ -9,6 +9,7 @@ import browser from "webextension-polyfill";
 import { mnemonicValidate } from "@polkadot/util-crypto";
 import { isHex } from "@polkadot/util";
 import {
+  addAccountMeta,
   encryptKeyringPair,
   importFromMnemonic,
   importJson,
@@ -28,6 +29,7 @@ import ImportPhase from "pages/AddImportAccount/ImportAccount/importPhase";
 import { saveToStorage } from "utils/chrome";
 import { clearAccountsFromStorage, isObjectEmpty } from "utils";
 import { toggleLoading } from "redux/actions";
+import keyring from "@polkadot/ui-keyring";
 
 const validate = (values: any) => {
   const errors: any = {};
@@ -70,6 +72,7 @@ function ImportAccount() {
   const account = useAccount();
   const activeAccount = account.getActiveAccount();
 
+
   const encoded = account.encryptedPassword;
 
   const dispatch = useDispatch();
@@ -86,9 +89,9 @@ function ImportAccount() {
     if (seedPhase) {
       if (mnemonicValidate(seedPhase)) {
         const pair = await importFromMnemonic(seedPhase, password);
+        
         if (redirectPassword) {
           clearAccountsFromStorage(pair.address);
-          account.saveActiveAccount(pair);
           dispatch(toggleLoading(true));
         }
 
@@ -113,7 +116,6 @@ function ImportAccount() {
         file as KeyringPair$Json | KeyringPairs$Json | undefined,
         jsonPassword,
       );
-
       const newPair = await encryptKeyringPair(pair, jsonPassword, password);
 
       if (redirectPassword) {

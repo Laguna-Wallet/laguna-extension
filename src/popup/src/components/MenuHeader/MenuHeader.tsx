@@ -56,10 +56,6 @@ export default function MenuHeader({ showUser, onClose, title, backAction }: Pro
     }
   };
 
-  const formatName = (name: string) => {
-    return name && name?.length > 12 ? truncateString(name) : name;
-  };
-
   const onButtonClick = () => {
     // `current` points to the mounted file input element
     if (inputFile.current) {
@@ -128,7 +124,7 @@ export default function MenuHeader({ showUser, onClose, title, backAction }: Pro
             <Name>
               <NameInput
                 ref={inputRef}
-                value={formatName(name) || ""}
+                value={name || ""}
                 onChange={(e) => setName(e.target.value)}
                 readOnly={!editMode}
                 onKeyDown={(e) => {
@@ -225,6 +221,9 @@ const Name = styled.div`
 const NameInput = styled.input`
   max-width: 146px;
   width: 100%;
+  white-space: nowrap;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
   background-color: transparent;
   color: #fff;
   font-size: 23px;
