@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import { IEVMAssetERC20, IEVMAsset, IEVMBuildTransaction, IEVMToBeSignTransaction, Response, TransfersList, TransactionState } from "./interfaces";
+import { IEVMAssetERC20, IEVMAsset, IEVMBuildTransaction, IEVMToBeSignTransaction, Response, TransfersList, TransactionState, Transfer } from "./interfaces";
 import fs from "fs";
 import BigNumber from "bignumber.js";
 import { EVMNetwork, networks } from "./networks";
@@ -77,7 +77,7 @@ export const calculateTransactionFeeInNormalUnit = (toBeSignTransaction: IEVMToB
   return new BigNumber(toBeSignTransaction.gasLimit).multipliedBy(toBeSignTransaction.gasPrice).dividedBy("1E18");
 };
 
-export const getEVMTransactions = async (address: string, network: EVMNetwork): Promise<TransactionState> => {
+export const getEVMTransactions = async (address: string, network: EVMNetwork, key?: string, transfers?: Transfer[]): Promise<TransactionState> => {
 
   const options = {
     method: "POST",
@@ -92,20 +92,26 @@ export const getEVMTransactions = async (address: string, network: EVMNetwork): 
           toBlock: "latest",
           category: ["internal", "erc20", "external"],
           withMetadata: false,
-          excludeZeroValue: true,
-          maxCount: "0x3e8",
+          excludeZeroValue: false,
           fromAddress: address,
+          ...(key && {pageKey: key}),
         },
       ],
     }),
   };
 
+
   try {
     const res = await fetch(networks[network].nodeUrl, options);
-    const data = await res.json();
+    const data: TransfersList = await res.json();
+    const transfer: Transfer[] = transfers || [];
+    transfer.push(...data.result.transfers);
+    if(data.result.pageKey) {
+      getEVMTransactions(address, network, data.result.pageKey, transfer);
+    }
     return {
       success: true,
-      transfers: data,
+      transfers: transfer,
     };
   } catch(err) {
     console.error(err);
@@ -115,6 +121,7 @@ export const getEVMTransactions = async (address: string, network: EVMNetwork): 
     };
   }
 };
+
 
 export const buildTransaction = async (  param: IEVMBuildTransaction  ): Promise<IEVMToBeSignTransaction> => {
   const onChainNonce = await getNonce(param.network, param.fromAddress);

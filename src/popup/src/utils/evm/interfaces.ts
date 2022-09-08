@@ -47,7 +47,7 @@ export interface IEVMBuildTransaction {
 
 export interface TransactionState {
   success: boolean,
-  transfers: TransfersList | null
+  transfers: Transfer[] | null
 }
 
 export interface TransfersList {
