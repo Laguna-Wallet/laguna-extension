@@ -25,10 +25,6 @@ export default function Accounts({ userContainerWidth }: Props) {
   const [accounts, setAccounts] = useState<KeyringPair[]>(keyring.getPairs());
   const [isConnected, setIsConnected] = useState<boolean>(true);
 
-  const formatName = (name: string) => {
-    return name.length > 12 ? truncateString(name) : name;
-  };
-
   const handleSetActiveAccount = (e: React.MouseEvent<HTMLDivElement>, account: unknown) => {
     e.stopPropagation();
     accountCtx.saveActiveAccount(account);
@@ -37,9 +33,6 @@ export default function Accounts({ userContainerWidth }: Props) {
 
   return (
     <Container>
-      <TriangleContainer userContainerWidth={userContainerWidth}>
-        <TriangleIcon />
-      </TriangleContainer>
 
       <Header>
         <HeaderItem>ACCOUNTS</HeaderItem>
@@ -70,7 +63,7 @@ export default function Accounts({ userContainerWidth }: Props) {
                 key={account.address}>
                 <Avatar img={getAccountImage(account.address)} />
                 <span>
-                  {(account?.meta?.name as string) && formatName(account?.meta?.name as string)}
+                  {(account?.meta?.name as string) && account?.meta?.name as string}
                 </span>
 
                 <Icons>
@@ -171,7 +164,7 @@ const Connected = styled.div`
   padding: 3px 8px;
   border-radius: 50px;
   background-color: #f2f2f2;
-  hight: 22px;
+  height: 22px;
   position: relative;
 `;
 
@@ -221,13 +214,18 @@ const Account = styled.div`
   margin: 14px 0 0;
   cursor: pointer;
   span {
+    max-width: 200px;
     font-family: IBM Plex Sans;
     font-size: 17px;
     font-weight: 500;
     line-height: 23px;
+    text-overflow: ellipsis;
+    overflow-x: hidden;
+    white-space: nowrap;
     margin-left: 10px;
     color: #18191a;
   }
+  
 `;
 
 const AccountIcon = styled.div`

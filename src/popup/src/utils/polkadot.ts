@@ -108,16 +108,18 @@ export async function importFromMnemonic(seed: string, password: string) {
   const encodedKey = AES.encrypt(u8aToHex(key), password).toString();
   const encodedSeed = AES.encrypt(seed, password).toString();
   const { pair } = keyring.addUri(seed, password);
+  const accounts = keyring.getPairs();
+  const name = `Account ${accounts.length} (Import)`;
 
   const img = await generateRandomBase64Avatar();
   const newPair = addAccountMeta(pair.address, {
     encodedKey,
     encodedSeed,
-    name: pair.address,
+    name,
     img,
   });
 
-  newPair.setMeta({ encodedKey, encodedSeed, name: pair.address, img });
+  newPair.setMeta({ encodedKey, encodedSeed, name, img });
 
   return newPair;
 }

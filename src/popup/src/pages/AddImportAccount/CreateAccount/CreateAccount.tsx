@@ -4,6 +4,7 @@ import EncodeAccount from "pages/AddImportAccount/EncodeAccount";
 import SetupComplete from "pages/AddImportAccount/SetupComplete";
 import { Wizard } from "react-use-wizard";
 import CreatePassword from "./CreatePassword/CreatePassword";
+import type { KeyringPair } from "@polkadot/keyring/types";
 import SecureWallet from "./SecureWallet/SecureWallet";
 import { useState } from "react";
 import { Messages, StorageKeys } from "utils/types";
@@ -54,6 +55,8 @@ export default function CreateAccount({
   const handleEncode = async (password: string) => {
     // note for now seed creation flow saves mnemonic in Account Context
     // would be better to refactor and save data in redux, (just for flow)
+    const accounts = keyring.getPairs();
+    const name = `Account ${accounts.length + 1}`;
 
     if (securityLevel === SecurityLevelEnum.Secured && account?.mnemonics) {
       const mnemonicsStr = account?.mnemonics.join(" ");
@@ -64,8 +67,10 @@ export default function CreateAccount({
         img: await generateRandomBase64Avatar(),
       });
 
+
+
       const newPair = addAccountMeta(pair.address, {
-        name: pair.address,
+       name,
       });
 
       if (!activeAccount || (activeAccount && isObjectEmpty(activeAccount))) {
@@ -94,7 +99,7 @@ export default function CreateAccount({
       });
 
       const newPair = addAccountMeta(pair.address, {
-        name: pair.address,
+        name,
       });
 
       if (!activeAccount || (activeAccount && isObjectEmpty(activeAccount))) {
