@@ -93,8 +93,8 @@ export const buildTransaction = async (  param: IEVMBuildTransaction  ): Promise
     to: param.toAddress,
     from: param.fromAddress,
     value: `0x${param.amount.multipliedBy(`1E${param.asset.decimal}`).toString(16)}`,
-    gasPrice: param.gasPriceInGwei.toString(10),
-    gasLimit: new BigNumber(21000).toString(10),
+    gasPrice: param.gasPriceInGwei.multipliedBy(`1E9`).toString(10),
+    gasLimit: param.gasPriceInGwei.toString(10),
     nonce: param.nonce.toString(10),
     chainId: networks[param.network].chainId,
   };

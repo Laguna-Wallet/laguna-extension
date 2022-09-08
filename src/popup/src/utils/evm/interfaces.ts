@@ -51,6 +51,7 @@ export interface IEVMBuildTransaction {
   toAddress: string, 
   nonce: BigNumber,
   gasPriceInGwei: BigNumber,
+  gasLimit: BigNumber,
   numOfPendingTransaction: BigNumber, // TODO for adding up nonce, blocked by cache pending txn
 }
 
