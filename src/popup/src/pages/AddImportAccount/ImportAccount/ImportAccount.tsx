@@ -116,10 +116,7 @@ function ImportAccount() {
         file as KeyringPair$Json | KeyringPairs$Json | undefined,
         jsonPassword,
       );
-
       const newPair = await encryptKeyringPair(pair, jsonPassword, password);
-
-      console.log(newPair);
 
       if (redirectPassword) {
         clearAccountsFromStorage(pair.address);
