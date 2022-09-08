@@ -55,7 +55,7 @@ export async function sendTransaction(pairs, ethWallets, payload) {
 export async function Retrieve_Coin_Prices() {
   // moonriver,
   // moonbeam,
-  // shiden,
+  // shiden,a
   // astar
   const data = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=polkadot,kusama,ethereum&vs_currencies=usd`)
   const json = await data.json()
