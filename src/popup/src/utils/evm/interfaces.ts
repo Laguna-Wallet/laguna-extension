@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import { BytesLike } from "ethers";
-import { EVMNetwork } from "./networks";
-import { EVMAssetType } from "./networks/asset";
+import { EVMNetwork } from "../../networks/evm";
+import { EVMAssetType } from "../../networks/evm/asset";
 
  
  export interface ethereumHoldingState {

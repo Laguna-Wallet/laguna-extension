@@ -1,5 +1,5 @@
 import { EVMNetwork } from ".";
-import { IEVMAsset, IEVMAssetERC20 } from "../interfaces";
+import { IEVMAsset, IEVMAssetERC20 } from "../../utils/evm/interfaces";
 
 export enum EVMAssetType {
   NATIVE = "NATIVE",

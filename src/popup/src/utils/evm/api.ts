@@ -2,8 +2,8 @@ import { ethers } from "ethers";
 import { IEVMAssetERC20, IEVMAsset, IEVMBuildTransaction, IEVMToBeSignTransaction, Response, IEVMBuildTransactionOnChainParam, IEVMNetwork } from "./interfaces";
 import fs from "fs";
 import BigNumber from "bignumber.js";
-import { EVMNetwork, networks } from "./networks";
-import { assets, EVMAssetType } from "./networks/asset";
+import { EVMNetwork, networks } from "networks/evm";
+import { assets, EVMAssetType } from "networks/evm/asset";
 
 export const toCheckSumAddress = (address: string): string => {
   const checksumAddress = ethers.utils.getAddress(address); 

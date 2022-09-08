@@ -1,4 +1,4 @@
-import { IEVMNetwork } from "../interfaces";
+import { IEVMNetwork } from "../../utils/evm/interfaces";
 
 export enum EVMNetwork {
   LOCALHOST = "LOCALHOST",
@@ -31,7 +31,7 @@ export const networks :{[network: string]: IEVMNetwork} = {
   },
   [EVMNetwork.AVALANCHE_TESTNET_FUJI]: {
     chainId: 43113,
-    nodeUrl: "https://eth-goerli.g.alchemy.com/v2/IFip5pZqfpAsi50-O2a0ZEJoA82E8KR_",
+    nodeUrl: "https://api.avax-test.network/ext/bc/C/rpc",
     explorerUrlAddress: "https://testnet.snowtrace.io/address/{{hash}}",
     explorerUrlTransaction: "https://testnet.snowtrace.io/tx/{{hash}}",
     nativeCurreny: "AVAX",
