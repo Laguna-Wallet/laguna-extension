@@ -27,14 +27,14 @@ const AXIOS_INSTANCE = axios.create({
 // TODO Refactor
 export async function Account_Search(chain: string, address: string) {
   return await AXIOS_INSTANCE.post(`https://${chain}.api.subscan.io/api/v2/scan/search`, {
-    key: address
+    key: address,
   });
 }
 export async function Price_Converter({ chain, symbol, amount, fiat }: PriceConverter) {
   const data = await AXIOS_INSTANCE.get(
     `    https://api.coingecko.com/api/v3/simple/price?ids=${[
-      'polkadot,kusama'
-    ]}&vs_currencies=${fiat}`
+      "polkadot,kusama",
+    ]}&vs_currencies=${fiat}`,
   );
 
   return data;
@@ -43,7 +43,7 @@ export async function Price_Converter({ chain, symbol, amount, fiat }: PriceConv
 // Todo Price Checkup
 export async function getCoinInfo({ chains }: any) {
   const data = await AXIOS_INSTANCE.get(
-    `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${chains}&order=market_cap_desc&per_page=100&page=1&sparkline=false`
+    `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${chains}&order=market_cap_desc&per_page=100&page=1&sparkline=false`,
   );
 
   return data;
@@ -52,7 +52,7 @@ export async function getCoinInfo({ chains }: any) {
 // todo proper typing
 export async function fetchAccountsBalances(
   // dispatch: AppDispatch
-  dispatch: any
+  dispatch: any,
 ) {
   try {
     // await timer(3000)
@@ -148,7 +148,7 @@ export async function fetchAccountsBalances(
 
       saveToStorage({
         key: StorageKeys.AccountBalances,
-        value: JSON.stringify({ address, balances: result_obj })
+        value: JSON.stringify({ address, balances: result_obj }),
       });
 
       dispatch(changeAccountsBalances({ address, balances: result_obj }));
@@ -161,22 +161,22 @@ export async function fetchAccountsBalances(
     setTimeout(() => fetchAccountsBalances(dispatch), 3000);
   } catch (err) {
     setTimeout(() => fetchAccountsBalances(dispatch), 5000);
-    console.log('error while fetching balances:', err);
+    console.log("error while fetching balances:", err);
   }
 }
 
 async function searchAccountBallance(chain: string, address: string) {
   if (!chain) return;
   const res = await fetch(`https://${chain}.api.subscan.io/api/v2/scan/search`, {
-    method: 'POST',
-    mode: 'cors',
-    cache: 'no-cache',
-    credentials: 'same-origin',
+    method: "POST",
+    mode: "cors",
+    cache: "no-cache",
+    credentials: "same-origin",
     headers: {
-      'Content-Type': 'application/json'
+      "Content-Type": "application/json",
       // 'X-API-Key': process.env.REACT_APP_SUBSCAN_KEY || ''
     },
-    body: JSON.stringify({ key: address, row: 1, page: 1 })
+    body: JSON.stringify({ key: address, row: 1, page: 1 }),
   });
 
   return await res.json();

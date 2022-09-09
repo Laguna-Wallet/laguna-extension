@@ -1,19 +1,19 @@
-import { useState } from 'react';
-import styled from 'styled-components';
+import { useState } from "react";
+import styled from "styled-components";
 
-import Header from 'pages/Wallet/Header';
-import HumbleInput from 'components/primitives/HumbleInput';
+import Header from "pages/Wallet/Header";
+import HumbleInput from "components/primitives/HumbleInput";
 // Todo Move ChainItem Into Shared
-import ChainItem from '../../pages/Wallet/ChainItem';
-import { useAccount } from 'context/AccountContext';
-import { Asset } from 'utils/types';
-import { useWizard } from 'react-use-wizard';
-import { useDispatch } from 'react-redux';
-import { selectAsset } from 'redux/actions';
-import { reset } from 'redux-form';
-import LoopIcon from 'assets/svgComponents/loopIcon';
-import { useHistory } from 'react-router-dom';
-import { router } from 'router/router';
+import ChainItem from "../../pages/Wallet/ChainItem";
+import { useAccount } from "context/AccountContext";
+import { Asset } from "utils/types";
+import { useWizard } from "react-use-wizard";
+import { useDispatch } from "react-redux";
+import { selectAsset } from "redux/actions";
+import { reset } from "redux-form";
+import LoopIcon from "assets/svgComponents/loopIcon";
+import { useHistory } from "react-router-dom";
+import { router } from "router/router";
 
 type Props = {
   assets: undefined | Asset[];
@@ -25,7 +25,7 @@ export default function SelectAsset({ assets }: Props) {
   const dispatch = useDispatch();
 
   const { nextStep } = useWizard();
-  const [assetsFilter, setAssetsFilter] = useState<string>('');
+  const [assetsFilter, setAssetsFilter] = useState<string>("");
 
   const handleClick = (asset: Asset) => {
     dispatch(selectAsset(asset));
@@ -37,7 +37,7 @@ export default function SelectAsset({ assets }: Props) {
   };
 
   const headerAction = () => {
-    dispatch(reset('sendToken'));
+    dispatch(reset("sendToken"));
     history.push(router.home);
   };
 
@@ -58,8 +58,8 @@ export default function SelectAsset({ assets }: Props) {
           onChange={(e: any) => {
             setAssetsFilter(e.target.value);
           }}
-          bgColor={'#f2f2f2'}
-          borderColor={'#f2f2f2'}
+          bgColor={"#f2f2f2"}
+          borderColor={"#f2f2f2"}
           color="#777e90"
           placeholderColor="#777e90"
           placeholder="Search"
@@ -70,7 +70,7 @@ export default function SelectAsset({ assets }: Props) {
         <List>
           {assets
             ? assets.length === 0
-              ? 'no assets'
+              ? "no assets"
               : renderAssets(assets, assetsFilter).map((asset: Asset) => {
                   return (
                     <ChainItemContainer key={asset.symbol}>
@@ -83,7 +83,7 @@ export default function SelectAsset({ assets }: Props) {
                     </ChainItemContainer>
                   );
                 })
-            : 'Loading...'}
+            : "Loading..."}
         </List>
       </Content>
     </Container>

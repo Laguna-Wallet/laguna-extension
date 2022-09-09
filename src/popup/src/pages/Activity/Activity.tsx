@@ -61,13 +61,13 @@ export const ActivityItem = ({ transaction, onClick, bgColor }: Props) => {
       </Icon>
       <Info>
         <InfoTop>
-          {transaction.amount} <span>{TokenSymbols[transaction?.chain]} </span>{' '}
+          {transaction.amount} <span>{TokenSymbols[transaction?.chain]} </span>{" "}
         </InfoTop>
         <InfoBottom>
           {isSent
-            ? 'to ' + truncateString(transaction.to)
-            : 'from ' + truncateString(transaction.from)}
-          {'  '} {format(Number(transaction.timestamp) * 1000, 'dd MMM yyyy')}
+            ? "to " + truncateString(transaction.to)
+            : "from " + truncateString(transaction.from)}
+          {"  "} {format(Number(transaction.timestamp) * 1000, "dd MMM yyyy")}
         </InfoBottom>
       </Info>
       <Actions>
@@ -99,7 +99,7 @@ export default function Activity() {
   const sortedTransactions =
     transactions &&
     transactions.sort(
-      (a: any, b: any) => (new Date(b.timestamp) as any) - (new Date(a.timestamp) as any)
+      (a: any, b: any) => (new Date(b.timestamp) as any) - (new Date(a.timestamp) as any),
     );
 
   useEffect(() => {
@@ -224,21 +224,21 @@ export default function Activity() {
 
 function handleIcons(chain: any) {
   switch (chain) {
-    case 'westend':
+    case "westend":
       return (
         <PolkadotLogoIcon
         // width={20} height={20}
         />
       );
     // break;
-    case 'polkadot':
+    case "polkadot":
       return (
         <PolkadotLogoIcon
         //  width={20} height={20}
         />
       );
     // break;
-    case 'kusama':
+    case "kusama":
       return <KusamaLogoIcon fill="#111" stroke="#111" />;
     // break;
     default:
@@ -255,7 +255,7 @@ const Container = styled.div<{ bg: string; isEmpty: boolean }>`
   position: relative;
   background-image: ${({ bg }) => `url(${bg})`};
   background-size: cover;
-  padding-top: ${({ isEmpty }) => (isEmpty ? '88px' : '50px')};
+  padding-top: ${({ isEmpty }) => (isEmpty ? "88px" : "50px")};
   padding-bottom: 50px;
   overflow: hidden;
 `;
@@ -354,7 +354,7 @@ const ActivityItemContainer = styled.div<{ bgColor?: string }>`
   padding: 14px;
   box-sizing: border-box;
   text-decoration: none;
-  background-color: ${({ bgColor }) => bgColor || '#fff'};
+  background-color: ${({ bgColor }) => bgColor || "#fff"};
   border-radius: 4px;
   cursor: pointer;
 `;

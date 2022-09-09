@@ -1,14 +1,14 @@
 export const accountReducer = (state: any = {}, action: any) => {
   switch (action.type) {
-    case 'CHANGE_ADDRESS':
+    case "CHANGE_ADDRESS":
       return { ...state, activeAccount: action.payload.account };
-    case 'CHANGE_AMOUNT':
+    case "CHANGE_AMOUNT":
       return { ...state, amount: action.payload.amount };
-    case 'SELECT_ASSET':
+    case "SELECT_ASSET":
       return { ...state, selectedAsset: action.payload.selectedAsset };
-    case 'SELECT_ASSET_TOKEN':
+    case "SELECT_ASSET_TOKEN":
       return { ...state, selectedAssetToken: action.payload.selectedAssetToken };
-    case 'SET_BLOCK_HASH':
+    case "SET_BLOCK_HASH":
       return { ...state, blockHash: action.payload.blockHash };
 
     default:

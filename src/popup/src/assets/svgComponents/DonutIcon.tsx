@@ -1,4 +1,4 @@
-import { SVGProps } from 'react';
+import { SVGProps } from "react";
 
 const DonutIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg width={279} height={279} fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>

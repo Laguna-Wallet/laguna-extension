@@ -1,4 +1,4 @@
-import { SVGProps } from 'react';
+import { SVGProps } from "react";
 
 const AlternateEmail = (props: SVGProps<SVGSVGElement>) => (
   <svg width={22} height={22} fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>

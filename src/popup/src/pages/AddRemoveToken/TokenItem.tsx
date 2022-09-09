@@ -1,19 +1,19 @@
-import styled from 'styled-components';
-import { useDispatch, useSelector } from 'react-redux';
+import styled from "styled-components";
+import { useDispatch, useSelector } from "react-redux";
 
-import WrongSwitch from 'react-switch';
+import WrongSwitch from "react-switch";
 const Switch: any = WrongSwitch;
 
-import { Network, StorageKeys, Token } from 'utils/types';
-import { saveToStorage } from 'utils/chrome';
+import { Network, StorageKeys, Token } from "utils/types";
+import { saveToStorage } from "utils/chrome";
 
-import { changeDisabledTokens } from 'redux/actions';
+import { changeDisabledTokens } from "redux/actions";
 
-import NetworkIcons from 'components/primitives/NetworkIcons';
-import { State } from 'redux/store';
+import NetworkIcons from "components/primitives/NetworkIcons";
+import { State } from "redux/store";
 
-import Bg from 'assets/imgs/avatars/avatar-1.png';
-import { url } from 'inspector';
+import Bg from "assets/imgs/avatars/avatar-1.png";
+import { url } from "inspector";
 
 type Props = {
   network: Network;
@@ -57,14 +57,14 @@ export default function TokenItem({ network, balance }: Props) {
           checkedIcon={
             <div
               style={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                fontFamily: 'IBM Plex Sans',
-                height: '100%',
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                fontFamily: "IBM Plex Sans",
+                height: "100%",
                 fontSize: 12,
-                color: '#fff',
-                paddingLeft: 2
+                color: "#fff",
+                paddingLeft: 2,
               }}>
               ON
             </div>
@@ -72,14 +72,14 @@ export default function TokenItem({ network, balance }: Props) {
           uncheckedIcon={
             <div
               style={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                fontFamily: 'IBM Plex Sans',
-                height: '100%',
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                fontFamily: "IBM Plex Sans",
+                height: "100%",
                 fontSize: 12,
-                color: '#fff',
-                paddingRight: 2
+                color: "#fff",
+                paddingRight: 2,
               }}>
               OFF
             </div>

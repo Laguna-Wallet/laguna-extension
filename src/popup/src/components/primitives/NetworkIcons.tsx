@@ -21,7 +21,7 @@ export default function NetworkIcons({ width, height, chain, isSmallIcon = false
     return <IconContainer width={width} height={height} img={PolkadotIcon} />;
   }
 
-  if (chain === 'kusama') {
+  if (chain === "kusama") {
     return <IconContainer width={width} height={height} img={KusamaIcon} />;
   }
   
@@ -29,7 +29,7 @@ export default function NetworkIcons({ width, height, chain, isSmallIcon = false
     return isSmallIcon ? <SmallMonriverIcon /> : <MoonriverIcon />;
   }
 
-  if (chain === 'astar') {
+  if (chain === "astar") {
     return <IconContainer width={width} height={height} img={AstarIcon} />;
   }
 
@@ -48,10 +48,10 @@ const PlaceHolder = styled.div`
 `;
 
 const IconContainer = styled.div<{ width?: string; height?: string; img: string }>`
-  width: ${({ width }) => width || '36px'};
-  height: ${({ height }) => height || '36px'};
-  min-width: ${({ width }) => width || '36px'};
-  min-height: ${({ height }) => height || '36px'};
+  width: ${({ width }) => width || "36px"};
+  height: ${({ height }) => height || "36px"};
+  min-width: ${({ width }) => width || "36px"};
+  min-height: ${({ height }) => height || "36px"};
   background-image: ${({ img }) => `url(${img})`};
   background-size: 100% 100%;
   background-position: center center;

@@ -1,9 +1,9 @@
-import { useWizard } from 'react-use-wizard';
-import styled from 'styled-components';
-import LeftArrowThinIcon from 'assets/svgComponents/LeftArrowThinIcon';
-import ProgressBarCloseIcon from 'assets/svgComponents/ProgressBarCloseIcon';
-import { useHistory } from 'react-router-dom';
-import { router } from 'router/router';
+import { useWizard } from "react-use-wizard";
+import styled from "styled-components";
+import LeftArrowThinIcon from "assets/svgComponents/LeftArrowThinIcon";
+import ProgressBarCloseIcon from "assets/svgComponents/ProgressBarCloseIcon";
+import { useHistory } from "react-router-dom";
+import { router } from "router/router";
 
 type Props = {
   title?: string;
@@ -18,12 +18,12 @@ type Props = {
 const calcProgressBarSize = (
   activeStep: number,
   isFinishSlider: boolean,
-  isMnemonics: boolean
+  isMnemonics: boolean,
 ): string | undefined => {
-  if ((activeStep === 0 || isFinishSlider) && !isMnemonics) return isFinishSlider ? '100%' : '50%';
-  if (activeStep === 0 && isMnemonics) return '33%';
-  if (activeStep === 1) return '66%';
-  if (activeStep === 2) return '100%';
+  if ((activeStep === 0 || isFinishSlider) && !isMnemonics) return isFinishSlider ? "100%" : "50%";
+  if (activeStep === 0 && isMnemonics) return "33%";
+  if (activeStep === 1) return "66%";
+  if (activeStep === 2) return "100%";
 };
 
 export default function WizardHeader({
@@ -33,7 +33,7 @@ export default function WizardHeader({
   onBack,
   isFinishSlider = false,
   isMnemonics = false,
-  isImportPhase = false
+  isImportPhase = false,
 }: Props) {
   const history = useHistory();
 
@@ -98,8 +98,8 @@ const Container = styled.div`
 
 const IconContainer = styled.div<{ onClose?: boolean }>`
   cursor: pointer;
-  width: ${({ onClose }) => (onClose ? '24px' : '16px')};
-  height: ${({ onClose }) => (onClose ? '24px' : '16px')};
+  width: ${({ onClose }) => (onClose ? "24px" : "16px")};
+  height: ${({ onClose }) => (onClose ? "24px" : "16px")};
 `;
 
 const Line = styled.div`

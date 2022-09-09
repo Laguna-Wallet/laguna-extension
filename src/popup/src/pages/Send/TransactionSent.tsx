@@ -1,14 +1,14 @@
-import { useRef } from 'react';
-import RightArrow from 'assets/svgComponents/RightArrow';
-import SuccessfullySentIcon from 'assets/svgComponents/SuccesfullySentIcon';
-import Button from 'components/primitives/Button';
-import styled from 'styled-components';
-import bg from '../../assets/imgs/transaction-sent.png';
-import { useDispatch, useSelector } from 'react-redux';
-import { reset } from 'redux-form';
-import { useHistory } from 'react-router-dom';
-import { router } from 'router/router';
-import browser from 'webextension-polyfill';
+import { useRef } from "react";
+import RightArrow from "assets/svgComponents/RightArrow";
+import SuccessfullySentIcon from "assets/svgComponents/SuccesfullySentIcon";
+import Button from "components/primitives/Button";
+import styled from "styled-components";
+import bg from "../../assets/imgs/transaction-sent.png";
+import { useDispatch, useSelector } from "react-redux";
+import { reset } from "redux-form";
+import { useHistory } from "react-router-dom";
+import { router } from "router/router";
+import browser from "webextension-polyfill";
 
 type Props = {
   blockHash: string;
@@ -23,7 +23,7 @@ export default function TransactionSent({ blockHash }: Props) {
   };
 
   const handleClick = () => {
-    dispatch(reset('sendToken'));
+    dispatch(reset("sendToken"));
     history.push(router.home);
   };
 

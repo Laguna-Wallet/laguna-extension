@@ -1,4 +1,4 @@
-import { SVGProps } from 'react';
+import { SVGProps } from "react";
 
 const SuccessfullySentIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg width={97} height={76} fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>

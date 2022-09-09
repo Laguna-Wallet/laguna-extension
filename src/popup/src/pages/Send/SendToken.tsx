@@ -1,46 +1,46 @@
-import styled from 'styled-components';
-import { isValidPolkadotAddress } from 'utils/polkadot';
-import { useEffect, useState } from 'react';
-import TokenAndAmountSelect from 'pages/Send/TokenAndAmountSelect';
-import ContactsIcon from 'assets/svgComponents/ContactsIcon';
-import WalletIcon from 'assets/svgComponents/WalletIcon';
-import HumbleInput from 'components/primitives/HumbleInput';
-import Button from 'components/primitives/Button';
-import RightArrow from 'assets/svgComponents/RightArrow';
+import styled from "styled-components";
+import { isValidPolkadotAddress } from "utils/polkadot";
+import { useEffect, useState } from "react";
+import TokenAndAmountSelect from "pages/Send/TokenAndAmountSelect";
+import ContactsIcon from "assets/svgComponents/ContactsIcon";
+import WalletIcon from "assets/svgComponents/WalletIcon";
+import HumbleInput from "components/primitives/HumbleInput";
+import Button from "components/primitives/Button";
+import RightArrow from "assets/svgComponents/RightArrow";
 
-import ExchangeIcon from 'assets/svgComponents/ExchangeIcon';
-import { useWizard } from 'react-use-wizard';
-import QRPopup from './QRPopup';
-import Header from 'pages/Wallet/Header';
-import BigNumber from 'bignumber.js';
-import ContactsPopup from './ContactsPopup';
-import { isNumeric } from 'utils/validations';
-import { useDispatch, useSelector, connect } from 'react-redux';
-import { Field, change, reset, reduxForm, getFormSyncErrors, formValueSelector } from 'redux-form';
-import Snackbar from 'components/Snackbar/Snackbar';
-import { isObjectEmpty, objectToArray, truncateString } from 'utils';
-import NetworkIcons from 'components/primitives/NetworkIcons';
-import AccountsPopup from './AccountsPopup';
-import BarcodeSendIcon from 'assets/svgComponents/BarcodeSendIcon';
-import { PropsFromTokenDashboard } from 'pages/Recieve/Receive';
-import keyring from '@polkadot/ui-keyring';
-import { AccountMeta } from 'utils/types';
-import { FlowValue, SendAccountFlowEnum } from './Send';
-import HashtagIcon from 'assets/svgComponents/HashtagIcon';
-import { useHistory } from 'react-router-dom';
-import { router } from 'router/router';
+import ExchangeIcon from "assets/svgComponents/ExchangeIcon";
+import { useWizard } from "react-use-wizard";
+import QRPopup from "./QRPopup";
+import Header from "pages/Wallet/Header";
+import BigNumber from "bignumber.js";
+import ContactsPopup from "./ContactsPopup";
+import { isNumeric } from "utils/validations";
+import { useDispatch, useSelector, connect } from "react-redux";
+import { Field, change, reset, reduxForm, getFormSyncErrors, formValueSelector } from "redux-form";
+import Snackbar from "components/Snackbar/Snackbar";
+import { isObjectEmpty, objectToArray, truncateString } from "utils";
+import NetworkIcons from "components/primitives/NetworkIcons";
+import AccountsPopup from "./AccountsPopup";
+import BarcodeSendIcon from "assets/svgComponents/BarcodeSendIcon";
+import { PropsFromTokenDashboard } from "pages/Recieve/Receive";
+import keyring from "@polkadot/ui-keyring";
+import { AccountMeta } from "utils/types";
+import { FlowValue, SendAccountFlowEnum } from "./Send";
+import HashtagIcon from "assets/svgComponents/HashtagIcon";
+import { useHistory } from "react-router-dom";
+import { router } from "router/router";
 
 const validate = (values: { address: string; amount: number }) => {
   const errors: any = {};
   if (!values.address) {
-    errors.address = 'Please enter address';
+    errors.address = "Please enter address";
   }
   if (values.address && !isValidPolkadotAddress(values.address)) {
-    errors.address = 'Please enter valid address';
+    errors.address = "Please enter valid address";
   } else if (!values.amount) {
-    errors.amount = 'Please enter amount';
+    errors.amount = "Please enter amount";
   } else if (values.amount && !isNumeric(values.amount)) {
-    errors.amount = 'Amount value must be integer value';
+    errors.amount = "Amount value must be integer value";
   }
 
   return errors;
@@ -87,7 +87,7 @@ function SendToken({
   amount,
   propsFromTokenDashboard,
   accountMeta,
-  setAccountMeta
+  setAccountMeta,
 }: Props) {
   const history = useHistory();
 
@@ -99,7 +99,7 @@ function SendToken({
   const [isContactsPopupOpen, setIsContactsPopupOpen] = useState<boolean>(false);
 
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
-  const [snackbarError, setSnackbarError] = useState<string>('');
+  const [snackbarError, setSnackbarError] = useState<string>("");
 
   // todo proper typing
   const { selectedAsset } = useSelector((state: any) => state.sendToken);
@@ -120,7 +120,7 @@ function SendToken({
   };
 
   const handleClickAccount = (address: string) => {
-    dispatch(change('sendToken', 'address', address));
+    dispatch(change("sendToken", "address", address));
     setIsAccountsPopupOpen(false);
 
     const pair = keyring.getPair(address);
@@ -148,7 +148,7 @@ function SendToken({
   };
 
   const handleCloseContacts = (address: string) => {
-    dispatch(change('sendToken', 'address', address));
+    dispatch(change("sendToken", "address", address));
     setIsContactsPopupOpen(false);
 
     const pair = keyring.getAddress(address);
@@ -172,11 +172,11 @@ function SendToken({
     if (propsFromTokenDashboard?.fromTokenDashboard) {
       history.push({
         pathname: router.tokenDashboard,
-        state: { asset: propsFromTokenDashboard?.asset }
+        state: { asset: propsFromTokenDashboard?.asset },
       });
     } else {
       previousStep();
-      dispatch(reset('sendToken'));
+      dispatch(reset("sendToken"));
       setFlow(undefined);
     }
   };
@@ -184,7 +184,7 @@ function SendToken({
   useEffect(() => {
     console.log('~ abilityToTransfer', abilityToTransfer);
     if (!abilityToTransfer && !loading) {
-      setSnackbarError('No enough funds to make transfer');
+      setSnackbarError("No enough funds to make transfer");
       setIsSnackbarOpen(true);
     }
   }, [loading]);
@@ -192,7 +192,7 @@ function SendToken({
   const isDisabled = (
     errors: Record<string, string>,
     loading: boolean,
-    abilityToTransfer: boolean
+    abilityToTransfer: boolean,
   ) => {
     if (!isObjectEmpty(errors)) return true;
     if (loading) return true;
@@ -217,7 +217,7 @@ function SendToken({
       <Header
         title={`SEND ${selectedAsset?.symbol} (${selectedAsset?.chain})`}
         closeAction={() => {
-          dispatch(reset('sendToken'));
+          dispatch(reset("sendToken"));
           history.push(router.home);
         }}
         backAction={handleBack}
@@ -243,14 +243,14 @@ function SendToken({
 
             <Price>
               <span>
-                ${amount && price ? new BigNumber(amount).times(price).toFormat(2) : '0.00'} USD
+                ${amount && price ? new BigNumber(amount).times(price).toFormat(2) : "0.00"} USD
               </span>
               <ExchangeIconContainer>
                 <ExchangeIcon />
               </ExchangeIconContainer>
             </Price>
           </ContentItem>
-          {handleShowAccountInput(flow, 'address') ? (
+          {handleShowAccountInput(flow, "address") ? (
             <ContentItem>
               <ContentItemTitle>Send to</ContentItemTitle>
               <Field
@@ -262,13 +262,13 @@ function SendToken({
                 component={HumbleInput}
                 format={(value: string) => formatAddressValue(value, flow)}
                 props={{
-                  type: 'text',
-                  bgColor: '#f3f3f3',
-                  color: '#18191a',
-                  placeholderColor: '#b1b5c3',
-                  fontSize: '16px',
-                  height: '48px',
-                  marginTop: '5px',
+                  type: "text",
+                  bgColor: "#f3f3f3",
+                  color: "#18191a",
+                  placeholderColor: "#b1b5c3",
+                  fontSize: "16px",
+                  height: "48px",
+                  marginTop: "5px",
                   accountMeta,
                   readOnly:
                     flow === SendAccountFlowEnum.SendToTrustedContact ||
@@ -278,7 +278,7 @@ function SendToken({
                     <ContactsIcon stroke="#111" />
                   ),
                   IconAlignment:
-                    flow === SendAccountFlowEnum.SendToTrustedContact ? 'right' : 'left'
+                    flow === SendAccountFlowEnum.SendToTrustedContact ? "right" : "left",
                 }}
               />
             </ContentItem>
@@ -326,12 +326,12 @@ function SendToken({
               placeholder="Enter note"
               component={HumbleInput}
               props={{
-                type: 'text',
-                bgColor: '#f2f2f2',
-                color: '#18191a',
-                placeholderColor: '#b1b5c3',
-                height: '45px',
-                fontSize: '14px'
+                type: "text",
+                bgColor: "#f2f2f2",
+                color: "#18191a",
+                placeholderColor: "#b1b5c3",
+                height: "45px",
+                fontSize: "14px",
               }}
             />
           </ContentItem>
@@ -353,7 +353,7 @@ function SendToken({
               <span>
                 {new BigNumber(selectedAsset.balance.overall)
                   .minus(selectedAsset.balance.locked)
-                  .toString()}{' '}
+                  .toString()}{" "}
                 {selectedAsset?.symbol.toUpperCase()}
               </span>
             </InfoRow>
@@ -366,7 +366,7 @@ function SendToken({
           </Info>
           <Button
             type="submit"
-            text={loading ? 'Calculating ability to transfer...' : 'Preview Send'}
+            text={loading ? "Calculating ability to transfer..." : "Preview Send"}
             justify="center"
             margin="13px 0 0"
             Icon={<RightArrow width={23} fill="#fff" />}
@@ -392,7 +392,7 @@ function SendToken({
             setFlow(undefined);
           }}
           closeAction={() => {
-            dispatch(reset('sendToken'));
+            dispatch(reset("sendToken"));
             history.push(router.home);
           }}
           handleCloseContacts={handleCloseContacts}
@@ -403,20 +403,20 @@ function SendToken({
 }
 
 export default connect((state: any) => ({
-  errors: getFormSyncErrors('sendToken')(state),
-  amount: formValueSelector('sendToken')(state, 'amount'),
+  errors: getFormSyncErrors("sendToken")(state),
+  amount: formValueSelector("sendToken")(state, "amount"),
   initialValues: {
-    token: state.sendToken.selectedAsset.symbol
-  }
+    token: state.sendToken.selectedAsset.symbol,
+  },
 }))(
   reduxForm<Record<string, unknown>, Props>({
-    form: 'sendToken',
+    form: "sendToken",
     validate,
     destroyOnUnmount: false,
     enableReinitialize: true,
     keepDirtyOnReinitialize: true,
-    updateUnregisteredFields: true
-  })(SendToken)
+    updateUnregisteredFields: true,
+  })(SendToken),
 );
 
 const Container = styled.div`

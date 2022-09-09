@@ -31,7 +31,7 @@ export default function Receive() {
   const [networks, setNetworks] = useState<any>(getNetworks(prices, infos, disabledTokens));
   const [selectedNetwork, setSelectedNetwork] = useState<Network & Asset>();
 
-  const [recoded, setRecoded] = useState<string>('');
+  const [recoded, setRecoded] = useState<string>("");
 
   useEffect(() => {
     async function go() {
@@ -47,7 +47,7 @@ export default function Receive() {
       const recoded = recodeAddress(
         activeAccount.address,
         selectedNetwork?.prefix,
-        selectedNetwork?.encodeType
+        selectedNetwork?.encodeType,
       );
       setRecoded(recoded);
     }
@@ -57,7 +57,7 @@ export default function Receive() {
   useEffect(() => {
     if (propsFromTokenDashboard?.fromTokenDashboard) {
       const network = networks.find(
-        (network: any) => network.chain === propsFromTokenDashboard.chain
+        (network: any) => network.chain === propsFromTokenDashboard.chain,
       );
       setSelectedNetwork(network);
     }

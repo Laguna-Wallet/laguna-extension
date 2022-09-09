@@ -1,24 +1,24 @@
-import TimerIcon from 'assets/svgComponents/TimerIcon';
-import MenuHeader from 'components/MenuHeader/MenuHeader';
-import Button from 'components/primitives/Button';
-import HumbleInput from 'components/primitives/HumbleInput';
-import Snackbar from 'components/Snackbar/Snackbar';
-import { millisecondsToMinutes } from 'date-fns';
-import { minutesToMilliseconds } from 'date-fns/esm';
-import { memo, useEffect, useState } from 'react';
-import styled from 'styled-components';
-import { Messages, SnackbarMessages } from 'utils/types';
-import { useHistory, Link } from 'react-router-dom';
-import { router } from 'router/router';
+import TimerIcon from "assets/svgComponents/TimerIcon";
+import MenuHeader from "components/MenuHeader/MenuHeader";
+import Button from "components/primitives/Button";
+import HumbleInput from "components/primitives/HumbleInput";
+import Snackbar from "components/Snackbar/Snackbar";
+import { millisecondsToMinutes } from "date-fns";
+import { minutesToMilliseconds } from "date-fns/esm";
+import { memo, useEffect, useState } from "react";
+import styled from "styled-components";
+import { Messages, SnackbarMessages } from "utils/types";
+import { useHistory, Link } from "react-router-dom";
+import { router } from "router/router";
 
 function AutoLockTimer() {
   const history = useHistory();
 
   const [isOpen, setOpen] = useState<boolean>(true);
-  const [timeout, changeTimeout] = useState<string>('');
+  const [timeout, changeTimeout] = useState<string>("");
   const [isChangeTime, setIsChangeTime] = useState<boolean>(false);
 
-  const [snackbarError, setSnackbarError] = useState<string>('');
+  const [snackbarError, setSnackbarError] = useState<string>("");
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
 
   const handleSetTimeout = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -46,11 +46,11 @@ function AutoLockTimer() {
 
     chrome.runtime.sendMessage({
       type: Messages.ChangeInterval,
-      payload: { timeout: minutesToMilliseconds(Number(timeout)).toString() }
+      payload: { timeout: minutesToMilliseconds(Number(timeout)).toString() },
     });
     history.push({
       pathname: router.home,
-      state: { snackbar: { show: true, message: SnackbarMessages.AutoLockUpdated } }
+      state: { snackbar: { show: true, message: SnackbarMessages.AutoLockUpdated } },
     });
   };
 
@@ -71,8 +71,8 @@ function AutoLockTimer() {
           history.push({
             pathname: router.home,
             state: {
-              isMenuOpen: true
-            }
+              isMenuOpen: true,
+            },
           });
         }}
       />
@@ -84,11 +84,11 @@ function AutoLockTimer() {
         <HumbleInput
           id="auto-lock-timer"
           type="text"
-          value={timeout || ''}
+          value={timeout || ""}
           onChange={handleSetTimeout}
           bgColor="#221d1d"
           borderColor="#303030"
-          color={isChangeTime ? '#fff' : '#777E91'}
+          color={isChangeTime ? "#fff" : "#777E91"}
           height="48px"
           marginTop="22px"
           padding="8px 22px 5px 16px"

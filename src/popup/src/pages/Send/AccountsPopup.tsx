@@ -1,17 +1,17 @@
-import styled from 'styled-components/macro';
-import keyring from '@polkadot/ui-keyring';
-import AddressBookIcon from 'assets/svgComponents/AdressBookIcon';
-import HumbleInput from 'components/primitives/HumbleInput';
-import { useAccount } from 'context/AccountContext';
-import Header from 'pages/Wallet/Header';
-import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { truncateString } from 'utils';
-import { recodeAddress } from 'utils/polkadot';
-import { Prefixes } from 'utils/types';
-import LoopIcon from 'assets/svgComponents/loopIcon';
-import { useHistory } from 'react-router-dom';
-import { router } from 'router/router';
+import styled from "styled-components/macro";
+import keyring from "@polkadot/ui-keyring";
+import AddressBookIcon from "assets/svgComponents/AdressBookIcon";
+import HumbleInput from "components/primitives/HumbleInput";
+import { useAccount } from "context/AccountContext";
+import Header from "pages/Wallet/Header";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { truncateString } from "utils";
+import { recodeAddress } from "utils/polkadot";
+import { Prefixes } from "utils/types";
+import LoopIcon from "assets/svgComponents/loopIcon";
+import { useHistory } from "react-router-dom";
+import { router } from "router/router";
 
 type Props = {
   handleClickAccount: (address: string) => void;
@@ -23,7 +23,7 @@ export default function AccountsPopup({ handleClickAccount, onBack }: Props) {
 
   const account = useAccount();
   const [accounts, setAccounts] = useState<any[] | undefined>(undefined);
-  const [filter, setFilter] = useState<string>('');
+  const [filter, setFilter] = useState<string>("");
   const { selectedAsset } = useSelector((state: any) => state.sendToken);
   const prefix = Prefixes[selectedAsset.chain];
 
@@ -49,7 +49,7 @@ export default function AccountsPopup({ handleClickAccount, onBack }: Props) {
     return accounts.filter(
       (account) =>
         account.address.toLowerCase().includes(filterWord.toLowerCase()) ||
-        account.name.toLowerCase().includes(filterWord.toLowerCase())
+        account.name.toLowerCase().includes(filterWord.toLowerCase()),
     );
   };
 
@@ -74,7 +74,7 @@ export default function AccountsPopup({ handleClickAccount, onBack }: Props) {
             placeholderColor="#777e90"
             color="#111"
             value={filter}
-            IconAlignment={'left'}
+            IconAlignment={"left"}
             Icon={<LoopIcon />}
             onChange={(e: any) => setFilter(e.target.value)}
           />

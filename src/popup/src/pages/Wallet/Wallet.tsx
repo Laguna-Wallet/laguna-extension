@@ -50,12 +50,12 @@ function Wallet({ snackbar }: Props) {
   const [activeTab, setActiveTab] = useState<number>(1);
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
   const [overallBalance, setOverallBalance] = useState<number | undefined>(undefined);
-  const [snackbarMessage, setSnackbarMessage] = useState<string>('');
+  const [snackbarMessage, setSnackbarMessage] = useState<string>("");
   const accountBalances = useSelector((state: State) => state.wallet?.accountsBalances);
   const [overallPriceChange, setOverallPriceChange] = useState<number | undefined>(undefined);
   const isPopupWindow = isInPopup();
 
-  const negativeValue = String(overallPriceChange).includes('-');
+  const negativeValue = String(overallPriceChange).includes("-");
   const dispatch = useDispatch();
 
   const {
@@ -63,7 +63,7 @@ function Wallet({ snackbar }: Props) {
     infos,
     accountsBalances,
     loading: accountsChanging,
-    disabledTokens
+    disabledTokens,
   } = useSelector((state: State) => state.wallet);
 
   const balances = accountsBalances?.balances;
@@ -79,7 +79,7 @@ function Wallet({ snackbar }: Props) {
         prices,
         infos,
         balances,
-        disabledTokens
+        disabledTokens,
       );
       setAssets(assets);
 
@@ -114,7 +114,7 @@ function Wallet({ snackbar }: Props) {
   }, [activeAccount, accountBalances]);
 
   const renderBallance = (balance: string): ReactNode => {
-    const splited = balance.split('.');
+    const splited = balance.split(".");
 
     return (
       <>
@@ -131,9 +131,9 @@ function Wallet({ snackbar }: Props) {
   const filtered = useMemo(
     () =>
       assets.filter(
-        ({ chain }, index: number) => chain !== 'westend' && !itemName.includes(chain, index + 1)
+        ({ chain }, index: number) => chain !== "westend" && !itemName.includes(chain, index + 1),
       ),
-    [assets]
+    [assets],
   );
 
   const reduceAssets = useMemo(
@@ -142,7 +142,7 @@ function Wallet({ snackbar }: Props) {
         c[v.chain] = (c[v.chain] || 0) + v.calculatedPrice;
         return c;
       }, {}),
-    [assets]
+    [assets],
   );
 
   const networks = useMemo(
@@ -154,10 +154,10 @@ function Wallet({ snackbar }: Props) {
         return {
           ...el,
           calculatedPrice: reduceAssets[samCalculatedPrice[0]],
-          assetsCount: filteredSimilarAssets.length
+          assetsCount: filteredSimilarAssets.length,
         };
       }),
-    [assets, filtered, reduceAssets]
+    [assets, filtered, reduceAssets],
   );
 
   const renderAssets = isEmpty ? (
@@ -207,7 +207,7 @@ function Wallet({ snackbar }: Props) {
             onClick={() => {
               history.push({
                 pathname: router.createAccount,
-                state: { redirectedFromDashboard: true }
+                state: { redirectedFromDashboard: true },
               });
             }}>
             <SecureNowIcon />
@@ -230,15 +230,15 @@ function Wallet({ snackbar }: Props) {
                     <TitleSmallText>$</TitleSmallText>
                     {(overallBalance || overallBalance === 0) && !accountsChanging
                       ? renderBallance(new BigNumber(overallBalance).toFormat(2))
-                      : '...'}{' '}
+                      : "..."}{" "}
                   </span>
                 </Balance>
                 <PriceChange negativeValue={negativeValue}>
                   {accountsChanging ? (
-                    '...'
+                    "..."
                   ) : (
                     <>
-                      {overallPriceChange && overallPriceChange > 0 ? '+' : ''}
+                      {overallPriceChange && overallPriceChange > 0 ? "+" : ""}
                       {overallPriceChange && new BigNumber(overallPriceChange).toFormat(2)}%
                     </>
                   )}
@@ -281,7 +281,7 @@ function Wallet({ snackbar }: Props) {
             </SwitchAssetIconContainer>
           </ListHeader>
           <ListContentParent isPopupWindow={isPopupWindow}>
-            {accountsChanging ? 'Loading...' : renderAssets}
+            {accountsChanging ? "Loading..." : renderAssets}
           </ListContentParent>
         </List>
         <Snackbar
@@ -371,7 +371,7 @@ const BalanceContainer = styled.div<{ isEmpty: boolean }>`
   display: flex;
   flex-direction: column;
   text-align: center;
-  margin-top: ${({ isEmpty }) => (isEmpty ? '75px' : '59px')};
+  margin-top: ${({ isEmpty }) => (isEmpty ? "75px" : "59px")};
   font-size: 44px;
   font-weight: 500;
   span {
@@ -420,7 +420,7 @@ const PriceChange = styled.div<{ negativeValue: boolean }>`
   display: flex;
   align-items: center;
   justify-content: center;
-  color: ${({ negativeValue }) => (!negativeValue ? '#45b26b' : '#606060')};
+  color: ${({ negativeValue }) => (!negativeValue ? "#45b26b" : "#606060")};
 `;
 
 const TitleSmallText = styled.span`
@@ -449,7 +449,7 @@ const SwitchAssetIconContainer = styled.div`
 `;
 
 const Button = styled.div<{ isEmpty?: boolean }>`
-  width: ${({ isEmpty }) => (isEmpty ? '142px' : '112px')};
+  width: ${({ isEmpty }) => (isEmpty ? "142px" : "112px")};
   height: 37px;
   display: flex;
   align-items: center;
@@ -470,7 +470,7 @@ const List = styled.div<{ isEmpty: boolean }>`
   width: 323px;
   display: flex;
   flex-direction: column;
-  margin-top: ${({ isEmpty }) => (isEmpty ? '82px' : '71px')};
+  margin-top: ${({ isEmpty }) => (isEmpty ? "82px" : "71px")};
 `;
 
 const ListHeader = styled.div`
@@ -484,11 +484,11 @@ const ListHeaderItem = styled.div<{ index: number; active: number }>`
   cursor: pointer;
   font-family: Inter;
   font-size: 12px;
-  font-weight: ${({ index, active }) => (index === active ? '500' : '400')};
+  font-weight: ${({ index, active }) => (index === active ? "500" : "400")};
   line-height: 1.44;
   letter-spacing: 0.96px;
   text-align: left;
-  color: ${({ index, active }) => (index === active ? '#18191a' : '#b1b5c3')};
+  color: ${({ index, active }) => (index === active ? "#18191a" : "#b1b5c3")};
   :nth-child(2) {
     margin-left: 10px;
   }
@@ -496,7 +496,7 @@ const ListHeaderItem = styled.div<{ index: number; active: number }>`
 
 const ListContentParent = styled.div<{ isPopupWindow?: boolean | null }>`
   width: 100%;
-  height: ${({ isPopupWindow }) => (isPopupWindow ? '213px' : '100%')};
+  height: ${({ isPopupWindow }) => (isPopupWindow ? "213px" : "100%")};
   overflow: hidden;
   display: flex;
   flex-direction: column;

@@ -26,7 +26,7 @@ export const generateNewWalletAddress = (mnemonicSeed: string): string => {
 export const toCheckSumAddress = (address: string): string => {
   const checksumAddress = ethers.utils.getAddress(address);
   return checksumAddress;
-};
+};;
 
 export const isValidEVMAddress = (address: string): Response => {
   try {
@@ -50,19 +50,19 @@ export const isValidEVMAddress = (address: string): Response => {
 export const getProvider = (network: EVMNetwork): ethers.providers.JsonRpcProvider => {
   // return new ethers.providers.JsonRpcProvider('HTTP://127.0.0.1:7545');
   return new ethers.providers.JsonRpcProvider(networks[network].nodeUrl);
-};
+};;
 
 export const getNonce = async (network: EVMNetwork, address: string): Promise<BigNumber> => {
   const provider = new ethers.providers.JsonRpcProvider(networks[network].nodeUrl);
   const nonce = await provider.getTransactionCount(address, 'latest');
   return new BigNumber(nonce);
-};
+};;
 
 export const getEvmGasPrice = async (network: EVMNetwork): Promise<BigNumber> => {
   const provider = new ethers.providers.JsonRpcProvider(networks[network].nodeUrl);
   const gasPrice = await provider.getGasPrice();
   return new BigNumber(gasPrice.toString());
-};
+};;
 
 export const estimateGas = async (
   network: EVMNetwork,
@@ -120,7 +120,7 @@ export const getEVMBalance = async (
   let balanceInBaseUnit;
   switch (asset.assetType) {
     case EVMAssetType.NATIVE: {
-      balanceInBaseUnit = await provider.getBalance(address);
+      balanceInBaseUnit = await provider.getBalance(address);;
       break;
     }
     case EVMAssetType.ERC20: {

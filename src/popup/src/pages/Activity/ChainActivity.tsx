@@ -1,20 +1,20 @@
-import styled from 'styled-components';
-import { useAccount } from 'context/AccountContext';
-import activityBg from 'assets/imgs/activity-bg.png';
-import Header from 'pages/Wallet/Header';
-import Footer from 'pages/Wallet/Footer';
-import { getLatestTransactionsForSingleChain } from 'utils/polkadot';
-import { useEffect, useState } from 'react';
-import ActivityInfo from './ActivityInfo';
-import { useSelector } from 'react-redux';
-import PolkadotLogoIcon from 'assets/svgComponents/PolkadotLogoIcon';
-import KusamaLogoIcon from 'assets/svgComponents/KusamaLogoIcon';
-import { Asset, Transaction } from 'utils/types';
-import Popup from 'components/Popup/Popup';
-import { ActivityItem } from './Activity';
-import InfiniteScroll from 'react-infinite-scroll-component';
-import { useHistory, useLocation } from 'react-router-dom';
-import { router } from 'router/router';
+import styled from "styled-components";
+import { useAccount } from "context/AccountContext";
+import activityBg from "assets/imgs/activity-bg.png";
+import Header from "pages/Wallet/Header";
+import Footer from "pages/Wallet/Footer";
+import { getLatestTransactionsForSingleChain } from "utils/polkadot";
+import { useEffect, useState } from "react";
+import ActivityInfo from "./ActivityInfo";
+import { useSelector } from "react-redux";
+import PolkadotLogoIcon from "assets/svgComponents/PolkadotLogoIcon";
+import KusamaLogoIcon from "assets/svgComponents/KusamaLogoIcon";
+import { Asset, Transaction } from "utils/types";
+import Popup from "components/Popup/Popup";
+import { ActivityItem } from "./Activity";
+import InfiniteScroll from "react-infinite-scroll-component";
+import { useHistory, useLocation } from "react-router-dom";
+import { router } from "router/router";
 
 type LocationState = {
   chain?: string;
@@ -94,19 +94,19 @@ export default function ChainActivity() {
         <div
           id="scrollableDiv"
           style={{
-            width: '100%',
+            width: "100%",
             height: 420,
-            overflow: 'auto',
-            display: 'flex',
-            justifyContent: 'center',
-            position: 'relative',
-            marginTop: 50
+            overflow: "auto",
+            display: "flex",
+            justifyContent: "center",
+            position: "relative",
+            marginTop: 50,
           }}>
           <InfiniteScroll
             dataLength={transactions.length}
             next={fetchMoreData}
             hasMore={count !== transactions.length}
-            style={{ display: 'flex', flexDirection: 'column' }}
+            style={{ display: "flex", flexDirection: "column" }}
             scrollableTarget="scrollableDiv"
             loader={<h4>Loading...</h4>}>
             {transactions &&
@@ -155,13 +155,13 @@ export default function ChainActivity() {
 
 function handleIcons(chain: any) {
   switch (chain) {
-    case 'westend':
+    case "westend":
       return <PolkadotLogoIcon width={20} height={20} />;
       break;
-    case 'polkadot':
+    case "polkadot":
       return <PolkadotLogoIcon width={20} height={20} />;
       break;
-    case 'kusama':
+    case "kusama":
       return <KusamaLogoIcon fill="#111" stroke="#111" />;
       break;
     default:
@@ -216,7 +216,7 @@ const ActivityItemContainer = styled.div<{ bgColor?: string }>`
   padding: 14px;
   box-sizing: border-box;
   text-decoration: none;
-  background-color: ${({ bgColor }) => bgColor || '#fff'};
+  background-color: ${({ bgColor }) => bgColor || "#fff"};
   border-radius: 4px;
   cursor: pointer;
 `;

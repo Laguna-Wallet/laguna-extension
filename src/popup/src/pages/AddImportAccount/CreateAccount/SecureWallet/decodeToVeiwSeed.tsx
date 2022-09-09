@@ -1,16 +1,16 @@
-import Button from 'components/primitives/Button';
-import HumbleInput from 'components/primitives/HumbleInput';
-import Snackbar from 'components/Snackbar/Snackbar';
-import { useState } from 'react';
-import styled from 'styled-components';
-import { validatePassword } from 'utils/polkadot';
-import encodeBg from 'assets/imgs/encode-bg.png';
-import { useWizard } from 'react-use-wizard';
-import { useAccount } from 'context/AccountContext';
-import * as AES from 'crypto-js/aes';
-import Utf8 from 'crypto-js/enc-utf8';
-import { Field, InjectedFormProps, reduxForm } from 'redux-form';
-import { validPassword } from 'utils';
+import Button from "components/primitives/Button";
+import HumbleInput from "components/primitives/HumbleInput";
+import Snackbar from "components/Snackbar/Snackbar";
+import { useState } from "react";
+import styled from "styled-components";
+import { validatePassword } from "utils/polkadot";
+import encodeBg from "assets/imgs/encode-bg.png";
+import { useWizard } from "react-use-wizard";
+import { useAccount } from "context/AccountContext";
+import * as AES from "crypto-js/aes";
+import Utf8 from "crypto-js/enc-utf8";
+import { Field, InjectedFormProps, reduxForm } from "redux-form";
+import { validPassword } from "utils";
 
 type Form = {
   password: string;
@@ -20,7 +20,7 @@ const DecodeToViewSeed = ({ handleSubmit, valid }: InjectedFormProps<Form>) => {
   const { nextStep } = useWizard();
   const account = useAccount();
 
-  const [snackbarError, setSnackbarError] = useState<string>('');
+  const [snackbarError, setSnackbarError] = useState<string>("");
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
 
   const submit = async (values: Form) => {
@@ -29,17 +29,17 @@ const DecodeToViewSeed = ({ handleSubmit, valid }: InjectedFormProps<Form>) => {
 
     if (!isValid) {
       setIsSnackbarOpen(true);
-      setSnackbarError('Incorrect Password');
+      setSnackbarError("Incorrect Password");
       return;
     }
 
     try {
       const decodedSeed = AES.decrypt(
         account.getActiveAccount()?.meta?.encodedSeed as string,
-        password
+        password,
       );
 
-      const seed = decodedSeed.toString(Utf8).split(' ');
+      const seed = decodedSeed.toString(Utf8).split(" ");
 
       account.setMnemonics(seed);
 
@@ -65,20 +65,20 @@ const DecodeToViewSeed = ({ handleSubmit, valid }: InjectedFormProps<Form>) => {
             placeholder="Your password"
             component={HumbleInput}
             props={{
-              type: 'password',
-              height: '48px',
-              fontSize: '16px',
-              bgColor: '#ececec',
-              color: '#434343',
-              placeholderColor: '#000',
-              errorBorderColor: '#fb5a5a',
-              autoFocus: true
+              type: "password",
+              height: "48px",
+              fontSize: "16px",
+              bgColor: "#ececec",
+              color: "#434343",
+              placeholderColor: "#000",
+              errorBorderColor: "#fb5a5a",
+              autoFocus: true,
             }}
           />
           <Button
             type="submit"
             margin="10px 0 0 0"
-            text={'Next'}
+            text={"Next"}
             justify="center"
             styledDisabled={!valid}
           />
@@ -89,7 +89,7 @@ const DecodeToViewSeed = ({ handleSubmit, valid }: InjectedFormProps<Form>) => {
           close={() => setIsSnackbarOpen(false)}
           type="error"
           left="26px"
-          bottom={'148px'}
+          bottom={"148px"}
           transform="translateX(0)"
         />
       </Content>
@@ -98,8 +98,8 @@ const DecodeToViewSeed = ({ handleSubmit, valid }: InjectedFormProps<Form>) => {
 };
 
 export default reduxForm<Record<string, unknown>, any>({
-  form: 'DecodeToViewSeed',
-  validate: validPassword
+  form: "DecodeToViewSeed",
+  validate: validPassword,
 })(DecodeToViewSeed);
 
 const Container = styled.div<{ bg?: string }>`

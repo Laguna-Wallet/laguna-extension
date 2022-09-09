@@ -1,6 +1,6 @@
 /*global chrome*/
 
-import browser from 'webextension-polyfill';
+import browser from "webextension-polyfill";
 
 // todo refactor localStorage api to chrome.storage
 // export function saveToStorage({ key, value }: { key: string; value: string }) {
@@ -31,7 +31,7 @@ export const saveToStorage = async function ({ key, value }: { key: string; valu
   return new Promise((resolve, reject) => {
     try {
       browser.storage.local.set({ [key]: value }).then(() => {
-        resolve('');
+        resolve("");
       });
     } catch (ex) {
       reject(ex);
@@ -45,7 +45,7 @@ export function sendMessagePromise(obj: Record<string, unknown>): Promise<Record
     if (response) {
       resolve(response);
     } else {
-      reject('Something wrong');
+      reject("Something wrong");
     }
 
     // , (response) => {
@@ -62,7 +62,7 @@ export const clearFromStorage = async function (keys: string) {
   return new Promise((resolve, reject) => {
     try {
       browser.storage.local.remove(keys).then(() => {
-        resolve('');
+        resolve("");
       });
     } catch (ex) {
       reject(ex);
@@ -84,6 +84,6 @@ export async function saveToChromeStorage({ key, value }: { key: string; value: 
 
 export const isInPopup = function () {
   return typeof chrome != undefined && chrome.extension
-    ? chrome.extension.getViews({ type: 'popup' }).length > 0
+    ? chrome.extension.getViews({ type: "popup" }).length > 0
     : null;
 };

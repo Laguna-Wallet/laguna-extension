@@ -1,12 +1,12 @@
-import styled from 'styled-components';
-import { useCallback, useState } from 'react';
-import { useDropzone } from 'react-dropzone';
-import { importJson } from 'utils/polkadot';
-import { convertUploadedFileToJson } from 'utils';
-import { KeyringPair$Json } from '@polkadot/keyring/types';
-import { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
-import Input from 'components/primitives/Input';
-import FileUploadIcon from 'assets/svgComponents/FileUploadIcon';
+import styled from "styled-components";
+import { useCallback, useState } from "react";
+import { useDropzone } from "react-dropzone";
+import { importJson } from "utils/polkadot";
+import { convertUploadedFileToJson } from "utils";
+import { KeyringPair$Json } from "@polkadot/keyring/types";
+import { KeyringPairs$Json } from "@polkadot/ui-keyring/types";
+import Input from "components/primitives/Input";
+import FileUploadIcon from "assets/svgComponents/FileUploadIcon";
 
 type Props = {
   setFile: (file: KeyringPair$Json | KeyringPairs$Json) => void;

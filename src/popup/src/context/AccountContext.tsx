@@ -7,14 +7,14 @@ import {
   useContext,
   useEffect,
   useMemo,
-  useState
-} from 'react';
-import { mnemonicGenerate } from '@polkadot/util-crypto/mnemonic';
-import { getFromStorage, saveToStorage } from 'utils/chrome';
-import { StorageKeys } from 'utils/types';
-import keyring from '@polkadot/ui-keyring';
-import { encryptPassword, isObjectEmpty } from 'utils';
-import type { KeyringPair } from '@polkadot/keyring/types';
+  useState,
+} from "react";
+import { mnemonicGenerate } from "@polkadot/util-crypto/mnemonic";
+import { getFromStorage, saveToStorage } from "utils/chrome";
+import { StorageKeys } from "utils/types";
+import keyring from "@polkadot/ui-keyring";
+import { encryptPassword, isObjectEmpty } from "utils";
+import type { KeyringPair } from "@polkadot/keyring/types";
 
 // todoProperTyping
 interface IAccountCtx {
@@ -41,7 +41,7 @@ const initialContextValue = {
   json: {},
   setJson: () => undefined,
   getActiveAccount: () => undefined,
-  saveActiveAccount: (account: any) => undefined
+  saveActiveAccount: (account: any) => undefined,
 };
 
 const AccountContext = createContext<IAccountCtx>(initialContextValue);
@@ -50,14 +50,14 @@ const useAccount = () => {
   const context = useContext(AccountContext);
 
   if (!context) {
-    throw new Error('AccountContext must be used within a AccountStateProvider');
+    throw new Error("AccountContext must be used within a AccountStateProvider");
   }
 
   return context;
 };
 
 const AccountProvider = ({ children }: { children?: ReactNode }) => {
-  const [json, setJson] = useState<any>('');
+  const [json, setJson] = useState<any>("");
 
   // todo typing
   const [activeAccount, setActiveAccount] = useState<KeyringPair>();
@@ -83,7 +83,7 @@ const AccountProvider = ({ children }: { children?: ReactNode }) => {
   }, []);
 
   const generateMnemonics = useCallback(() => {
-    const mnemonics = mnemonicGenerate().split(' ');
+    const mnemonics = mnemonicGenerate().split(" ");
     setMnemonics(mnemonics);
     return mnemonics;
   }, []);
@@ -119,7 +119,7 @@ const AccountProvider = ({ children }: { children?: ReactNode }) => {
     json,
     setJson,
     getActiveAccount,
-    saveActiveAccount
+    saveActiveAccount,
   };
 
   return <AccountContext.Provider value={value}>{children}</AccountContext.Provider>;

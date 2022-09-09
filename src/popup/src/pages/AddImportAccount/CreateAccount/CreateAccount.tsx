@@ -30,14 +30,14 @@ type LocationState = {
 };
 
 export enum SecurityLevelEnum {
-  Secured = 'Secured',
-  Skipped = 'Skipped'
+  Secured = "Secured",
+  Skipped = "Skipped"
 }
 
 export default function CreateAccount({
   // redirectedFromSignUp,
   // redirectedFromDashboard,
-  encodePhase
+  encodePhase,
 }: Props & Partial<RouteComponentProps>) {
   const account = useAccount();
   const activeAccount = account.getActiveAccount();
@@ -57,8 +57,8 @@ export default function CreateAccount({
     // would be better to refactor and save data in redux, (just for flow)
 
     if (securityLevel === SecurityLevelEnum.Secured && account?.mnemonics) {
-      const mnemonicsStr = account?.mnemonics.join(' ');
-      const encodedSeed = AES.encrypt(account?.mnemonics.join(' '), password).toString();
+      const mnemonicsStr = account?.mnemonics.join(" ");
+      const encodedSeed = AES.encrypt(account?.mnemonics.join(" "), password).toString();
 
       const ethAddress = generateNewWalletAddress(mnemonicsStr);
 
@@ -69,7 +69,7 @@ export default function CreateAccount({
       });
 
       const newPair = addAccountMeta(pair.address, {
-        name: pair.address
+        name: pair.address,
       });
 
       if (!activeAccount || (activeAccount && isObjectEmpty(activeAccount))) {
@@ -78,17 +78,17 @@ export default function CreateAccount({
 
       browser.runtime.sendMessage({
         type: Messages.AddToKeyring,
-        payload: { seed: mnemonicsStr, password, meta: newPair.meta }
+        payload: { seed: mnemonicsStr, password, meta: newPair.meta },
       });
 
       browser.runtime.sendMessage({
         type: Messages.AuthUser,
-        payload: { password }
+        payload: { password },
       });
 
       saveToStorage({ key: StorageKeys.OnBoarding, value: true });
     } else {
-      const mnemonicsStr = account?.generateMnemonics().join(' ');
+      const mnemonicsStr = account?.generateMnemonics().join(" ");
       const encodedSeed = AES.encrypt(mnemonicsStr, password).toString();
 
       const ethAddress = generateNewWalletAddress(mnemonicsStr);
@@ -101,7 +101,7 @@ export default function CreateAccount({
       });
 
       const newPair = addAccountMeta(pair.address, {
-        name: pair.address
+        name: pair.address,
       });
 
       if (!activeAccount || (activeAccount && isObjectEmpty(activeAccount))) {
@@ -110,14 +110,14 @@ export default function CreateAccount({
 
       browser.runtime.sendMessage({
         type: Messages.AuthUser,
-        payload: { password }
+        payload: { password },
       });
 
       saveToStorage({ key: StorageKeys.OnBoarding, value: true });
 
       browser.runtime.sendMessage({
         type: Messages.AddToKeyring,
-        payload: { seed: mnemonicsStr, password, meta: newPair.meta }
+        payload: { seed: mnemonicsStr, password, meta: newPair.meta },
       });
     }
   };

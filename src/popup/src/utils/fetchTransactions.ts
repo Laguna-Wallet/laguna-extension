@@ -1,5 +1,5 @@
-import { timer } from 'utils';
-import { chains, Transaction } from './types';
+import { timer } from "utils";
+import { chains, Transaction } from "./types";
 
 // export async function fetchAllAccountsTransactions(address: string) {
 //   try {
@@ -86,15 +86,15 @@ export async function fetchAccountTransactionsByChain(address: string, chain: st
 
 export async function fetchTransactions(address: string, chain: string, row: number, page: number) {
   const res = await fetch(`https://${chain}.api.subscan.io/api/scan/transfers`, {
-    method: 'POST',
-    mode: 'cors',
-    cache: 'no-cache',
-    credentials: 'same-origin',
+    method: "POST",
+    mode: "cors",
+    cache: "no-cache",
+    credentials: "same-origin",
     headers: {
-      'Content-Type': 'application/json',
-      'X-API-Key': process.env.REACT_APP_SUBSCAN_KEY as string
+      "Content-Type": "application/json",
+      "X-API-Key": process.env.REACT_APP_SUBSCAN_KEY as string,
     },
-    body: JSON.stringify({ address, row: 30, page })
+    body: JSON.stringify({ address, row: 30, page }),
   });
 
   return await res.json();
@@ -109,6 +109,6 @@ export function transformTransfers(transfers: any[], chain: any): Transaction[] 
     to: transfer?.to,
     nonce: transfer?.nonce,
     hash: transfer?.hash,
-    timestamp: transfer?.block_timestamp
+    timestamp: transfer?.block_timestamp,
   }));
 }

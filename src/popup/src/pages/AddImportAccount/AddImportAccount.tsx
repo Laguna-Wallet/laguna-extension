@@ -1,16 +1,16 @@
-import { Wizard } from 'react-use-wizard';
+import { Wizard } from "react-use-wizard";
 // import AddImport from './ChooseAddImport';
-import { useState } from 'react';
+import { useState } from "react";
 // import CreateAccount from 'pages/CreateAccount/CreateAccount';
 // import ImportAccount from './ImportAccount';
 
 export enum PhaseEnum {
-  Import = 'Import',
-  Create = 'Create'
+  Import = "Import",
+  Create = "Create"
 }
 
 function AddImportForExistingUsers() {
-  const [phase, setPhase] = useState<string>('');
+  const [phase, setPhase] = useState<string>("");
 
   return (
     <Wizard>

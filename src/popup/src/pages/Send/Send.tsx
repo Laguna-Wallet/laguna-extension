@@ -1,7 +1,7 @@
-import react from 'react';
-import styled from 'styled-components';
-import SelectAsset from './SelectAsset';
-import Confirm from './Confirm';
+import react from "react";
+import styled from "styled-components";
+import SelectAsset from "./SelectAsset";
+import Confirm from "./Confirm";
 import {
   getApiInstance,
   getAssets,
@@ -31,10 +31,10 @@ import { IEVMBuildTransaction, IEVMToBeSignTransaction } from 'utils/evm/interfa
 import { EVMNetwork } from 'utils/evm/networks';
 
 export enum SendAccountFlowEnum {
-  SendToTrustedContact = 'SendToTrustedContact',
-  SendToAddress = 'SendToAddress',
-  SendToAccount = 'SendToAccount',
-  ScanQR = 'ScanQR'
+  SendToTrustedContact = "SendToTrustedContact",
+  SendToAddress = "SendToAddress",
+  SendToAccount = "SendToAccount",
+  ScanQR = "ScanQR"
 }
 
 export type FlowValue =
@@ -63,7 +63,7 @@ function Send({ initialIsContactsPopupOpen }: Props) {
   const { propsFromTokenDashboard } = location?.state || {};
 
   const { prices, infos, accountsBalances, disabledTokens } = useSelector(
-    (state: State) => state.wallet
+    (state: State) => state.wallet,
   );
 
   const balances = accountsBalances?.balances;
@@ -82,8 +82,8 @@ function Send({ initialIsContactsPopupOpen }: Props) {
 
   const [transfer, setTransfer] = useState<any>();
   const [fee, setFee] = useState<any>();
-  const [amountToSend, setAmountToSend] = useState<string>('');
-  const [recoded, setRecoded] = useState<string>('');
+  const [amountToSend, setAmountToSend] = useState<string>("");
+  const [recoded, setRecoded] = useState<string>("");
   const [loading, setLoading] = useState<any>();
   const [abilityToTransfer, setAbilityToTransfer] = useState<boolean>(true);
   const [blockHash, setBlockHash] = useState<string>('');
@@ -114,7 +114,7 @@ function Send({ initialIsContactsPopupOpen }: Props) {
       const recoded = recodeAddress(
         form.address,
         prefix,
-        reduxSendTokenState.selectedAsset.encodeType
+        reduxSendTokenState.selectedAsset.encodeType,
       );
 
       // const recoded = recodeAddressForTransaction(form.address, prefix);
