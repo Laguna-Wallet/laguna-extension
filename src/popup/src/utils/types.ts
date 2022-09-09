@@ -327,7 +327,7 @@ export const networks: Network[] = [
     chain: EVMNetwork.ETHEREUM,
     decimal: 18,
     assetType: EVMAssetType.NATIVE
-  }
+  },
   // {
   //   name: 'USD Coin',
   //   symbol: TokenSymbols.USDC,
@@ -344,21 +344,21 @@ export const networks: Network[] = [
   //   assetType: EVMAssetType.ERC20,
   //   contractAddress: '0xdAC17F958D2ee523a2206206994597C13D831ec7'
   // },
-  // {
-  //   name: 'Ethereum',
-  //   symbol: TokenSymbols.ethereum,
-  //   chain: EVMNetwork.ETHEREUM_TESTNET_GOERLI,
-  //   decimal: 18,
-  //   assetType: EVMAssetType.NATIVE
-  // },
-  // {
-  //   name: 'TBC',
-  //   symbol: TokenSymbols.TBC,
-  //   chain: EVMNetwork.ETHEREUM_TESTNET_GOERLI,
-  //   decimal: 18,
-  //   assetType: EVMAssetType.ERC20,
-  //   contractAddress: 'TBC'
-  // }
+  {
+    name: 'Ethereum',
+    symbol: TokenSymbols.ethereum,
+    chain: EVMNetwork.ETHEREUM_TESTNET_GOERLI,
+    decimal: 18,
+    assetType: EVMAssetType.NATIVE
+  },
+  {
+    name: 'TBC',
+    symbol: TokenSymbols.TBC,
+    chain: EVMNetwork.ETHEREUM_TESTNET_GOERLI,
+    decimal: 18,
+    assetType: EVMAssetType.ERC20,
+    contractAddress: 'TBC'
+  }
   // {
   //   name: 'Avalanche',
   //   chain: EVMNetwork.AVALANCHE_TESTNET_FUJI,

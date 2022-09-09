@@ -91,6 +91,11 @@ export async function fetchAccountsBalances(
             network.chain === EVMNetwork.ETHEREUM_TESTNET_GOERLI) &&
           ethAddress
         ) {
+          console.log('~ network.chain', network.chain);
+          console.log(
+            '~EvmAssets[network.chain][network.symbol]',
+            EvmAssets[network.chain][network.symbol]
+          );
           const ethBalance = await getEVMBalance(
             network.chain,
             ethAddress,
@@ -98,7 +103,7 @@ export async function fetchAccountsBalances(
           );
 
           console.log('~ network.chain', network.chain);
-          console.log('~ ethBalance', ethBalance);
+          console.log('~ ethBalance', ethBalance.toString());
 
           if (new BigNumber(ethBalance.toString()).isEqualTo(0)) {
             i++;
