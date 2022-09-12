@@ -1,15 +1,15 @@
-import styled from 'styled-components';
-import { useAccount } from 'context/AccountContext';
-import { Asset, Network } from 'utils/types';
-import { Wizard } from 'react-use-wizard';
-import { useEffect, useState } from 'react';
-import ReceiveToken from './ReceiveToken';
-import { getNetworks, recodeAddress } from 'utils/polkadot';
-import { useSelector } from 'react-redux';
-import SelectNetwork from './SelectNetwork';
-import { State } from 'redux/store';
-import { useLocation } from 'react-router-dom';
-import { EVMNetwork } from 'utils/evm/networks';
+import styled from "styled-components";
+import { useAccount } from "context/AccountContext";
+import { Asset, Network } from "utils/types";
+import { Wizard } from "react-use-wizard";
+import { useEffect, useState } from "react";
+import ReceiveToken from "./ReceiveToken";
+import { getNetworks, recodeAddress } from "utils/polkadot";
+import { useSelector } from "react-redux";
+import SelectNetwork from "./SelectNetwork";
+import { State } from "redux/store";
+import { useLocation } from "react-router-dom";
+import { EVMNetwork } from "utils/evm/networks";
 export interface PropsFromTokenDashboard {
   fromTokenDashboard?: boolean;
   asset?: Asset;
@@ -39,7 +39,10 @@ export default function Receive() {
       // const api = await getApiInstance(selectedNetwork.chain);
       // const prefix = api.consts.system.ss58Prefix;
 
-      if (selectedNetwork.chain === EVMNetwork.ETHEREUM && activeAccount?.meta?.ethAddress) {
+      if (
+        selectedNetwork.chain === EVMNetwork.ETHEREUM ||
+        (EVMNetwork.AVALANCHE_TESTNET_FUJI && activeAccount?.meta?.ethAddress)
+      ) {
         setRecoded(activeAccount?.meta?.ethAddress);
         return;
       }
@@ -115,11 +118,11 @@ const ContentItem = styled.div`
 const Text = styled.div`
   font-size: 14px;
   color: #8c8c8c;
-  font-family: 'Sequel100Wide55Wide';
+  font-family: "Sequel100Wide55Wide";
 `;
 
 const BottomText = styled.div`
-  font-family: 'Inter';
+  font-family: "Inter";
   font-weight: 400;
   font-size: 14px;
   color: #000000;

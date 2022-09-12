@@ -1,28 +1,28 @@
-import styled from 'styled-components/macro';
-import { useAccount } from 'context/AccountContext';
-import activityBg from 'assets/imgs/activity-bg.png';
-import Header from 'pages/Wallet/Header';
-import Footer from 'pages/Wallet/Footer';
-import { recodeAddress } from 'utils/polkadot';
-import { ReactChild, useEffect, useState } from 'react';
-import ThreeDotsIcon from 'assets/svgComponents/ThreeDotsIcon';
-import ActivityInfo from './ActivityInfo';
-import { useSelector } from 'react-redux';
-import { truncateString } from 'utils';
-import { format } from 'date-fns';
-import RightArrow from 'assets/svgComponents/RightArrow';
-import { PlusIcon } from '@heroicons/react/outline';
-import PolkadotLogoIcon from 'assets/svgComponents/PolkadotLogoIcon';
-import KusamaLogoIcon from 'assets/svgComponents/KusamaLogoIcon';
-import { networks, TokenSymbols, Transaction } from 'utils/types';
-import { fetchAccountTransactionsByChain } from 'utils/fetchTransactions';
-import Popup from 'components/Popup/Popup';
-import Loader from 'components/Loader/Loader';
-import InactiveField from 'components/InactiveField/InactiveField';
-import { router } from 'router/router';
-import { useHistory } from 'react-router-dom';
-import Select, { components } from 'react-select';
-import NetworkIcons from 'components/primitives/NetworkIcons';
+import styled from "styled-components/macro";
+import { useAccount } from "context/AccountContext";
+import activityBg from "assets/imgs/activity-bg.png";
+import Header from "pages/Wallet/Header";
+import Footer from "pages/Wallet/Footer";
+import { recodeAddress } from "utils/polkadot";
+import { ReactChild, useEffect, useState } from "react";
+import ThreeDotsIcon from "assets/svgComponents/ThreeDotsIcon";
+import ActivityInfo from "./ActivityInfo";
+import { useSelector } from "react-redux";
+import { truncateString } from "utils";
+import { format } from "date-fns";
+import RightArrow from "assets/svgComponents/RightArrow";
+import { PlusIcon } from "@heroicons/react/outline";
+import PolkadotLogoIcon from "assets/svgComponents/PolkadotLogoIcon";
+import KusamaLogoIcon from "assets/svgComponents/KusamaLogoIcon";
+import { networks, TokenSymbols, Transaction } from "utils/types";
+import { fetchAccountTransactionsByChain } from "utils/fetchTransactions";
+import Popup from "components/Popup/Popup";
+import Loader from "components/Loader/Loader";
+import InactiveField from "components/InactiveField/InactiveField";
+import { router } from "router/router";
+import { useHistory } from "react-router-dom";
+import Select, { components } from "react-select";
+import NetworkIcons from "components/primitives/NetworkIcons";
 
 type Props = {
   isMenuOpen?: boolean;
@@ -89,9 +89,9 @@ export default function Activity() {
   const [loading, setLoading] = useState<boolean>(false);
   const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false);
   const [chain, setChain] = useState<{ value: string; label: string; icon: ReactChild }>({
-    value: 'polkadot',
-    label: 'polkadot',
-    icon: <NetworkIcons isSmallIcon={true} width="20px" height="20px" chain={'polkadot'} />
+    value: "polkadot",
+    label: "polkadot",
+    icon: <NetworkIcons isSmallIcon={true} width="20px" height="20px" chain={"polkadot"} />,
   });
 
   const address = account.getActiveAccount().address;
@@ -107,7 +107,7 @@ export default function Activity() {
       setLoading(true);
       const transactions = (await fetchAccountTransactionsByChain(
         address,
-        chain.value
+        chain.value,
       )) as Transaction[];
       setTransactions(transactions);
       setLoading(false);
@@ -126,7 +126,15 @@ export default function Activity() {
   const options = networks.map((network) => ({
     value: network.chain,
     label: network.chain.toUpperCase(),
-    icon: <NetworkIcons isSmallIcon={true} width="20px" height="20px" chain={network.chain} />
+    icon: (
+      <NetworkIcons
+        isSmallIcon={true}
+        width="20px"
+        height="20px"
+        chain={network.chain}
+        token={network.symbol}
+      />
+    ),
   }));
 
   // useEffect(() => {
@@ -155,8 +163,8 @@ export default function Activity() {
   const styles = {
     singleValue: (provided: any, state: any) => ({
       ...provided,
-      display: 'flex'
-    })
+      display: "flex",
+    }),
   };
 
   return (
@@ -185,7 +193,7 @@ export default function Activity() {
                       height="15px"
                       chain={chain.value}
                     />
-                  )
+                  ),
                 }}
                 options={options}
                 components={{ Option: IconOption, SingleValue: customSingleValue }}
@@ -284,7 +292,7 @@ const SelectContainer = styled.div`
 `;
 
 const SelectLabel = styled.span`
-  font-family: 'Inter';
+  font-family: "Inter";
   font-weight: 500;
   font-size: 14px;
   letter-spacing: 0.25px;
@@ -390,7 +398,7 @@ const Info = styled.span`
 `;
 
 const InfoTop = styled.span`
-  font-family: 'IBM Plex Sans';
+  font-family: "IBM Plex Sans";
   font-size: 14px;
   font-weight: 500;
   color: #18191a;
@@ -401,7 +409,7 @@ const InfoTop = styled.span`
 `;
 
 const InfoBottom = styled.div`
-  font-family: 'IBM Plex Sans';
+  font-family: "IBM Plex Sans";
   font-size: 12px;
   color: #777e90;
 `;

@@ -24,6 +24,7 @@ export default function ChainItem({ asset, handleClick, iconSize }: Props) {
           height={iconCurrentSize}
           isSmallIcon={!!iconSize}
           chain={chain}
+          token={asset.symbol}
         />
       </ListItemIcon>
       <ListItemText>
@@ -70,7 +71,7 @@ const ListItemText = styled.div`
   flex-direction: column;
   margin-left: 15px;
   text-align: left;
-  font-family: 'IBM Plex Sans';
+  font-family: "IBM Plex Sans";
   font-size: 17px;
   font-weight: 500;
 
@@ -84,6 +85,10 @@ const Title = styled.div`
   font-size: 17px;
   text-transform: capitalize;
   color: #000;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  max-width: 180px;
 `;
 
 const Symbol = styled.div`
@@ -94,7 +99,7 @@ const Symbol = styled.div`
 
 const Tag = styled.div`
   font-size: 10px;
-  font-family: 'IBM Plex Sans';
+  font-family: "IBM Plex Sans";
   box-sizing: border-box;
   color: #777e90 !important;
   text-transform: capitalize;
@@ -102,7 +107,7 @@ const Tag = styled.div`
 
 const Value = styled.div`
   font-size: 10px;
-  font-family: 'IBM Plex Sans';
+  font-family: "IBM Plex Sans";
   color: #23262f;
   margin-top: 3px;
 `;

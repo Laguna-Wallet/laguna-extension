@@ -17,23 +17,23 @@ import {
   StorageKeys,
   Token,
   TokenSymbols,
-  Transaction
-} from './types';
-import { KeyringPair$Json } from '@polkadot/keyring/types';
-import { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
-import keyring from '@polkadot/ui-keyring';
-import { getFromStorage } from './chrome';
-import bcrypt from 'bcryptjs';
-import { ApiPromise, WsProvider } from '@polkadot/api';
-import { decodeAddress, encodeAddress } from '@polkadot/keyring';
-import BigNumber from 'bignumber.js';
-import * as AES from 'crypto-js/aes';
-import Utf8 from 'crypto-js/enc-utf8';
-import { fetchTransactions, transformTransfers } from './fetchTransactions';
-import { generateRandomBase64Avatar } from 'utils';
-import { generateNewWalletAddress } from './evm/api';
-import { EVMNetwork } from './evm/networks';
-import { EVMAssetType } from './evm/networks/asset';
+  Transaction,
+} from "./types";
+import { KeyringPair$Json } from "@polkadot/keyring/types";
+import { KeyringPairs$Json } from "@polkadot/ui-keyring/types";
+import keyring from "@polkadot/ui-keyring";
+import { getFromStorage } from "./chrome";
+import bcrypt from "bcryptjs";
+import { ApiPromise, WsProvider } from "@polkadot/api";
+import { decodeAddress, encodeAddress } from "@polkadot/keyring";
+import BigNumber from "bignumber.js";
+import * as AES from "crypto-js/aes";
+import Utf8 from "crypto-js/enc-utf8";
+import { fetchTransactions, transformTransfers } from "./fetchTransactions";
+import { generateRandomBase64Avatar } from "utils";
+import { generateNewWalletAddress } from "./evm/api";
+import { EVMNetwork } from "./evm/networks";
+import { EVMAssetType } from "./evm/networks/asset";
 
 // TODO appropriate typing
 
@@ -121,7 +121,7 @@ export async function importFromMnemonic(seed: string, password: string) {
     encodedSeed,
     name: pair.address,
     ethAddress,
-    img
+    img,
   });
 
   newPair.setMeta({ encodedKey, encodedSeed, name: pair.address, img });
@@ -220,94 +220,6 @@ export function getNetworks(
 ): Network[] {
   if (!prices || !tokenInfos) return [];
 
-  const networks: Network[] = [
-    {
-      name: "Polkadot",
-      symbol: TokenSymbols.westend,
-      chain: "westend",
-      node: "wss://westend-rpc.polkadot.io",
-      prefix: 42,
-    },
-    {
-      name: "Polkadot",
-      symbol: TokenSymbols.polkadot,
-      chain: "polkadot",
-      node: "wss://rpc.polkadot.io",
-      prefix: 0,
-    },
-    {
-      name: "Kusama",
-      symbol: TokenSymbols.kusama,
-      chain: "kusama",
-      node: "wss://kusama-rpc.polkadot.io",
-      prefix: 2,
-    },
-    // {
-    //   name: 'Moonriver',
-    //   symbol: 'movr',
-    //   chain: 'moonriver',
-    //   node: 'wss://moonriver-rpc.polkadot.io',
-    //   encodeType: 'ethereum'
-    // },
-    // {
-    //   name: 'Moonbeam',
-    //   symbol: 'glmr',
-    //   chain: 'moonbeam',
-    //   // chain: ' moonbeam-alpha',
-    //   node: 'wss://moonbeam-rpc.polkadot.io',
-    //   encodeType: 'ethereum'
-    // },
-    // {
-    //   name: 'Shiden',
-    //   symbol: 'sdn',
-    //   chain: 'shiden',
-    //   node: 'wss://shiden.api.onfinality.io/public-ws'
-    // },
-    // {
-    //   name: 'Astar',
-    //   symbol: TokenSymbols.astar,
-    //   chain: 'astar',
-    //   node: 'wss://astar.api.onfinality.io/public-ws',
-    //   prefix: 5
-    // },
-    {
-      name: "Ethereum",
-      symbol: TokenSymbols.ethereum,
-      chain: "Ethereum",
-      node: "wss://eth-mainnet.g.alchemy.com/v2/IFip5pZqfpAsi50-O2a0ZEJoA82E8KR_",
-      prefix: 0,
-    },
-    // wss://rpc.astar.network
-
-    // {
-    //   name: 'Acala',
-    //   symbol: 'ACA',
-    //   chain: 'acala-testnet' //todo revise test-net?
-    // },
-    // {
-    //   name: 'Karura',
-    //   symbol: 'KAR',
-    //   chain: 'karura'
-    // },
-    // {
-    //   name: 'Altair',
-    //   symbol: 'AIR',
-    //   chain: 'altair'
-    // },
-
-    // {
-    //   name: 'Bifrost',
-    //   symbol: 'BNC',
-    //   chain: 'bifrost-parachain'
-    // },
-    // {
-    //   name: 'Edgeware',
-    //   symbol: 'EDG',
-    //   chain: 'edgeware'
-    // }
-    
-  ];
-
   const ht = tokenInfos.reduce((acc: any, item: any) => {
     acc[item.symbol] = item;
     return acc;
@@ -327,7 +239,7 @@ export function getNetworks(
       ...network,
       price_change_percentage_24h: ht[network.symbol.toLowerCase()]
         .price_change_percentage_24h as number,
-      marketCap: ht[network.symbol.toLowerCase()].market_cap as number
+      marketCap: ht[network.symbol.toLowerCase()].market_cap as number,
     };
   });
 
@@ -534,6 +446,7 @@ export function encryptMetaData(oldPassword: string, newPassword: string) {
     if (meta?.encodedSeed) {
       const decodedSeedBytes = AES.decrypt(meta?.encodedSeed as string, oldPassword);
       const decodedSeed = decodedSeedBytes.toString(Utf8);
+
       const reEncodedSeed = AES.encrypt(decodedSeed, newPassword).toString();
 
       keyring.saveAccountMeta(pair, { ...pair.meta, encodedSeed: reEncodedSeed });

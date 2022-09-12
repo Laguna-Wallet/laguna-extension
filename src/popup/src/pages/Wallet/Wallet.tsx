@@ -1,30 +1,30 @@
-import { memo, ReactNode, useCallback, useEffect, useState, useMemo } from 'react';
-import styled from 'styled-components';
-import Header from './Header';
-import Footer from './Footer';
-import { useAccount } from 'context/AccountContext';
-import ChainItem from './ChainItem';
-import { getAssets, recodeAddress } from 'utils/polkadot';
-import NetworkItem from './NetworkItem';
-import dashboardBG from 'assets/imgs/dashboard-bg.jpg';
-import BigNumber from 'bignumber.js';
-import { useDispatch, useSelector } from 'react-redux';
-import Snackbar from 'components/Snackbar/Snackbar';
-import ReceiveIcon from 'assets/svgComponents/ReceiveIcon';
-import SendIcon from 'assets/svgComponents/SendIIcon';
-import SwitchAssetsIcon from 'assets/svgComponents/SwitchAssetIcon';
-import { State } from 'redux/store';
-import SecureNowIcon from 'assets/svgComponents/SecureNowIcon';
-import RightArrowMenuIcon from 'assets/svgComponents/MenuIcons/RightArrowMenuIcon';
-import { toggleLoading } from 'redux/actions';
-import { Asset } from 'utils/types';
-import { emptyAssets } from 'utils/emptyAssets';
-import { useHistory, Link } from 'react-router-dom';
-import { router } from 'router/router';
-import { isInPopup } from 'utils/chrome';
-import { isObjectEmpty } from 'utils';
-import keyring from '@polkadot/ui-keyring';
-import { ethereumEncode } from '@polkadot/util-crypto';
+import { memo, ReactNode, useCallback, useEffect, useState, useMemo } from "react";
+import styled from "styled-components";
+import Header from "./Header";
+import Footer from "./Footer";
+import { useAccount } from "context/AccountContext";
+import ChainItem from "./ChainItem";
+import { getAssets, recodeAddress } from "utils/polkadot";
+import NetworkItem from "./NetworkItem";
+import dashboardBG from "assets/imgs/dashboard-bg.jpg";
+import BigNumber from "bignumber.js";
+import { useDispatch, useSelector } from "react-redux";
+import Snackbar from "components/Snackbar/Snackbar";
+import ReceiveIcon from "assets/svgComponents/ReceiveIcon";
+import SendIcon from "assets/svgComponents/SendIIcon";
+import SwitchAssetsIcon from "assets/svgComponents/SwitchAssetIcon";
+import { State } from "redux/store";
+import SecureNowIcon from "assets/svgComponents/SecureNowIcon";
+import RightArrowMenuIcon from "assets/svgComponents/MenuIcons/RightArrowMenuIcon";
+import { toggleLoading } from "redux/actions";
+import { Asset } from "utils/types";
+import { emptyAssets } from "utils/emptyAssets";
+import { useHistory, Link } from "react-router-dom";
+import { router } from "router/router";
+import { isInPopup } from "utils/chrome";
+import { isObjectEmpty } from "utils";
+import keyring from "@polkadot/ui-keyring";
+import { ethereumEncode } from "@polkadot/util-crypto";
 
 export interface ShowSnackbar {
   message: string;
@@ -339,7 +339,7 @@ const SecureNowMessage = styled.div`
   /* margin-top: 20px; */
 
   span {
-    font-family: 'IBM Plex Sans';
+    font-family: "IBM Plex Sans";
     font-size: 11px;
     color: #000;
   }
@@ -360,7 +360,7 @@ const FirstTimeUserBalance = styled.div`
   }
 
   h2 {
-    font-family: 'IBM Plex Sans';
+    font-family: "IBM Plex Sans";
     font-size: 22px;
     margin-bottom: 10px;
     font-weight: 500;
@@ -384,7 +384,7 @@ const Balance = styled.div`
   justify-content: center;
   word-break: break-word;
   span {
-    font-family: 'IBM Plex Sans';
+    font-family: "IBM Plex Sans";
     font-size: 30px;
     font-weight: 500;
   }
@@ -412,7 +412,7 @@ const SubTitle = styled.div`
 `;
 
 const PriceChange = styled.div<{ negativeValue: boolean }>`
-  font-family: 'IBM Plex Sans';
+  font-family: "IBM Plex Sans";
   font-size: 14px;
   color: #606060;
   line-height: 19px;

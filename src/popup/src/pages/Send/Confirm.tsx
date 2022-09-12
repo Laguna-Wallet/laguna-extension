@@ -10,22 +10,22 @@ import {
   getContactNameByAddress,
   recodeToPolkadotAddress,
   truncateString,
-  updateBallanceCache
-} from 'utils';
-import BigNumber from 'bignumber.js';
-import { useDispatch, useSelector } from 'react-redux';
-import { Messages, SnackbarMessages } from 'utils/types';
-import NetworkIcons from 'components/primitives/NetworkIcons';
-import { reset } from 'redux-form';
-import Loader from 'components/Loader/Loader';
-import { useHistory } from 'react-router-dom';
-import { router } from 'router/router';
-import browser from 'webextension-polyfill';
-import { changeAccountsBalances } from 'redux/actions';
-import { recodeAddress } from 'utils/polkadot';
-import { sendMessagePromise } from 'utils/chrome';
-import { IEVMBuildTransaction, IEVMToBeSignTransaction } from 'utils/evm/interfaces';
-import { EVMNetwork } from 'utils/evm/networks';
+  updateBallanceCache,
+} from "utils";
+import BigNumber from "bignumber.js";
+import { useDispatch, useSelector } from "react-redux";
+import { Messages, SnackbarMessages } from "utils/types";
+import NetworkIcons from "components/primitives/NetworkIcons";
+import { reset } from "redux-form";
+import Loader from "components/Loader/Loader";
+import { useHistory } from "react-router-dom";
+import { router } from "router/router";
+import browser from "webextension-polyfill";
+import { changeAccountsBalances } from "redux/actions";
+import { recodeAddress } from "utils/polkadot";
+import { sendMessagePromise } from "utils/chrome";
+import { IEVMBuildTransaction, IEVMToBeSignTransaction } from "utils/evm/interfaces";
+import { EVMNetwork } from "utils/evm/networks";
 
 type Props = {
   fee: string;
@@ -44,7 +44,7 @@ function Confirm({
   recoded,
   setBlockHash,
   flow,
-  toBeSignTransaction
+  toBeSignTransaction,
 }: Props) {
   const { nextStep, previousStep } = useWizard();
   const account = useAccount();
@@ -75,7 +75,7 @@ function Confirm({
     if (chain === EVMNetwork.ETHEREUM) {
       browser.runtime.sendMessage({
         type: Messages.SendTransaction,
-        payload: { chain, toBeSignTransaction }
+        payload: { chain, toBeSignTransaction },
       });
     } else {
       browser.runtime.sendMessage({
@@ -84,8 +84,8 @@ function Confirm({
           sendTo: recoded,
           sendFrom: activeAccountAddress,
           amount: amountToSend,
-          chain
-        }
+          chain,
+        },
       });
     }
 
@@ -275,7 +275,7 @@ const Text = styled.div`
   }
 
   :nth-child(2) {
-    font-family: 'Work Sans';
+    font-family: "Work Sans";
     font-size: 27px;
     font-weight: 600;
     color: #18191a;
@@ -341,7 +341,7 @@ const Tag = styled.div`
   border-radius: 60px;
   padding: 0 10px;
   box-sizing: border-box;
-  font-family: 'IBM Plex Sans';
+  font-family: "IBM Plex Sans";
   font-size: 10px;
   color: #000;
   margin-left: 5px;

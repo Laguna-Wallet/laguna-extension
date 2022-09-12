@@ -1,31 +1,44 @@
-import KusamaIcon from 'assets/imgs/NetworkIcons/KusamaCircle.png';
-import MoonriverIcon from 'assets/svgComponents/MoonriverIcon';
-import PolkadotIcon from 'assets/imgs/NetworkIcons/polkadotPink.png';
-import AstarIcon from '../../assets/imgs/NetworkIcons/AstarIcon.png';
-import SmallPolkadotIcon from 'assets/svgComponents/SmallPolkadotIcon';
-import SmallKusamaIcon from 'assets/svgComponents/SmallKusamaIcon';
-import SmallMonriverIcon from 'assets/svgComponents/SmallMonriverIcon';
-import EthereumIcon from 'assets/imgs/ethereum.png';
-import styled from 'styled-components';
+import KusamaIcon from "assets/imgs/NetworkIcons/KusamaCircle.png";
+import MoonriverIcon from "assets/svgComponents/MoonriverIcon";
+import PolkadotIcon from "assets/imgs/NetworkIcons/polkadotPink.png";
+import AstarIcon from "assets/imgs/NetworkIcons/AstarIcon.png";
+import AvalancheIcon from "assets/imgs/NetworkIcons/Avalanche.png";
+import USDCIcon from "assets/imgs/NetworkIcons/USDC.png";
+import USDTIcon from "assets/imgs/NetworkIcons/USDT.png";
+// import SmallPolkadotIcon from "assets/svgComponents/SmallPolkadotIcon";
+// import SmallKusamaIcon from "assets/svgComponents/SmallKusamaIcon";
+import SmallMonriverIcon from "assets/svgComponents/SmallMonriverIcon";
+import EthereumIcon from "assets/imgs/ethereum.png";
+import styled from "styled-components";
+import { EVMNetwork } from "utils/evm/networks";
+import { TokenSymbols } from "utils/types";
 
 type Props = {
   width?: string;
   height?: string;
   chain: string;
+  token?: string;
   fill?: string;
   isSmallIcon?: boolean;
 };
 
-export default function NetworkIcons({ width, height, chain, isSmallIcon = false, fill }: Props) {
-  if (chain === 'polkadot' || chain === 'westend') {
+export default function NetworkIcons({
+  width,
+  height,
+  chain,
+  token,
+  isSmallIcon = false,
+  fill,
+}: Props) {
+  if (chain === "polkadot" || chain === "westend") {
     return <IconContainer width={width} height={height} img={PolkadotIcon} />;
   }
 
   if (chain === "kusama") {
     return <IconContainer width={width} height={height} img={KusamaIcon} />;
   }
-  
-  if (chain === 'moonriver') {
+
+  if (chain === "moonriver") {
     return isSmallIcon ? <SmallMonriverIcon /> : <MoonriverIcon />;
   }
 
@@ -33,7 +46,20 @@ export default function NetworkIcons({ width, height, chain, isSmallIcon = false
     return <IconContainer width={width} height={height} img={AstarIcon} />;
   }
 
-  if (chain === 'ETHEREUM') {
+  // if (chain === EVMNetwork.AVALANCHE_TESTNET_FUJI) {
+  //   return <IconContainer width={width} height={height} img={AvalancheIcon} />;
+  // }
+
+  if (chain === EVMNetwork.AVALANCHE_TESTNET_FUJI) {
+    return <IconContainer width={width} height={height} img={AvalancheIcon} />;
+  }
+
+  if (chain === "ETHEREUM") {
+    if (token === TokenSymbols.USDC) {
+      return <IconContainer width={width} height={height} img={USDCIcon} />;
+    } else if (token === TokenSymbols.USDT) {
+      return <IconContainer width={width} height={height} img={USDTIcon} />;
+    }
     return <IconContainer width={width} height={height} img={EthereumIcon} />;
   }
 

@@ -1,17 +1,17 @@
-import { BigNumber } from 'bignumber.js';
-import keyring from '@polkadot/ui-keyring';
-import axios from 'axios';
-import { AES } from 'crypto-js';
-import Utf8 from 'crypto-js/enc-utf8';
-import { ethers } from 'ethers';
-import { changeAccountsBalances, changeTokenReceived } from 'redux/actions';
-import { checkBalanceChange, timer } from 'utils';
-import { getFromStorage, saveToStorage } from './chrome';
-import { getEVMBalance } from './evm/api';
-import { EVMNetwork } from './evm/networks';
-import { EvmAssets } from './evm/networks/asset';
-import { recodeAddress } from './polkadot';
-import { networks, StorageKeys } from './types';
+import { BigNumber } from "bignumber.js";
+import keyring from "@polkadot/ui-keyring";
+import axios from "axios";
+import { AES } from "crypto-js";
+import Utf8 from "crypto-js/enc-utf8";
+import { ethers } from "ethers";
+import { changeAccountsBalances, changeTokenReceived } from "redux/actions";
+import { checkBalanceChange, timer } from "utils";
+import { getFromStorage, saveToStorage } from "./chrome";
+import { getEVMBalance } from "./evm/api";
+import { EVMNetwork } from "./evm/networks";
+import { EvmAssets } from "./evm/networks/asset";
+import { recodeAddress } from "./polkadot";
+import { networks, StorageKeys } from "./types";
 
 interface PriceConverter {
   symbol: string;
@@ -91,19 +91,14 @@ export async function fetchAccountsBalances(
             network.chain === EVMNetwork.ETHEREUM_TESTNET_GOERLI) &&
           ethAddress
         ) {
-          console.log('~ network.chain', network.chain);
-          console.log(
-            '~EvmAssets[network.chain][network.symbol]',
-            EvmAssets[network.chain][network.symbol]
-          );
           const ethBalance = await getEVMBalance(
             network.chain,
             ethAddress,
-            EvmAssets[network.chain][network.symbol]
+            EvmAssets[network.chain][network.symbol],
           );
 
-          console.log('~ network.chain', network.chain);
-          console.log('~ ethBalance', ethBalance.toString());
+          console.log("~ network.chain", network.chain);
+          console.log("~ ethBalance", ethBalance.toString());
 
           if (new BigNumber(ethBalance.toString()).isEqualTo(0)) {
             i++;
@@ -112,16 +107,16 @@ export async function fetchAccountsBalances(
 
           temp_obj[network.chain] = {
             overall: ethers.utils.formatEther(ethBalance.toString()),
-            locked: Number(0) // todo change after eth 2.0 merge
+            locked: Number(0), // todo change after eth 2.0 merge
           };
         } else {
           const resolved = await searchAccountBallance(
             network.chain,
-            recodeAddress(address, network?.prefix, network?.encodeType)
+            recodeAddress(address, network?.prefix, network?.encodeType),
           );
           // if (resolved.message !== "Success") return
-          if (resolved.message !== 'Success') {
-            if (resolved.message === 'Record Not Found' || resolved?.data?.account?.balance === 0) {
+          if (resolved.message !== "Success") {
+            if (resolved.message === "Record Not Found" || resolved?.data?.account?.balance === 0) {
               i++;
             }
             continue;
@@ -129,7 +124,7 @@ export async function fetchAccountsBalances(
 
           temp_obj[network.chain] = {
             overall: Number(resolved.data.account.balance),
-            locked: Number(resolved.data.account.balance_lock)
+            locked: Number(resolved.data.account.balance_lock),
           };
         }
 

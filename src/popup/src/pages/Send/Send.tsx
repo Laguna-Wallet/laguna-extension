@@ -8,33 +8,33 @@ import {
   getNetworks,
   isValidPolkadotAddress,
   recodeAddress,
-  recodeAddressForTransaction
-} from 'utils/polkadot';
-import { useEffect, useReducer, useState } from 'react';
-import { AccountMeta, Asset, Network, SelectType } from 'utils/types';
-import { useWizard, Wizard } from 'react-use-wizard';
-import TransactionSent from './TransactionSent';
-import SendToken from './SendToken';
-import { useAccount } from 'context/AccountContext';
-import { useFormik } from 'formik';
-import { isNumeric, sendTokenSchema } from 'utils/validations';
-import BigNumber from 'bignumber.js';
-import { useDispatch, useSelector } from 'react-redux';
-import { PropsFromTokenDashboard } from 'pages/Recieve/Receive';
-import { selectAsset } from 'redux/actions';
-import { State } from 'redux/store';
-import { useLocation } from 'react-router-dom';
-import { buildEvmTransaction, estimateGas, getEvmGasPrice, isValidEVMAddress } from 'utils/evm/api';
-import { EvmAssets } from 'utils/evm/networks/asset';
-import { ethers } from 'ethers';
-import { IEVMBuildTransaction, IEVMToBeSignTransaction } from 'utils/evm/interfaces';
-import { EVMNetwork } from 'utils/evm/networks';
+  recodeAddressForTransaction,
+} from "utils/polkadot";
+import { useEffect, useReducer, useState } from "react";
+import { AccountMeta, Asset, Network, SelectType } from "utils/types";
+import { useWizard, Wizard } from "react-use-wizard";
+import TransactionSent from "./TransactionSent";
+import SendToken from "./SendToken";
+import { useAccount } from "context/AccountContext";
+import { useFormik } from "formik";
+import { isNumeric, sendTokenSchema } from "utils/validations";
+import BigNumber from "bignumber.js";
+import { useDispatch, useSelector } from "react-redux";
+import { PropsFromTokenDashboard } from "pages/Recieve/Receive";
+import { selectAsset } from "redux/actions";
+import { State } from "redux/store";
+import { useLocation } from "react-router-dom";
+import { buildEvmTransaction, estimateGas, getEvmGasPrice, isValidEVMAddress } from "utils/evm/api";
+import { EvmAssets } from "utils/evm/networks/asset";
+import { ethers } from "ethers";
+import { IEVMBuildTransaction, IEVMToBeSignTransaction } from "utils/evm/interfaces";
+import { EVMNetwork } from "utils/evm/networks";
 
 export enum SendAccountFlowEnum {
   SendToTrustedContact = "SendToTrustedContact",
   SendToAddress = "SendToAddress",
   SendToAccount = "SendToAccount",
-  ScanQR = "ScanQR"
+  ScanQR = "ScanQR",
 }
 
 export type FlowValue =
@@ -86,7 +86,7 @@ function Send({ initialIsContactsPopupOpen }: Props) {
   const [recoded, setRecoded] = useState<string>("");
   const [loading, setLoading] = useState<any>();
   const [abilityToTransfer, setAbilityToTransfer] = useState<boolean>(true);
-  const [blockHash, setBlockHash] = useState<string>('');
+  const [blockHash, setBlockHash] = useState<string>("");
   const [toBeSignTransaction, setToBeSignTransaction] = useState<IEVMToBeSignTransaction>();
 
   const reduxSendTokenState = useSelector((state: any) => state.sendToken);
@@ -167,7 +167,7 @@ function Send({ initialIsContactsPopupOpen }: Props) {
         amount: new BigNumber(form.amount),
         fromAddress: activeAccount?.meta?.ethAddress,
         toAddress: form?.address,
-        gasPriceInGwei: gasPrice
+        gasPriceInGwei: gasPrice,
         // numOfPendingTransaction: BigNumber; // TODO for adding up nonce, blocked by cache pending txn
       });
 

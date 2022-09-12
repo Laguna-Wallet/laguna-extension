@@ -55,10 +55,10 @@ export async function fetchAccountTransactionsByChain(address: string, chain: st
 
     // if (!res?.data?.transfers) continue;
     if (!res?.data?.transfers) return;
-    console.log('~ res?.data?.transfers', res?.data?.transfers);
+    console.log("~ res?.data?.transfers", res?.data?.transfers);
 
     results = [...res.data.transfers];
-    console.log('~ results', results);
+    console.log("~ results", results);
     retrieved_count = res?.data?.count;
     page++;
 

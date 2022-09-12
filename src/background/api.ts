@@ -12,7 +12,7 @@ import { checkBalanceChange, getAccountAddresses, getFromStorage, recodeAddress,
 import { cryptoWaitReady } from "@polkadot/util-crypto"
 // import { initWasm } from "@polkadot/wasm-crypto/initOnlyAsm"
 import browser from "webextension-polyfill"
-import { signTransaction } from "./evm/utils/api"
+import { signTransaction } from "./evm"
 
 export async function Retrieve_balance_change_rates() {
   // const balances = getFromStorage()
@@ -25,7 +25,7 @@ export async function sendTransaction(pairs, ethWallets, payload) {
         return wallet.address === payload.toBeSignTransaction.from
       })
 
-      const signedTx = await signTransaction(payload.chain, wallet, payload.toBeSignTransaction)
+      const signedTx = await signTransaction(wallet, payload.toBeSignTransaction)
     } else {
       const pair = pairs.find((pair) => {
         return recodeToPolkadotAddress(pair.address) === recodeToPolkadotAddress(payload.sendFrom)

@@ -1,7 +1,7 @@
-import BigNumber from 'bignumber.js';
-import { BigNumberish, BytesLike } from 'ethers';
-import { EVMNetwork } from './networks';
-import { EVMAssetType } from './networks/asset';
+import BigNumber from "bignumber.js";
+import { BigNumberish, BytesLike } from "ethers";
+import { EVMNetwork } from "./networks";
+import { EVMAssetType } from "./networks/asset";
 
 export interface ethereumHoldingState {
   list: TokenData[];
@@ -45,40 +45,40 @@ export interface IEVMBuildTransaction {
 }
 
 export interface TransactionState {
-  success: boolean,
-  transfers: Transfer[] | null
+  success: boolean;
+  transfers: Transfer[] | null;
 }
 
 export interface TransfersList {
-  id: number,
-  jsonrpc: string,
-  result: Result
+  id: number;
+  jsonrpc: string;
+  result: Result;
 }
 
 export interface Result {
-  pageKey: string,
-  transfers: Transfer[]
+  pageKey: string;
+  transfers: Transfer[];
 }
 
 export interface Transfer {
-  blockNum: string,
-  uniqueId: string,
-  hash: string,
-  from: string,
-  to: string,
-  value: number,
-  erc721TokenId: string | null,
-  erc1155Metadata: string | null,
-  tokenId: string | null,
-  asset: string,
-  category: string
-  rawContract: RawContract
+  blockNum: string;
+  uniqueId: string;
+  hash: string;
+  from: string;
+  to: string;
+  value: number;
+  erc721TokenId: string | null;
+  erc1155Metadata: string | null;
+  tokenId: string | null;
+  asset: string;
+  category: string;
+  rawContract: RawContract;
 }
 
 export interface RawContract {
-  value: string,
-  address: string | null,
-  decimal: string
+  value: string;
+  address: string | null;
+  decimal: string;
 }
 
 export interface IEVMToBeSignTransaction {

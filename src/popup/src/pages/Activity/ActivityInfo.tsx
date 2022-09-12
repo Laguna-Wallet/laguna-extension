@@ -165,7 +165,7 @@ const Title = styled.div`
   align-items: center;
   height: 24px;
   span {
-    font-family: 'IBM Plex Sans';
+    font-family: "IBM Plex Sans";
     font-size: 17px;
     font-weight: 500;
     color: #18191a;
@@ -194,7 +194,7 @@ const Row = styled.div<{ marginTop?: string }>`
 `;
 
 const RowLeft = styled.span`
-  font-family: 'IBM Plex Sans';
+  font-family: "IBM Plex Sans";
   font-size: 12px;
   line-height: 1.35;
   color: #18191a;
@@ -209,7 +209,7 @@ const BoldText = styled.div<{ fontSize?: string }>`
 `;
 
 const RowRight = styled.span`
-  font-family: 'IBM Plex Sans';
+  font-family: "IBM Plex Sans";
   font-size: 12px;
   color: #18191a;
 `;
@@ -260,7 +260,7 @@ const ExportButton = styled.div`
   justify-content: center;
   cursor: pointer;
   text-decoration: none;
-  font-family: 'IBM Plex Sans';
+  font-family: "IBM Plex Sans";
   font-size: 12px;
   margin-top: 17px;
   line-height: 1.35 span {

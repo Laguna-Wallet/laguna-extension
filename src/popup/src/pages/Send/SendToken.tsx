@@ -182,7 +182,7 @@ function SendToken({
   };
 
   useEffect(() => {
-    console.log('~ abilityToTransfer', abilityToTransfer);
+    console.log("~ abilityToTransfer", abilityToTransfer);
     if (!abilityToTransfer && !loading) {
       setSnackbarError("No enough funds to make transfer");
       setIsSnackbarOpen(true);
@@ -360,7 +360,7 @@ function SendToken({
             <InfoRow>
               <span>Estimated Fee</span>
               <span>
-                {loading ? '...' : fee} {selectedAsset?.symbol.toUpperCase()}
+                {loading ? "..." : fee} {selectedAsset?.symbol.toUpperCase()}
               </span>
             </InfoRow>
           </Info>
@@ -466,7 +466,7 @@ const Price = styled.div`
   align-items: center;
   margin-top: 6px;
   color: #111;
-  font-family: 'IBM Plex Sans';
+  font-family: "IBM Plex Sans";
   font-size: 12px;
   line-height: 14px;
   text-align: right;
@@ -485,7 +485,7 @@ const ExchangeIconContainer = styled.div`
 const ContentItemTitle = styled.p`
   font-size: 12px;
   color: #18191a;
-  font-family: 'IBM Plex Sans';
+  font-family: "IBM Plex Sans";
   margin-bottom: 8px;
 `;
 
@@ -518,7 +518,7 @@ const IconContainer = styled.div`
 `;
 
 const Text = styled.span`
-  font-family: 'IBM Plex Sans';
+  font-family: "IBM Plex Sans";
   color: #353945;
   font-weight: 400;
   font-size: 10px;
@@ -537,7 +537,7 @@ const Info = styled.div`
   display: flex;
   flex-direction: column;
   span {
-    font-family: 'IBM Plex Sans';
+    font-family: "IBM Plex Sans";
     font-size: 12px;
   }
 `;

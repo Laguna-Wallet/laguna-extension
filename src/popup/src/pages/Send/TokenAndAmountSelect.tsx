@@ -5,8 +5,8 @@ import { parseNumeric } from "utils/validations";
 import SelectSmallIcon from "assets/svgComponents/SelectSmallIcon";
 import useOnClickOutside from "hooks/useOnClickOutside";
 // import debounce from 'lodash.debounce';
-import { useEffect } from 'react';
-import debounce from 'lodash.debounce';
+import { useEffect } from "react";
+import debounce from "lodash.debounce";
 
 type Props = {
   Icon: any;

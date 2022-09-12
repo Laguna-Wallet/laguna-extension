@@ -1,13 +1,13 @@
-import { KeypairType } from '@polkadot/util-crypto/types';
-import type { Signer as InjectedSigner } from '@polkadot/api/types';
-import type { ExtDef } from '@polkadot/types/extrinsic/signedExtensions/types';
-import type { ProviderInterface } from '@polkadot/rpc-provider/types';
-import { EVMAssetType } from './evm/networks/asset';
-import { EVMNetwork } from './evm/networks';
+import { KeypairType } from "@polkadot/util-crypto/types";
+import type { Signer as InjectedSigner } from "@polkadot/api/types";
+import type { ExtDef } from "@polkadot/types/extrinsic/signedExtensions/types";
+import type { ProviderInterface } from "@polkadot/rpc-provider/types";
+import { EVMAssetType } from "./evm/networks/asset";
+import { EVMNetwork } from "./evm/networks";
 
 export enum SecurityOptionsEnum {
   Secured = "Secured",
-  None = "None"
+  None = "None",
 }
 
 export type SecurityOptions = "Secured" | "None" | undefined;
@@ -15,7 +15,7 @@ export type SecurityOptions = "Secured" | "None" | undefined;
 export type MnemonicsTriple = [number, number, number];
 export enum ImportTypeEnum {
   SEED = "Seed",
-  JSON = "Json"
+  JSON = "Json",
 }
 
 export type ImportType = ImportTypeEnum.SEED | ImportTypeEnum.JSON;
@@ -24,27 +24,27 @@ export const DEFAULT_TYPE: KeypairType = "ed25519";
 export const SEED_LENGTHS = [12, 24];
 
 export enum StorageKeys {
-  SignedIn = 'signed-in',
-  Encoded = 'encoded',
-  ActiveAccount = 'active-account',
-  TokenPrices = 'token-prices',
-  TokenInfos = 'token-infos',
-  AccountBalances = 'account-balances',
-  ethereumBalances = 'ethereum-balances',
-  Transactions = 'transactions',
-  EthereumTransactions = 'ethereum-transactions',
-  IdleTimeout = 'idle-timeout',
-  UnlockedPairs = 'unlocked-pairs',
-  TokenDecimals = 'token-decimals',
-  DisabledTokens = 'disabled-tokens',
-  OnBoarding = 'onboarding'
+  SignedIn = "signed-in",
+  Encoded = "encoded",
+  ActiveAccount = "active-account",
+  TokenPrices = "token-prices",
+  TokenInfos = "token-infos",
+  AccountBalances = "account-balances",
+  ethereumBalances = "ethereum-balances",
+  Transactions = "transactions",
+  EthereumTransactions = "ethereum-transactions",
+  IdleTimeout = "idle-timeout",
+  UnlockedPairs = "unlocked-pairs",
+  TokenDecimals = "token-decimals",
+  DisabledTokens = "disabled-tokens",
+  OnBoarding = "onboarding",
 }
 
 // Array of contract addresses specific to ERC-20 tokens (ETH is a native token so it does not have an address)
 export const contractAddresses = [
-  '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', // USDC
-  '0xdAC17F958D2ee523a2206206994597C13D831ec7', // USDT
-  'eth' // Ethereum
+  "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48", // USDC
+  "0xdAC17F958D2ee523a2206206994597C13D831ec7", // USDT
+  "eth", // Ethereum
 ];
 
 //==============================================================================
@@ -53,7 +53,7 @@ export const contractAddresses = [
 export interface Network {
   name: string;
   symbol: Token;
-  chain: EVMNetwork | 'westend' | 'polkadot' | 'kusama';
+  chain: EVMNetwork | "westend" | "polkadot" | "kusama";
   node?: string;
   price_change_percentage_24h?: number;
   marketCap?: number;
@@ -86,7 +86,7 @@ export enum Prefixes {
   moonriver = 1285,
   moonbeam = 1284,
   shiden = 5,
-  astar = 5
+  astar = 5,
 }
 
 //==============================================================================
@@ -124,7 +124,7 @@ export enum Messages {
   ResetTimeout = "RESET_TIMEOUT",
   FreezeAccountBalanceUpdate = "FREEZE_ACCOUNT_BALANCE_UPDATE",
   OpenSupport = "OPEN_SUPPORT",
-  DisconnectAllSites = "DISCONNECT_ALL_SITES"
+  DisconnectAllSites = "DISCONNECT_ALL_SITES",
 }
 
 //==============================================================================
@@ -136,19 +136,19 @@ export interface SelectType {
 }
 
 export enum TokenSymbols {
-  westend = 'wnd',
-  polkadot = 'dot',
-  kusama = 'ksm',
-  moonriver = 'movr',
-  moonbeam = 'glmr',
-  shiden = 'sdn',
-  astar = 'astr',
-  ethereum = 'ETH',
-  USDC = 'USDC',
-  USDT = 'USDT',
-  TBC = 'TBC',
-  ALOT = 'ALOT',
-  AVAX = 'AVAX'
+  westend = "wnd",
+  polkadot = "dot",
+  kusama = "ksm",
+  moonriver = "movr",
+  moonbeam = "glmr",
+  shiden = "sdn",
+  astar = "astr",
+  ethereum = "ETH",
+  USDC = "USDC",
+  USDT = "USDT",
+  TBC = "TBC",
+  ALOT = "ALOT",
+  AVAX = "AVAX",
 }
 
 export type Token =
@@ -185,7 +185,7 @@ export enum SnackbarMessages {
   WalletRemoved = "Account Removed",
   AccessRevoked = "Access Revoked",
   DepositReceived = "New Deposit Received",
-  PasswordChanged = "Password Changed"
+  PasswordChanged = "Password Changed",
 }
 
 //==============================================================================
@@ -266,7 +266,7 @@ export const chains = [
   // 'moonriver',
   //  'moonbeam',
   // 'shiden',
-  'astar'
+  "astar",
 ];
 
 export interface TokenInfo {
@@ -318,63 +318,63 @@ export const networks: Network[] = [
   {
     name: "Kusama",
     symbol: TokenSymbols.kusama,
-    chain: 'kusama',
-    node: 'wss://kusama-rpc.polkadot.io',
-    prefix: 2
+    chain: "kusama",
+    node: "wss://kusama-rpc.polkadot.io",
+    prefix: 2,
   },
   {
-    name: 'Ethereum',
+    name: "Ethereum",
     symbol: TokenSymbols.ethereum,
     chain: EVMNetwork.ETHEREUM,
     decimal: 18,
-    assetType: EVMAssetType.NATIVE
-  },
-  // {
-  //   name: 'USD Coin',
-  //   symbol: TokenSymbols.USDC,
-  //   chain: EVMNetwork.ETHEREUM,
-  //   decimal: 6,
-  //   assetType: EVMAssetType.ERC20,
-  //   contractAddress: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'
-  // },
-  // {
-  //   name: 'Tether USD',
-  //   symbol: TokenSymbols.USDT,
-  //   chain: EVMNetwork.ETHEREUM,
-  //   decimal: 6,
-  //   assetType: EVMAssetType.ERC20,
-  //   contractAddress: '0xdAC17F958D2ee523a2206206994597C13D831ec7'
-  // },
-  {
-    name: 'Ethereum',
-    symbol: TokenSymbols.ethereum,
-    chain: EVMNetwork.ETHEREUM_TESTNET_GOERLI,
-    decimal: 18,
-    assetType: EVMAssetType.NATIVE
+    assetType: EVMAssetType.NATIVE,
   },
   {
-    name: 'TBC',
-    symbol: TokenSymbols.TBC,
-    chain: EVMNetwork.ETHEREUM_TESTNET_GOERLI,
-    decimal: 18,
+    name: "USD Coin",
+    symbol: TokenSymbols.USDC,
+    chain: EVMNetwork.ETHEREUM,
+    decimal: 6,
     assetType: EVMAssetType.ERC20,
-    contractAddress: 'TBC'
-  }
+    contractAddress: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+  },
+  {
+    name: "Tether USD",
+    symbol: TokenSymbols.USDT,
+    chain: EVMNetwork.ETHEREUM,
+    decimal: 6,
+    assetType: EVMAssetType.ERC20,
+    contractAddress: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+  },
   // {
-  //   name: 'Avalanche',
-  //   chain: EVMNetwork.AVALANCHE_TESTNET_FUJI,
-  //   symbol: TokenSymbols.AVAX,
+  //   name: "Ethereum",
+  //   symbol: TokenSymbols.ethereum,
+  //   chain: EVMNetwork.ETHEREUM_TESTNET_GOERLI,
   //   decimal: 18,
-  //   assetType: EVMAssetType.NATIVE
+  //   assetType: EVMAssetType.NATIVE,
   // },
   // {
-  //   name: 'Dexalot Token',
+  //   name: "TBC",
+  //   symbol: TokenSymbols.TBC,
+  //   chain: EVMNetwork.ETHEREUM_TESTNET_GOERLI,
+  //   decimal: 18,
+  //   assetType: EVMAssetType.ERC20,
+  //   contractAddress: "TBC",
+  // },
+  {
+    name: "Avalanche",
+    chain: EVMNetwork.AVALANCHE_TESTNET_FUJI,
+    symbol: TokenSymbols.AVAX,
+    decimal: 18,
+    assetType: EVMAssetType.NATIVE,
+  },
+  // {
+  //   name: "Dexalot Token",
   //   symbol: TokenSymbols.ALOT,
   //   chain: EVMNetwork.AVALANCHE_TESTNET_FUJI,
   //   decimal: 18,
   //   assetType: EVMAssetType.ERC20,
-  //   contractAddress: '0x9983F755Bbd60d1886CbfE103c98C272AA0F03d6'
-  // }
+  //   contractAddress: "0x9983F755Bbd60d1886CbfE103c98C272AA0F03d6",
+  // },
 
   // {
   //   name: 'Astar',
