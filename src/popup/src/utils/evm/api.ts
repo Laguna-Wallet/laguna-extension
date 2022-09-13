@@ -5,6 +5,9 @@ import {
   IEVMBuildTransaction,
   IEVMToBeSignTransaction,
   Response,
+  Transfer,
+  TransactionState,
+  TransfersList,
 } from "./interfaces";
 // import fs from 'fs';
 import BigNumber from "bignumber.js";
@@ -48,8 +51,8 @@ export const isValidEVMAddress = (address: string): Response => {
 };
 
 export const getProvider = (network: EVMNetwork): ethers.providers.JsonRpcProvider => {
-  return new ethers.providers.JsonRpcProvider("HTTP://127.0.0.1:7545");
-  // return new ethers.providers.JsonRpcProvider(networks[network].nodeUrl);
+  // return new ethers.providers.JsonRpcProvider("HTTP://127.0.0.1:7545");
+  return new ethers.providers.JsonRpcProvider(networks[network].nodeUrl);
 };
 
 export const getNonce = async (network: EVMNetwork, address: string): Promise<BigNumber> => {
@@ -72,6 +75,57 @@ export const estimateGas = async (
   const provider = getProvider(network);
   const estimateResult = await provider.estimateGas(toBeSignTransaction);
   return new BigNumber(estimateResult.toString());
+};
+
+export const getEVMTransactions = async (
+  address: string,
+  network: EVMNetwork,
+  key?: string,
+  transfers?: Transfer[],
+): Promise<TransactionState> => {
+  const options = {
+    method: "POST",
+    headers: { Accept: "application/json", "Content-Type": "application/json" },
+    body: JSON.stringify({
+      id: 1,
+      jsonrpc: "2.0",
+      method: "alchemy_getAssetTransfers",
+      params: [
+        {
+          fromBlock: "0x0",
+          toBlock: "latest",
+          category: ["internal", "erc20", "external"],
+          withMetadata: false,
+          excludeZeroValue: false,
+          fromAddress: address,
+          ...(key && { pageKey: key }),
+        },
+      ],
+    }),
+  };
+
+  try {
+    console.log("~ address", address);
+    console.log("~ network", network);
+    const res = await fetch(networks[network].nodeUrl, options);
+    const data: TransfersList = await res.json();
+    console.log("~ data", data);
+    const transfer: Transfer[] = transfers || [];
+    transfer.push(...data.result.transfers);
+    if (data.result.pageKey) {
+      getEVMTransactions(address, network, data.result.pageKey, transfer);
+    }
+    return {
+      success: true,
+      transfers: transfer,
+    };
+  } catch (err) {
+    console.error(err);
+    return {
+      success: false,
+      transfers: null,
+    };
+  }
 };
 
 export const buildEvmTransaction = async (

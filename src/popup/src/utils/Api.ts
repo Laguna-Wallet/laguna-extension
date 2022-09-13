@@ -77,8 +77,7 @@ export async function fetchAccountsBalances(
 
         if (
           (network.chain === EVMNetwork.ETHEREUM ||
-            network.chain === EVMNetwork.AVALANCHE_TESTNET_FUJI ||
-            network.chain === EVMNetwork.ETHEREUM_TESTNET_GOERLI) &&
+            network.chain === EVMNetwork.AVALANCHE_TESTNET_FUJI) &&
           !ethAddress
         ) {
           i++;
@@ -87,8 +86,7 @@ export async function fetchAccountsBalances(
 
         if (
           (network.chain === EVMNetwork.ETHEREUM ||
-            network.chain === EVMNetwork.AVALANCHE_TESTNET_FUJI ||
-            network.chain === EVMNetwork.ETHEREUM_TESTNET_GOERLI) &&
+            network.chain === EVMNetwork.AVALANCHE_TESTNET_FUJI) &&
           ethAddress
         ) {
           const ethBalance = await getEVMBalance(
@@ -96,6 +94,10 @@ export async function fetchAccountsBalances(
             ethAddress,
             EvmAssets[network.chain][network.symbol],
           );
+
+          console.log("~ ethBalance.toString()", ethBalance.toString());
+          console.log("~ ethAddress", ethAddress);
+          console.log("~ network.chain", network.chain);
 
           if (new BigNumber(ethBalance.toString()).isEqualTo(0)) {
             i++;

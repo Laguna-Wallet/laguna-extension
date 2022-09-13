@@ -4,8 +4,8 @@ import { EVMAssetType } from "../../../popup/src/utils/evm/networks/asset"
 import { EVMNetwork, networks } from "../../../popup/src/utils/evm/networks"
 
 export const getProvider = (network: EVMNetwork): ethers.providers.JsonRpcProvider => {
-  // return new ethers.providers.JsonRpcProvider(networks[network].nodeUrl)
-  return new ethers.providers.JsonRpcProvider("HTTP://127.0.0.1:7545")
+  return new ethers.providers.JsonRpcProvider(networks[network].nodeUrl)
+  // return new ethers.providers.JsonRpcProvider("HTTP://127.0.0.1:7545")
 }
 
 export const generateNewEvmWallet = (mnemonicSeed: string): ethers.Wallet => {

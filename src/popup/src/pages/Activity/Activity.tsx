@@ -23,6 +23,7 @@ import { router } from "router/router";
 import { useHistory } from "react-router-dom";
 import Select, { components } from "react-select";
 import NetworkIcons from "components/primitives/NetworkIcons";
+import { EVMNetwork } from "utils/evm/networks";
 
 type Props = {
   isMenuOpen?: boolean;
@@ -98,7 +99,10 @@ export default function Activity() {
     icon: <NetworkIcons isSmallIcon={true} width="20px" height="20px" chain={"polkadot"} />,
   });
 
-  const address = account.getActiveAccount().address;
+  const address =
+    chain?.value?.chain === EVMNetwork.ETHEREUM
+      ? account.getActiveAccount().address
+      : account.getActiveAccount()?.meta?.ethAddress;
 
   const sortedTransactions =
     transactions &&
