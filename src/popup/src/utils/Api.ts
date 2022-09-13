@@ -7,9 +7,9 @@ import { ethers } from "ethers";
 import { changeAccountsBalances, changeTokenReceived } from "redux/actions";
 import { checkBalanceChange, timer } from "utils";
 import { getFromStorage, saveToStorage } from "./chrome";
-import { getEVMBalance } from "./evm/api";
-import { EVMNetwork } from "./evm/networks";
-import { EvmAssets } from "./evm/networks/asset";
+import { getEVMBalance } from "utils/evm/api";
+import { EVMNetwork } from "networks/evm";
+import { EvmAssets } from "networks/evm/asset";
 import { recodeAddress } from "./polkadot";
 import { networks, StorageKeys } from "./types";
 

@@ -55,6 +55,8 @@ export default function CreateAccount({
   const handleEncode = async (password: string) => {
     // note for now seed creation flow saves mnemonic in Account Context
     // would be better to refactor and save data in redux, (just for flow)
+    const accounts = keyring.getPairs();
+    const name = `Account ${accounts.length + 1}`;
 
     if (securityLevel === SecurityLevelEnum.Secured && account?.mnemonics) {
       const mnemonicsStr = account?.mnemonics.join(" ");
@@ -68,8 +70,10 @@ export default function CreateAccount({
         ethAddress,
       });
 
+
+
       const newPair = addAccountMeta(pair.address, {
-        name: pair.address,
+       name,
       });
 
       if (!activeAccount || (activeAccount && isObjectEmpty(activeAccount))) {
@@ -88,7 +92,7 @@ export default function CreateAccount({
 
       saveToStorage({ key: StorageKeys.OnBoarding, value: true });
     } else {
-      const mnemonicsStr = account?.generateMnemonics().join(" ");
+      const mnemonicsStr = account?.generateMnemonics().join(' ');
       const encodedSeed = AES.encrypt(mnemonicsStr, password).toString();
 
       const ethAddress = generateNewWalletAddress(mnemonicsStr);
@@ -101,7 +105,7 @@ export default function CreateAccount({
       });
 
       const newPair = addAccountMeta(pair.address, {
-        name: pair.address,
+        name: pair.address
       });
 
       if (!activeAccount || (activeAccount && isObjectEmpty(activeAccount))) {
@@ -110,14 +114,14 @@ export default function CreateAccount({
 
       browser.runtime.sendMessage({
         type: Messages.AuthUser,
-        payload: { password },
+        payload: { password }
       });
 
       saveToStorage({ key: StorageKeys.OnBoarding, value: true });
 
       browser.runtime.sendMessage({
         type: Messages.AddToKeyring,
-        payload: { seed: mnemonicsStr, password, meta: newPair.meta },
+        payload: { seed: mnemonicsStr, password, meta: newPair.meta }
       });
     }
   };

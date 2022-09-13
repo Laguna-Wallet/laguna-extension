@@ -991,7 +991,7 @@
   resolved "https://registry.yarnpkg.com/@ethereumjs/rlp/-/rlp-4.0.0.tgz#66719891bd727251a7f233f9ca80212d1994f8c8"
   integrity sha512-LM4jS5n33bJN60fM5EC8VeyhUgga6/DjCPBV2vWjnfVtobqtOiNC4SQ1MRFqyBSmJGGdB533JZWewyvlcdJtkQ==
 
-"@ethereumjs/tx@^4.0.0":
+"@ethereumjs/tx@4.0.0":
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/@ethereumjs/tx/-/tx-4.0.0.tgz#da284dd1d3407d910a055da99dc0d1c917097a8c"
   integrity sha512-W3Fc61kAA3D6vJad2vsfh9ygdaMeScYpf49ephoo/0y+CP9IN+MMrqA6mx1X0Fr/jf52IuW4hDHE/rmgadBV6g==

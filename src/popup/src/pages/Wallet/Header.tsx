@@ -43,13 +43,7 @@ export default function Header({
 
   const name = account?.getActiveAccount()?.meta?.name;
   const accountImg = account?.getActiveAccount()?.meta?.img;
-  const formattedName = name?.length > 15 ? truncateString(name) : name;
 
-  useEffect(() => {
-    if (containerRef?.current) {
-      setUserContainerWidth(containerRef?.current.offsetWidth);
-    }
-  }, [formattedName]);
 
   return (
     <Container bgColor={bgColor}>
@@ -57,7 +51,7 @@ export default function Header({
       <Content>
         <UserContainer ref={containerRef} onClick={() => setIsPopupOpen(true)}>
           <Avatar img={accountImg} />
-          <UserName>{formattedName}</UserName>
+          <UserName>{name}</UserName>
           <DownIconContainer>
             <DownArrowIcon />
           </DownIconContainer>
@@ -126,6 +120,7 @@ const UserContainer = styled.div`
   display: flex;
   align-items: center;
   cursor: pointer;
+  max-width: 200px;
 `;
 
 const Avatar = styled.div<{ img: string }>`
@@ -146,6 +141,9 @@ const UserName = styled.span`
   font-weight: 500;
   color: #18191a;
   letter-spacing: 0.28px;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const DownIconContainer = styled.div`

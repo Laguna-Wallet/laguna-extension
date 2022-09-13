@@ -1,7 +1,7 @@
-import BigNumber from "bignumber.js";
-import { BigNumberish, BytesLike } from "ethers";
-import { EVMNetwork } from "./networks";
-import { EVMAssetType } from "./networks/asset";
+import BigNumber from 'bignumber.js';
+import { BytesLike } from 'ethers';
+import { EVMNetwork } from '../../networks/evm';
+import { EVMAssetType } from '../../networks/evm/asset';
 
 export interface ethereumHoldingState {
   list: TokenData[];
@@ -21,6 +21,7 @@ export interface IEVMNetwork {
   nodeUrl: string;
   explorerUrlAddress: string;
   explorerUrlTransaction: string;
+  nativeCurreny: string;
 }
 
 export interface IEVMAsset {
@@ -32,6 +33,13 @@ export interface IEVMAsset {
 
 export interface IEVMAssetERC20 extends IEVMAsset {
   contractAddress: string;
+}
+
+export interface IEVMBuildTransactionOnChainParam {
+  nonce: BigNumber;
+  gasPriceInGwei: BigNumber;
+  nativeCurrenyBalance: BigNumber;
+  assetBalance: BigNumber;
 }
 
 export interface IEVMBuildTransaction {
@@ -82,14 +90,14 @@ export interface RawContract {
 }
 
 export interface IEVMToBeSignTransaction {
-  to?: string;
-  from?: string;
-  nonce?: BigNumberish;
-  gasLimit?: BigNumberish;
-  gasPrice?: BigNumberish;
+  to: string;
+  from: string;
+  nonce: string;
+  gasLimit: string;
+  gasPrice: string;
   data?: BytesLike;
-  value?: BigNumberish;
-  chainId?: number;
+  value: string;
+  chainId: number;
   type?: number;
   maxPriorityFeePerGas?: string;
   maxFeePerGas?: string;
