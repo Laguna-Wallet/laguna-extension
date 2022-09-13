@@ -52,7 +52,7 @@ export interface IEVMBuildTransactionOnChainParam {
 
 export interface IEVMBuildTransaction {
   network: EVMNetwork;
-  asset: IEVMAssetERC20;
+  asset: IEVMAsset | IEVMAssetERC20;
   amount: BigNumber;
   fromAddress: string;
   toAddress: string;

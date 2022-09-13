@@ -70,10 +70,8 @@ export default function CreateAccount({
         ethAddress,
       });
 
-
-
       const newPair = addAccountMeta(pair.address, {
-       name,
+        name,
       });
 
       if (!activeAccount || (activeAccount && isObjectEmpty(activeAccount))) {
@@ -92,7 +90,7 @@ export default function CreateAccount({
 
       saveToStorage({ key: StorageKeys.OnBoarding, value: true });
     } else {
-      const mnemonicsStr = account?.generateMnemonics().join(' ');
+      const mnemonicsStr = account?.generateMnemonics().join(" ");
       const encodedSeed = AES.encrypt(mnemonicsStr, password).toString();
 
       const ethAddress = generateNewWalletAddress(mnemonicsStr);
@@ -105,7 +103,7 @@ export default function CreateAccount({
       });
 
       const newPair = addAccountMeta(pair.address, {
-        name: pair.address
+        name: pair.address,
       });
 
       if (!activeAccount || (activeAccount && isObjectEmpty(activeAccount))) {
@@ -114,14 +112,14 @@ export default function CreateAccount({
 
       browser.runtime.sendMessage({
         type: Messages.AuthUser,
-        payload: { password }
+        payload: { password },
       });
 
       saveToStorage({ key: StorageKeys.OnBoarding, value: true });
 
       browser.runtime.sendMessage({
         type: Messages.AddToKeyring,
-        payload: { seed: mnemonicsStr, password, meta: newPair.meta }
+        payload: { seed: mnemonicsStr, password, meta: newPair.meta },
       });
     }
   };

@@ -190,13 +190,14 @@ export const buildEvmTransaction = async (
     return toBeSignTransaction;
   } else if (asset.assetType === EVMAssetType.ERC20) {
     const contract = initERC20SmartContract(network, asset as IEVMAssetERC20);
+
     return {
       gasPrice: gasPriceInGwei.multipliedBy("1E9").toString(10),
       gasLimit: gasPriceInGwei.toString(10),
       nonce: nonce.toString(10),
       chainId: networks[network].chainId,
       from: fromAddress,
-      to: toCheckSumAddress(asset?.contractAddress),
+      // to: toCheckSumAddress(asset?.contractAddress),
       value: "0",
       data: contract.methods
         .transfer(

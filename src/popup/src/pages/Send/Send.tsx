@@ -161,27 +161,27 @@ function Send({ initialIsContactsPopupOpen }: Props) {
 
       const ethAsset = EvmAssets[ethNetwork][reduxSendTokenState?.selectedAsset?.symbol];
 
-      const toSignTransaction: IEVMToBeSignTransaction = await buildEvmTransaction({
-        network: ethNetwork,
-        asset: ethAsset,
-        amount: new BigNumber(form.amount),
-        fromAddress: activeAccount?.meta?.ethAddress,
-        toAddress: form?.address,
-        gasPriceInGwei: gasPrice,
-        // numOfPendingTransaction: BigNumber; // TODO for adding up nonce, blocked by cache pending txn
-      });
+      // const toSignTransaction: IEVMToBeSignTransaction = await buildEvmTransaction({
+      //   network: ethNetwork,
+      //   asset: ethAsset,
+      //   amount: new BigNumber(form.amount),
+      //   fromAddress: activeAccount?.meta?.ethAddress,
+      //   toAddress: form?.address,
+      //   gasPriceInGwei: gasPrice,
+      //   // numOfPendingTransaction: BigNumber; // TODO for adding up nonce, blocked by cache pending txn
+      // });
 
-      const estimatedGas = await estimateGas(ethNetwork, toSignTransaction);
-      const ethValue = await ethers.utils.formatUnits(estimatedGas.toNumber());
+      // const estimatedGas = await estimateGas(ethNetwork, toSignTransaction);
+      // const ethValue = await ethers.utils.formatUnits(estimatedGas.toNumber());
 
-      setToBeSignTransaction(toSignTransaction);
-      setFee(ethValue);
-      setRecoded(form?.address);
+      // setToBeSignTransaction(toSignTransaction);
+      // setFee(ethValue);
+      // setRecoded(form?.address);
       // todo check if balance is enough
       setAbilityToTransfer(true);
 
       setLoading(false);
-      setAmountToSend(ethValue.toString());
+      // setAmountToSend(ethValue.toString());
 
       //   // setTransfer(transfer);
     }
@@ -217,7 +217,7 @@ function Send({ initialIsContactsPopupOpen }: Props) {
         />
 
         {/* todo pass one payload prop for all the chains   */}
-        <Confirm
+        {/* <Confirm
           setBlockHash={setBlockHash}
           amountToSend={amountToSend}
           recoded={recoded}
@@ -225,7 +225,7 @@ function Send({ initialIsContactsPopupOpen }: Props) {
           transfer={transfer}
           flow={flow}
           toBeSignTransaction={toBeSignTransaction}
-        />
+        /> */}
         <TransactionSent blockHash={blockHash} />
       </Wizard>
     </Container>

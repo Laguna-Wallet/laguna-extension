@@ -1,7 +1,7 @@
 import { ethers } from "ethers"
 import { IEVMAssetERC20, IEVMAsset, IEVMBuildTransaction, IEVMToBeSignTransaction, Response } from "../../../popup/src/utils/evm/interfaces"
-import { EVMAssetType } from "../../../popup/src/utils/evm/networks/asset"
-import { EVMNetwork, networks } from "../../../popup/src/utils/evm/networks"
+import { EVMAssetType } from "../../../popup/src/networks/evm/asset"
+import { EVMNetwork, networks } from "../../../popup/src/networks/evm"
 
 export const getProvider = (network: EVMNetwork): ethers.providers.JsonRpcProvider => {
   return new ethers.providers.JsonRpcProvider(networks[network].nodeUrl)

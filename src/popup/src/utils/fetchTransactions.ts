@@ -56,7 +56,7 @@ export async function fetchAccountTransactionsByChain(
     let retrieved_count = 0;
     let page = 0;
     //   let accountTransfers = [];
-
+    console.log("hi");
     if (chain === EVMNetwork.ETHEREUM) {
       const data = await getEVMTransactions(address, EVMNetwork.ETHEREUM);
     }
