@@ -23,7 +23,7 @@ import { router } from "router/router";
 import { useHistory } from "react-router-dom";
 import Select, { components } from "react-select";
 import NetworkIcons from "components/primitives/NetworkIcons";
-import { EVMNetwork } from "utils/evm/networks";
+import { EVMNetwork } from "networks/evm";
 
 type Props = {
   isMenuOpen?: boolean;

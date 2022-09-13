@@ -32,8 +32,8 @@ import Utf8 from "crypto-js/enc-utf8";
 import { fetchTransactions, transformTransfers } from "./fetchTransactions";
 import { generateRandomBase64Avatar } from "utils";
 import { generateNewWalletAddress } from "./evm/api";
-import { EVMNetwork } from "./evm/networks";
-import { EVMAssetType } from "./evm/networks/asset";
+import { EVMNetwork } from "networks/evm";
+import { EVMAssetType } from "networks/evm/asset";
 
 // TODO appropriate typing
 

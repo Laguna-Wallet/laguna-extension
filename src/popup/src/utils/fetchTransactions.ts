@@ -1,6 +1,6 @@
 import { timer } from "utils";
 import { getEVMTransactions } from "./evm/api";
-import { EVMNetwork } from "./evm/networks";
+import { EVMNetwork } from "networks/evm";
 import { chains, Transaction } from "./types";
 
 // export async function fetchAllAccountsTransactions(address: string) {

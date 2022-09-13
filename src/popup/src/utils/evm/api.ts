@@ -1,4 +1,3 @@
-import { ethers } from "ethers";
 import {
   IEVMAssetERC20,
   IEVMAsset,
@@ -15,6 +14,7 @@ import {
 import BigNumber from "bignumber.js";
 import { EVMNetwork, networks } from "networks/evm";
 import { EVMAssetType, EvmAssets } from "networks/evm/asset";
+import { ethers } from "ethers";
 import ERC20ABI from "./abi/ERC20.json";
 
 export const generateNewWalletAddress = (mnemonicSeed: string): string => {
@@ -172,7 +172,7 @@ export const getBuildTransactionOnChainParam = async (
   };
 };
 
-export const buildTransaction = async (
+export const buildEvmTransaction = async (
   param: IEVMBuildTransaction,
 ): Promise<IEVMToBeSignTransaction> => {
   const { network, asset, amount, fromAddress, toAddress, nonce, gasPriceInGwei, gasLimit } = param;

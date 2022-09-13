@@ -25,10 +25,10 @@ import { selectAsset } from "redux/actions";
 import { State } from "redux/store";
 import { useLocation } from "react-router-dom";
 import { buildEvmTransaction, estimateGas, getEvmGasPrice, isValidEVMAddress } from "utils/evm/api";
-import { EvmAssets } from "utils/evm/networks/asset";
+import { EvmAssets } from "networks/evm/asset";
 import { ethers } from "ethers";
 import { IEVMBuildTransaction, IEVMToBeSignTransaction } from "utils/evm/interfaces";
-import { EVMNetwork } from "utils/evm/networks";
+import { EVMNetwork } from "networks/evm";
 
 export enum SendAccountFlowEnum {
   SendToTrustedContact = "SendToTrustedContact",

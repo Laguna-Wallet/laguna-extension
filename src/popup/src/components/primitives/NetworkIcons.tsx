@@ -10,7 +10,7 @@ import USDTIcon from "assets/imgs/NetworkIcons/USDT.png";
 import SmallMonriverIcon from "assets/svgComponents/SmallMonriverIcon";
 import EthereumIcon from "assets/imgs/ethereum.png";
 import styled from "styled-components";
-import { EVMNetwork } from "utils/evm/networks";
+import { EVMNetwork } from "networks/evm";
 import { TokenSymbols } from "utils/types";
 
 type Props = {

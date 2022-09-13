@@ -9,7 +9,7 @@ import { useSelector } from "react-redux";
 import SelectNetwork from "./SelectNetwork";
 import { State } from "redux/store";
 import { useLocation } from "react-router-dom";
-import { EVMNetwork } from "utils/evm/networks";
+import { EVMNetwork } from "networks/evm";
 export interface PropsFromTokenDashboard {
   fromTokenDashboard?: boolean;
   asset?: Asset;

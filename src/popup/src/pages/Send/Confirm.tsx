@@ -25,7 +25,7 @@ import { changeAccountsBalances } from "redux/actions";
 import { recodeAddress } from "utils/polkadot";
 import { sendMessagePromise } from "utils/chrome";
 import { IEVMBuildTransaction, IEVMToBeSignTransaction } from "utils/evm/interfaces";
-import { EVMNetwork } from "utils/evm/networks";
+import { EVMNetwork } from "networks/evm";
 
 type Props = {
   fee: string;
