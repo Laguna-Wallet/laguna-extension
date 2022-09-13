@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import { IEVMAssetERC20, IEVMAsset, IEVMBuildTransaction, IEVMToBeSignTransaction, Response, TransfersList, TransactionState, Transfer } from "./interfaces";
+import { IEVMAssetERC20, IEVMAsset, IEVMBuildTransaction, IEVMToBeSignTransaction, Response, IAlchemyGetAssetTransfersResult, IAlchemyTransferObject } from "./interfaces";
 import fs from "fs";
 import BigNumber from "bignumber.js";
 import { EVMNetwork, networks } from "./networks";
@@ -77,7 +77,8 @@ export const calculateTransactionFeeInNormalUnit = (toBeSignTransaction: IEVMToB
   return new BigNumber(toBeSignTransaction.gasLimit).multipliedBy(toBeSignTransaction.gasPrice).dividedBy("1E18");
 };
 
-export const getEVMTransactions = async (address: string, network: EVMNetwork, key?: string, transfers?: Transfer[]): Promise<TransactionState> => {
+export const getEVMTransactions = async (address: string, network: EVMNetwork, key?: string, transfers?: any[])
+: Promise<IAlchemyGetAssetTransfersResult> => {
 
   const options = {
     method: "POST",
@@ -103,8 +104,8 @@ export const getEVMTransactions = async (address: string, network: EVMNetwork, k
 
   try {
     const res = await fetch(networks[network].nodeUrl, options);
-    const data: TransfersList = await res.json();
-    const transfer: Transfer[] = transfers || [];
+    const data = await res.json();
+    const transfer: IAlchemyTransferObject[] = transfers || [];
     transfer.push(...data.result.transfers);
     if(data.result.pageKey) {
       getEVMTransactions(address, network, data.result.pageKey, transfer);

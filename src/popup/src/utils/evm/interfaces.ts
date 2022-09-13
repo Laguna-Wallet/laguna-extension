@@ -45,23 +45,12 @@ export interface IEVMBuildTransaction {
   numOfPendingTransaction: BigNumber, // TODO for adding up nonce, blocked by cache pending txn
 }
 
-export interface TransactionState {
+export interface IAlchemyGetAssetTransfersResult {
   success: boolean,
-  transfers: Transfer[] | null
+  transfers: IAlchemyTransferObject[] | null
 }
 
-export interface TransfersList {
-  id: number,
-  jsonrpc: string,
-  result: Result
-}
-
-export interface Result {
-  pageKey: string,
-  transfers: Transfer[]
-}
-
-export interface Transfer {
+export interface IAlchemyTransferObject {
   blockNum: string,
   uniqueId: string,
   hash: string,
