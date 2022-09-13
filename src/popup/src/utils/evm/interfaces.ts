@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import { BytesLike } from "ethers";
-import { EVMNetwork } from "../../networks/evm";
-import { EVMAssetType } from "../../networks/evm/asset";
+import { EVMNetwork } from "networks/evm";
+import { EVMAssetType } from "networks/evm/asset";
 
 export interface ethereumHoldingState {
   list: TokenData[];
@@ -29,11 +29,18 @@ export interface IEVMAsset {
   symbol: string;
   decimal: number;
   assetType: EVMAssetType;
-  contractAddress?: string;
 }
 
 export interface IEVMAssetERC20 extends IEVMAsset {
   contractAddress: string;
+}
+
+export interface IEVMNetwork {
+  chainId: number;
+  nodeUrl: string;
+  explorerUrlAddress: string;
+  explorerUrlTransaction: string;
+  nativeCurreny: string;
 }
 
 export interface IEVMBuildTransactionOnChainParam {
