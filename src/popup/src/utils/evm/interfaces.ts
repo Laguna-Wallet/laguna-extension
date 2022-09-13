@@ -1,30 +1,29 @@
-import BigNumber from "bignumber.js";
-import { BytesLike } from "ethers";
-import { EVMNetwork } from "../../networks/evm";
-import { EVMAssetType } from "../../networks/evm/asset";
+import BigNumber from 'bignumber.js';
+import { BytesLike } from 'ethers';
+import { EVMNetwork } from '../../networks/evm';
+import { EVMAssetType } from '../../networks/evm/asset';
 
- 
- export interface ethereumHoldingState {
-    list: TokenData[]
- }
+export interface ethereumHoldingState {
+  list: TokenData[];
+}
 
- export interface TokenData {
-    balances: Balance[];
- }
+export interface TokenData {
+  balances: Balance[];
+}
 
- export interface Balance {
-  contractAddress: string
-  amount: string
- }
+export interface Balance {
+  contractAddress: string;
+  amount: string;
+}
 
- export interface IEVMNetwork {
-   chainId: number;
-   nodeUrl: string;
-   explorerUrlAddress: string;
-   explorerUrlTransaction: string;
-   nativeCurreny: string;
- }
- 
+export interface IEVMNetwork {
+  chainId: number;
+  nodeUrl: string;
+  explorerUrlAddress: string;
+  explorerUrlTransaction: string;
+  nativeCurreny: string;
+}
+
 export interface IEVMAsset {
   name: string;
   symbol: string;
@@ -37,33 +36,33 @@ export interface IEVMAssetERC20 extends IEVMAsset {
 }
 
 export interface IEVMBuildTransactionOnChainParam {
-  nonce: BigNumber,
-  gasPriceInGwei: BigNumber,
-  nativeCurrenyBalance: BigNumber,
-  assetBalance: BigNumber,
+  nonce: BigNumber;
+  gasPriceInGwei: BigNumber;
+  nativeCurrenyBalance: BigNumber;
+  assetBalance: BigNumber;
 }
 
 export interface IEVMBuildTransaction {
-  network: EVMNetwork, 
-  asset: IEVMAssetERC20, 
-  amount: BigNumber, 
-  fromAddress: string, 
-  toAddress: string, 
-  nonce: BigNumber,
-  gasPriceInGwei: BigNumber,
-  gasLimit: BigNumber,
-  numOfPendingTransaction: BigNumber, // TODO for adding up nonce, blocked by cache pending txn
+  network: EVMNetwork;
+  asset: IEVMAssetERC20;
+  amount: BigNumber;
+  fromAddress: string;
+  toAddress: string;
+  nonce: BigNumber;
+  gasPriceInGwei: BigNumber;
+  gasLimit: BigNumber;
+  numOfPendingTransaction: BigNumber; // TODO for adding up nonce, blocked by cache pending txn
 }
 
 export interface IEVMToBeSignTransaction {
-  to: string,
-  from: string,
-  nonce: string,
-  gasLimit: string,
-  gasPrice: string,
-  data?: BytesLike,
-  value: string,
-  chainId: number
+  to: string;
+  from: string;
+  nonce: string;
+  gasLimit: string;
+  gasPrice: string;
+  data?: BytesLike;
+  value: string;
+  chainId: number;
   type?: number;
   maxPriorityFeePerGas?: string;
   maxFeePerGas?: string;
@@ -72,6 +71,6 @@ export interface IEVMToBeSignTransaction {
 }
 
 export interface Response {
-  success: boolean,
-  message: string
+  success: boolean;
+  message: string;
 }
