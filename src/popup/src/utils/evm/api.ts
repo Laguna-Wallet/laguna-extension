@@ -90,17 +90,38 @@ export const getBuildTransactionOnChainParam = async (network: EVMNetwork, fromA
 };
 
 export const buildTransaction = async (  param: IEVMBuildTransaction  ): Promise<IEVMToBeSignTransaction> => {
-  const toBeSignTransaction: IEVMToBeSignTransaction = {
-    to: param.toAddress,
-    from: param.fromAddress,
-    value: `0x${param.amount.multipliedBy(`1E${param.asset.decimal}`).toString(16)}`,
-    gasPrice: param.gasPriceInGwei.multipliedBy(`1E9`).toString(10),
-    gasLimit: param.gasPriceInGwei.toString(10),
-    nonce: param.nonce.toString(10),
-    chainId: networks[param.network].chainId,
-  };
-  toBeSignTransaction.gasLimit = ( await estimateGas(param.network, toBeSignTransaction)).toString(10);
-  return toBeSignTransaction;
+  const {network, asset, amount, fromAddress, toAddress, nonce,gasPriceInGwei, gasLimit} = param;
+
+  if (asset.assetType === EVMAssetType.NATIVE) {
+    const toBeSignTransaction: IEVMToBeSignTransaction = {
+      to: toAddress,
+      from: fromAddress,
+      value: `0x${amount.multipliedBy(`1E${asset.decimal}`).toString(16)}`,
+      gasPrice: gasPriceInGwei.multipliedBy("1E9").toString(10),
+      gasLimit: gasPriceInGwei.toString(10),
+      nonce: nonce.toString(10),
+      chainId: networks[network].chainId,
+    };
+    return toBeSignTransaction;
+  } else if (asset.assetType === EVMAssetType.ERC20) {
+    const contract = initERC20SmartContract(network, (asset as IEVMAssetERC20));
+    return {
+      gasPrice: gasPriceInGwei.multipliedBy("1E9").toString(10),
+      gasLimit: gasPriceInGwei.toString(10),
+      nonce: nonce.toString(10),
+      chainId: networks[network].chainId,
+      from: fromAddress,
+      to: toCheckSumAddress(asset.contractAddress),
+      value: "0",
+      data: contract.methods
+        .transfer(
+          toCheckSumAddress(toAddress),
+          amount.multipliedBy(`1E${asset.decimal}`).toString(10),
+        )
+        .encodeABI(),
+    } as IEVMToBeSignTransaction;
+  }
+  throw new Error("invalid assetType");
 };
 
 export const signTransaction = async (network: EVMNetwork, wallet: ethers.Wallet, toBeSignTransaction: IEVMToBeSignTransaction): Promise<string> => {
@@ -117,21 +138,27 @@ export const broadcastTransaction = async (network: EVMNetwork, signedTx: string
     return transactionReceipt.hash;
   };
 
-export const getBalance = async (network: EVMNetwork, address: string, asset: IEVMAsset | IEVMAssetERC20): Promise<BigNumber> => {
-  const provider = getProvider(network);
-  let balanceInBaseUnit;
-  switch (asset.assetType) {
-    case EVMAssetType.NATIVE: {
-      balanceInBaseUnit = await provider.getBalance(address);
-      break;
+  export const getBalance = async (network: EVMNetwork, address: string, asset: IEVMAsset | IEVMAssetERC20): Promise<BigNumber> => {
+    const provider = getProvider(network);
+    let balanceInBaseUnit;
+    switch (asset.assetType) {
+      case EVMAssetType.NATIVE: {
+        balanceInBaseUnit = await provider.getBalance(address);
+        break;
+      }
+      case EVMAssetType.ERC20: {
+        const contract = initERC20SmartContract(network, (asset as IEVMAssetERC20));
+        balanceInBaseUnit = await contract.balanceOf(address);
+        break;
+      }
     }
-    case EVMAssetType.ERC20: {
-      const abiFileName = "ERC20";
-      const ERC20ABI = JSON.parse(fs.readFileSync(`./abi/${abiFileName}.json`, "utf-8"));
-      const contract = new ethers.Contract((asset as IEVMAssetERC20).contractAddress, ERC20ABI, provider);
-      balanceInBaseUnit = await contract.balanceOf(address);
-      break;
-    }
-  }
-  return new BigNumber(balanceInBaseUnit).dividedBy(`1E${asset.decimal}`);
-};
+    return new BigNumber(balanceInBaseUnit).dividedBy(`1E${asset.decimal}`);
+  };
+
+  const initERC20SmartContract = (network: EVMNetwork, asset: IEVMAssetERC20): ethers.Contract => {
+    const provider = getProvider(network);
+    const abiFileName = "ERC20";
+    const ERC20ABI = JSON.parse(fs.readFileSync(`./abi/${abiFileName}.json`, "utf-8"));
+    return new ethers.Contract((asset as IEVMAssetERC20).contractAddress, ERC20ABI, provider);
+  };
+    
