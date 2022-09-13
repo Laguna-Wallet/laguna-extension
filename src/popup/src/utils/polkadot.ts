@@ -470,7 +470,8 @@ export async function getLatestTransactionsForSingleChain(
   page: number,
   row: number,
 ): Promise<{ count: number; transactions: Transaction[] }> {
-  const data = await fetchTransactions(address, chain, row, page);
+  // TODO Token
+  const data = await fetchTransactions(address, chain, "USDC", row, page);
   return {
     count: data?.data?.count,
     transactions: data?.data?.transfers ? transformTransfers(data?.data?.transfers, chain) : [],

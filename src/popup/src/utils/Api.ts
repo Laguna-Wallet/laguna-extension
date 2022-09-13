@@ -97,9 +97,6 @@ export async function fetchAccountsBalances(
             EvmAssets[network.chain][network.symbol],
           );
 
-          console.log("~ network.chain", network.chain);
-          console.log("~ ethBalance", ethBalance.toString());
-
           if (new BigNumber(ethBalance.toString()).isEqualTo(0)) {
             i++;
             continue;

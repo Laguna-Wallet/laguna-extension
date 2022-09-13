@@ -10,8 +10,8 @@ const InactiveField = () => {
 };
 
 const EmptyContent = styled.div`
-height: calc(100% - 56px);
-box-sizing: border-box;
+  height: calc(100% - 56px);
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -20,7 +20,7 @@ box-sizing: border-box;
 `;
 
 const Title = styled.h2`
-  font-family: 'IBM Plex Sans';
+  font-family: "IBM Plex Sans";
   font-weight: 500;
   font-size: 22px;
   line-height: 40px;
@@ -29,7 +29,7 @@ const Title = styled.h2`
 `;
 
 const Text = styled.p`
-  font-family: 'Inter';
+  font-family: "Inter";
   font-weight: 400;
   font-size: 14px;
   line-height: 135%;

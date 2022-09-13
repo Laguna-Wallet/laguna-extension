@@ -48,8 +48,8 @@ export const isValidEVMAddress = (address: string): Response => {
 };
 
 export const getProvider = (network: EVMNetwork): ethers.providers.JsonRpcProvider => {
-  // return new ethers.providers.JsonRpcProvider("HTTP://127.0.0.1:7545");
-  return new ethers.providers.JsonRpcProvider(networks[network].nodeUrl);
+  return new ethers.providers.JsonRpcProvider("HTTP://127.0.0.1:7545");
+  // return new ethers.providers.JsonRpcProvider(networks[network].nodeUrl);
 };
 
 export const getNonce = async (network: EVMNetwork, address: string): Promise<BigNumber> => {

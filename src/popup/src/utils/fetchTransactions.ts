@@ -43,7 +43,11 @@ import { chains, Transaction } from "./types";
 //   }
 // }
 
-export async function fetchAccountTransactionsByChain(address: string, chain: string) {
+export async function fetchAccountTransactionsByChain(
+  address: string,
+  chain: string,
+  token: string,
+) {
   try {
     let result_arr: Transaction[] = [];
     let results = [];
@@ -51,21 +55,23 @@ export async function fetchAccountTransactionsByChain(address: string, chain: st
     let page = 0;
     //   let accountTransfers = [];
 
-    const res = await fetchTransactions(address, chain, 30, page);
+    // if(chain === 'ETHEREUM'){
+
+    // }
+
+    const res = await fetchTransactions(address, chain, token, 30, page);
 
     // if (!res?.data?.transfers) continue;
     if (!res?.data?.transfers) return;
-    console.log("~ res?.data?.transfers", res?.data?.transfers);
 
     results = [...res.data.transfers];
-    console.log("~ results", results);
     retrieved_count = res?.data?.count;
     page++;
 
     while (results?.length < retrieved_count) {
       try {
         await timer(1000);
-        const data = await fetchTransactions(address, chain, 30, page);
+        const data = await fetchTransactions(address, chain, token, 30, page);
         results = [...results, ...data.data.transfers];
         page++;
       } catch (err) {
@@ -84,7 +90,13 @@ export async function fetchAccountTransactionsByChain(address: string, chain: st
   }
 }
 
-export async function fetchTransactions(address: string, chain: string, row: number, page: number) {
+export async function fetchTransactions(
+  address: string,
+  chain: string,
+  token: string,
+  row: number,
+  page: number,
+) {
   const res = await fetch(`https://${chain}.api.subscan.io/api/scan/transfers`, {
     method: "POST",
     mode: "cors",

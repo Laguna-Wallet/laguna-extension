@@ -88,8 +88,12 @@ export default function Activity() {
   const [transaction, setTransaction] = useState<Transaction>();
   const [loading, setLoading] = useState<boolean>(false);
   const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false);
-  const [chain, setChain] = useState<{ value: string; label: string; icon: ReactChild }>({
-    value: "polkadot",
+  const [chain, setChain] = useState<{
+    value: { chain: string; token: string };
+    label: string;
+    icon: ReactChild;
+  }>({
+    value: { chain: "polkadot", token: "DOT" },
     label: "polkadot",
     icon: <NetworkIcons isSmallIcon={true} width="20px" height="20px" chain={"polkadot"} />,
   });
@@ -107,7 +111,8 @@ export default function Activity() {
       setLoading(true);
       const transactions = (await fetchAccountTransactionsByChain(
         address,
-        chain.value,
+        chain.value.chain,
+        chain.value.token,
       )) as Transaction[];
       setTransactions(transactions);
       setLoading(false);
@@ -124,7 +129,7 @@ export default function Activity() {
   const { Option } = components;
 
   const options = networks.map((network) => ({
-    value: network.chain,
+    value: { chain: network.chain, token: network.symbol },
     label: network.chain.toUpperCase(),
     icon: (
       <NetworkIcons
@@ -170,35 +175,36 @@ export default function Activity() {
   return (
     <Container bg={activityBg} isEmpty={!transactions?.length}>
       <Header backAction={() => history.push(router.home)} title="Activity" />
-      {transactions?.length ? (
-        <>
-          <Content>
-            <SelectContainer>
-              <span>Network</span>
-              <Select
-                styles={styles}
-                isSearchable={false}
-                menuPlacement="auto"
-                menuPosition="fixed"
-                onChange={(value: any) => {
-                  setChain(value);
-                }}
-                value={{
-                  value: chain.value,
-                  label: chain.label,
-                  icon: (
-                    <NetworkIcons
-                      isSmallIcon={true}
-                      width="15px"
-                      height="15px"
-                      chain={chain.value}
-                    />
-                  ),
-                }}
-                options={options}
-                components={{ Option: IconOption, SingleValue: customSingleValue }}
-              />
-            </SelectContainer>
+      <>
+        <Content>
+          <SelectContainer>
+            <span>Network</span>
+            <Select
+              styles={styles}
+              isSearchable={false}
+              menuPlacement="auto"
+              menuPosition="fixed"
+              onChange={(value: any) => {
+                setChain(value);
+              }}
+              value={{
+                value: { chain: chain.value.chain, token: chain.value.token },
+                label: chain.label,
+                icon: (
+                  <NetworkIcons
+                    isSmallIcon={true}
+                    width="15px"
+                    height="15px"
+                    chain={chain.value.chain}
+                    token={chain.value.token}
+                  />
+                ),
+              }}
+              options={options}
+              components={{ Option: IconOption, SingleValue: customSingleValue }}
+            />
+          </SelectContainer>
+          {transactions?.length ? (
             <ListContentParent>
               <ListContentChild>
                 {sortedTransactions.map((transaction: any) => {
@@ -212,17 +218,17 @@ export default function Activity() {
                 })}
               </ListContentChild>
             </ListContentParent>
-          </Content>
-          {isPopupOpen && transaction && (
-            <Popup justify="center" align="center" onClose={() => setIsPopupOpen(false)}>
-              <ActivityContainer>
-                <ActivityInfo transaction={transaction} />
-              </ActivityContainer>
-            </Popup>
+          ) : (
+            <InactiveField />
           )}
-        </>
-      ) : (
-        <InactiveField />
+        </Content>
+      </>
+      {isPopupOpen && transaction && (
+        <Popup justify="center" align="center" onClose={() => setIsPopupOpen(false)}>
+          <ActivityContainer>
+            <ActivityInfo transaction={transaction} />
+          </ActivityContainer>
+        </Popup>
       )}
       <Footer activeItem="activity" />
       {loading && <Loader />}
@@ -281,7 +287,7 @@ const SelectContainer = styled.div`
   width: 100% !important;
   display: flex;
   align-items: space-between;
-  margin-top: 45px;
+  /* margin-top: 45px; */
   align-items: center;
   span {
     letter-spacing: 0.25px;
