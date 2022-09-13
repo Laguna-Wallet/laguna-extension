@@ -92,6 +92,15 @@ export const estimateGas = async (
   }
 };
 
+export const isSmartContractAddress = async (
+  network: EVMNetwork,
+  address: string,
+): Promise<boolean> => {
+  const provider = new ethers.providers.JsonRpcProvider(networks[network].nodeUrl);
+  const code = await provider.getCode(toCheckSumAddress(address));
+  return !code;
+};
+
 export const getEVMTransactions = async (
   address: string,
   network: EVMNetwork,
