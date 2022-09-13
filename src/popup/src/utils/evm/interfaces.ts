@@ -62,13 +62,11 @@ export interface IAlchemyTransferObject {
   tokenId: string | null,
   asset: string,
   category: string
-  rawContract: RawContract
-}
-
-export interface RawContract {
-  value: string,
-  address: string | null,
-  decimal: string
+  rawContract: {
+    value: string,
+    address: string | null,
+    decimal: string
+  }
 }
 
 export interface IEVMToBeSignTransaction {
