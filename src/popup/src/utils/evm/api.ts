@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import { IEVMAssetERC20, IEVMAsset, IEVMBuildTransaction, IEVMToBeSignTransaction, Response, IAlchemyGetAssetTransfersResult, IAlchemyTransferObject } from "./interfaces";
+import { IEVMAssetERC20, IEVMAsset, IEVMBuildTransaction, IEVMToBeSignTransaction, Response, IAlchemyHistoricalTransfers, IAlchemyTransfer } from "./interfaces";
 import fs from "fs";
 import BigNumber from "bignumber.js";
 import { EVMNetwork, networks } from "./networks";
@@ -78,7 +78,7 @@ export const calculateTransactionFeeInNormalUnit = (toBeSignTransaction: IEVMToB
 };
 
 export const getHistoricalTransactions = async (address: string, network: EVMNetwork, key?: string, transfers?: any[])
-: Promise<IAlchemyGetAssetTransfersResult> => {
+: Promise<IAlchemyHistoricalTransfers> => {
 
   const options = {
     method: "POST",
@@ -103,7 +103,7 @@ export const getHistoricalTransactions = async (address: string, network: EVMNet
 
 
   try {
-    const transfer: IAlchemyTransferObject[] = transfers || [];
+    const transfer: IAlchemyTransfer[] = transfers || [];
     const provider = getProvider(network);
     const res = await fetch(networks[network].nodeUrl, options);
     const data = await res.json();
@@ -111,7 +111,7 @@ export const getHistoricalTransactions = async (address: string, network: EVMNet
 
     data.result.transfers.forEach(async (element: any) => {
       const transactionData = await provider.getTransaction(element.hash);
-      const transferObj: IAlchemyTransferObject  = {
+      const transferObj: IAlchemyTransfer  = {
         asset: element.asset,
         amount: element.value,
         from: element.from,

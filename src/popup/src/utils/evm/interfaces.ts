@@ -45,25 +45,6 @@ export interface IEVMBuildTransaction {
   numOfPendingTransaction: BigNumber, // TODO for adding up nonce, blocked by cache pending txn
 }
 
-export interface IAlchemyGetAssetTransfersResult {
-  success: boolean,
-  transfers: IAlchemyTransferObject[] | null
-}
-
-export interface IAlchemyTransferObject {
-  asset: string;
-  amount: string;
-  from: string;
-  fee: string;
-  to: string;
-  nonce: string;
-  blockNumber: string;
-  transactionHash: string;
-  timestamp: string;
-}
-
-
-
 export interface IEVMToBeSignTransaction {
   to: string,
   from: string,
@@ -83,4 +64,25 @@ export interface IEVMToBeSignTransaction {
 export interface Response {
   success: boolean,
   message: string
+}
+
+//==============================================================================
+// Alchemy API
+//==============================================================================
+
+export interface IAlchemyHistoricalTransfers {
+  success: boolean,
+  transfers: IAlchemyTransfer[] | null
+}
+
+export interface IAlchemyTransfer {
+  asset: string;
+  amount: string;
+  from: string;
+  fee: string;
+  to: string;
+  nonce: string;
+  blockNumber: string;
+  transactionHash: string;
+  timestamp: string;
 }
