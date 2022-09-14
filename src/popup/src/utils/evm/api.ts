@@ -107,15 +107,15 @@ export const getHistoricalTransactions = async (address: string, network: EVMNet
     const provider = getProvider(network);
     const res = await fetch(networks[network].nodeUrl, options);
     const data = await res.json();
-    await Promise.all([res, data ]);
+    const transfersList = data.result.transfers;
 
-    data.result.transfers.forEach(async (element: any) => {
-      const transactionData = await provider.getTransaction(element.hash);
+    for(let i = 0; i < 20; i++) {
+      const transactionData = await provider.getTransaction(transfersList[i].hash);
       const transferObj: IAlchemyTransfer  = {
-        asset: element.asset,
-        amount: element.value,
-        from: element.from,
-        to: element.to,
+        asset: transfersList[i].asset,
+        amount: transfersList[i].value,
+        from: transfersList[i].from,
+        to: transfersList[i].to,
         fee: transactionData.gasLimit.toString() || "unknown",
         nonce: transactionData.nonce.toString(),
         blockNumber: transactionData.blockNumber?.toString() || "",
@@ -123,8 +123,7 @@ export const getHistoricalTransactions = async (address: string, network: EVMNet
         timestamp: transactionData.timestamp?.toString() || "unknown",
       };
       transfer.push(transferObj);
-      
-    });
+    }
 
     // if(data.result.pageKey) {
     //   getHistoricalTransactions(address, network, data.result.pageKey, transfer);
