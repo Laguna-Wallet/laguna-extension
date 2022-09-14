@@ -51,23 +51,18 @@ export interface IAlchemyGetAssetTransfersResult {
 }
 
 export interface IAlchemyTransferObject {
-  blockNum: string,
-  uniqueId: string,
-  hash: string,
-  from: string,
-  to: string,
-  value: number,
-  erc721TokenId: string | null,
-  erc1155Metadata: string | null,
-  tokenId: string | null,
-  asset: string,
-  category: string
-  rawContract: {
-    value: string,
-    address: string | null,
-    decimal: string
-  }
+  asset: string;
+  amount: string;
+  from: string;
+  fee: string;
+  to: string;
+  nonce: string;
+  blockNumber: string;
+  transactionHash: string;
+  timestamp: string;
 }
+
+
 
 export interface IEVMToBeSignTransaction {
   to: string,

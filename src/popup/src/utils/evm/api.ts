@@ -77,7 +77,7 @@ export const calculateTransactionFeeInNormalUnit = (toBeSignTransaction: IEVMToB
   return new BigNumber(toBeSignTransaction.gasLimit).multipliedBy(toBeSignTransaction.gasPrice).dividedBy("1E18");
 };
 
-export const getEVMTransactions = async (address: string, network: EVMNetwork, key?: string, transfers?: any[])
+export const getHistoricalTransactions = async (address: string, network: EVMNetwork, key?: string, transfers?: any[])
 : Promise<IAlchemyGetAssetTransfersResult> => {
 
   const options = {
@@ -103,13 +103,32 @@ export const getEVMTransactions = async (address: string, network: EVMNetwork, k
 
 
   try {
+    const transfer: IAlchemyTransferObject[] = transfers || [];
+    const provider = getProvider(network);
     const res = await fetch(networks[network].nodeUrl, options);
     const data = await res.json();
-    const transfer: IAlchemyTransferObject[] = transfers || [];
-    transfer.push(...data.result.transfers);
-    if(data.result.pageKey) {
-      getEVMTransactions(address, network, data.result.pageKey, transfer);
-    }
+    await Promise.all([res, data ]);
+
+    data.result.transfers.forEach(async (element: any) => {
+      const transactionData = await provider.getTransaction(element.hash);
+      const transferObj: IAlchemyTransferObject  = {
+        asset: element.asset,
+        amount: element.value,
+        from: element.from,
+        to: element.to,
+        fee: transactionData.gasLimit.toString() || "unknown",
+        nonce: transactionData.nonce.toString(),
+        blockNumber: transactionData.blockNumber?.toString() || "",
+        transactionHash: transactionData.hash,
+        timestamp: transactionData.timestamp?.toString() || "unknown",
+      };
+      transfer.push(transferObj);
+      
+    });
+
+    // if(data.result.pageKey) {
+    //   getHistoricalTransactions(address, network, data.result.pageKey, transfer);
+    // }
     return {
       success: true,
       transfers: transfer,
