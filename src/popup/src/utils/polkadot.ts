@@ -16,21 +16,21 @@ import {
   StorageKeys,
   Token,
   TokenSymbols,
-  Transaction
-} from './types';
-import { KeyringPair$Json } from '@polkadot/keyring/types';
-import { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
-import keyring from '@polkadot/ui-keyring';
-import { getFromStorage } from './chrome';
-import bcrypt from 'bcryptjs';
-import { ApiPromise, WsProvider } from '@polkadot/api';
-import { decodeAddress, encodeAddress } from '@polkadot/keyring';
-import BigNumber from 'bignumber.js';
-import * as AES from 'crypto-js/aes';
-import Utf8 from 'crypto-js/enc-utf8';
-import { fetchTransactions, transformTransfers } from './fetchTransactions';
-import { generateRandomBase64Avatar } from 'utils';
-import { generateNewWalletAddress, importWalletAddress } from './ethereumUtils/ethereumApi';
+  Transaction,
+} from "./types";
+import { KeyringPair$Json } from "@polkadot/keyring/types";
+import { KeyringPairs$Json } from "@polkadot/ui-keyring/types";
+import keyring from "@polkadot/ui-keyring";
+import { getFromStorage } from "./chrome";
+import bcrypt from "bcryptjs";
+import { ApiPromise, WsProvider } from "@polkadot/api";
+import { decodeAddress, encodeAddress } from "@polkadot/keyring";
+import BigNumber from "bignumber.js";
+import * as AES from "crypto-js/aes";
+import Utf8 from "crypto-js/enc-utf8";
+import { fetchTransactions, transformTransfers } from "./fetchTransactions";
+import { generateRandomBase64Avatar } from "utils";
+import { generateNewWalletAddress, importWalletAddress } from "./ethereumUtils/ethereumApi";
 
 // TODO appropriate typing
 
@@ -120,7 +120,7 @@ export async function importFromMnemonic(seed: string, password: string) {
     encodedSeed,
     name: pair.address,
     ethAddress,
-    img
+    img,
   });
 
   newPair.setMeta({ encodedKey, encodedSeed, name, img });

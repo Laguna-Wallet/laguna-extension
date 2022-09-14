@@ -1,23 +1,23 @@
-import keyring from '@polkadot/ui-keyring';
-import { useAccount } from 'context/AccountContext';
-import EncodeAccount from 'pages/AddImportAccount/EncodeAccount';
-import SetupComplete from 'pages/AddImportAccount/SetupComplete';
-import { Wizard } from 'react-use-wizard';
-import CreatePassword from './CreatePassword/CreatePassword';
-import SecureWallet from './SecureWallet/SecureWallet';
-import { useState } from 'react';
-import { Messages, StorageKeys } from 'utils/types';
-import { generateRandomBase64Avatar, isObjectEmpty } from 'utils';
-import { addAccountMeta } from 'utils/polkadot';
-import { useSelector } from 'react-redux';
-import { State } from 'redux/store';
-import AES from 'crypto-js/aes';
-import { saveToStorage } from 'utils/chrome';
-import { RouteComponentProps, useHistory } from 'react-router-dom';
-import { router } from 'router/router';
-import browser from 'webextension-polyfill';
-import { useLocation } from 'react-router-dom';
-import { generateNewWalletAddress } from 'utils/ethereumUtils/ethereumApi';
+import keyring from "@polkadot/ui-keyring";
+import { useAccount } from "context/AccountContext";
+import EncodeAccount from "pages/AddImportAccount/EncodeAccount";
+import SetupComplete from "pages/AddImportAccount/SetupComplete";
+import { Wizard } from "react-use-wizard";
+import CreatePassword from "./CreatePassword/CreatePassword";
+import SecureWallet from "./SecureWallet/SecureWallet";
+import { useState } from "react";
+import { Messages, StorageKeys } from "utils/types";
+import { generateRandomBase64Avatar, isObjectEmpty } from "utils";
+import { addAccountMeta } from "utils/polkadot";
+import { useSelector } from "react-redux";
+import { State } from "redux/store";
+import AES from "crypto-js/aes";
+import { saveToStorage } from "utils/chrome";
+import { RouteComponentProps, useHistory } from "react-router-dom";
+import { router } from "router/router";
+import browser from "webextension-polyfill";
+import { useLocation } from "react-router-dom";
+import { generateNewWalletAddress } from "utils/ethereumUtils/ethereumApi";
 
 type Props = {
   existingAccount?: boolean;
@@ -31,7 +31,7 @@ type LocationState = {
 
 export enum SecurityLevelEnum {
   Secured = "Secured",
-  Skipped = "Skipped"
+  Skipped = "Skipped",
 }
 
 export default function CreateAccount({
@@ -70,10 +70,8 @@ export default function CreateAccount({
         ethAddress,
       });
 
-
-
       const newPair = addAccountMeta(pair.address, {
-       name,
+        name,
       });
 
       if (!activeAccount || (activeAccount && isObjectEmpty(activeAccount))) {
@@ -92,7 +90,7 @@ export default function CreateAccount({
 
       saveToStorage({ key: StorageKeys.OnBoarding, value: true });
     } else {
-      const mnemonicsStr = account?.generateMnemonics().join(' ');
+      const mnemonicsStr = account?.generateMnemonics().join(" ");
       const encodedSeed = AES.encrypt(mnemonicsStr, password).toString();
 
       const ethAddress = generateNewWalletAddress(mnemonicsStr)?.address;
@@ -101,11 +99,11 @@ export default function CreateAccount({
         encodedSeed,
         img: await generateRandomBase64Avatar(),
         notSecured: true,
-        ethAddress
+        ethAddress,
       });
 
       const newPair = addAccountMeta(pair.address, {
-        name: pair.address
+        name: pair.address,
       });
 
       if (!activeAccount || (activeAccount && isObjectEmpty(activeAccount))) {
@@ -114,14 +112,14 @@ export default function CreateAccount({
 
       browser.runtime.sendMessage({
         type: Messages.AuthUser,
-        payload: { password }
+        payload: { password },
       });
 
       saveToStorage({ key: StorageKeys.OnBoarding, value: true });
 
       browser.runtime.sendMessage({
         type: Messages.AddToKeyring,
-        payload: { seed: mnemonicsStr, password, meta: newPair.meta }
+        payload: { seed: mnemonicsStr, password, meta: newPair.meta },
       });
     }
   };

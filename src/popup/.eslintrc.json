@@ -22,12 +22,11 @@
   "rules": {
     "react/react-in-jsx-scope": "off",
     "react/display-name": "off",
-    "max-len": ["warn", { "code": 150, "ignoreUrls": true , "ignoreComments": true, "ignoreStrings": true}],
-    "quotes": [
-      "error",
-      "double",
-      { "avoidEscape": true, "allowTemplateLiterals": false }
+    "max-len": [
+      "warn",
+      { "code": 150, "ignoreUrls": true, "ignoreComments": true, "ignoreStrings": true }
     ],
+    "quotes": ["error", "double", { "avoidEscape": true, "allowTemplateLiterals": false }],
     "semi": [2, "always"],
     "comma-dangle": ["error", "always-multiline"],
     "@typescript-eslint/no-explicit-any": ["off", { "ignoreRestArgs": true }],
