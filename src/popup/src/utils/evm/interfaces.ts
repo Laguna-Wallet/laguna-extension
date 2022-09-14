@@ -52,14 +52,14 @@ export interface IEVMBuildTransactionOnChainParam {
 
 export interface IEVMBuildTransaction {
   network: EVMNetwork;
-  asset: IEVMAsset | IEVMAssetERC20;
+  asset: IEVMAssetERC20;
   amount: BigNumber;
   fromAddress: string;
   toAddress: string;
   nonce: BigNumber;
   gasPriceInGwei: BigNumber;
-  gasLimit: BigNumber;
-  numOfPendingTransaction: BigNumber; // TODO for adding up nonce, blocked by cache pending txn
+  gasLimit?: BigNumber;
+  numOfPendingTransaction?: BigNumber; // TODO for adding up nonce, blocked by cache pending txn
 }
 
 export interface TransactionState {
@@ -103,7 +103,7 @@ export interface IEVMToBeSignTransaction {
   to: string;
   from: string;
   nonce: string;
-  gasLimit: string;
+  gasLimit?: string;
   gasPrice: string;
   data?: BytesLike;
   value: string;

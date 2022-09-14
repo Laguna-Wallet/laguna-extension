@@ -197,7 +197,7 @@ export const buildEvmTransaction = async (
       nonce: nonce.toString(10),
       chainId: networks[network].chainId,
       from: fromAddress,
-      // to: toCheckSumAddress(asset?.contractAddress),
+      to: toCheckSumAddress(asset?.contractAddress),
       value: "0",
       data: contract.methods
         .transfer(
