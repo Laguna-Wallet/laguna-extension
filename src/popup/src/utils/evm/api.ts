@@ -111,12 +111,13 @@ export const getHistoricalTransactions = async (address: string, network: EVMNet
 
     for(let i = 0; i < 20; i++) {
       const transactionData = await provider.getTransaction(transfersList[i].hash);
+      const transactionReceipt = await provider.getTransactionReceipt(transfersList[i].hash);
       const transferObj: IAlchemyTransfer  = {
         asset: transfersList[i].asset,
         amount: transfersList[i].value,
         from: transfersList[i].from,
-        to: transfersList[i].to,
-        fee: transactionData.gasLimit.toString() || "unknown",
+        to: transfersList[i].to,  
+        fee: transactionReceipt.gasUsed.toString() || "unknown",
         nonce: transactionData.nonce.toString(),
         blockNumber: transactionData.blockNumber?.toString() || "",
         transactionHash: transactionData.hash,
@@ -124,6 +125,7 @@ export const getHistoricalTransactions = async (address: string, network: EVMNet
       };
       transfer.push(transferObj);
     }
+    await Promise.all([transfer, res, data]);
 
     // if(data.result.pageKey) {
     //   getHistoricalTransactions(address, network, data.result.pageKey, transfer);
