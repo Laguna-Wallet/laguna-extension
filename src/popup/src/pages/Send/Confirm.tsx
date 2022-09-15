@@ -72,7 +72,7 @@ function Confirm({
   const name = account?.getActiveAccount()?.meta?.name;
 
   const handleClick = async () => {
-    if (chain === EVMNetwork.ETHEREUM) {
+    if (chain === EVMNetwork.ETHEREUM || chain === EVMNetwork.AVALANCHE_TESTNET_FUJI) {
       browser.runtime.sendMessage({
         type: Messages.SendTransaction,
         payload: { chain, toBeSignTransaction },

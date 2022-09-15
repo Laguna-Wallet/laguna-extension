@@ -13,6 +13,7 @@ import { cryptoWaitReady } from "@polkadot/util-crypto"
 // import { initWasm } from "@polkadot/wasm-crypto/initOnlyAsm"
 import browser from "webextension-polyfill"
 import { signTransaction } from "./evm"
+import { EVMNetwork } from "../popup/src/networks/evm"
 
 export async function Retrieve_balance_change_rates() {
   // const balances = getFromStorage()
@@ -20,12 +21,13 @@ export async function Retrieve_balance_change_rates() {
 
 export async function sendTransaction(pairs, ethWallets, payload) {
   try {
-    if (payload.chain === "ETHEREUM") {
+    if (payload.chain === EVMNetwork.ETHEREUM || payload.chain === EVMNetwork.AVALANCHE_TESTNET_FUJI) {
       const wallet = ethWallets.find((wallet) => {
         return wallet.address === payload.toBeSignTransaction.from
       })
 
       const signedTx = await signTransaction(wallet, payload.toBeSignTransaction)
+      console.log("~ signedTx", signedTx)
     } else {
       const pair = pairs.find((pair) => {
         return recodeToPolkadotAddress(pair.address) === recodeToPolkadotAddress(payload.sendFrom)

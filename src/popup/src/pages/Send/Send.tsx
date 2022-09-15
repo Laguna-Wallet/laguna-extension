@@ -176,7 +176,7 @@ function Send({ initialIsContactsPopupOpen }: Props) {
       ] as IEVMAssetERC20;
 
       const { nonce, gasPriceInGwei, nativeCurrenyBalance, assetBalance } =
-        await getBuildTransactionOnChainParam(ethNetwork, form.address, ethAsset.name);
+        await getBuildTransactionOnChainParam(ethNetwork, form.address, ethAsset.symbol);
 
       const toSignTransaction: IEVMToBeSignTransaction = await buildEvmTransaction({
         network: ethNetwork,
@@ -189,6 +189,7 @@ function Send({ initialIsContactsPopupOpen }: Props) {
         // gasLimit
         // numOfPendingTransaction: BigNumber; // TODO for adding up nonce, blocked by cache pending txn
       });
+      console.log("~ toSignTransaction", toSignTransaction);
 
       const estimatedGas = await estimateGas(ethNetwork, toSignTransaction);
       const ethValue = await ethers.utils.formatUnits(estimatedGas.toNumber());
@@ -205,7 +206,10 @@ function Send({ initialIsContactsPopupOpen }: Props) {
       //   // setTransfer(transfer);
     }
 
-    if (reduxSendTokenState?.selectedAsset?.chain === EVMNetwork.ETHEREUM) {
+    if (
+      reduxSendTokenState?.selectedAsset?.chain === EVMNetwork.ETHEREUM ||
+      reduxSendTokenState?.selectedAsset?.chain === EVMNetwork.AVALANCHE_TESTNET_FUJI
+    ) {
       goEthereum();
     } else {
       goPolkadot();
@@ -236,7 +240,7 @@ function Send({ initialIsContactsPopupOpen }: Props) {
         />
 
         {/* todo pass one payload prop for all the chains   */}
-        {/* <Confirm
+        <Confirm
           setBlockHash={setBlockHash}
           amountToSend={amountToSend}
           recoded={recoded}
@@ -244,7 +248,7 @@ function Send({ initialIsContactsPopupOpen }: Props) {
           transfer={transfer}
           flow={flow}
           toBeSignTransaction={toBeSignTransaction}
-        /> */}
+        />
         <TransactionSent blockHash={blockHash} />
       </Wizard>
     </Container>

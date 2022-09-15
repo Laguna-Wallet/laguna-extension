@@ -249,7 +249,8 @@ export const getEVMBalance = async (
       break;
     }
   }
-  return new BigNumber(balanceInBaseUnit).dividedBy(`1E${asset.decimal}`);
+  return balanceInBaseUnit;
+  // return new BigNumber(balanceInBaseUnit).dividedBy(`1E${asset.decimal}`);
 };
 
 const initERC20SmartContract = (network: EVMNetwork, asset: IEVMAssetERC20): ethers.Contract => {
