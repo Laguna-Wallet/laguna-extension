@@ -72,7 +72,7 @@ export interface Response {
 
 export interface IAlchemyHistoricalTransfers {
   success: boolean,
-  transfers: IAlchemyTransfer[] | null
+  transfers: IEVMHistoricalTransaction[] | null
 }
 
 

@@ -1,5 +1,5 @@
-import { ethers } from "ethers";
-import { IEVMAssetERC20, IEVMAsset, IEVMBuildTransaction, IEVMToBeSignTransaction, Response, IAlchemyHistoricalTransfers, IAlchemyTransfer } from "./interfaces";
+import { ethers, utils } from "ethers";
+import { IEVMAssetERC20, IEVMAsset, IEVMBuildTransaction, IEVMToBeSignTransaction, Response, IEVMHistoricalTransaction } from "./interfaces";
 import fs from "fs";
 import BigNumber from "bignumber.js";
 import { EVMNetwork, networks } from "./networks";
@@ -78,7 +78,7 @@ export const calculateTransactionFeeInNormalUnit = (toBeSignTransaction: IEVMToB
 };
 
 export const getHistoricalTransactions = async (address: string, network: EVMNetwork, key?: string, transfers?: any[])
-: Promise<IAlchemyHistoricalTransfers> => {
+: Promise<IEVMHistoricalTransaction[] | null> => {
 
   const options = {
     method: "POST",
@@ -103,7 +103,7 @@ export const getHistoricalTransactions = async (address: string, network: EVMNet
 
 
   try {
-    const transfer: IAlchemyTransfer[] = transfers || [];
+    const transfer: IEVMHistoricalTransaction[] = transfers || [];
     const provider = getProvider(network);
     const res = await fetch(networks[network].nodeUrl, options);
     const data = await res.json();
@@ -112,31 +112,25 @@ export const getHistoricalTransactions = async (address: string, network: EVMNet
     for(let i = 0; i < 20; i++) {
       const transactionData = await provider.getTransaction(transfersList[i].hash);
       const transactionReceipt = await provider.getTransactionReceipt(transfersList[i].hash);
-      const transferObj: IAlchemyTransfer  = {
+      const transferObj: IEVMHistoricalTransaction  = {
         asset: transfersList[i].asset,
         amount: transfersList[i].value,
         from: utils.getAddress(transfersList[i].from),
         to: utils.getAddress(transfersList[i].to),  
-        fee: transactionReceipt.gasUsed.toString() || "unknown",
+        fee: transactionReceipt.gasUsed.mul(transactionReceipt.effectiveGasPrice).toString() || "unknown",
         nonce: transactionData.nonce.toString(),
-        blockNumber: transactionData.blockNumber?.toString() || "",
-        transactionHash: transactionData.hash,
+        blockNumber: transactionReceipt.blockNumber?.toString() || "",
+        transactionHash: transfersList[i].hash,
         timestamp: transactionData.timestamp?.toString() || "unknown",
       };
       transfer.push(transferObj);
     }
     await Promise.all([transfer, res, data]);
     
-    return {
-      success: true,
-      transfers: transfer,
-    };
+    return transfer;
   } catch(err) {
     console.error(err);
-    return {
-      success: false,
-      transfers: null,
-    };
+    return null;
   }
 };
 
