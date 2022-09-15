@@ -117,11 +117,11 @@ export const getHistoricalTransactions = async (address: string, network: EVMNet
         amount: transfersList[i].value,
         from: utils.getAddress(transfersList[i].from),
         to: utils.getAddress(transfersList[i].to),  
-        fee: transactionReceipt.gasUsed.mul(transactionReceipt.effectiveGasPrice).toString() || "unknown",
+        fee: transactionReceipt.gasUsed.mul(transactionReceipt.effectiveGasPrice),
         nonce: transactionData.nonce.toString(),
-        blockNumber: transactionReceipt.blockNumber?.toString() || "",
+        blockNumber: ethers.BigNumber.from(transactionReceipt.blockNumber),
         transactionHash: transfersList[i].hash,
-        timestamp: transactionData.timestamp?.toString() || "unknown",
+        timestamp: ethers.BigNumber.from(transactionData.timestamp),
       };
       transfer.push(transferObj);
     }

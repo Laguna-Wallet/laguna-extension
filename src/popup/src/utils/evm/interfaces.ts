@@ -1,7 +1,8 @@
 import BigNumber from "bignumber.js";
-import { BytesLike } from "ethers";
+import { BytesLike, ethers } from "ethers";
 import { EVMNetwork } from "./networks";
 import { EVMAssetType } from "./networks/asset";
+
 
  
  export interface ethereumHoldingState {
@@ -70,12 +71,6 @@ export interface Response {
 // Alchemy API
 //==============================================================================
 
-export interface IAlchemyHistoricalTransfers {
-  success: boolean,
-  transfers: IEVMHistoricalTransaction[] | null
-}
-
-
 export interface IAlchemyTransferObject {
   blockNum: string,
   uniqueId: string,
@@ -98,14 +93,14 @@ export interface IAlchemyTransferObject {
 
 export interface IEVMHistoricalTransaction {
   asset: string;
-  amount: string;
+  amount: ethers.BigNumber;
   from: string;
-  fee: string;
+  fee: ethers.BigNumber;
   to: string;
   nonce: string;
-  blockNumber: string;
+  blockNumber: ethers.BigNumber;
   transactionHash: string;
-  timestamp: string;
+  timestamp: ethers.BigNumber;
 }
 
 
