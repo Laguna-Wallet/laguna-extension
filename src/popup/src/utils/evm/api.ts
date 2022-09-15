@@ -126,10 +126,7 @@ export const getHistoricalTransactions = async (address: string, network: EVMNet
       transfer.push(transferObj);
     }
     await Promise.all([transfer, res, data]);
-
-    // if(data.result.pageKey) {
-    //   getHistoricalTransactions(address, network, data.result.pageKey, transfer);
-    // }
+    
     return {
       success: true,
       transfers: transfer,
@@ -158,14 +155,6 @@ export const buildTransaction = async (  param: IEVMBuildTransaction  ): Promise
   };
   toBeSignTransaction.gasLimit = ( await estimateGas(param.network, toBeSignTransaction)).toString(10);
   return toBeSignTransaction;
-};
-
-export const signTransaction = async (network: EVMNetwork, wallet: ethers.Wallet, toBeSignTransaction: IEVMToBeSignTransaction): Promise<string> => {
-  // TODO decide were wallet is generated from
-  const provider = getProvider(network);
-  const signer = wallet.connect(provider);
-  const signedTx = signer.signTransaction(toBeSignTransaction);
- return signedTx;
 };
 
 export const broadcastTransaction = async (network: EVMNetwork, signedTx: string): Promise<string> => {   
