@@ -1,6 +1,6 @@
-import styled from 'styled-components';
-import CloseIcon from 'assets/svgComponents/CloseIcon';
-import LeftArrowThinIcon from 'assets/svgComponents/LeftArrowThinIcon';
+import styled from "styled-components";
+import CloseIcon from "assets/svgComponents/CloseIcon";
+import LeftArrowThinIcon from "assets/svgComponents/LeftArrowThinIcon";
 
 type Props = {
   title?: string;
@@ -9,9 +9,9 @@ type Props = {
 };
 
 const calcProgressBarSize = (activeStep: number): string | undefined => {
-  if (activeStep === 0) return '33%';
-  if (activeStep === 1) return '66%';
-  if (activeStep === 2) return '100%';
+  if (activeStep === 0) return "33%";
+  if (activeStep === 1) return "66%";
+  if (activeStep === 2) return "100%";
 };
 
 export default function WizardHeader({ title, onClose, onBack }: Props) {
@@ -122,7 +122,7 @@ const Title = styled.div`
   letter-spacing: 0.85px;
   text-align: center;
   color: #000;
-  font-family: 'IBM Plex Sans';
+  font-family: "IBM Plex Sans";
   font-size: 17px;
   font-weight: 500;
   margin-right: auto;
