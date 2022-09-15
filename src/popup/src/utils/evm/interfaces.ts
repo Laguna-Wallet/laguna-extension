@@ -75,7 +75,28 @@ export interface IAlchemyHistoricalTransfers {
   transfers: IAlchemyTransfer[] | null
 }
 
-export interface IAlchemyTransfer {
+
+export interface IAlchemyTransferObject {
+  blockNum: string,
+  uniqueId: string,
+  hash: string,
+  from: string,
+  to: string,
+  value: number,
+  erc721TokenId: string | null,
+  erc1155Metadata: string | null,
+  tokenId: string | null,
+  asset: string,
+  category: string
+  rawContract: {
+    value: string,
+    address: string | null,
+    decimal: string
+  }
+}
+
+
+export interface IEVMHistoricalTransaction {
   asset: string;
   amount: string;
   from: string;
@@ -86,3 +107,5 @@ export interface IAlchemyTransfer {
   transactionHash: string;
   timestamp: string;
 }
+
+
