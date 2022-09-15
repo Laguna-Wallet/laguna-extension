@@ -115,8 +115,8 @@ export const getHistoricalTransactions = async (address: string, network: EVMNet
       const transferObj: IAlchemyTransfer  = {
         asset: transfersList[i].asset,
         amount: transfersList[i].value,
-        from: transfersList[i].from,
-        to: transfersList[i].to,  
+        from: utils.getAddress(transfersList[i].from),
+        to: utils.getAddress(transfersList[i].to),  
         fee: transactionReceipt.gasUsed.toString() || "unknown",
         nonce: transactionData.nonce.toString(),
         blockNumber: transactionData.blockNumber?.toString() || "",
