@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import { BytesLike } from "ethers";
-import { EVMNetwork } from "./networks";
-import { EVMAssetType } from "./networks/asset";
+import { EVMNetwork } from "../../networks/evm";
+import { EVMAssetType } from "../../networks/evm/asset";
 
 
  
@@ -23,6 +23,7 @@ import { EVMAssetType } from "./networks/asset";
    nodeUrl: string;
    explorerUrlAddress: string;
    explorerUrlTransaction: string;
+   nativeCurreny: string;
  }
  
 export interface IEVMAsset {
@@ -36,13 +37,22 @@ export interface IEVMAssetERC20 extends IEVMAsset {
   contractAddress: string;
 }
 
+export interface IEVMBuildTransactionOnChainParam {
+  nonce: BigNumber,
+  gasPriceInGwei: BigNumber,
+  nativeCurrenyBalance: BigNumber,
+  assetBalance: BigNumber,
+}
+
 export interface IEVMBuildTransaction {
   network: EVMNetwork, 
   asset: IEVMAssetERC20, 
   amount: BigNumber, 
   fromAddress: string, 
   toAddress: string, 
+  nonce: BigNumber,
   gasPriceInGwei: BigNumber,
+  gasLimit: BigNumber,
   numOfPendingTransaction: BigNumber, // TODO for adding up nonce, blocked by cache pending txn
 }
 
