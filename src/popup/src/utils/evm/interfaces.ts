@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { BytesLike, ethers } from "ethers";
+import { BytesLike } from "ethers";
 import { EVMNetwork } from "./networks";
 import { EVMAssetType } from "./networks/asset";
 
@@ -93,14 +93,14 @@ export interface IAlchemyTransferObject {
 
 export interface IEVMHistoricalTransaction {
   asset: string;
-  amount: ethers.BigNumber;
+  amount: BigNumber;
   from: string;
-  fee: ethers.BigNumber;
+  fee: BigNumber;
   to: string;
   nonce: string;
-  blockNumber: ethers.BigNumber;
+  blockNumber: BigNumber;
   transactionHash: string;
-  timestamp: ethers.BigNumber;
+  timestamp: BigNumber;
 }
 
 

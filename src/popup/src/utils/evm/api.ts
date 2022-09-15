@@ -3,7 +3,7 @@ import { IEVMAssetERC20, IEVMAsset, IEVMBuildTransaction, IEVMToBeSignTransactio
 import fs from "fs";
 import BigNumber from "bignumber.js";
 import { EVMNetwork, networks } from "./networks";
-import { EVMAssetType } from "./networks/asset";
+import { assets, EVMAssetType } from "./networks/asset";
 
 // // ?? remove ?
 // export const generateNewWalletAddress = (address: string): ethers.Wallet | string => {   
@@ -112,23 +112,29 @@ export const getHistoricalTransactions = async (address: string, network: EVMNet
     for(let i = 0; i < 20; i++) {
       const transactionData = await provider.getTransaction(transfersList[i].hash);
       const transactionReceipt = await provider.getTransactionReceipt(transfersList[i].hash);
+      const assetType = Object.values(assets[network]).find((object) => object.symbol === transfersList[i].asset);
+
+      if(assetType == null) {
+        return transfer;
+      }
       const transferObj: IEVMHistoricalTransaction  = {
-        asset: transfersList[i].asset,
-        amount: transfersList[i].value,
+        asset: assetType.name,
+        amount: new BigNumber(transfersList[i].value),
         from: utils.getAddress(transfersList[i].from),
         to: utils.getAddress(transfersList[i].to),  
-        fee: transactionReceipt.gasUsed.mul(transactionReceipt.effectiveGasPrice),
+        fee: new BigNumber(transactionReceipt.gasUsed.mul(transactionReceipt.effectiveGasPrice)._hex),
         nonce: transactionData.nonce.toString(),
-        blockNumber: ethers.BigNumber.from(transactionReceipt.blockNumber),
+        blockNumber: new BigNumber(transactionReceipt.blockNumber),
         transactionHash: transfersList[i].hash,
-        timestamp: ethers.BigNumber.from(transactionData.timestamp),
+        timestamp: new BigNumber(transactionData?.timestamp || 0),
       };
       transfer.push(transferObj);
     }
     await Promise.all([transfer, res, data]);
-    
+
     return transfer;
   } catch(err) {
+
     console.error(err);
     return null;
   }
