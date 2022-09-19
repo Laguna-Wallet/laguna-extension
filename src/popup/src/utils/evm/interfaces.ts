@@ -110,7 +110,7 @@ export interface IEVMHistoricalTransaction {
   nonce: string;
   blockNumber: BigNumber;
   transactionHash: string;
-  timestamp: BigNumber;
+  timestamp: number;
 }
 
 

@@ -1,5 +1,5 @@
 import { ethers, utils } from "ethers";
-import { IEVMAssetERC20, IEVMAsset, IEVMBuildTransaction, IEVMToBeSignTransaction, Response, IEVMBuildTransactionOnChainParam, IEVMNetwork, IEVMHistoricalTransaction } from "./interfaces";
+import { IEVMAssetERC20, IEVMAsset, IEVMBuildTransaction, IEVMToBeSignTransaction, Response, IEVMBuildTransactionOnChainParam, IEVMNetwork, IEVMHistoricalTransaction, IAlchemyTransferObject } from "./interfaces";
 import fs from "fs";
 import BigNumber from "bignumber.js";
 import { EVMNetwork, networks } from "networks/evm";
@@ -155,8 +155,8 @@ export const broadcastTransaction = async (network: EVMNetwork, signedTx: string
     return new ethers.Contract((asset as IEVMAssetERC20).contractAddress, ERC20ABI, provider);
   };
 
-  export const getHistoricalTransactions = async (address: string, network: EVMNetwork, key?: string, transfers?: any[])
-  : Promise<IEVMHistoricalTransaction[] | null> => {
+  export const getHistoricalTransactions = async (address: string, network: EVMNetwork, key?: string)
+  : Promise<IEVMHistoricalTransaction[][] | null> => {
 
   const options = {
     method: "POST",
@@ -179,42 +179,54 @@ export const broadcastTransaction = async (network: EVMNetwork, signedTx: string
     }),
   };
 
-
-  try {
-    const transfer: IEVMHistoricalTransaction[] = transfers || [];
+  const getTransactionReceipt = async (data: IAlchemyTransferObject[] ): Promise<IEVMHistoricalTransaction[]>  => {
+    const transferReceipts: IEVMHistoricalTransaction[] = [];
     const provider = getProvider(network);
-    const res = await fetch(networks[network].nodeUrl, options);
-    const data = await res.json();
-    const transfersList = data.result.transfers;
 
-    for(let i = 0; i < 20; i++) {
-      const transactionData = await provider.getTransaction(transfersList[i].hash);
-      const transactionReceipt = await provider.getTransactionReceipt(transfersList[i].hash);
-      const assetType = Object.values(assets[network]).find((object) => object.symbol === transfersList[i].asset);
+    data.forEach( async (transfer) => {
+      const transactionData = await provider.getTransaction(transfer.hash);
+      const transactionReceipt = await provider.getTransactionReceipt(transfer.hash);
+      const assetType = Object.values(assets[network]).find((object) => object.symbol === transfer.asset);
 
       if(assetType == null) {
         return transfer;
       }
       const transferObj: IEVMHistoricalTransaction  = {
         asset: assetType.name,
-        amount: new BigNumber(transfersList[i].value),
-        from: utils.getAddress(transfersList[i].from),
-        to: utils.getAddress(transfersList[i].to),  
+        amount: new BigNumber(transfer.value),
+        from: utils.getAddress(transfer.from),
+        to: utils.getAddress(transfer.to),  
         fee: new BigNumber(transactionReceipt.gasUsed.mul(transactionReceipt.effectiveGasPrice)._hex),
         nonce: transactionData.nonce.toString(),
         blockNumber: new BigNumber(transactionReceipt.blockNumber),
-        transactionHash: transfersList[i].hash,
-        timestamp: new BigNumber(transactionData?.timestamp || 0),
+        transactionHash: transfer.hash,
+        timestamp: transactionData?.timestamp || 0,
       };
-      transfer.push(transferObj);
-    }
-    await Promise.all([transfer, res, data]);
+      transferReceipts.push(transferObj);
+    });
 
-    return transfer;
+    return transferReceipts;
+  };
+
+
+  try {
+    const allTransfers: IEVMHistoricalTransaction[][] = [];
+    const res = await fetch(networks[network].nodeUrl, options);
+    const data = await res.json();
+    const transfersList = data.result.transfers;
+    const batchAmount = 20;
+
+    while((allTransfers.length * batchAmount ) < transfersList.length) {
+      const transfers = await Promise.all(
+      [getTransactionReceipt(transfersList.slice((allTransfers.length * batchAmount), allTransfers.length * batchAmount + batchAmount))]);
+      allTransfers.push(...transfers);
+    }
+    return allTransfers;
   } catch(err) {
 
     console.error(err);
     return null;
   }
 };
+
 
