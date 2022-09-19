@@ -156,7 +156,7 @@ export const broadcastTransaction = async (network: EVMNetwork, signedTx: string
   };
 
   export const getHistoricalTransactions = async (address: string, network: EVMNetwork, key?: string)
-  : Promise<IEVMHistoricalTransaction[][] | null> => {
+  : Promise<any> => {
 
   const options = {
     method: "POST",
@@ -186,13 +186,9 @@ export const broadcastTransaction = async (network: EVMNetwork, signedTx: string
     data.forEach( async (transfer) => {
       const transactionData = await provider.getTransaction(transfer.hash);
       const transactionReceipt = await provider.getTransactionReceipt(transfer.hash);
-      const assetType = Object.values(assets[network]).find((object) => object.symbol === transfer.asset);
-
-      if(assetType == null) {
-        return transfer;
-      }
+      
       const transferObj: IEVMHistoricalTransaction  = {
-        asset: assetType.name,
+        asset: transfer.asset,
         amount: new BigNumber(transfer.value),
         from: utils.getAddress(transfer.from),
         to: utils.getAddress(transfer.to),  
@@ -210,20 +206,15 @@ export const broadcastTransaction = async (network: EVMNetwork, signedTx: string
 
 
   try {
-    const allTransfers: IEVMHistoricalTransaction[][] = [];
     const res = await fetch(networks[network].nodeUrl, options);
     const data = await res.json();
-    const transfersList = data.result.transfers;
-    const batchAmount = 20;
-
-    while((allTransfers.length * batchAmount ) < transfersList.length) {
-      const transfers = await Promise.all(
-      [getTransactionReceipt(transfersList.slice((allTransfers.length * batchAmount), allTransfers.length * batchAmount + batchAmount))]);
-      allTransfers.push(...transfers);
-    }
-    return allTransfers;
+    const transfersList: IAlchemyTransferObject[] = data.result.transfers;
+    const filteredList: IAlchemyTransferObject[] = transfersList.filter((receipt) => {
+      return Object.values(assets[network]).find((object) => object.symbol === receipt.asset);
+    });
+    const result = await Promise.all([getTransactionReceipt(filteredList)]);
+    return result;
   } catch(err) {
-
     console.error(err);
     return null;
   }
