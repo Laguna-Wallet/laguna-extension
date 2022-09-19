@@ -156,64 +156,64 @@ export const broadcastTransaction = async (network: EVMNetwork, signedTx: string
   };
 
   export const getHistoricalTransactions = async (address: string, network: EVMNetwork, key?: string)
-  : Promise<any> => {
+  : Promise<IEVMHistoricalTransaction[] | null> => {
 
-  const options = {
-    method: "POST",
-    headers: {Accept: "application/json", "Content-Type": "application/json"},
-    body: JSON.stringify({
-      id: 1,
-      jsonrpc: "2.0",
-      method: "alchemy_getAssetTransfers",
-      params: [
-        {
-          fromBlock: "0x0",
-          toBlock: "latest",
-          category: ["internal", "erc20", "external"],
-          withMetadata: false,
-          excludeZeroValue: false,
-          fromAddress: address,
-          ...(key && {pageKey: key}),
-        },
-      ],
-    }),
-  };
-
-  const getTransactionReceipt = async (data: IAlchemyTransferObject[] ): Promise<IEVMHistoricalTransaction[]>  => {
-    const transferReceipts: IEVMHistoricalTransaction[] = [];
-    const provider = getProvider(network);
-
-    data.forEach( async (transfer) => {
-      const transactionData = await provider.getTransaction(transfer.hash);
-      const transactionReceipt = await provider.getTransactionReceipt(transfer.hash);
-      
-      const transferObj: IEVMHistoricalTransaction  = {
-        asset: transfer.asset,
-        amount: new BigNumber(transfer.value),
-        from: utils.getAddress(transfer.from),
-        to: utils.getAddress(transfer.to),  
-        fee: new BigNumber(transactionReceipt.gasUsed.mul(transactionReceipt.effectiveGasPrice)._hex),
-        nonce: transactionData.nonce.toString(),
-        blockNumber: new BigNumber(transactionReceipt.blockNumber),
-        transactionHash: transfer.hash,
-        timestamp: transactionData?.timestamp || 0,
-      };
-      transferReceipts.push(transferObj);
-    });
-
-    return transferReceipts;
-  };
-
+    const options = {
+      method: "POST",
+      headers: {Accept: "application/json", "Content-Type": "application/json"},
+      body: JSON.stringify({
+        id: 1,
+        jsonrpc: "2.0",
+        method: "alchemy_getAssetTransfers",
+        params: [
+          {
+            fromBlock: "0x0",
+            toBlock: "latest",
+            category: ["internal", "erc20", "external"],
+            withMetadata: false,
+            excludeZeroValue: false,
+            fromAddress: address,
+            ...(key && {pageKey: key}),
+          },
+        ],
+      }),
+    };
 
   try {
+    const transferReceipts: IEVMHistoricalTransaction[] = [];
+    const provider = getProvider(network);
     const res = await fetch(networks[network].nodeUrl, options);
     const data = await res.json();
     const transfersList: IAlchemyTransferObject[] = data.result.transfers;
     const filteredList: IAlchemyTransferObject[] = transfersList.filter((receipt) => {
       return Object.values(assets[network]).find((object) => object.symbol === receipt.asset);
     });
-    const result = await Promise.all([getTransactionReceipt(filteredList)]);
-    return result;
+    const chunkSize = 20;
+
+    for(let i = 0; i < filteredList.length; i += chunkSize) {
+      const chunk = filteredList.slice(i, i + chunkSize);
+
+        chunk.forEach( async (listItem) => {
+          const transactionData =  provider.getTransaction(listItem.hash);
+          const transactionReceipt = provider.getTransactionReceipt(listItem.hash);
+
+         await Promise.all([transactionData, transactionReceipt]).then(([data, receipt]) => {
+            const transferObj: IEVMHistoricalTransaction  = {
+              asset: listItem.asset,
+              amount: new BigNumber(listItem.value),
+              from: utils.getAddress(listItem.from),
+              to: utils.getAddress(listItem.to),  
+              fee: new BigNumber(receipt.gasUsed.mul(receipt.effectiveGasPrice)._hex),
+              nonce: data.nonce.toString(),
+              blockNumber: new BigNumber(receipt.blockNumber),
+              transactionHash: listItem.hash,
+              timestamp: data?.timestamp || 0,
+            };
+            transferReceipts.push(transferObj);
+          });
+        });
+    }
+    return transferReceipts;
   } catch(err) {
     console.error(err);
     return null;
