@@ -201,8 +201,8 @@ export const broadcastTransaction = async (network: EVMNetwork, signedTx: string
             const transferObj: IEVMHistoricalTransaction  = {
               asset: listItem.asset,
               amount: new BigNumber(listItem.value),
-              from: ethers.utils.getAddress(listItem.from),
-              to: ethers.utils.getAddress(listItem.to),  
+              from: toCheckSumAddress(listItem.from),
+              to: toCheckSumAddress(listItem.to),  
               fee: new BigNumber(receipt.gasUsed.mul(receipt.effectiveGasPrice)._hex),
               nonce: data.nonce.toString(),
               blockNumber: new BigNumber(receipt.blockNumber),
