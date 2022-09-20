@@ -155,6 +155,14 @@ export const broadcastTransaction = async (network: EVMNetwork, signedTx: string
     return new ethers.Contract((asset as IEVMAssetERC20).contractAddress, ERC20ABI, provider);
   };
 
+  const getAssetIdBySmartContractAddress = (smartContractAddress: string, network: EVMNetwork): string | null => {
+      const contractObject = Object.values(assets[network]).find((object) => object.contractAddress === smartContractAddress);
+      if(contractObject == null) {
+        return null;
+      }
+      return contractObject?.name;
+  };
+
   export const getHistoricalTransactions = async (address: string, network: EVMNetwork, key?: string)
   : Promise<IEVMHistoricalTransaction[] | null> => {
 
@@ -196,10 +204,11 @@ export const broadcastTransaction = async (network: EVMNetwork, signedTx: string
         chunk.forEach( async (listItem) => {
           const transactionData =  provider.getTransaction(listItem.hash);
           const transactionReceipt = provider.getTransactionReceipt(listItem.hash);
+          const assetName = listItem.rawContract.address && getAssetIdBySmartContractAddress(listItem.rawContract.address, network);
 
          await Promise.all([transactionData, transactionReceipt]).then(([data, receipt]) => {
             const transferObj: IEVMHistoricalTransaction  = {
-              asset: listItem.asset,
+              asset: assetName || listItem.asset,
               amount: new BigNumber(listItem.value),
               from: toCheckSumAddress(listItem.from),
               to: toCheckSumAddress(listItem.to),  
