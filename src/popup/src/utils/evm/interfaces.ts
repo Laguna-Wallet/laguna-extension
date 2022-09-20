@@ -31,8 +31,6 @@ export interface IEVMAsset {
   symbol: string;
   decimal: number;
   assetType: EVMAssetType;
-  contractAddress?: string;
-
 }
 
 export interface IEVMAssetERC20 extends IEVMAsset {
