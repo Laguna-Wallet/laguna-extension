@@ -6,11 +6,9 @@ import {
   Response,
   IEVMBuildTransactionOnChainParam,
   IEVMNetwork,
-  Transfer,
-  TransactionState,
-  TransfersList,
+  IEVMHistoricalTransaction,
+  IAlchemyTransferObject,
 } from "./interfaces";
-// import fs from 'fs';
 import BigNumber from "bignumber.js";
 import { EVMNetwork, networks } from "networks/evm";
 import { EVMAssetType, EvmAssets } from "networks/evm/asset";
@@ -101,57 +99,6 @@ export const isSmartContractAddress = async (
   return !code;
 };
 
-export const getEVMTransactions = async (
-  address: string,
-  network: EVMNetwork,
-  key?: string,
-  transfers?: Transfer[],
-): Promise<TransactionState> => {
-  const options = {
-    method: "POST",
-    headers: { Accept: "application/json", "Content-Type": "application/json" },
-    body: JSON.stringify({
-      id: 1,
-      jsonrpc: "2.0",
-      method: "alchemy_getAssetTransfers",
-      params: [
-        {
-          fromBlock: "0x0",
-          toBlock: "latest",
-          category: ["internal", "erc20", "external"],
-          withMetadata: false,
-          excludeZeroValue: false,
-          fromAddress: address,
-          ...(key && { pageKey: key }),
-        },
-      ],
-    }),
-  };
-
-  try {
-    console.log("~ address", address);
-    console.log("~ network", network);
-    const res = await fetch(networks[network].nodeUrl, options);
-    const data: TransfersList = await res.json();
-    console.log("~ data", data);
-    const transfer: Transfer[] = transfers || [];
-    transfer.push(...data.result.transfers);
-    if (data.result.pageKey) {
-      getEVMTransactions(address, network, data.result.pageKey, transfer);
-    }
-    return {
-      success: true,
-      transfers: transfer,
-    };
-  } catch (err) {
-    console.error(err);
-    return {
-      success: false,
-      transfers: null,
-    };
-  }
-};
-
 export const getBuildTransactionOnChainParam = async (
   network: EVMNetwork,
   fromAddress: string,
@@ -210,18 +157,6 @@ export const buildEvmTransaction = async (
   throw new Error("invalid assetType");
 };
 
-export const signTransaction = async (
-  network: EVMNetwork,
-  wallet: ethers.Wallet,
-  toBeSignTransaction: IEVMToBeSignTransaction,
-): Promise<string> => {
-  // TODO decide were wallet is generated from
-  const provider = getProvider(network);
-  const signer = wallet.connect(provider);
-  const signedTx = signer.signTransaction(toBeSignTransaction);
-  return signedTx;
-};
-
 export const broadcastTransaction = async (
   network: EVMNetwork,
   signedTx: string,
@@ -258,4 +193,87 @@ const initERC20SmartContract = (network: EVMNetwork, asset: IEVMAssetERC20): eth
   const abiFileName = "ERC20";
   // const ERC20ABI = JSON.parse(fs.readFileSync(`./abi/${abiFileName}.json`, "utf-8"));
   return new ethers.Contract((asset as IEVMAssetERC20).contractAddress, ERC20ABI, provider);
+};
+
+const getAssetIdBySmartContractAddress = (
+  smartContractAddress: string,
+  network: EVMNetwork,
+): string | null => {
+  const contractObject = Object.values(EvmAssets[network]).find(
+    (object) => object.contractAddress === smartContractAddress,
+  );
+  if (contractObject == null) {
+    return null;
+  }
+  return contractObject?.name;
+};
+
+export const getEVMHistoricalTransactions = async (
+  address: string,
+  network: EVMNetwork,
+  key?: string,
+): Promise<IEVMHistoricalTransaction[] | null> => {
+  const options = {
+    method: "POST",
+    headers: { Accept: "application/json", "Content-Type": "application/json" },
+    body: JSON.stringify({
+      id: 1,
+      jsonrpc: "2.0",
+      method: "alchemy_getAssetTransfers",
+      params: [
+        {
+          fromBlock: "0x0",
+          toBlock: "latest",
+          category: ["internal", "erc20", "external"],
+          withMetadata: false,
+          excludeZeroValue: false,
+          fromAddress: address,
+          ...(key && { pageKey: key }),
+        },
+      ],
+    }),
+  };
+
+  try {
+    const transferReceipts: IEVMHistoricalTransaction[] = [];
+    const provider = getProvider(network);
+    const res = await fetch(networks[network].nodeUrl, options);
+    const data = await res.json();
+    const transfersList: IAlchemyTransferObject[] = data.result.transfers;
+    const filteredList: IAlchemyTransferObject[] = transfersList.filter((receipt) => {
+      return Object.values(EvmAssets[network]).find((object) => object.symbol === receipt.asset);
+    });
+    const chunkSize = 20;
+
+    for (let i = 0; i < filteredList.length; i += chunkSize) {
+      const chunk = filteredList.slice(i, i + chunkSize);
+
+      chunk.forEach(async (listItem) => {
+        const transactionData = provider.getTransaction(listItem.hash);
+        const transactionReceipt = provider.getTransactionReceipt(listItem.hash);
+        const assetName =
+          listItem.rawContract.address &&
+          getAssetIdBySmartContractAddress(listItem.rawContract.address, network);
+
+        await Promise.all([transactionData, transactionReceipt]).then(([data, receipt]) => {
+          const transferObj: IEVMHistoricalTransaction = {
+            asset: assetName || listItem.asset,
+            amount: new BigNumber(listItem.value),
+            from: toCheckSumAddress(listItem.from),
+            to: toCheckSumAddress(listItem.to),
+            fee: new BigNumber(receipt.gasUsed.mul(receipt.effectiveGasPrice)._hex),
+            nonce: data.nonce.toString(),
+            blockNumber: new BigNumber(receipt.blockNumber),
+            transactionHash: listItem.hash,
+            timestamp: data?.timestamp || 0,
+          };
+          transferReceipts.push(transferObj);
+        });
+      });
+    }
+    return transferReceipts;
+  } catch (err) {
+    console.error(err);
+    return null;
+  }
 };

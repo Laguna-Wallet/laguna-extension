@@ -29,6 +29,7 @@ export interface IEVMAsset {
   symbol: string;
   decimal: number;
   assetType: EVMAssetType;
+  contractAddress?: string;
 }
 
 export interface IEVMAssetERC20 extends IEVMAsset {
@@ -62,48 +63,11 @@ export interface IEVMBuildTransaction {
   numOfPendingTransaction?: BigNumber; // TODO for adding up nonce, blocked by cache pending txn
 }
 
-export interface TransactionState {
-  success: boolean;
-  transfers: Transfer[] | null;
-}
-
-export interface TransfersList {
-  id: number;
-  jsonrpc: string;
-  result: Result;
-}
-
-export interface Result {
-  pageKey: string;
-  transfers: Transfer[];
-}
-
-export interface Transfer {
-  blockNum: string;
-  uniqueId: string;
-  hash: string;
-  from: string;
-  to: string;
-  value: number;
-  erc721TokenId: string | null;
-  erc1155Metadata: string | null;
-  tokenId: string | null;
-  asset: string;
-  category: string;
-  rawContract: RawContract;
-}
-
-export interface RawContract {
-  value: string;
-  address: string | null;
-  decimal: string;
-}
-
 export interface IEVMToBeSignTransaction {
   to: string;
   from: string;
   nonce: string;
-  gasLimit?: string;
+  gasLimit: string;
   gasPrice: string;
   data?: BytesLike;
   value: string;
@@ -118,4 +82,74 @@ export interface IEVMToBeSignTransaction {
 export interface Response {
   success: boolean;
   message: string;
+}
+
+//==============================================================================
+// Alchemy API
+//==============================================================================
+
+export interface IAlchemyTransferObject {
+  blockNum: string;
+  uniqueId: string;
+  hash: string;
+  from: string;
+  to: string;
+  value: number;
+  erc721TokenId: string | null;
+  erc1155Metadata: string | null;
+  tokenId: string | null;
+  asset: string;
+  category: string;
+  rawContract: {
+    value: string;
+    address: string | null;
+    decimal: string;
+  };
+}
+
+export interface IEVMHistoricalTransaction {
+  asset: string;
+  amount: BigNumber;
+  from: string;
+  fee: BigNumber;
+  to: string;
+  nonce: string;
+  blockNumber: BigNumber;
+  transactionHash: string;
+  timestamp: number;
+}
+
+//==============================================================================
+// Alchemy API
+//==============================================================================
+
+export interface IAlchemyTransferObject {
+  blockNum: string;
+  uniqueId: string;
+  hash: string;
+  from: string;
+  to: string;
+  value: number;
+  erc721TokenId: string | null;
+  erc1155Metadata: string | null;
+  tokenId: string | null;
+  asset: string;
+  category: string;
+  rawContract: {
+    value: string;
+    address: string | null;
+    decimal: string;
+  };
+}
+
+export interface IEVMHistoricalTransaction {
+  asset: string;
+  amount: BigNumber;
+  from: string;
+  fee: BigNumber;
+  to: string;
+  nonce: string;
+  blockNumber: BigNumber;
+  transactionHash: string;
+  timestamp: number;
 }
