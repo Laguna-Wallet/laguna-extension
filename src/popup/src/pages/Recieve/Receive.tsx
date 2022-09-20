@@ -40,8 +40,9 @@ export default function Receive() {
       // const prefix = api.consts.system.ss58Prefix;
 
       if (
-        selectedNetwork.chain === EVMNetwork.ETHEREUM ||
-        (EVMNetwork.AVALANCHE_TESTNET_FUJI && activeAccount?.meta?.ethAddress)
+        (selectedNetwork.chain === EVMNetwork.ETHEREUM ||
+          selectedNetwork.chain === EVMNetwork.AVALANCHE_TESTNET_FUJI) &&
+        activeAccount?.meta?.ethAddress
       ) {
         setRecoded(activeAccount?.meta?.ethAddress);
         return;
