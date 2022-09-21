@@ -96,18 +96,18 @@ export const buildTransaction = async (  param: IEVMBuildTransaction  ): Promise
       to: toAddress,
       from: fromAddress,
       value: `0x${amount.multipliedBy(`1E${asset.decimal}`).toString(16)}`,
-      gasPrice: gasPriceInGwei.multipliedBy("1E9").toString(10),
-      gasLimit: gasPriceInGwei.toString(10),
-      nonce: nonce.toString(10),
+      gasPrice: `0x${gasPriceInGwei.multipliedBy("1E9").toString(16)}`,
+      gasLimit: `0x${gasLimit.toString(16)}`,
+      nonce: `0x${nonce.toString(16)}`,
       chainId: networks[network].chainId,
     };
     return toBeSignTransaction;
   } else if (asset.assetType === EVMAssetType.ERC20) {
     const contract = initERC20SmartContract(network, (asset as IEVMAssetERC20));
     return {
-      gasPrice: gasPriceInGwei.multipliedBy("1E9").toString(10),
-      gasLimit: gasPriceInGwei.toString(10),
-      nonce: nonce.toString(10),
+      gasPrice: `0x${gasPriceInGwei.multipliedBy("1E9").toString(16)}`,
+      gasLimit: `0x${gasLimit.toString(16)}`,
+      nonce: `0x${nonce.toString(16)}`,
       chainId: networks[network].chainId,
       from: fromAddress,
       to: toCheckSumAddress(asset.contractAddress),
