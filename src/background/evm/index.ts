@@ -3,7 +3,6 @@ import { IEVMToBeSignTransaction } from "../../popup/src/utils/evm/interfaces"
 
 export const signTransaction = async (keyPair: any, toBeSignTransaction: IEVMToBeSignTransaction): Promise<string> => {
   // const privateKey = Buffer.from(keyPair.privateKey, "hex")
-  console.log("~ keyPair.privateKey", keyPair)
   const privateKey = Buffer.from(keyPair.privateKey.substring(2, 66), "hex")
 
   const tx: Transaction = Transaction.fromTxData({

@@ -213,6 +213,7 @@ export const getEVMHistoricalTransactions = async (
   network: EVMNetwork,
   key?: string,
 ): Promise<IEVMHistoricalTransaction[] | null> => {
+  console.log("get history");
   const options = {
     method: "POST",
     headers: { Accept: "application/json", "Content-Type": "application/json" },
@@ -234,11 +235,13 @@ export const getEVMHistoricalTransactions = async (
     }),
   };
 
+  console.log("get history 2");
   try {
     const transferReceipts: IEVMHistoricalTransaction[] = [];
     const provider = getProvider(network);
     const res = await fetch(networks[network].nodeUrl, options);
     const data = await res.json();
+    console.log("~ data", data);
     const transfersList: IAlchemyTransferObject[] = data.result.transfers;
     const filteredList: IAlchemyTransferObject[] = transfersList.filter((receipt) => {
       return Object.values(EvmAssets[network]).find((object) => object.symbol === receipt.asset);

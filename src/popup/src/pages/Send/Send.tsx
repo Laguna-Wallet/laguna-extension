@@ -189,7 +189,6 @@ function Send({ initialIsContactsPopupOpen }: Props) {
         // gasLimit
         // numOfPendingTransaction: BigNumber; // TODO for adding up nonce, blocked by cache pending txn
       });
-      console.log("~ toSignTransaction", toSignTransaction);
 
       const estimatedGas = await estimateGas(ethNetwork, toSignTransaction);
       const ethValue = await ethers.utils.formatUnits(estimatedGas.toNumber());

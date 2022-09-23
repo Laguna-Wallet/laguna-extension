@@ -283,7 +283,6 @@ browser.runtime.onMessage.addListener(async (msg, _sender) => {
 
         keyPairs = substratePairs
         ethWallets = openedEthWallets
-        console.log("~ ethWallets", ethWallets)
       }
       break
     case Messages.CheckPendingDappAuth:
