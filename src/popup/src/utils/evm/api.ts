@@ -5,10 +5,7 @@ import BigNumber from "bignumber.js";
 import { EVMNetwork, networks } from "networks/evm";
 import { assets, EVMAssetType } from "networks/evm/asset";
 
-export const toCheckSumAddress = (address: string | undefined): string => {
-  if (address == null) {
-    return "unknown";
-  }
+export const toCheckSumAddress = (address: string): string => {
   const checksumAddress = ethers.utils.getAddress(address); 
   return checksumAddress;
 };
