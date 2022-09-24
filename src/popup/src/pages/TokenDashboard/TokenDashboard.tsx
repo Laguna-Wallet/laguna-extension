@@ -318,21 +318,8 @@ const Tag = styled.div`
   box-sizing: border-box;
   border-radius: 50px;
   text-transform: capitalize;
-  background-image: linear-gradient(
-    to right top,
-    #d7cce2,
-    #ddcde1,
-    #e3cee0,
-    #e8cfdf,
-    #edd0dd,
-    #f1d1db,
-    #f4d2d8,
-    #f6d4d6,
-    #f8d6d3,
-    #f8d8d0,
-    #f7dbcd,
-    #f5decc
-  );
+  color: #FFFFFF;
+  background-color: #6366F1;
 `;
 
 const Rate = styled.div<{ negativeValue: boolean }>`
