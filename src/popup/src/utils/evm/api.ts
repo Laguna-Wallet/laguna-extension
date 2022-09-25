@@ -3,7 +3,7 @@ import { IEVMAssetERC20, IEVMAsset, IEVMBuildTransaction, IEVMToBeSignTransactio
 import fs from "fs";
 import BigNumber from "bignumber.js";
 import { EVMNetwork, networks } from "networks/evm";
-import { assets, EVMAssetType } from "networks/evm/asset";
+import { assetByNetwork, EVMAssetId, EVMAssetType } from "networks/evm/asset";
 
 export const toCheckSumAddress = (address: string): string => {
   const checksumAddress = ethers.utils.getAddress(address); 
@@ -35,8 +35,8 @@ export const getNetworkInfo = (network: EVMNetwork): IEVMNetwork => {
   return networks[network];
 };
 
-export const getAssetInfo = (network: EVMNetwork, assetId: string): IEVMAsset | IEVMAssetERC20 => {
-  const asset = assets[network][assetId];
+export const getAssetInfo = (network: EVMNetwork, assetId: EVMAssetId): IEVMAsset | IEVMAssetERC20 => {
+  const asset = assetByNetwork[network][assetId];
   if (!asset) {
     throw new Error("Invalid Asset Id");
   }
@@ -75,8 +75,7 @@ export const calculateTransactionFeeInNormalUnit = (toBeSignTransaction: IEVMToB
   return new BigNumber(toBeSignTransaction.gasLimit).multipliedBy(toBeSignTransaction.gasPrice).dividedBy("1E18");
 };
 
-export const getBuildTransactionOnChainParam = async (network: EVMNetwork, fromAddress: string, assetId: string)
-: Promise<IEVMBuildTransactionOnChainParam> => {
+export const getBuildTransactionOnChainParam = async (network: EVMNetwork, fromAddress: string, assetId: EVMAssetId): Promise<IEVMBuildTransactionOnChainParam> => {
   const networkInfo = networks[network];
   const [nonce, gasPriceInGwei, nativeCurrenyBalance, assetBalance] = await Promise.all([
     await getNonce(network, fromAddress),
@@ -98,18 +97,18 @@ export const buildTransaction = async (  param: IEVMBuildTransaction  )
       to: toAddress,
       from: fromAddress,
       value: `0x${amount.multipliedBy(`1E${asset.decimal}`).toString(16)}`,
-      gasPrice: gasPriceInGwei.multipliedBy("1E9").toString(10),
-      gasLimit: gasPriceInGwei.toString(10),
-      nonce: nonce.toString(10),
+      gasPrice: `0x${gasPriceInGwei.multipliedBy("1E9").toString(16)}`,
+      gasLimit: `0x${gasLimit.toString(16)}`,
+      nonce: `0x${nonce.toString(16)}`,
       chainId: networks[network].chainId,
     };
     return toBeSignTransaction;
   } else if (asset.assetType === EVMAssetType.ERC20) {
     const contract = initERC20SmartContract(network, (asset as IEVMAssetERC20));
     return {
-      gasPrice: gasPriceInGwei.multipliedBy("1E9").toString(10),
-      gasLimit: gasPriceInGwei.toString(10),
-      nonce: nonce.toString(10),
+      gasPrice: `0x${gasPriceInGwei.multipliedBy("1E9").toString(16)}`,
+      gasLimit: `0x${gasLimit.toString(16)}`,
+      nonce: `0x${nonce.toString(16)}`,
       chainId: networks[network].chainId,
       from: fromAddress,
       to: toCheckSumAddress(asset.contractAddress),
@@ -156,7 +155,7 @@ export const broadcastTransaction = async (network: EVMNetwork, signedTx: string
   };
 
   const getAssetIdBySmartContractAddress = (smartContractAddress: string, network: EVMNetwork): string | null => {
-      const contractObject = Object.values(assets[network]).find(
+      const contractObject = Object.values(assetByNetwork[network]).find(
         (object) => {
           const asset =  object as IEVMAssetERC20;
           return toCheckSumAddress(asset.contractAddress) === toCheckSumAddress(smartContractAddress);

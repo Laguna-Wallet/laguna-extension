@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import { BytesLike } from "ethers";
 import { EVMNetwork } from "../../networks/evm";
-import { EVMAssetType } from "../../networks/evm/asset";
+import { EVMAssetType, EVMAssetId } from "../../networks/evm/asset";
 
 
  
@@ -23,13 +23,14 @@ import { EVMAssetType } from "../../networks/evm/asset";
    nodeUrl: string;
    explorerUrlAddress: string;
    explorerUrlTransaction: string;
-   nativeCurreny: string;
+   nativeCurreny: EVMAssetId;
  }
  
 export interface IEVMAsset {
   name: string;
   symbol: string;
   decimal: number;
+  network: EVMNetwork;
   assetType: EVMAssetType;
 }
 
