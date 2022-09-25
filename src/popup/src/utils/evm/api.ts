@@ -125,72 +125,72 @@ export const buildTransaction = async (  param: IEVMBuildTransaction  )
 };
 
 export const broadcastTransaction = async (network: EVMNetwork, signedTx: string): Promise<string> => {   
-    const provider = getProvider(network);
-    const transactionReceipt = await provider.sendTransaction(signedTx);
-    return transactionReceipt.hash;
-  };
+  const provider = getProvider(network);
+  const transactionReceipt = await provider.sendTransaction(signedTx);
+  return transactionReceipt.hash;
+};
 
-  export const getBalance = async (network: EVMNetwork, address: string, asset: IEVMAsset | IEVMAssetERC20): Promise<BigNumber> => {
-    const provider = getProvider(network);
-    let balanceInBaseUnit;
-    switch (asset.assetType) {
-      case EVMAssetType.NATIVE: {
-        balanceInBaseUnit = await provider.getBalance(address);
-        break;
-      }
-      case EVMAssetType.ERC20: {
-        const contract = initERC20SmartContract(network, (asset as IEVMAssetERC20));
-        balanceInBaseUnit = await contract.balanceOf(address);
-        break;
-      }
+export const getBalance = async (network: EVMNetwork, address: string, asset: IEVMAsset | IEVMAssetERC20): Promise<BigNumber> => {
+  const provider = getProvider(network);
+  let balanceInBaseUnit;
+  switch (asset.assetType) {
+    case EVMAssetType.NATIVE: {
+      balanceInBaseUnit = await provider.getBalance(address);
+      break;
     }
-    return new BigNumber(balanceInBaseUnit).dividedBy(`1E${asset.decimal}`);
+    case EVMAssetType.ERC20: {
+      const contract = initERC20SmartContract(network, (asset as IEVMAssetERC20));
+      balanceInBaseUnit = await contract.balanceOf(address);
+      break;
+    }
+  }
+  return new BigNumber(balanceInBaseUnit).dividedBy(`1E${asset.decimal}`);
+};
+
+const initERC20SmartContract = (network: EVMNetwork, asset: IEVMAssetERC20): ethers.Contract => {
+  const provider = getProvider(network);
+  const abiFileName = "ERC20";
+  const ERC20ABI = JSON.parse(fs.readFileSync(`./abi/${abiFileName}.json`, "utf-8"));
+  return new ethers.Contract((asset as IEVMAssetERC20).contractAddress, ERC20ABI, provider);
+};
+
+const getAssetIdBySmartContractAddress = (smartContractAddress: string, network: EVMNetwork): string | null => {
+    const contractObject = Object.values(assetByNetwork[network]).find(
+      (object) => {
+        const asset =  object as IEVMAssetERC20;
+        return toCheckSumAddress(asset.contractAddress) === toCheckSumAddress(smartContractAddress);
+      });
+
+      if(contractObject == null) {
+        return null;
+      }
+
+    return contractObject.symbol;
+};
+
+export const getHistoricalTransactions = async (address: string, network: EVMNetwork, key?: string, transactions?: IEVMHistoricalTransaction[])
+: Promise<IEVMHistoricalTransaction[] | null> => {
+
+  const options = {
+    method: "POST",
+    headers: {Accept: "application/json", "Content-Type": "application/json"},
+    body: JSON.stringify({
+      id: 1,
+      jsonrpc: "2.0",
+      method: "alchemy_getAssetTransfers",
+      params: [
+        {
+          fromBlock: "0x0",
+          toBlock: "latest",
+          category: ["internal", "erc20", "external"],
+          withMetadata: false,
+          excludeZeroValue: false,
+          fromAddress: address,
+          ...(key && {pageKey: key}),
+        },
+      ],
+    }),
   };
-
-  const initERC20SmartContract = (network: EVMNetwork, asset: IEVMAssetERC20): ethers.Contract => {
-    const provider = getProvider(network);
-    const abiFileName = "ERC20";
-    const ERC20ABI = JSON.parse(fs.readFileSync(`./abi/${abiFileName}.json`, "utf-8"));
-    return new ethers.Contract((asset as IEVMAssetERC20).contractAddress, ERC20ABI, provider);
-  };
-
-  const getAssetIdBySmartContractAddress = (smartContractAddress: string, network: EVMNetwork): string | null => {
-      const contractObject = Object.values(assetByNetwork[network]).find(
-        (object) => {
-          const asset =  object as IEVMAssetERC20;
-          return toCheckSumAddress(asset.contractAddress) === toCheckSumAddress(smartContractAddress);
-        });
-
-        if(contractObject == null) {
-          return null;
-        }
-
-      return contractObject.symbol;
-  };
-
-  export const getHistoricalTransactions = async (address: string, network: EVMNetwork, key?: string, transactions?: IEVMHistoricalTransaction[])
-  : Promise<IEVMHistoricalTransaction[] | null> => {
-
-    const options = {
-      method: "POST",
-      headers: {Accept: "application/json", "Content-Type": "application/json"},
-      body: JSON.stringify({
-        id: 1,
-        jsonrpc: "2.0",
-        method: "alchemy_getAssetTransfers",
-        params: [
-          {
-            fromBlock: "0x0",
-            toBlock: "latest",
-            category: ["internal", "erc20", "external"],
-            withMetadata: false,
-            excludeZeroValue: false,
-            fromAddress: address,
-            ...(key && {pageKey: key}),
-          },
-        ],
-      }),
-    };
 
   try {
     const historicalTransactions: IEVMHistoricalTransaction[] = transactions || [];
@@ -238,5 +238,3 @@ export const broadcastTransaction = async (network: EVMNetwork, signedTx: string
     return null;
   }
 };
-
-
