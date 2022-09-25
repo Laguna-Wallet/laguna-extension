@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import { BytesLike } from "ethers";
 import { EVMNetwork } from "../../networks/evm";
-import { EVMAssetType } from "../../networks/evm/asset";
+import { EVMAssetType, EVMAssetId } from "../../networks/evm/asset";
 
  
  export interface ethereumHoldingState {
@@ -22,7 +22,7 @@ import { EVMAssetType } from "../../networks/evm/asset";
    nodeUrl: string;
    explorerUrlAddress: string;
    explorerUrlTransaction: string;
-   nativeCurreny: string;
+   nativeCurreny: EVMAssetId;
  }
  
 export interface IEVMAsset {
