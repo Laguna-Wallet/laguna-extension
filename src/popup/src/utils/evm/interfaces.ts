@@ -29,6 +29,7 @@ export interface IEVMAsset {
   name: string;
   symbol: string;
   decimal: number;
+  network: EVMNetwork;
   assetType: EVMAssetType;
 }
 
