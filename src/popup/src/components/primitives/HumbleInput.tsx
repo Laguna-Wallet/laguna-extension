@@ -322,6 +322,12 @@ const Copy = styled.div`
   background-color: #18191a;
   border-radius: 20px;
   z-index: 444;
+
+  &:hover {
+    background-color: #6366F1;
+    color: #fff;
+    transition: 200ms;
+  }
 `;
 
 const Text = styled.p`
