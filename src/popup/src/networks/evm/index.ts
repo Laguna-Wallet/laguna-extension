@@ -9,24 +9,28 @@ export enum EVMNetwork {
 
 export const networks :{[network: string]: IEVMNetwork} = {
   [EVMNetwork.LOCALHOST]: {
+    isTestnet: true,
     chainId: 1,
     nodeUrl: "http://127.0.0.1.8545",
     explorerUrlAddress: "https://etherscan.io/address/{{hash}}",
     explorerUrlTransaction: "https://etherscan.io/tx/{{hash}}",
   },
   [EVMNetwork.ETHEREUM]: {
+    isTestnet: false,
     chainId: 1,
     nodeUrl: "https://eth-mainnet.g.alchemy.com/v2/IFip5pZqfpAsi50-O2a0ZEJoA82E8KR_",
     explorerUrlAddress: "https://etherscan.io/address/{{hash}}",
     explorerUrlTransaction: "https://etherscan.io/tx/{{hash}}",
   },
   [EVMNetwork.ETHEREUM_TESTNET_GOERLI]: {
+    isTestnet: true,
     chainId: 5,
     nodeUrl: "https://eth-goerli.g.alchemy.com/v2/IFip5pZqfpAsi50-O2a0ZEJoA82E8KR_",
     explorerUrlAddress: "https://goerli.etherscan.io/address/{{hash}}",
     explorerUrlTransaction: "https://goerli.etherscan.io/tx/{{hash}}",
   },
   [EVMNetwork.AVALANCHE_TESTNET_FUJI]: {
+    isTestnet: true,
     chainId: 43113,
     nodeUrl: "https://api.avax-test.network/ext/bc/C/rpc",
     explorerUrlAddress: "https://testnet.snowtrace.io/address/{{hash}}",

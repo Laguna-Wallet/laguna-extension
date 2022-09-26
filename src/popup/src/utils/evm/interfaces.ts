@@ -16,6 +16,7 @@ import { EVMNetwork, EVMAssetType } from "../../networks/evm";
  }
 
  export interface IEVMNetwork {
+   isTestnet: boolean;
    chainId: number;
    nodeUrl: string;
    explorerUrlAddress: string;
