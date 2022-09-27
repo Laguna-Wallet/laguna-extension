@@ -280,6 +280,7 @@ browser.runtime.onMessage.addListener(async (msg, _sender) => {
         isLoggedIn = true
         timeoutStart = Date.now()
         const { substratePairs, openedEthWallets } = unlockKeyPairs(msg.payload.password)
+        console.log("~ substratePairs, openedEthWallets", substratePairs, openedEthWallets)
 
         keyPairs = substratePairs
         ethWallets = openedEthWallets

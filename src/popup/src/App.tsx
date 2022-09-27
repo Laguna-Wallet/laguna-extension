@@ -82,9 +82,11 @@ function App() {
       //       // If user is not logged in redirect to WelcomeBack or SignUp
       if (!AuthResponse?.payload?.isLoggedIn) {
         const hasBoarded = Boolean(await getFromStorage(StorageKeys.OnBoarding));
+        console.log("~ hasBoarded", hasBoarded);
         if (hasBoarded) {
           history.push(router.welcomeBack);
         } else {
+          console.log("?");
           history.push(router.signUp);
         }
       }

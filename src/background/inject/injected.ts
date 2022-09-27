@@ -1,4 +1,4 @@
-export const a = 0;
+export const a = 0
 // import type { Injected } from '@polkadot/extension-inject/types';
 // import type { SendRequest } from './types';
 

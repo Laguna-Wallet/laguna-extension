@@ -1,5 +1,12 @@
 import { Transaction, TxData } from "@ethereumjs/tx"
+import { ethers } from "ethers"
+import { EVMNetwork, networks } from "../../popup/src/networks/evm"
 import { IEVMToBeSignTransaction } from "../../popup/src/utils/evm/interfaces"
+
+export const getProvider = (network: EVMNetwork): ethers.providers.JsonRpcProvider => {
+  // return new ethers.providers.JsonRpcProvider("HTTP://127.0.0.1:7545");
+  return new ethers.providers.JsonRpcProvider(networks[network].nodeUrl)
+}
 
 export const signTransaction = async (keyPair: any, toBeSignTransaction: IEVMToBeSignTransaction): Promise<string> => {
   // const privateKey = Buffer.from(keyPair.privateKey, "hex")
@@ -15,6 +22,17 @@ export const signTransaction = async (keyPair: any, toBeSignTransaction: IEVMToB
     chainId: toBeSignTransaction?.chainId ? toBeSignTransaction?.chainId.toString() : "",
   } as TxData)
 
+  console.log("~ tx", tx)
+
   const signedTransaction = tx.sign(privateKey)
   return signedTransaction.serialize().toString("hex")
+}
+
+export const broadcastTransaction = async (network: EVMNetwork, signedTx: string): Promise<string> => {
+  console.log(1)
+  const provider = getProvider(network)
+  console.log(2)
+  const transactionReceipt = await provider.sendTransaction(signedTx)
+  console.log(3)
+  return transactionReceipt.hash
 }

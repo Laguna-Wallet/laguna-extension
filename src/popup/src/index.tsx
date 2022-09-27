@@ -1,6 +1,6 @@
-import "@polkadot/wasm-crypto/initOnlyAsm";
-import React, { useEffect } from "react";
-import ReactDOM from "react-dom";
+// import "@polkadot/wasm-crypto/initOnlyAsm";
+import React from "react";
+import * as ReactDOM from "react-dom/client";
 import { HashRouter } from "react-router-dom";
 
 import "./index.css";
@@ -20,8 +20,9 @@ generateStore().then((store) => {
   // load all available addresses and accounts
   cryptoWaitReady().then(async () => {
     keyring.loadAll({ ss58Format: 42, type: "sr25519", store: new AccountsStore() });
+    const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
 
-    ReactDOM.render(
+    root.render(
       <React.StrictMode>
         <Provider store={store}>
           <IdleTimeoutWrapper>
@@ -34,7 +35,6 @@ generateStore().then((store) => {
           </IdleTimeoutWrapper>
         </Provider>
       </React.StrictMode>,
-      document.getElementById("root"),
     );
 
     reportWebVitals();
