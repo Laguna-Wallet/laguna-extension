@@ -82,11 +82,9 @@ function App() {
       //       // If user is not logged in redirect to WelcomeBack or SignUp
       if (!AuthResponse?.payload?.isLoggedIn) {
         const hasBoarded = Boolean(await getFromStorage(StorageKeys.OnBoarding));
-        console.log("~ hasBoarded", hasBoarded);
         if (hasBoarded) {
           history.push(router.welcomeBack);
         } else {
-          console.log("?");
           history.push(router.signUp);
         }
       }
@@ -130,6 +128,10 @@ function App() {
   return (
     <div className="App">
       <Switch>
+        <Route exact path={router.home}>
+          <Wallet />
+        </Route>
+
         <Route path={router.importAccount}>
           <ImportAccount />
         </Route>
@@ -204,9 +206,6 @@ function App() {
         </Route>
         <Route path={router.addRemoveToken}>
           <AddRemoveToken />
-        </Route>
-        <Route exact path={router.home}>
-          <Wallet />
         </Route>
       </Switch>
       <Snackbar

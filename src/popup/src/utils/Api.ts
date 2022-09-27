@@ -56,7 +56,6 @@ export async function fetchAccountsBalances(
 ) {
   try {
     // await timer(3000)
-
     const account = await getFromStorage(StorageKeys.ActiveAccount);
 
     const balances = await getFromStorage(StorageKeys.AccountBalances);
