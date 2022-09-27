@@ -276,7 +276,7 @@ const Info = styled.span`
 `;
 
 const InfoTop = styled.span`
-  font-family: 'IBM Plex Sans';
+  font-family: "IBM Plex Sans";
   font-size: 14px;
   font-weight: 500;
   color: #18191a;
@@ -287,7 +287,7 @@ const InfoTop = styled.span`
 `;
 
 const InfoBottom = styled.div`
-  font-family: 'IBM Plex Sans';
+  font-family: "IBM Plex Sans";
   font-size: 12px;
   color: #777e90;
 `;
