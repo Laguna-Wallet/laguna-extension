@@ -29,6 +29,7 @@ import { FlowValue, SendAccountFlowEnum } from "./Send";
 import HashtagIcon from "assets/svgComponents/HashtagIcon";
 import { useHistory } from "react-router-dom";
 import { router } from "router/router";
+import { EVMNetwork } from "networks/evm";
 
 const validate = (values: { address: string; amount: number }) => {
   const errors: any = {};
@@ -104,8 +105,10 @@ function SendToken({
   // todo proper typing
   const { selectedAsset } = useSelector((state: any) => state.sendToken);
   const { prices } = useSelector((state: any) => state.wallet);
+  const chain = selectedAsset?.chain;
+  const symbol = selectedAsset?.symbol;
 
-  const price = selectedAsset?.chain && prices[selectedAsset.chain]?.usd;
+  const price = chain && prices[chain.toLowerCase()]?.usd;
 
   // const handleClick = (isValid: boolean) => {
   //   if (!isValid) return;
@@ -214,7 +217,7 @@ function SendToken({
   return (
     <Container>
       <Header
-        title={`SEND ${selectedAsset?.symbol} (${selectedAsset?.chain})`}
+        title={`SEND ${symbol} (${chain})`}
         closeAction={() => {
           dispatch(reset("sendToken"));
           history.push(router.home);
@@ -227,12 +230,13 @@ function SendToken({
       <Form onSubmit={handleSubmit(submit)}>
         <Content>
           <ContentItem>
-            <ContentItemTitle>Amount</ContentItemTitle>
+            <ContentItemTitle>
+              <span>Amount</span>
+              <span>Max</span>
+            </ContentItemTitle>
             <TokenAndAmountSelect
-              Icon={
-                <NetworkIcons isSmallIcon width="28px" height="28px" chain={selectedAsset?.chain} />
-              }
-              tokens={[selectedAsset.symbol]}
+              Icon={<NetworkIcons isSmallIcon width="28px" height="28px" chain={chain} />}
+              tokens={[symbol]}
               value={amount}
               onChangeCallback={() => {
                 setLoading(true);
@@ -242,11 +246,20 @@ function SendToken({
 
             <Price>
               <span>
-                ${amount && price ? new BigNumber(amount).times(price).toFormat(2) : "0.00"} USD
+                Balance:{" "}
+                {new BigNumber(selectedAsset.balance.overall)
+                  .minus(selectedAsset.balance.locked)
+                  .toString()}{" "}
+                {symbol?.toUpperCase()}
               </span>
-              <ExchangeIconContainer>
-                <ExchangeIcon />
-              </ExchangeIconContainer>
+              <span>
+                ${amount && price ? new BigNumber(amount).times(price).toFormat(2) : "0.00"} USD
+                {console.log("~ amount", amount)}
+                {console.log("~ price", price)}
+                <ExchangeIconContainer>
+                  <ExchangeIcon />
+                </ExchangeIconContainer>
+              </span>
             </Price>
           </ContentItem>
           {handleShowAccountInput(flow, "address") ? (
@@ -315,8 +328,28 @@ function SendToken({
               </SendTypes>
             </ContentItem>
           )}
-
           <ContentItem>
+            {chain === EVMNetwork.ETHEREUM ? (
+              <Info>
+                <InfoRow>
+                  <span>Network Fee</span>
+                  <span>
+                    {loading ? "..." : fee} {selectedAsset?.symbol.toUpperCase()}
+                  </span>
+                </InfoRow>
+                <InfoRow>
+                  <span>Max Total</span>
+                  <span>
+                    {loading ? "..." : fee} {selectedAsset?.symbol.toUpperCase()}
+                  </span>
+                </InfoRow>
+              </Info>
+            ) : (
+              ""
+            )}
+          </ContentItem>
+
+          {/* <ContentItem>
             <ContentItemTitle>Add Note (optional)</ContentItemTitle>
             <Field
               id="note"
@@ -333,7 +366,7 @@ function SendToken({
                 fontSize: "14px",
               }}
             />
-          </ContentItem>
+          </ContentItem> */}
 
           <Snackbar
             isOpen={isSnackbarOpen}
@@ -346,23 +379,6 @@ function SendToken({
         </Content>
 
         <BottomSection>
-          <Info>
-            <InfoRow>
-              <span>Transferable Balance</span>
-              <span>
-                {new BigNumber(selectedAsset.balance.overall)
-                  .minus(selectedAsset.balance.locked)
-                  .toString()}{" "}
-                {selectedAsset?.symbol.toUpperCase()}
-              </span>
-            </InfoRow>
-            <InfoRow>
-              <span>Estimated Fee</span>
-              <span>
-                {loading ? "..." : fee} {selectedAsset?.symbol.toUpperCase()}
-              </span>
-            </InfoRow>
-          </Info>
           <Button
             type="submit"
             text={loading ? "Calculating ability to transfer..." : "Preview Send"}
@@ -440,11 +456,11 @@ const ContentItem = styled.div`
   margin-top: 17px;
 
   :nth-child(2) {
-    margin-top: 7px;
+    margin-top: 24px;
   }
 
   :nth-child(3) {
-    margin-top: 28px;
+    margin-top: 24px;
   }
 `;
 
@@ -461,7 +477,7 @@ const Form = styled.form`
 const Price = styled.div`
   width: 100%;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
   margin-top: 6px;
   color: #111;
@@ -471,6 +487,9 @@ const Price = styled.div`
   text-align: right;
   color: #18191a;
   overflow: hidden;
+  span {
+    display: flex;
+  }
 `;
 
 const ExchangeIconContainer = styled.div`
@@ -482,10 +501,17 @@ const ExchangeIconContainer = styled.div`
 `;
 
 const ContentItemTitle = styled.p`
-  font-size: 12px;
-  color: #18191a;
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: #62768a;
   font-family: "IBM Plex Sans";
-  margin-bottom: 8px;
+  margin-bottom: 6px;
+
+  span:nth-child(2) {
+    color: #6366f1;
+    cursor: pointer;
+  }
 `;
 
 const SendTypes = styled.div`
@@ -517,10 +543,10 @@ const IconContainer = styled.div`
 `;
 
 const Text = styled.span`
-  font-family: "IBM Plex Sans";
-  color: #353945;
+  font-family: "Inter";
+  color: #181818;
   font-weight: 400;
-  font-size: 10px;
+  font-size: 12px;
   line-height: 20px;
 `;
 
@@ -545,7 +571,12 @@ const InfoRow = styled.div`
   display: flex;
   justify-content: space-between;
   &:nth-child(2) {
-    margin-top: 8px;
+    margin-top: 12px;
+  }
+
+  span {
+    font-family: "Inter";
+    font-size: 14px;
   }
 `;
 

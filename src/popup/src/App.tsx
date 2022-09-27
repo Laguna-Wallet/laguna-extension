@@ -40,6 +40,7 @@ import AddRemoveToken from "pages/AddRemoveToken/AddRemoveToken";
 import { fetchAccountsBalances } from "utils/Api";
 import { useAccount } from "context/AccountContext";
 import keyring from "@polkadot/ui-keyring";
+import TransactionSentEVM from "pages/Send/SuccesPage/TransactionSentEVM";
 
 function App() {
   const dispatch = useDispatch();

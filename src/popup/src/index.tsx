@@ -22,14 +22,7 @@ generateStore().then((store) => {
   // load all available addresses and accounts
   cryptoWaitReady().then(async () => {
     keyring.loadAll({ ss58Format: 42, type: "sr25519", store: new AccountsStore() });
-    console.log(
-      "txns",
-      await getEVMHistoricalTransactions(
-        "0x6e70d24832511dffd2cab529913ab54433e9abd9",
-        EVMNetwork.ETHEREUM,
-        EVMAssetId.ETHEREUM_USDT,
-      ),
-    );
+
     ReactDOM.render(
       <React.StrictMode>
         <Provider store={store}>

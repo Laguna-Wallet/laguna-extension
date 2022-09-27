@@ -91,7 +91,7 @@ const Input = ({ input: { value, onChange }, onChangeCallback }: any) => {
         onChangeCallback();
         debouncedChangeHandler(e);
       }}
-      placeholder="Enter Amount"
+      placeholder="Amount"
       // debounceTimeout={600}
     />
   );
@@ -101,7 +101,6 @@ const Container = styled.div`
   width: 100%;
   display: flex;
   align-items: center;
-  margin-top: 8px;
   padding: 0 20px 0 14px;
   border-radius: 5px;
   background-color: #f2f2f2;
@@ -121,7 +120,6 @@ const IconContainer = styled.div`
 
   svg {
     margin-left: 9px;
-
     min-width: 13px;
     min-height: 8px;
   }
@@ -152,11 +150,9 @@ const StyledInput = styled.input<{ isvalue: boolean }>`
   border-top-left-radius: 5px;
   border-bottom-left-radius: 5px;
   background-color: #f2f2f2;
-  color: #b1b5c3;
   font-family: Inter;
   font-size: 16px;
   color: #18191a;
-
   &::-webkit-inner-spin-button,
   &::-webkit-outer-spin-button {
     appearance: none;
@@ -164,6 +160,7 @@ const StyledInput = styled.input<{ isvalue: boolean }>`
 
   &::placeholder {
     color: #b1b5c3;
+    font-size: 14px;
   }
 
   &:focus {

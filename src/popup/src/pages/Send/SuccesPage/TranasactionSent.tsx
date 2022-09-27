@@ -13,7 +13,7 @@ import browser from "webextension-polyfill";
 type Props = {
   blockHash: string;
 };
-export default function TransactionSent({ blockHash }: Props) {
+export default function TransactionSentEVM({ blockHash }: Props) {
   const history = useHistory();
 
   const dispatch = useDispatch();

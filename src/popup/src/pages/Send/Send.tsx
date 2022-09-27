@@ -13,7 +13,7 @@ import {
 import { useEffect, useReducer, useState } from "react";
 import { AccountMeta, Asset, Network, SelectType } from "utils/types";
 import { useWizard, Wizard } from "react-use-wizard";
-import TransactionSent from "./TransactionSent";
+import TransactionSent from "./SuccesPage/TransactionSentSubstrate";
 import SendToken from "./SendToken";
 import { useAccount } from "context/AccountContext";
 import { useFormik } from "formik";

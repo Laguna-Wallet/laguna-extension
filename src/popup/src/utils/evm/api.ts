@@ -52,8 +52,8 @@ export const isValidEVMAddress = (address: string): Response => {
 };
 
 export const getProvider = (network: EVMNetwork): ethers.providers.JsonRpcProvider => {
-  // return new ethers.providers.JsonRpcProvider("HTTP://127.0.0.1:7545");
-  return new ethers.providers.JsonRpcProvider(networks[network].nodeUrl);
+  return new ethers.providers.JsonRpcProvider("HTTP://127.0.0.1:7545");
+  // return new ethers.providers.JsonRpcProvider(networks[network].nodeUrl);
 };
 
 export const getNetworkInfo = (network: EVMNetwork): IEVMNetwork => {
@@ -213,7 +213,9 @@ export const getEVMBalance = async (
       break;
     }
   }
-  return new BigNumber(balanceInBaseUnit).dividedBy(`1E${asset.decimal}`);
+
+  return balanceInBaseUnit.toString();
+  // return new BigNumber(balanceInBaseUnit).dividedBy(`1E${asset.decimal}`);
 };
 
 const initERC20SmartContract = (network: EVMNetwork, asset: IEVMAssetERC20): ethers.Contract => {

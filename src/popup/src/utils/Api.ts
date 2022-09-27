@@ -84,10 +84,17 @@ export async function fetchAccountsBalances(
         }
 
         if (
-          (network.chain === EVMNetwork.ETHEREUM ||
-            network.chain === EVMNetwork.AVALANCHE_TESTNET_FUJI) &&
+          network.chain === EVMNetwork.ETHEREUM &&
+          // || network.chain === EVMNetwork.AVALANCHE_TESTNET_FUJI)
           ethAddress
         ) {
+          console.log("~ network.chain", network.chain);
+          console.log("~ network.symbol", network.symbol);
+          console.log(
+            "~ EvmAssets[network.chain][network.symbol]",
+            EvmAssets[network.chain][network.symbol],
+          );
+
           const ethBalance = await getEVMBalance(
             network.chain,
             ethAddress,
@@ -108,6 +115,7 @@ export async function fetchAccountsBalances(
             network.chain,
             recodeAddress(address, network?.prefix, network?.encodeType),
           );
+          console.log(resolved);
           // if (resolved.message !== "Success") return
           if (resolved.message !== "Success") {
             if (resolved.message === "Record Not Found" || resolved?.data?.account?.balance === 0) {

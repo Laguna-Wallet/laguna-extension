@@ -414,6 +414,7 @@ browser.runtime.onMessage.addListener(async (msg, _sender) => {
 
 browser.runtime.onInstalled.addListener(async (port) => {
   const prices = await Retrieve_Coin_Prices()
+  console.log("~ prices", prices)
   browser.runtime.sendMessage({
     type: Messages.PriceUpdated,
     payload: JSON.stringify(prices),
