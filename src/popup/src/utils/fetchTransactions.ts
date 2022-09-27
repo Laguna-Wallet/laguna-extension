@@ -59,13 +59,13 @@ export async function fetchAccountTransactionsByChain(
     console.log("hi");
 
     if (chain === EVMNetwork.ETHEREUM) {
-      const data = await getEVMHistoricalTransactions(address, EVMNetwork.ETHEREUM);
-      console.log("~ data", data);
+      // const data = await getEVMHistoricalTransactions(address, EVMNetwork.ETHEREUM);
+      // console.log("~ data", data);
     }
 
     if (chain === EVMNetwork.AVALANCHE_TESTNET_FUJI) {
-      const data = await getEVMHistoricalTransactions(address, EVMNetwork.AVALANCHE_TESTNET_FUJI);
-      console.log("~ data", data);
+      // const data = await getEVMHistoricalTransactions(address, EVMNetwork.AVALANCHE_TESTNET_FUJI);
+      // console.log("~ data", data);
     }
 
     const res = await fetchTransactions(address, chain, token, 30, page);

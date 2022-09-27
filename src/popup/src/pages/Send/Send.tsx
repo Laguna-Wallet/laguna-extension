@@ -176,7 +176,8 @@ function Send({ initialIsContactsPopupOpen }: Props) {
       ] as IEVMAssetERC20;
 
       const { nonce, gasPriceInGwei, nativeCurrenyBalance, assetBalance } =
-        await getBuildTransactionOnChainParam(ethNetwork, form.address, ethAsset.symbol);
+        // todo change props
+        await getBuildTransactionOnChainParam(ethNetwork, form.address, ethAsset.symbol as any);
 
       const toSignTransaction: IEVMToBeSignTransaction = await buildEvmTransaction({
         network: ethNetwork,

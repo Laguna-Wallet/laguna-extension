@@ -1,14 +1,12 @@
 import BigNumber from "bignumber.js";
 import { BytesLike } from "ethers";
-import { EVMNetwork } from "../../networks/evm";
-import { EVMAssetType } from "../../networks/evm/asset";
-
-export interface ethereumHoldingState {
-  list: TokenData[];
-}
+import { EVMNetwork, EVMAssetType } from "../../networks/evm";
 
 export interface TokenData {
   balances: Balance[];
+}
+export interface ethereumHoldingState {
+  list: TokenData[];
 }
 
 export interface Balance {
@@ -16,19 +14,12 @@ export interface Balance {
   amount: string;
 }
 
-export interface IEVMNetwork {
-  chainId: number;
-  nodeUrl: string;
-  explorerUrlAddress: string;
-  explorerUrlTransaction: string;
-  nativeCurreny: string;
-}
-
 export interface IEVMAsset {
   name: string;
   symbol: string;
   decimal: number;
   assetType: EVMAssetType;
+  network?: EVMNetwork;
   contractAddress?: string;
 }
 
@@ -37,11 +28,12 @@ export interface IEVMAssetERC20 extends IEVMAsset {
 }
 
 export interface IEVMNetwork {
+  isTestnet?: boolean;
   chainId: number;
   nodeUrl: string;
   explorerUrlAddress: string;
   explorerUrlTransaction: string;
-  nativeCurreny: string;
+  nativeCurrency?: string;
 }
 
 export interface IEVMBuildTransactionOnChainParam {
@@ -87,6 +79,15 @@ export interface Response {
 //==============================================================================
 // Alchemy API
 //==============================================================================
+export interface IAlchemyTransferParam {
+  fromAddress: string;
+  fromBlock: string;
+  toBlock: string;
+  category: string[];
+  withMetadata: boolean;
+  excludeZeroValue: boolean;
+  contractAddresses?: string[];
+}
 
 export interface IAlchemyTransferObject {
   blockNum: string;
@@ -108,47 +109,12 @@ export interface IAlchemyTransferObject {
 }
 
 export interface IEVMHistoricalTransaction {
-  asset: string;
+  assetId: string;
   amount: BigNumber;
   from: string;
   fee: BigNumber;
   to: string;
-  nonce: string;
-  blockNumber: BigNumber;
-  transactionHash: string;
-  timestamp: number;
-}
-
-//==============================================================================
-// Alchemy API
-//==============================================================================
-
-export interface IAlchemyTransferObject {
-  blockNum: string;
-  uniqueId: string;
-  hash: string;
-  from: string;
-  to: string;
-  value: number;
-  erc721TokenId: string | null;
-  erc1155Metadata: string | null;
-  tokenId: string | null;
-  asset: string;
-  category: string;
-  rawContract: {
-    value: string;
-    address: string | null;
-    decimal: string;
-  };
-}
-
-export interface IEVMHistoricalTransaction {
-  asset: string;
-  amount: BigNumber;
-  from: string;
-  fee: BigNumber;
-  to: string;
-  nonce: string;
+  nonce: BigNumber;
   blockNumber: BigNumber;
   transactionHash: string;
   timestamp: number;
