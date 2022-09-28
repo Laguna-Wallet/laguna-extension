@@ -29,10 +29,7 @@ export const signTransaction = async (keyPair: any, toBeSignTransaction: IEVMToB
 }
 
 export const broadcastTransaction = async (network: EVMNetwork, signedTx: string): Promise<string> => {
-  console.log(1)
   const provider = getProvider(network)
-  console.log(2)
   const transactionReceipt = await provider.sendTransaction(signedTx)
-  console.log(3)
   return transactionReceipt.hash
 }
