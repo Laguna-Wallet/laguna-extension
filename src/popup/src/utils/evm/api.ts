@@ -43,21 +43,22 @@ export const getAssetInfo = (network: EVMNetwork, assetId: EVMAssetId): IEVMAsse
 };
 
 export const getNonce = async (network: EVMNetwork, address: string): Promise<BigNumber> => {
-  const provider = new ethers.providers.JsonRpcProvider(networks[network].nodeUrl);
+  const provider = getProvider(network);
   const nonce = await provider.getTransactionCount(address, "latest");
   return new BigNumber(nonce);
 };
 
 export const getGasPrice = async (network: EVMNetwork): Promise<BigNumber> => {
-  const provider = new ethers.providers.JsonRpcProvider(networks[network].nodeUrl);
+  const provider = getProvider(network);
   const gasPrice = await provider.getGasPrice();
   return new BigNumber(gasPrice.toString());
 };
 
-export const estimateGas = async (network: EVMNetwork, toBeSignTransaction: IEVMToBeSignTransaction): Promise<BigNumber> => {
-  const provider = new ethers.providers.JsonRpcProvider(networks[network].nodeUrl);
-  if (await isSmartContractAddress(network, toBeSignTransaction.to)) {
-    const estimateResult = await provider.estimateGas(toBeSignTransaction);
+export const estimateGasLimit = async (network: EVMNetwork, param: IEVMBuildTransaction): Promise<BigNumber> => {
+  const provider = getProvider(network);
+  const transaction = buildTransaction(param);
+  if (await isSmartContractAddress(network, param.toAddress)) {
+    const estimateResult = await provider.estimateGas(transaction);
     return new BigNumber(estimateResult.toString()).multipliedBy(1.5);
   } else {
     return new BigNumber(21000);
@@ -86,8 +87,8 @@ export const getBuildTransactionOnChainParam = async (networkId: EVMNetwork, fro
   };
 };
 
-export const buildTransaction = async (  param: IEVMBuildTransaction  )
-: Promise<IEVMToBeSignTransaction> => {
+export const buildTransaction = (  param: IEVMBuildTransaction  )
+: IEVMToBeSignTransaction => {
   const {network, asset, amount, fromAddress, toAddress, nonce,gasPriceInGwei, gasLimit} = param;
 
   if (asset.assetType === EVMAssetType.NATIVE) {
