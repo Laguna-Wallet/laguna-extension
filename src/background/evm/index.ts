@@ -16,5 +16,5 @@ export const signTransaction = async (keyPair: any, toBeSignTransaction: IEVMToB
         chainId: toBeSignTransaction.chainId.toString() ,
     } as TxData);
     const signedTransaction = tx.sign(privateKey);
-   return signedTransaction.serialize().toString("hex");
+   return `0x${signedTransaction.serialize().toString("hex")}`;
 };
