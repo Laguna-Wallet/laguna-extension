@@ -1,9 +1,10 @@
 import { ethers } from "ethers";
-import { IEVMAssetERC20, IEVMAsset, IEVMBuildTransaction, IEVMToBeSignTransaction, Response, IEVMBuildTransactionOnChainParam, IEVMNetwork, IEVMHistoricalTransaction, IAlchemyTransferObject, IAlchemyTransferParam } from "./interfaces";
 import fs from "fs";
 import BigNumber from "bignumber.js";
-import { EVMNetwork, nativeCurrencyByNetwork, networks, assetByNetwork, EVMAssetId, EVMAssetType, assets } from "networks/evm";
+import { IEVMAssetERC20, IEVMAsset, IEVMBuildTransaction, IEVMToBeSignTransaction, Response, IEVMBuildTransactionOnChainParam, IEVMNetwork, IEVMHistoricalTransaction } from "./interfaces";
+import { EVMNetwork, nativeCurrencyByNetwork, networks, assetByNetwork, EVMAssetId, EVMAssetType } from "networks/evm";
 import * as alchemyApi from "./api/alchemy";
+import * as covalenthqApi from "./api/covalenthq";
 
 export const toCheckSumAddress = (address: string): string => {
   const checksumAddress = ethers.utils.getAddress(address); 
@@ -170,12 +171,15 @@ export const getAssetIdBySmartContractAddress = (smartContractAddress: string, n
 
 export const getHistoricalTransactions = async (address: string, networkId: EVMNetwork, assetId: EVMAssetId)
 : Promise<IEVMHistoricalTransaction[]> => {
+  console.log(address, networkId, assetId);
   switch (networkId) {
     case EVMNetwork.LOCALHOST:
       return [];
     case EVMNetwork.ETHEREUM:
     case EVMNetwork.ETHEREUM_TESTNET_GOERLI:
       return await alchemyApi.getHistoricalTransactions(address, networkId, assetId);
+    case EVMNetwork.AVALANCHE_TESTNET_FUJI:
+      return await covalenthqApi.getHistoricalTransactions(address, networkId, assetId);
     default:
       throw new Error("Non Supported Network");
   }

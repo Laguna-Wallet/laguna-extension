@@ -1,14 +1,43 @@
-import { IEVMAssetERC20, IEVMAsset, IEVMHistoricalTransaction, IAlchemyTransferParam } from "../interfaces";
+import { IEVMAssetERC20, IEVMAsset, IEVMHistoricalTransaction } from "../interfaces";
 import BigNumber from "bignumber.js";
 import { EVMNetwork, EVMAssetId, EVMAssetType, assets } from "networks/evm";
 import { getProvider, toCheckSumAddress } from "../api";
+
+export interface IAlchemyTransferParam { 
+  fromAddress: string; 
+  fromBlock: string; 
+  toBlock: string; 
+  category: string[]; 
+  withMetadata: boolean; 
+  excludeZeroValue: boolean; 
+  contractAddresses?: string[]; 
+}
+
+export interface IAlchemyTransferObject {
+  blockNum: string,
+  uniqueId: string,
+  hash: string,
+  from: string,
+  to: string,
+  value: number,
+  erc721TokenId: string | null,
+  erc1155Metadata: string | null,
+  tokenId: string | null,
+  asset: string,
+  category: string
+  rawContract: {
+    value: string,
+    address: string | null,
+    decimal: string
+  }
+}
 
 const getApiUrl = (networkId: EVMNetwork) : string => {
     switch (networkId) {
       case EVMNetwork.ETHEREUM:
         return `https://eth-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_KEY}`;
       case EVMNetwork.ETHEREUM_TESTNET_GOERLI:
-        return `https://eth-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_KEY}`;
+        return `https://eth-goerli.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_KEY}`;
       default:
         throw new Error("Non Supported Network");
     }

@@ -75,38 +75,6 @@ export interface Response {
   message: string
 }
 
-//==============================================================================
-// Alchemy API
-//==============================================================================
-export interface IAlchemyTransferParam { 
-  fromAddress: string; 
-  fromBlock: string; 
-  toBlock: string; 
-  category: string[]; 
-  withMetadata: boolean; 
-  excludeZeroValue: boolean; 
-  contractAddresses?: string[]; 
-}
-
-export interface IAlchemyTransferObject {
-  blockNum: string,
-  uniqueId: string,
-  hash: string,
-  from: string,
-  to: string,
-  value: number,
-  erc721TokenId: string | null,
-  erc1155Metadata: string | null,
-  tokenId: string | null,
-  asset: string,
-  category: string
-  rawContract: {
-    value: string,
-    address: string | null,
-    decimal: string
-  }
-}
-
 
 export interface IEVMHistoricalTransaction {
   assetId: string;
