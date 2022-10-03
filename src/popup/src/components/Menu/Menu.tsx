@@ -22,6 +22,7 @@ export default function Menu({ onClose }: Props) {
 
   const activeUser = account.getActiveAccount();
   const [isOpen, setOpen] = useState<boolean>(true);
+  const manifestVersion = chrome.runtime.getManifest();
 
   const backupLocation = {
     pathname: activeUser?.meta?.notSecured ? router.createAccount : router.backupAccount,
@@ -105,6 +106,10 @@ export default function Menu({ onClose }: Props) {
         <LogoutIcon width={15} />
         <span>Log Out</span>
       </StyledLogoutLink> */}
+      <Footer>
+        <div> v1.0{manifestVersion.manifest_version}</div>
+        <a href="https://lagu.na/wallet/" target="_blank" rel="noreferrer" >Website</a>
+      </Footer>
     </Container>
   );
 }
@@ -219,5 +224,27 @@ const StyledLink = styled(Link)<{ color?: string }>`
   span {
     margin-left: 13px;
     margin-right: auto;
+  }
+`;
+
+const Footer = styled.div`
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  color: #777E91;
+  font-size: 15px;
+  margin-bottom: 2rem;
+  padding: 0 10px;
+  gap: 1rem;
+
+  a {
+    text-decoration: none;
+    color: #777E91;
+    font-size: 15px;
+  }
+
+  a:hover {
+    color: #B1B5C4;
+    transition: 400ms;
   }
 `;
