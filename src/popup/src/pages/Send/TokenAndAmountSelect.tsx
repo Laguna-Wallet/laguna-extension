@@ -32,7 +32,6 @@ export default function TokenAndAmountSelect({
   useOnClickOutside(optionContainerRef, () => setIsOpen(false));
 
   const selectOptions = currencyType === CurrencyType.Crypto ? tokens : fiatList;
-  console.log("~ currencyType", currencyType);
 
   const renderSelect = () => {
     return (

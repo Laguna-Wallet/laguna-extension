@@ -81,7 +81,7 @@ export const getEvmGasPrice = async (network: EVMNetwork): Promise<BigNumber> =>
   const provider = new ethers.providers.JsonRpcProvider(networks[network].nodeUrl);
   const gasPrice = await provider.getGasPrice();
   return new BigNumber(gasPrice.toString());
-};
+};g
 
 export const estimateGas = async (
   network: EVMNetwork,

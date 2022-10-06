@@ -178,6 +178,7 @@ function Send({ initialIsContactsPopupOpen }: Props) {
       const { nonce, gasPriceInGwei, nativeCurrenyBalance, assetBalance } =
         await getBuildTransactionOnChainParam(ethNetwork, form.address, EVMAssetId.ETHEREUM_ETH);
 
+      console.log("~ gasPriceInGwei", gasPriceInGwei.toString());
       // const gasLimit = estimateGasLimit(param);
 
       const toSignTransaction: IEVMToBeSignTransaction = await buildEvmTransaction({
@@ -187,7 +188,7 @@ function Send({ initialIsContactsPopupOpen }: Props) {
         fromAddress: activeAccount?.meta?.ethAddress,
         toAddress: form?.address,
         nonce,
-        gasPriceInGwei,
+        gasPriceInGwei: new BigNumber(100),
         gasLimit: new BigNumber(100000),
         // numOfPendingTransaction: BigNumber; // TODO for adding up nonce, blocked by cache pending txn
       });
