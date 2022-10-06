@@ -188,7 +188,7 @@ function Send({ initialIsContactsPopupOpen }: Props) {
         toAddress: form?.address,
         nonce,
         gasPriceInGwei,
-        gasLimit: new BigNumber(10000000000000000),
+        gasLimit: new BigNumber(100000),
         // numOfPendingTransaction: BigNumber; // TODO for adding up nonce, blocked by cache pending txn
       });
 
