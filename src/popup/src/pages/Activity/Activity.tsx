@@ -8,14 +8,14 @@ import { ReactChild, useEffect, useState } from "react";
 import ThreeDotsIcon from "assets/svgComponents/ThreeDotsIcon";
 import ActivityInfo from "./ActivityInfo";
 import { useSelector } from "react-redux";
-import { truncateString } from "utils";
+import { transformEVMHistoryToTransaction, truncateString } from "utils";
 import { format } from "date-fns";
 import RightArrow from "assets/svgComponents/RightArrow";
 import { PlusIcon } from "@heroicons/react/outline";
 import PolkadotLogoIcon from "assets/svgComponents/PolkadotLogoIcon";
 import KusamaLogoIcon from "assets/svgComponents/KusamaLogoIcon";
 import { networks, TokenSymbols, Transaction } from "utils/types";
-import { fetchAccountTransactionsByChain } from "utils/fetchTransactions";
+import { fetchSubstrateAccountTransactionsByChain } from "utils/fetchTransactions";
 import Popup from "components/Popup/Popup";
 import Loader from "components/Loader/Loader";
 import InactiveField from "components/InactiveField/InactiveField";
@@ -23,7 +23,9 @@ import { router } from "router/router";
 import { useHistory } from "react-router-dom";
 import Select, { components } from "react-select";
 import NetworkIcons from "components/primitives/NetworkIcons";
-import { EVMNetwork } from "networks/evm";
+import { EVMAssetId, EVMNetwork } from "networks/evm";
+import { getEVMHistoricalTransactions } from "utils/evm/api";
+import EthIcon from "assets/svgComponents/EthIcon";
 
 type Props = {
   isMenuOpen?: boolean;
@@ -35,14 +37,20 @@ type Props = {
 export const ActivityItem = ({ transaction, onClick, bgColor }: Props) => {
   const account = useAccount();
 
-  const handleIsSent = (accountAddress: string, from: string) => {
+  const handleIsSent = (accountAddress: string, from: string, chain: string) => {
+    // Todo Proper chain enum
+    if (chain.toUpperCase() === EVMNetwork.ETHEREUM) {
+      if (accountAddress === from) return true;
+      return false;
+    }
+
     if (recodeAddress(accountAddress, 0) === recodeAddress(from, 0)) return true;
     return false;
   };
 
   const currAccountAddress = account?.getActiveAccount()?.address;
 
-  const isSent = handleIsSent(currAccountAddress, transaction.from);
+  const isSent = handleIsSent(currAccountAddress, transaction.from, transaction.chain);
 
   return (
     <ActivityItemContainer bgColor={bgColor} onClick={onClick}>
@@ -83,7 +91,7 @@ export default function Activity() {
   const account = useAccount();
   const history = useHistory();
 
-  const wallet = useSelector((state: any) => state.wallet);
+  // const wallet = useSelector((state: any) => state.wallet);
   // const transactions = wallet?.transactions[account.getActiveAccount().address];
   const [transactions, setTransactions] = useState<Transaction[] | []>([]);
   const [transaction, setTransaction] = useState<Transaction>();
@@ -101,8 +109,8 @@ export default function Activity() {
 
   const address =
     chain?.value?.chain === EVMNetwork.ETHEREUM
-      ? account.getActiveAccount().address
-      : account.getActiveAccount()?.meta?.ethAddress;
+      ? account.getActiveAccount()?.meta?.ethAddress
+      : account.getActiveAccount().address;
 
   const sortedTransactions =
     transactions &&
@@ -113,11 +121,24 @@ export default function Activity() {
   useEffect(() => {
     async function go() {
       setLoading(true);
-      const transactions = (await fetchAccountTransactionsByChain(
-        address,
-        chain.value.chain,
-        chain.value.token,
-      )) as Transaction[];
+      let transactions: Transaction[] = [];
+
+      if (chain.value.chain === EVMNetwork.ETHEREUM) {
+        const ethHistory = await getEVMHistoricalTransactions(
+          address,
+          EVMNetwork.ETHEREUM,
+          EVMAssetId.ETHEREUM_ETH,
+        );
+
+        transactions = transformEVMHistoryToTransaction(ethHistory);
+      } else {
+        transactions = (await fetchSubstrateAccountTransactionsByChain(
+          address,
+          chain.value.chain,
+          chain.value.token,
+        )) as Transaction[];
+      }
+
       setTransactions(transactions);
       setLoading(false);
     }
@@ -146,13 +167,8 @@ export default function Activity() {
     ),
   }));
 
-  // useEffect(() => {
-  //   setChain(options.find((option) => option.value === 'polkadot') as any);
-  // }, []);
-
   const IconOption = (props: any) => (
     <Option {...props}>
-      {/* <img src={require('./' + props?.data?.icon)} style={{ width: 36 }} /> */}
       <SelectIconsContainer>
         <SelectIcon>{props?.data?.icon}</SelectIcon>
         <SelectLabel>{props?.data?.label}</SelectLabel>
@@ -258,6 +274,9 @@ function handleIcons(chain: any) {
     // break;
     case "kusama":
       return <KusamaLogoIcon fill="#111" stroke="#111" />;
+    case "ethereum":
+      return <NetworkIcons width="35px" height="35px" chain="ETHEREUM" />;
+
     // break;
     default:
   }
@@ -273,7 +292,7 @@ const Container = styled.div<{ bg: string; isEmpty: boolean }>`
   position: relative;
   background-image: ${({ bg }) => `url(${bg})`};
   background-size: cover;
-  padding-top: ${({ isEmpty }) => (isEmpty ? "88px" : "50px")};
+  padding-top: ${({ isEmpty }) => (isEmpty ? "88px" : "88px")};
   padding-bottom: 50px;
   overflow: hidden;
 `;
@@ -324,7 +343,7 @@ const ValueContentContainer = styled.div`
 
 const ListContentParent = styled.div`
   width: 100%;
-  height: 570px;
+  height: 100%;
   overflow: hidden;
   display: flex;
   flex-direction: column;

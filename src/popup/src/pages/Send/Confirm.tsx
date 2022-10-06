@@ -103,9 +103,7 @@ function Confirm({
         setLoadingTransaction(false);
         setTransactionConfirmed(true);
         // const updatedBalances = await updateBallanceCache(chain, amount, fee);
-
         // dispatch(changeAccountsBalances(updatedBalances));
-
         // sendMessagePromise({ type: Messages.FreezeAccountBalanceUpdate });
         history.push({
           pathname: router.home,

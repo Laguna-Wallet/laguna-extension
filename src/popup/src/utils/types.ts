@@ -165,7 +165,15 @@ export type Token =
 
 // todo move chain names to enum
 export interface Transaction {
-  chain: "westend" | "polkadot" | "kusama" | "moonriver" | "moonbeam" | "shiden" | "astar";
+  chain:
+    | "westend"
+    | "polkadot"
+    | "kusama"
+    | "moonriver"
+    | "moonbeam"
+    | "shiden"
+    | "astar"
+    | "ethereum";
   amount: string;
   fee: string;
   from: string;
@@ -434,3 +442,8 @@ export const networks: Network[] = [
   //   chain: 'edgeware'
   // }
 ];
+
+export enum CurrencyType {
+  Fiat = "fiat",
+  Crypto = "crypto",
+}

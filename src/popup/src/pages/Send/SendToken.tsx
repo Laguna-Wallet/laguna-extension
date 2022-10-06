@@ -24,7 +24,7 @@ import AccountsPopup from "./AccountsPopup";
 import BarcodeSendIcon from "assets/svgComponents/BarcodeSendIcon";
 import { PropsFromTokenDashboard } from "pages/Recieve/Receive";
 import keyring from "@polkadot/ui-keyring";
-import { AccountMeta } from "utils/types";
+import { AccountMeta, CurrencyType } from "utils/types";
 import { FlowValue, SendAccountFlowEnum } from "./Send";
 import HashtagIcon from "assets/svgComponents/HashtagIcon";
 import { useHistory } from "react-router-dom";
@@ -103,6 +103,7 @@ function SendToken({
   const [snackbarError, setSnackbarError] = useState<string>("");
 
   // todo proper typing
+  const [currencyType, setCurrencyType] = useState<CurrencyType>(CurrencyType.Crypto);
   const { selectedAsset } = useSelector((state: any) => state.sendToken);
   const { prices } = useSelector((state: any) => state.wallet);
   const chain = selectedAsset?.chain;
@@ -214,6 +215,15 @@ function SendToken({
     return value;
   };
 
+  const handleCurrencyType = (currencyType: CurrencyType) => {
+    if (currencyType === CurrencyType.Crypto) {
+      setCurrencyType(CurrencyType.Fiat);
+      return;
+    }
+
+    setCurrencyType(CurrencyType.Crypto);
+  };
+
   return (
     <Container>
       <Header
@@ -237,7 +247,9 @@ function SendToken({
             <TokenAndAmountSelect
               Icon={<NetworkIcons isSmallIcon width="28px" height="28px" chain={chain} />}
               tokens={[symbol]}
+              fiatList={["USD"]}
               value={amount}
+              currencyType={currencyType}
               onChangeCallback={() => {
                 setLoading(true);
                 setAbilityToTransfer(false);
@@ -254,9 +266,7 @@ function SendToken({
               </span>
               <span>
                 ${amount && price ? new BigNumber(amount).times(price).toFormat(2) : "0.00"} USD
-                {console.log("~ amount", amount)}
-                {console.log("~ price", price)}
-                <ExchangeIconContainer>
+                <ExchangeIconContainer onClick={() => handleCurrencyType(currencyType)}>
                   <ExchangeIcon />
                 </ExchangeIconContainer>
               </span>

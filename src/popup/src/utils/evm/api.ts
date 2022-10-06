@@ -305,9 +305,7 @@ export const getHistoricalTransactionsByAlchemy = async (
     const provider = getProvider(networkId);
     const res = await fetch(networks[networkId].nodeUrl, options);
     const data = await res.json();
-    // TODO remove log
-    console.log("*** res", res);
-    console.log("*** data", data);
+
     if (data.error) {
       throw data.error;
     }
@@ -327,8 +325,6 @@ export const getHistoricalTransactionsByAlchemy = async (
         historicalTransactions.push(transferObj);
       }
     } while (data.result.pageKey);
-    // TODO remove log
-    console.log("TimeTaken 1 - ", Date.now() - startTime);
     const chunkSize = 20;
     for (let i = 0; i < historicalTransactions.length; i += chunkSize) {
       const chunk = historicalTransactions.slice(i, i + chunkSize);
@@ -342,8 +338,6 @@ export const getHistoricalTransactionsByAlchemy = async (
         }),
       );
     }
-    // TODO remove log
-    console.log("TimeTaken 2 - ", Date.now() - startTime);
     return historicalTransactions;
   } catch (err) {
     console.log("Failed to getHistoricalTransactionsByAlchemy", err);

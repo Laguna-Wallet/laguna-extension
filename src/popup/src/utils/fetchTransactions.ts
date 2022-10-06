@@ -1,6 +1,6 @@
 import { timer } from "utils";
 import { getEVMHistoricalTransactions } from "./evm/api";
-import { EVMNetwork } from "networks/evm";
+import { EVMAssetId, EVMNetwork } from "networks/evm";
 import { chains, Transaction } from "./types";
 
 // export async function fetchAllAccountsTransactions(address: string) {
@@ -45,7 +45,7 @@ import { chains, Transaction } from "./types";
 //   }
 // }
 
-export async function fetchAccountTransactionsByChain(
+export async function fetchSubstrateAccountTransactionsByChain(
   address: string,
   chain: string,
   token: string,
@@ -57,16 +57,6 @@ export async function fetchAccountTransactionsByChain(
     let page = 0;
     //   let accountTransfers = [];
     console.log("hi");
-
-    if (chain === EVMNetwork.ETHEREUM) {
-      // const data = await getEVMHistoricalTransactions(address, EVMNetwork.ETHEREUM);
-      // console.log("~ data", data);
-    }
-
-    if (chain === EVMNetwork.AVALANCHE_TESTNET_FUJI) {
-      // const data = await getEVMHistoricalTransactions(address, EVMNetwork.AVALANCHE_TESTNET_FUJI);
-      // console.log("~ data", data);
-    }
 
     const res = await fetchTransactions(address, chain, token, 30, page);
 

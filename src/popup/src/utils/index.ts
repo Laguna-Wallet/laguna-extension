@@ -1,4 +1,4 @@
-import { MnemonicsTriple, StorageKeys } from "./types";
+import { MnemonicsTriple, StorageKeys, Transaction } from "./types";
 import { saveAs } from "file-saver";
 import { KeyringPair$Json } from "@polkadot/keyring/types";
 import { KeyringPairs$Json } from "@polkadot/ui-keyring/types";
@@ -9,6 +9,7 @@ import keyring from "@polkadot/ui-keyring";
 import Resizer from "react-image-file-resizer";
 import { decodeAddress, encodeAddress } from "@polkadot/util-crypto";
 import BigNumber from "bignumber.js";
+import { IEVMHistoricalTransaction } from "./evm/interfaces";
 
 //==============================================================================
 // Mnemonics
@@ -280,3 +281,32 @@ export async function checkBalanceChange(
 
   return false;
 }
+
+export function transformEVMHistoryToTransaction(
+  evmHistory: IEVMHistoricalTransaction[],
+): Transaction[] {
+  return evmHistory.map(({ amount, from, to, transactionHash, nonce, timestamp, fee }) => ({
+    chain: "ethereum",
+    amount: amount.toString(),
+    from,
+    hash: transactionHash,
+    timestamp: timestamp.toString(),
+    fee: fee.toString(),
+    nonce: nonce.toString(),
+    to,
+  }));
+}
+
+// amount
+// from
+// blockNumber
+// transactionHash
+
+// chain: "westend" | "polkadot" | "kusama" | "moonriver" | "moonbeam" | "shiden" | "astar" | "ethereum";
+// amount: string;
+// fee: string;
+// from: string;
+// to: string;
+// nonce: string;
+// hash: string;
+// timestamp: string;

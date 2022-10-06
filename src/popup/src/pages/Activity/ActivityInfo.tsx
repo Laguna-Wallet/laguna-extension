@@ -11,6 +11,7 @@ import RightBigArrowIcon from "assets/svgComponents/RightBigArrowIcon";
 import { useHistory } from "react-router-dom";
 import { router } from "router/router";
 import browser from "webextension-polyfill";
+import { EVMNetwork } from "networks/evm";
 
 type Props = {
   transaction: Transaction;
@@ -18,6 +19,7 @@ type Props = {
 };
 
 export default function AccountInfo({ transaction, closeAction }: Props) {
+  console.log("~ transaction", transaction);
   const history = useHistory();
 
   const { from, to, nonce, amount, fee, chain, hash } = transaction;
@@ -31,6 +33,12 @@ export default function AccountInfo({ transaction, closeAction }: Props) {
   const decimal = tokenDecimals[symbol.toUpperCase()];
 
   const onClick = (hash: string, chain: string) => {
+    // Todo Proper chain enum
+    if (chain.toUpperCase() === EVMNetwork.ETHEREUM) {
+      browser.windows.create({ url: `https://etherscan.io/tx/${hash}` });
+      return;
+    }
+
     browser.windows.create({ url: `https://${chain}.subscan.io/extrinsic/${hash}` });
   };
 
@@ -65,7 +73,9 @@ export default function AccountInfo({ transaction, closeAction }: Props) {
         <Row>
           <RowLeft>Status</RowLeft>
           <RowRight style={{ cursor: "pointer" }} onClick={() => onClick(hash, chain)}>
-            View on Polkadot explorer
+            {chain.toUpperCase() === EVMNetwork.ETHEREUM
+              ? "View on Etherscan"
+              : "View on Polkadot explorer"}
           </RowRight>
         </Row>
         <Row marginTop="8px">

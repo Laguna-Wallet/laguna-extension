@@ -39,7 +39,7 @@ import {
   IEVMBuildTransaction,
   IEVMToBeSignTransaction,
 } from "utils/evm/interfaces";
-import { EVMNetwork } from "networks/evm";
+import { EVMAssetId, EVMNetwork } from "networks/evm";
 
 export enum SendAccountFlowEnum {
   SendToTrustedContact = "SendToTrustedContact",
@@ -168,7 +168,7 @@ function Send({ initialIsContactsPopupOpen }: Props) {
       setLoading(true);
 
       const ethNetwork = reduxSendTokenState?.selectedAsset?.chain;
-      const gasPrice = await getEvmGasPrice(ethNetwork);
+      // const gasPrice = await getEvmGasPrice(ethNetwork);
 
       // todo revise with Evelyn
       const ethAsset = EvmAssets[ethNetwork][
@@ -176,8 +176,9 @@ function Send({ initialIsContactsPopupOpen }: Props) {
       ] as IEVMAssetERC20;
 
       const { nonce, gasPriceInGwei, nativeCurrenyBalance, assetBalance } =
-        // todo change props
-        await getBuildTransactionOnChainParam(ethNetwork, form.address, ethAsset.symbol as any);
+        await getBuildTransactionOnChainParam(ethNetwork, form.address, EVMAssetId.ETHEREUM_ETH);
+
+      // const gasLimit = estimateGasLimit(param);
 
       const toSignTransaction: IEVMToBeSignTransaction = await buildEvmTransaction({
         network: ethNetwork,
@@ -187,7 +188,7 @@ function Send({ initialIsContactsPopupOpen }: Props) {
         toAddress: form?.address,
         nonce,
         gasPriceInGwei,
-        // gasLimit
+        gasLimit: new BigNumber(10000000000000000),
         // numOfPendingTransaction: BigNumber; // TODO for adding up nonce, blocked by cache pending txn
       });
 

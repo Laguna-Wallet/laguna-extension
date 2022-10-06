@@ -7,32 +7,45 @@ import useOnClickOutside from "hooks/useOnClickOutside";
 // import debounce from 'lodash.debounce';
 import { useEffect } from "react";
 import debounce from "lodash.debounce";
+import { CurrencyType } from "utils/types";
 
 type Props = {
   Icon: any;
   tokens: string[];
+  fiatList: string[];
   value?: string;
+  currencyType: CurrencyType;
   onChangeCallback: () => void;
 };
 
-export default function TokenAndAmountSelect({ tokens, Icon, value, onChangeCallback }: Props) {
+export default function TokenAndAmountSelect({
+  tokens,
+  fiatList,
+  Icon,
+  value,
+  currencyType,
+  onChangeCallback,
+}: Props) {
   const optionContainerRef = useRef<HTMLDivElement | null>(null);
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   useOnClickOutside(optionContainerRef, () => setIsOpen(false));
 
+  const selectOptions = currencyType === CurrencyType.Crypto ? tokens : fiatList;
+  console.log("~ currencyType", currencyType);
+
   const renderSelect = () => {
     return (
       <StyledSelect>
         <StyledOption onClick={() => setIsOpen(true)}>
-          {tokens[0].toUpperCase()}
+          {selectOptions[0].toUpperCase()}
           <IconContainer>
             <SelectSmallIcon />
           </IconContainer>
         </StyledOption>
-        {tokens && isOpen && (
+        {selectOptions && isOpen && (
           <OptionContainer ref={optionContainerRef}>
-            {tokens.map((symbol: string) => (
+            {selectOptions.map((symbol: string) => (
               <StyledOption key={symbol} onClick={() => setIsOpen(false)}>
                 {/* {symbol.toUpperCase()} */}
               </StyledOption>
