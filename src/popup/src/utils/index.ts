@@ -297,16 +297,10 @@ export function transformEVMHistoryToTransaction(
   }));
 }
 
-// amount
-// from
-// blockNumber
-// transactionHash
+export function cryptoToFiat(crypto: number, price: number): number {
+  return new BigNumber(crypto).times(price).toNumber();
+}
 
-// chain: "westend" | "polkadot" | "kusama" | "moonriver" | "moonbeam" | "shiden" | "astar" | "ethereum";
-// amount: string;
-// fee: string;
-// from: string;
-// to: string;
-// nonce: string;
-// hash: string;
-// timestamp: string;
+export function fiatToCrypto(fiat: number, price: number): number {
+  return new BigNumber(fiat).dividedBy(price).toNumber();
+}
