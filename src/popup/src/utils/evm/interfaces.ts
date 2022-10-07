@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { BytesLike } from "ethers";
-import { EVMNetwork, EVMAssetType } from "../../networks/evm";
+import { EVMNetwork, EVMAssetType, EVMAssetId } from "../../networks/evm";
 
 export interface TokenData {
   balances: Balance[];
@@ -21,6 +21,7 @@ export interface IEVMAsset {
   assetType: EVMAssetType;
   network?: EVMNetwork;
   contractAddress?: string;
+  assetId: EVMAssetId;
 }
 
 export interface IEVMAssetERC20 extends IEVMAsset {

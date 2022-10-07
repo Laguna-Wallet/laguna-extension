@@ -368,13 +368,13 @@ export const networks: Network[] = [
   //   assetType: EVMAssetType.ERC20,
   //   contractAddress: "TBC",
   // },
-  // {
-  //   name: "Avalanche",
-  //   chain: EVMNetwork.AVALANCHE_TESTNET_FUJI,
-  //   symbol: TokenSymbols.AVAX,
-  //   decimal: 18,
-  //   assetType: EVMAssetType.NATIVE,
-  // },
+  {
+    name: "Avalanche",
+    chain: EVMNetwork.AVALANCHE_TESTNET_FUJI,
+    symbol: TokenSymbols.AVAX,
+    decimal: 18,
+    assetType: EVMAssetType.NATIVE,
+  },
   // {
   //   name: "Dexalot Token",
   //   symbol: TokenSymbols.ALOT,

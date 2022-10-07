@@ -1,4 +1,4 @@
-import { EVMNetwork } from ".";
+import { EVMAssetId, EVMNetwork } from ".";
 import { IEVMAsset, IEVMAssetERC20 } from "../../utils/evm/interfaces";
 
 export enum EVMAssetType {
@@ -19,6 +19,7 @@ export const EvmAssets: {
       symbol: "ETH",
       decimal: 18,
       assetType: EVMAssetType.NATIVE,
+      assetId: EVMAssetId.ETHEREUM_ETH,
     },
     USDC: {
       name: "USD Coin",
@@ -26,6 +27,7 @@ export const EvmAssets: {
       decimal: 6,
       assetType: EVMAssetType.ERC20,
       contractAddress: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+      assetId: EVMAssetId.ETHEREUM_USDC,
     },
     USDT: {
       name: "Tether USD",
@@ -33,6 +35,7 @@ export const EvmAssets: {
       decimal: 6,
       assetType: EVMAssetType.ERC20,
       contractAddress: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+      assetId: EVMAssetId.ETHEREUM_USDT,
     },
   },
   [EVMNetwork.ETHEREUM_TESTNET_GOERLI]: {
@@ -41,6 +44,7 @@ export const EvmAssets: {
       symbol: "ETH",
       decimal: 18,
       assetType: EVMAssetType.NATIVE,
+      assetId: EVMAssetId.ETHEREUM_TESTNET_GOERLI_ETH,
     },
   },
   [EVMNetwork.AVALANCHE_TESTNET_FUJI]: {
@@ -49,6 +53,7 @@ export const EvmAssets: {
       symbol: "AVAX",
       decimal: 18,
       assetType: EVMAssetType.NATIVE,
+      assetId: EVMAssetId.AVALANCHE_TESTNET_FUJI_AVAX,
     },
     ALOT: {
       name: "Dexalot Token",
@@ -56,6 +61,7 @@ export const EvmAssets: {
       decimal: 18,
       assetType: EVMAssetType.ERC20,
       contractAddress: "0x9983F755Bbd60d1886CbfE103c98C272AA0F03d6",
+      assetId: EVMAssetId.AVALANCHE_TESTNET_FUJI_ALOT,
     },
   },
 };

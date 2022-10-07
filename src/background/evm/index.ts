@@ -4,12 +4,11 @@ import { EVMNetwork, networks } from "../../popup/src/networks/evm"
 import { IEVMToBeSignTransaction } from "../../popup/src/utils/evm/interfaces"
 
 export const getProvider = (network: EVMNetwork): ethers.providers.JsonRpcProvider => {
-  return new ethers.providers.JsonRpcProvider("HTTP://127.0.0.1:7545")
-  // return new ethers.providers.JsonRpcProvider(networks[network].nodeUrl)
+  // return new ethers.providers.JsonRpcProvider("HTTP://127.0.0.1:7545")
+  return new ethers.providers.JsonRpcProvider(networks[network].nodeUrl)
 }
 
 export const signTransaction = async (keyPair: any, toBeSignTransaction: IEVMToBeSignTransaction): Promise<string> => {
-  // const privateKey = Buffer.from(keyPair.privateKey, "hex")
   const privateKey = Buffer.from(keyPair.privateKey.substring(2, 66), "hex")
 
   const tx: Transaction = Transaction.fromTxData({

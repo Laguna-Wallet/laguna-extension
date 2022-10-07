@@ -52,8 +52,8 @@ export const isValidEVMAddress = (address: string): Response => {
 };
 
 export const getProvider = (network: EVMNetwork): ethers.providers.JsonRpcProvider => {
-  return new ethers.providers.JsonRpcProvider("HTTP://127.0.0.1:7545");
-  // return new ethers.providers.JsonRpcProvider(networks[network].nodeUrl);
+  // return new ethers.providers.JsonRpcProvider("HTTP://127.0.0.1:7545");
+  return new ethers.providers.JsonRpcProvider(networks[network].nodeUrl);
 };
 
 export const getNetworkInfo = (network: EVMNetwork): IEVMNetwork => {
@@ -81,7 +81,7 @@ export const getEvmGasPrice = async (network: EVMNetwork): Promise<BigNumber> =>
   const provider = new ethers.providers.JsonRpcProvider(networks[network].nodeUrl);
   const gasPrice = await provider.getGasPrice();
   return new BigNumber(gasPrice.toString());
-};g
+};
 
 export const estimateGas = async (
   network: EVMNetwork,
