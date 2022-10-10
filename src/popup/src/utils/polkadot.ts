@@ -124,10 +124,24 @@ export async function importFromMnemonic(seed: string, password: string) {
   return newPair;
 }
 
-export function importFromPrivateKey(secretKey: string, password: string) {
+export async function importFromPrivateKey(secretKey: string, password: string) {
   const encodedKey = AES.encrypt(secretKey, password).toString();
+  const encodedSeed = AES.encrypt(secretKey, password).toString();
   const { pair } = keyring.addUri(secretKey, password);
+  const img = await generateRandomBase64Avatar();
+  const accounts = keyring.getPairs();
+  const name = `Account ${accounts.length} (Import)`;
+
   keyring.saveAccountMeta(pair, { encodedKey, name: pair.address });
+  const newPair = addAccountMeta(pair.address, {
+    encodedKey,
+    encodedSeed,
+    name,
+    img,
+  });
+  newPair.setMeta({ encodedKey, encodedSeed, name, img });
+
+  return pair;
 }
 
 export function importFromPublicKey(publicAddress: string) {

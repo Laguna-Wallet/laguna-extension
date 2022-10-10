@@ -12,6 +12,7 @@ import {
   addAccountMeta,
   encryptKeyringPair,
   importFromMnemonic,
+  importFromPrivateKey,
   importJson,
   isValidPolkadotAddress,
 } from "utils/polkadot";
@@ -80,7 +81,7 @@ function ImportAccount() {
   const importPhaseFormValues = useSelector((state: any) => state?.form?.ImportPhase?.values);
   const hasBoarded = useSelector((state: State) => state.wallet.onboarding);
 
-  const { seedPhase, file, password: jsonPassword }: any = { ...importPhaseFormValues };
+  const {  privateKey, seedPhase, file, password: jsonPassword }: any = { ...importPhaseFormValues };
 
   const redirectPassword =
     redirectedFromForgotPassword || location.state?.redirectedFromForgotPassword;
@@ -137,6 +138,20 @@ function ImportAccount() {
         browser.runtime.sendMessage({
           type: Messages.AddToKeyring,
           payload: { password, json: file, jsonPassword, meta: newPair.meta },
+        });
+      }
+    } else if (privateKey) {
+      const pair: any = await importFromPrivateKey(password, privateKey);
+
+      if (redirectPassword) {
+        browser.runtime.sendMessage({
+          type: Messages.ForgotPassword,
+          payload: { seed: seedPhase, password, meta: pair.meta },
+        });
+      } else {
+        browser.runtime.sendMessage({
+          type: Messages.AddToKeyring,
+          payload: { seed: seedPhase, password, meta: pair.meta },
         });
       }
     }

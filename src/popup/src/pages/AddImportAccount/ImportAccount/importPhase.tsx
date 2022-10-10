@@ -224,7 +224,7 @@ const ImportPhase = ({
                 name="seedPhase"
                 type="textarea"
                 label="seedPhase"
-                placeholder="Enter your seed phrase, Polkadot address or drag and drop a JSON backup file"
+                placeholder="Enter your seed phrase or drag and drop a JSON backup file"
                 component={HumbleInput}
                 props={{
                   type: 'textarea',
