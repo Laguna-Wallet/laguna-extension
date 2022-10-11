@@ -1,3 +1,4 @@
+import { TokenData } from "utils/evm/interfaces";
 import { Asset, Token } from "utils/types";
 
 // send token
@@ -62,6 +63,13 @@ export function changeAccountsBalances(accountsBalances: Record<string, number>)
   return {
     type: "CHANGE_ACCOUNTS_BALANCES",
     payload: { accountsBalances },
+  };
+}
+
+export function changeEthereumBalances(ethereumBalances: TokenData) {
+  return {
+    type: "CHANGE_ETHEREUM_BALANCES",
+    payload: {ethereumBalances},
   };
 }
 
@@ -134,3 +142,4 @@ export function changeDisabledTokens(disabledTokens: Token[]) {
     payload: { disabledTokens },
   };
 }
+

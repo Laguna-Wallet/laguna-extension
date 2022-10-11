@@ -4,7 +4,7 @@ import { Field } from "redux-form";
 import { parseNumeric } from "utils/validations";
 import SelectSmallIcon from "assets/svgComponents/SelectSmallIcon";
 import useOnClickOutside from "hooks/useOnClickOutside";
-import debounce from "lodash.debounce";
+// import debounce from 'lodash.debounce';
 import { useEffect } from "react";
 
 type Props = {
@@ -66,11 +66,11 @@ const Input = ({ input: { value, onChange }, onChangeCallback }: any) => {
     onChange(parseNumeric(event.target.value));
   };
 
-  const debouncedChangeHandler = useMemo(() => debounce(changeHandler, 3000), []);
+  // const debouncedChangeHandler = useMemo(() => debounce(changeHandler, 3000), []);
 
   useEffect(() => {
     return () => {
-      debouncedChangeHandler.cancel();
+      // debouncedChangeHandler.cancel();
     };
   }, []);
 
@@ -87,7 +87,7 @@ const Input = ({ input: { value, onChange }, onChangeCallback }: any) => {
       // todo proper typing
       onChange={(e) => {
         onChangeCallback();
-        debouncedChangeHandler(e);
+        // debouncedChangeHandler(e);
       }}
       placeholder="Enter Amount"
       // debounceTimeout={600}

@@ -8,6 +8,8 @@ export const walletReducer = (state: any = {}, action: any) => {
       return { ...state, infos: action.payload.infos };
     case "CHANGE_ACCOUNTS_BALANCES":
       return { ...state, accountsBalances: action.payload.accountsBalances };
+      case "CHANGE_ETHEREUM_BALANCES":
+        return {...state, ethereumBalances: action.payload.accountsBalances};
     case "CHANGE_TRANSACTIONS":
       return { ...state, transactions: action.payload.transactions };
     case "CHANGE_IDLE_TIMEOUT":
@@ -33,3 +35,4 @@ export const walletReducer = (state: any = {}, action: any) => {
       return state;
   }
 };
+

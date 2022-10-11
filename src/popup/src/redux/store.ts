@@ -1,5 +1,7 @@
+import { storage } from "googleapis/build/src/apis/storage";
 import { createStore, Store } from "redux";
 import { getFromChromeStorage, getFromStorage } from "utils/chrome";
+import { TokenData } from "utils/evm/interfaces";
 import { Prices, StorageKeys, Token } from "utils/types";
 import { string } from "yup/lib/locale";
 import rootReducer from "./reducer";
@@ -18,8 +20,10 @@ export interface State {
     accountsBalances: {
       address: string;
       balances: Record<string, { transferable: number; locked: number }>;
-    };
+    },
+    ethereumBalances: TokenData;
     transactions: any[];
+    ethereumTransactions: Record<string, string>;
     idleTimeout: number;
     tokenReceived: boolean;
     disabledTokens: Token[];
@@ -31,7 +35,9 @@ async function handleInitialState(): Promise<State> {
   const prices = await getFromStorage(StorageKeys.TokenPrices);
   const infos = await getFromStorage(StorageKeys.TokenInfos);
   const accountsBalances = await getFromStorage(StorageKeys.AccountBalances);
+  const ethereumBalances = await getFromStorage(StorageKeys.ethereumBalances);
   const transactions = await getFromStorage(StorageKeys.Transactions);
+  const ethereumTransactions = await getFromStorage(StorageKeys.EthereumTransactions);
   const idleTimeout = await getFromStorage(StorageKeys.IdleTimeout);
   const tokenDecimals = await getFromStorage(StorageKeys.TokenDecimals);
   const pendingDappAuthorization: [] = [];
@@ -54,7 +60,9 @@ async function handleInitialState(): Promise<State> {
       prices: prices ? JSON.parse(prices) : {},
       infos: infos ? JSON.parse(infos) : [],
       accountsBalances: accountsBalances ? JSON.parse(accountsBalances) : [],
+      ethereumBalances: ethereumBalances ? JSON.parse(ethereumBalances): [],
       transactions: transactions ? JSON.parse(transactions) : [],
+      ethereumTransactions: ethereumTransactions ? JSON.parse(ethereumTransactions): [],
       idleTimeout: Number(idleTimeout) || 10,
       tokenReceived: false,
       disabledTokens: disabledTokens ? JSON.parse(disabledTokens) : [],
