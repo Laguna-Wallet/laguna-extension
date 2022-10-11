@@ -11,7 +11,7 @@ export const networks :{[network: string]: IEVMNetwork} = {
   [EVMNetwork.LOCALHOST]: {
     isTestnet: true,
     chainId: 1,
-    nodeUrl: "http://127.0.0.1.8545",
+    nodeUrl: "http://127.0.0.1:8545",
     explorerUrlAddress: "https://etherscan.io/address/{{hash}}",
     explorerUrlTransaction: "https://etherscan.io/tx/{{hash}}",
   },
