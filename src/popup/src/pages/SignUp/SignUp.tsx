@@ -1,19 +1,19 @@
-import Button from 'components/primitives/Button';
-import { Link } from 'react-router-dom';
-import styled from 'styled-components';
-import { PageContainer } from 'components/ui';
-import browser from 'webextension-polyfill';
-import signUpBg from 'assets/imgs/sign-up-bg.png';
-import mainLogoSvg from 'assets/imgs/main-logo-white.svg';
-import { router } from 'router/router';
-import { Messages } from 'utils/types';
+import Button from "components/primitives/Button";
+import { Link } from "react-router-dom";
+import styled from "styled-components";
+import { PageContainer } from "components/ui";
+import browser from "webextension-polyfill";
+import signUpBg from "assets/imgs/sign-up-bg.png";
+import mainLogoSvg from "assets/imgs/main-logo-white.svg";
+import { router } from "router/router";
+import { Messages } from "utils/types";
 
 // import ImportAccount from 'pages/AddImportAccount/ImportAccount';
 
 export default function SignUp() {
   const handleClick = () => {
     browser.runtime.sendMessage({
-      type: Messages.OpenSupport
+      type: Messages.OpenSupport,
     });
   };
   return (

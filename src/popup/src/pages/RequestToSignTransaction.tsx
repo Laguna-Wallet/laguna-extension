@@ -1,12 +1,12 @@
-import styled from 'styled-components';
-import walletBG from 'assets/imgs/walletBG.jpg';
-import Button from 'components/primitives/Button';
-import { useDispatch, useSelector } from 'react-redux';
-import { changeDappAuthorization, changePendingToSign } from 'redux/actions';
-import CheckMarkIcon from 'assets/svgComponents/CheckMarkIcon';
-import { CheckIcon } from '@heroicons/react/outline';
-import { Messages } from 'utils/types';
-import browser from 'webextension-polyfill';
+import styled from "styled-components";
+import walletBG from "assets/imgs/walletBG.jpg";
+import Button from "components/primitives/Button";
+import { useDispatch, useSelector } from "react-redux";
+import { changeDappAuthorization, changePendingToSign } from "redux/actions";
+import CheckMarkIcon from "assets/svgComponents/CheckMarkIcon";
+import { CheckIcon } from "@heroicons/react/outline";
+import { Messages } from "utils/types";
+import browser from "webextension-polyfill";
 
 export default function RequestToSignTransaction() {
   const { pendingToSign } = useSelector((state: any) => state.wallet);
@@ -19,8 +19,8 @@ export default function RequestToSignTransaction() {
       payload: {
         approved: true,
         data: pendingToSign,
-        POPUP_CONTENT: process.env.REACT_APP_POPUP_CONTENT
-      }
+        POPUP_CONTENT: process.env.REACT_APP_POPUP_CONTENT,
+      },
     });
 
     dispatch(changePendingToSign({}));
@@ -31,7 +31,7 @@ export default function RequestToSignTransaction() {
   const handleCancel = () => {
     browser.runtime.sendMessage({
       type: Messages.SignRequest,
-      payload: { approved: false, data: pendingToSign }
+      payload: { approved: false, data: pendingToSign },
     });
 
     dispatch(changePendingToSign({}));
@@ -148,10 +148,10 @@ const Text = styled.div<{
   align-items: center;
   font-size: 16px;
   margin-top: ${({ marginTop }) => marginTop};
-  font-weight: ${({ fWeight }) => fWeight || '400'};
+  font-weight: ${({ fWeight }) => fWeight || "400"};
   letter-spacing: ${({ spacing }) => spacing};
-  font-size: ${({ fSize }) => fSize || '16px'};
-  font-size: ${({ color }) => color || '#18191A'};
+  font-size: ${({ fSize }) => fSize || "16px"};
+  font-size: ${({ color }) => color || "#18191A"};
 `;
 
 const Warning = styled.div`

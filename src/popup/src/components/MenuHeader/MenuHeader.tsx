@@ -1,20 +1,20 @@
-import React, { useRef, useState } from 'react';
-import styled from 'styled-components';
-import BackIcon from 'assets/svgComponents/BackIcon';
-import MenuCloseIcon from 'assets/svgComponents/MenuIcons/MenuCloseIcon';
-import { useAccount } from 'context/AccountContext';
-import { resizeFile, truncateString } from 'utils';
-import useOutsideClick from 'hooks/useOutsideClick';
-import { addAccountMeta, changeAccountPicture } from 'utils/polkadot';
-import PencilIcon from 'assets/svgComponents/PencilIcon';
-import MenuLockIcon from 'assets/svgComponents/MenuIcons/MenuLockIcon';
-import { Messages, StorageKeys } from 'utils/types';
-import { saveToStorage } from 'utils/chrome';
-import MenuMainLogo from 'assets/svgComponents/MenuIcons/MenuMainLogo';
-import AvatarEditIcon from 'assets/svgComponents/AvatarEditIcon';
-import { useHistory } from 'react-router-dom';
-import { router } from 'router/router';
-import browser from 'webextension-polyfill';
+import React, { useRef, useState } from "react";
+import styled from "styled-components";
+import BackIcon from "assets/svgComponents/BackIcon";
+import MenuCloseIcon from "assets/svgComponents/MenuIcons/MenuCloseIcon";
+import { useAccount } from "context/AccountContext";
+import { resizeFile, truncateString } from "utils";
+import useOutsideClick from "hooks/useOutsideClick";
+import { addAccountMeta, changeAccountPicture } from "utils/polkadot";
+import PencilIcon from "assets/svgComponents/PencilIcon";
+import MenuLockIcon from "assets/svgComponents/MenuIcons/MenuLockIcon";
+import { Messages, StorageKeys } from "utils/types";
+import { saveToStorage } from "utils/chrome";
+import MenuMainLogo from "assets/svgComponents/MenuIcons/MenuMainLogo";
+import AvatarEditIcon from "assets/svgComponents/AvatarEditIcon";
+import { useHistory } from "react-router-dom";
+import { router } from "router/router";
+import browser from "webextension-polyfill";
 
 type Props = {
   isOpen: boolean;
@@ -51,13 +51,9 @@ export default function MenuHeader({ showUser, onClose, title, backAction }: Pro
   });
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' || e.keyCode === 14) {
+    if (e.key === "Enter" || e.keyCode === 14) {
       editAccount();
     }
-  };
-
-  const formatName = (name: string) => {
-    return name && name?.length > 12 ? truncateString(name) : name;
   };
 
   const onButtonClick = () => {
@@ -79,7 +75,7 @@ export default function MenuHeader({ showUser, onClose, title, backAction }: Pro
 
   const handleLogout = () => {
     browser.runtime.sendMessage({
-      type: Messages.LogOutUser
+      type: Messages.LogOutUser,
     });
 
     history.push(router.welcomeBack);
@@ -121,14 +117,14 @@ export default function MenuHeader({ showUser, onClose, title, backAction }: Pro
             id="file"
             ref={inputFile}
             onChange={handleUpload}
-            style={{ display: 'none' }}
+            style={{ display: "none" }}
             accept="image/png, image/jpeg, image/svg+xml"
           />
           <Text>
             <Name>
               <NameInput
                 ref={inputRef}
-                value={formatName(name) || ''}
+                value={name || ""}
                 onChange={(e) => setName(e.target.value)}
                 readOnly={!editMode}
                 onKeyDown={(e) => {
@@ -225,6 +221,9 @@ const Name = styled.div`
 const NameInput = styled.input`
   max-width: 146px;
   width: 100%;
+  white-space: nowrap;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
   background-color: transparent;
   color: #fff;
   font-size: 23px;

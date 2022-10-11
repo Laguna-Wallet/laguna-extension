@@ -11,9 +11,9 @@ export const validator =
       return errors.inner.reduce(
         (errors: any, err: any) => ({
           ...errors,
-          [err.path]: err.message
+          [err.path]: err.message,
         }),
-        {}
+        {},
       );
     }
   };

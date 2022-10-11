@@ -1,18 +1,18 @@
-import styled from 'styled-components';
-import Header from 'pages/Wallet/Header';
-import WrongQRCode from 'react-qr-code';
+import styled from "styled-components";
+import Header from "pages/Wallet/Header";
+import WrongQRCode from "react-qr-code";
 const QRCode: any = WrongQRCode;
 
-import HumbleInput from 'components/primitives/HumbleInput';
-import ReceiveSelect from './components/ReceiveSelect';
-import { useState } from 'react';
+import HumbleInput from "components/primitives/HumbleInput";
+import ReceiveSelect from "./components/ReceiveSelect";
+import { useState } from "react";
 
-import { Network } from 'utils/types';
-import { useWizard } from 'react-use-wizard';
-import { PropsFromTokenDashboard } from './Receive';
-import Snackbar from 'components/Snackbar/Snackbar';
-import { useHistory } from 'react-router-dom';
-import { router } from 'router/router';
+import { Network } from "utils/types";
+import { useWizard } from "react-use-wizard";
+import { PropsFromTokenDashboard } from "./Receive";
+import Snackbar from "components/Snackbar/Snackbar";
+import { useHistory } from "react-router-dom";
+import { router } from "router/router";
 
 type Props = {
   selectedNetwork: Network | undefined;
@@ -26,7 +26,7 @@ export default function ReceiveToken({ selectedNetwork, recoded, propsFromTokenD
   const { previousStep } = useWizard();
 
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
-  const [snackbarMessage, setSnackbarMessage] = useState<string>('');
+  const [snackbarMessage, setSnackbarMessage] = useState<string>("");
 
   // todo case when there are multiple symbols
   const [selectedToken, setSelectedToken] = useState<string>();
@@ -35,7 +35,7 @@ export default function ReceiveToken({ selectedNetwork, recoded, propsFromTokenD
   const handleClickCopy = (value: string) => {
     navigator.clipboard.writeText(value);
     setIsSnackbarOpen(true);
-    setSnackbarMessage('Address Copied');
+    setSnackbarMessage("Address Copied");
   };
 
   return (
@@ -46,7 +46,7 @@ export default function ReceiveToken({ selectedNetwork, recoded, propsFromTokenD
           propsFromTokenDashboard?.fromTokenDashboard
             ? history.push({
                 pathname: router.tokenDashboard,
-                state: { asset: propsFromTokenDashboard.asset }
+                state: { asset: propsFromTokenDashboard.asset },
               })
             : previousStep()
         }
@@ -64,7 +64,7 @@ export default function ReceiveToken({ selectedNetwork, recoded, propsFromTokenD
           <Text>ADDRESS:</Text>
           <HumbleInput
             id="address"
-            type={'text'}
+            type={"text"}
             value={recoded}
             height="48px"
             bgColor="#F2F2F2"
@@ -89,7 +89,7 @@ export default function ReceiveToken({ selectedNetwork, recoded, propsFromTokenD
         </ContentItem>
 
         <BottomText>
-          This address can only be used to receive assets on the{' '}
+          This address can only be used to receive assets on the{" "}
           <span>{selectedNetwork?.chain}</span> chain.
         </BottomText>
         <Snackbar

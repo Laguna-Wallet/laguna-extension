@@ -1,14 +1,14 @@
-import { memo, ReactElement, useCallback, useEffect, useState, useMemo } from 'react';
-import styled from 'styled-components/macro';
-import { truncateString } from 'utils';
-import { AccountMeta } from 'utils/types';
-import CopyIcon from 'assets/svgComponents/CopyIcon';
-import TextareaAutosize from 'react-textarea-autosize';
-import WarningMark from 'assets/svgComponents/WarningMark';
+import { memo, ReactElement, useCallback, useEffect, useState, useMemo } from "react";
+import styled from "styled-components/macro";
+import { truncateString } from "utils";
+import { AccountMeta } from "utils/types";
+import CopyIcon from "assets/svgComponents/CopyIcon";
+import TextareaAutosize from "react-textarea-autosize";
+import WarningMark from "assets/svgComponents/WarningMark";
 
 type InputProps = {
   id: string;
-  type: 'text' | 'password' | 'textarea';
+  type: "text" | "password" | "textarea";
   placeholder?: string;
   label?: string;
   value: string;
@@ -38,7 +38,7 @@ type InputProps = {
   rightLabel?: string;
   // todo asap
   Icon?: ReactElement;
-  IconAlignment?: 'left' | 'right';
+  IconAlignment?: "left" | "right";
   accountMeta?: AccountMeta;
   readOnly?: boolean;
   meta?: any;
@@ -56,7 +56,7 @@ function HumbleInput({
   errorBorderColor,
   marginTop,
   marginBottom,
-  borderColor = '#f4f4f6',
+  borderColor = "#f4f4f6",
   height,
   fontSize,
   fontWeight,
@@ -78,17 +78,17 @@ function HumbleInput({
   accountMeta,
   readOnly,
   meta,
-  isPassword
+  isPassword,
 }: InputProps) {
-  const [dummyText, setDummyText] = useState<string>('');
+  const [dummyText, setDummyText] = useState<string>("");
 
   useEffect(() => {
-    const changeDummyText = Array(input?.value?.length).fill('*').join('');
+    const changeDummyText = Array(input?.value?.length).fill("*").join("");
     setDummyText(changeDummyText);
   }, [input?.value]);
   // debounce
   const handleValue = (value: string) => {
-    if (!value) return '';
+    if (!value) return "";
     if (truncate) {
       return truncateString(value, 8);
     }
@@ -105,8 +105,8 @@ function HumbleInput({
         color={color}
         padding={padding}
         height={height}>
-        {IconAlignment === 'left' && Icon && <IconContainer>{Icon}</IconContainer>}
-        {type === 'textarea' ? (
+        {IconAlignment === "left" && Icon && <IconContainer>{Icon}</IconContainer>}
+        {type === "textarea" ? (
           <StyledTextarea
             id={id}
             value={value || input?.value}
@@ -120,7 +120,7 @@ function HumbleInput({
           />
         ) : (
           <>
-            {IconAlignment === 'left' && accountMeta && <AccountAvatar img={accountMeta.img} />}
+            {IconAlignment === "left" && accountMeta && <AccountAvatar img={accountMeta.img} />}
             <StyledInput
               isPassword={isPassword}
               {...input}
@@ -138,7 +138,7 @@ function HumbleInput({
               disabled={readOnly}
             />
             {isPassword && <DummyElement>{dummyText}</DummyElement>}
-            {IconAlignment === 'right' && Icon && <IconContainer>{Icon}</IconContainer>}
+            {IconAlignment === "right" && Icon && <IconContainer>{Icon}</IconContainer>}
             {copy && handleClickCopy && (
               <Copy onClick={() => handleClickCopy(value || input?.value)}>
                 <CopyIcon />
@@ -168,7 +168,7 @@ const Container = styled.div<{ marginBottom?: string; marginTop?: string }>`
   width: 100%;
   display: flex;
   flex-direction: column;
-  margin-bottom: ${({ marginBottom }) => marginBottom || '0px'};
+  margin-bottom: ${({ marginBottom }) => marginBottom || "0px"};
   margin-top: ${({ marginTop }) => marginTop};
 `;
 
@@ -181,18 +181,18 @@ const InputContainer = styled.div<{
   errorBorderColor?: string;
 }>`
   width: 100%;
-  height: ${({ height }) => (height ? height : 'auto')};
+  height: ${({ height }) => (height ? height : "auto")};
   display: flex;
   /* display: grid; */
   align-items: center;
   /* flex-direction: column; */
-  padding: ${({ padding }) => padding || '8px 8px 5px 16px'};
+  padding: ${({ padding }) => padding || "8px 8px 5px 16px"};
   box-sizing: border-box;
   border: 1px solid;
   border-color: ${({ error, borderColor, errorBorderColor }) =>
     error && errorBorderColor ? errorBorderColor : borderColor};
   border-radius: 5px;
-  background-color: ${({ bgColor }) => bgColor || '#fff'};
+  background-color: ${({ bgColor }) => bgColor || "#fff"};
   position: relative;
 `;
 
@@ -229,31 +229,31 @@ const StyledInput = styled.input<{
   flex: 1;
   height: 100%;
   border: none;
-  font-size: ${({ fontSize }) => (fontSize ? fontSize : '14.8px')};
+  font-size: ${({ fontSize }) => (fontSize ? fontSize : "14.8px")};
   padding: 0;
   appearance: none;
   outline: none;
   background-color: ${({ bgColor, isPassword }) =>
-    isPassword ? 'transparent' : bgColor || '#fff'};
-  color: ${({ color, isPassword }) => (isPassword ? 'transparent' : color || '#111')};
+    isPassword ? "transparent" : bgColor || "#fff"};
+  color: ${({ color, isPassword }) => (isPassword ? "transparent" : color || "#111")};
   font-family: Inter;
   font-weight: ${({ fontWeight }) => fontWeight || 400};
-  caret-color: ${({ color }) => color || '#111'};
+  caret-color: ${({ color }) => color || "#111"};
   z-index: 3;
   :-webkit-autofill,
   :-webkit-autofill:hover,
   :-webkit-autofill:focus,
   :-webkit-autofill:active {
-    -webkit-box-shadow: ${({ bgColor }) => `0 0 0 30px ${bgColor}` || '0 0 0 30px #303030'} inset !important;
-    -webkit-text-fill-color: ${({ color }) => color || '#fff'} !important;
-    font-size: ${({ fontSize }) => (fontSize ? fontSize : '14.8px')} !important;
+    -webkit-box-shadow: ${({ bgColor }) => `0 0 0 30px ${bgColor}` || "0 0 0 30px #303030"} inset !important;
+    -webkit-text-fill-color: ${({ color }) => color || "#fff"} !important;
+    font-size: ${({ fontSize }) => (fontSize ? fontSize : "14.8px")} !important;
   }
   &:focus {
     outline: none;
   }
 
   &::placeholder {
-    color: ${({ placeholderColor }) => placeholderColor || '#111'};
+    color: ${({ placeholderColor }) => placeholderColor || "#111"};
   }
 `;
 
@@ -268,11 +268,11 @@ const StyledTextarea = styled(TextareaAutosize)<{
   width: 100%;
   height: 100%;
   border: none;
-  color: ${({ color }) => (color ? color : '#111')};
-  font-size: ${({ fontSize }) => (fontSize ? fontSize : '20px')};
+  color: ${({ color }) => (color ? color : "#111")};
+  font-size: ${({ fontSize }) => (fontSize ? fontSize : "20px")};
   font-weight: ${({ fontWeight }) => fontWeight || 400};
-  text-align: ${({ textAlign }) => (textAlign ? textAlign : 'left')};
-  background-color: ${({ bgColor }) => bgColor || '#fff'};
+  text-align: ${({ textAlign }) => (textAlign ? textAlign : "left")};
+  background-color: ${({ bgColor }) => bgColor || "#fff"};
   padding: 0;
   appearance: none;
   outline: none;
@@ -281,7 +281,7 @@ const StyledTextarea = styled(TextareaAutosize)<{
   overflow: hidden;
 
   &::placeholder {
-    color: ${({ placeholderColor }) => placeholderColor || '#111'};
+    color: ${({ placeholderColor }) => placeholderColor || "#111"};
   }
 
   &:after {
@@ -322,6 +322,12 @@ const Copy = styled.div`
   background-color: #18191a;
   border-radius: 20px;
   z-index: 444;
+
+  &:hover {
+    background-color: #6366F1;
+    color: #fff;
+    transition: 200ms;
+  }
 `;
 
 const Text = styled.p`
@@ -356,7 +362,7 @@ const ErrorContainer = styled.div`
 const ErrorMessage = styled.div<{ errorColor?: string }>`
   display: flex;
   align-items: center;
-  color: ${({ errorColor }) => errorColor || '#353945'};
+  color: ${({ errorColor }) => errorColor || "#353945"};
   font-size: 12px;
   margin-left: 2px;
 `;

@@ -1,16 +1,16 @@
-import styled from 'styled-components';
-import { truncateString } from 'utils';
-import BigNumber from 'bignumber.js';
-import { useSelector } from 'react-redux';
-import ExportTransactionIcon from 'assets/svgComponents/ExportTransactionIcon';
-import { TokenSymbols, Transaction } from 'utils/types';
-import { CSVLink } from 'react-csv';
-import { format } from 'date-fns';
-import CloseArrowIcon from 'assets/svgComponents/CloseArrowIcon';
-import RightBigArrowIcon from 'assets/svgComponents/RightBigArrowIcon';
-import { useHistory } from 'react-router-dom';
-import { router } from 'router/router';
-import browser from 'webextension-polyfill';
+import styled from "styled-components";
+import { truncateString } from "utils";
+import BigNumber from "bignumber.js";
+import { useSelector } from "react-redux";
+import ExportTransactionIcon from "assets/svgComponents/ExportTransactionIcon";
+import { TokenSymbols, Transaction } from "utils/types";
+import { CSVLink } from "react-csv";
+import { format } from "date-fns";
+import CloseArrowIcon from "assets/svgComponents/CloseArrowIcon";
+import RightBigArrowIcon from "assets/svgComponents/RightBigArrowIcon";
+import { useHistory } from "react-router-dom";
+import { router } from "router/router";
+import browser from "webextension-polyfill";
 
 type Props = {
   transaction: Transaction;
@@ -40,15 +40,15 @@ export default function AccountInfo({ transaction, closeAction }: Props) {
   const totalInUsd = price?.usd ? new BigNumber(total).multipliedBy(price?.usd) : new BigNumber(0);
 
   const csvData = [
-    ['Confirmed', hash],
-    ['From', from],
-    ['To', to],
-    ['Nonce', nonce],
-    ['Amount', `${amount} ${symbol}`],
-    ['Gas Fee', `${gasFee} ${symbol}`],
-    ['Total', `${total} ${symbol}`],
-    ['Total in currency', `${totalInUsd} usd`],
-    ['Date', `${format(Number(transaction.timestamp) * 1000, 'dd/MMM/yyyy pp')}`]
+    ["Confirmed", hash],
+    ["From", from],
+    ["To", to],
+    ["Nonce", nonce],
+    ["Amount", `${amount} ${symbol}`],
+    ["Gas Fee", `${gasFee} ${symbol}`],
+    ["Total", `${total} ${symbol}`],
+    ["Total in currency", `${totalInUsd} usd`],
+    ["Date", `${format(Number(transaction.timestamp) * 1000, "dd/MMM/yyyy pp")}`],
   ];
 
   return (
@@ -64,14 +64,14 @@ export default function AccountInfo({ transaction, closeAction }: Props) {
         <Line />
         <Row>
           <RowLeft>Status</RowLeft>
-          <RowRight style={{ cursor: 'pointer' }} onClick={() => onClick(hash, chain)}>
+          <RowRight style={{ cursor: "pointer" }} onClick={() => onClick(hash, chain)}>
             View on Polkadot explorer
           </RowRight>
         </Row>
         <Row marginTop="8px">
           <RowLeft>Confirmed</RowLeft>
           <RowRight
-            style={{ cursor: 'pointer' }}
+            style={{ cursor: "pointer" }}
             onClick={() => {
               navigator.clipboard.writeText(hash);
             }}>
@@ -120,7 +120,7 @@ export default function AccountInfo({ transaction, closeAction }: Props) {
             <TotalValue>
               <BoldText fontSize="14px">
                 {total.toFormat(4, 1)} {symbol.toUpperCase()}
-              </BoldText>{' '}
+              </BoldText>{" "}
               <BoldText fontSize="14px">${totalInUsd.toFormat(2)} USD</BoldText>
             </TotalValue>
           </RowRight>
@@ -129,7 +129,7 @@ export default function AccountInfo({ transaction, closeAction }: Props) {
 
       <ExportButton>
         <ExportTransactionIcon />
-        <StyledCSVLink filename={'transaction.csv'} data={csvData}>
+        <StyledCSVLink filename={"transaction.csv"} data={csvData}>
           <span>Export Transaction</span>
         </StyledCSVLink>
       </ExportButton>
@@ -190,7 +190,7 @@ const Row = styled.div<{ marginTop?: string }>`
   align-items: center;
   max-width: 274px;
   width: 100%;
-  margin-top: ${({ marginTop }) => marginTop || '15px'};
+  margin-top: ${({ marginTop }) => marginTop || "15px"};
 `;
 
 const RowLeft = styled.span`
@@ -202,7 +202,7 @@ const RowLeft = styled.span`
 
 const BoldText = styled.div<{ fontSize?: string }>`
   font-family: Inter;
-  font-size: ${({ fontSize }) => fontSize || '16px'};
+  font-size: ${({ fontSize }) => fontSize || "16px"};
   font-weight: 500;
   color: #18191a;
   line-height: 1.35;

@@ -1,12 +1,12 @@
-import { assert, hexToU8a, u8aToHex, isHex, u8aToString } from '@polkadot/util';
+import { assert, hexToU8a, u8aToHex, isHex, u8aToString } from "@polkadot/util";
 import {
   keyExtractSuri,
   mnemonicValidate,
   randomAsHex,
   mnemonicToMiniSecret,
   encodeAddress as toSS58,
-  ethereumEncode
-} from '@polkadot/util-crypto';
+  ethereumEncode,
+} from "@polkadot/util-crypto";
 
 import {
   Asset,
@@ -16,20 +16,20 @@ import {
   StorageKeys,
   Token,
   TokenSymbols,
-  Transaction
-} from './types';
-import { KeyringPair$Json } from '@polkadot/keyring/types';
-import { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
-import keyring from '@polkadot/ui-keyring';
-import { getFromStorage } from './chrome';
-import bcrypt from 'bcryptjs';
-import { ApiPromise, WsProvider } from '@polkadot/api';
-import { decodeAddress, encodeAddress } from '@polkadot/keyring';
-import BigNumber from 'bignumber.js';
-import * as AES from 'crypto-js/aes';
-import Utf8 from 'crypto-js/enc-utf8';
-import { fetchTransactions, transformTransfers } from './fetchTransactions';
-import { generateRandomBase64Avatar } from 'utils';
+  Transaction,
+} from "./types";
+import { KeyringPair$Json } from "@polkadot/keyring/types";
+import { KeyringPairs$Json } from "@polkadot/ui-keyring/types";
+import keyring from "@polkadot/ui-keyring";
+import { getFromStorage } from "./chrome";
+import bcrypt from "bcryptjs";
+import { ApiPromise, WsProvider } from "@polkadot/api";
+import { decodeAddress, encodeAddress } from "@polkadot/keyring";
+import BigNumber from "bignumber.js";
+import * as AES from "crypto-js/aes";
+import Utf8 from "crypto-js/enc-utf8";
+import { fetchTransactions, transformTransfers } from "./fetchTransactions";
+import { generateRandomBase64Avatar } from "utils";
 
 // TODO appropriate typing
 
@@ -39,13 +39,13 @@ import { generateRandomBase64Avatar } from 'utils';
 export function generateKeyPair(
   password: string,
   mnemonics?: string,
-  name?: 'default name'
+  name?: "default name",
 ): { pair: any; json: any } {
   if (mnemonics) {
-    return keyring.addUri(mnemonics, password, { name: 'mnemonic acc' });
+    return keyring.addUri(mnemonics, password, { name: "mnemonic acc" });
   }
 
-  return keyring.addUri(randomAsHex(32), password, { name: 'mnemonic acc' });
+  return keyring.addUri(randomAsHex(32), password, { name: "mnemonic acc" });
 }
 
 export async function validatePassword(password: string) {
@@ -70,11 +70,11 @@ export function validateSeed(suri: string) {
     const { phrase } = keyExtractSuri(suri);
 
     if (isHex(phrase)) {
-      assert(isHex(phrase, 256), 'Hex seed needs to be 256-bits');
+      assert(isHex(phrase, 256), "Hex seed needs to be 256-bits");
     } else {
-      assert(SEED_LENGTHS.includes(phrase.split(' ').length), `Please enter 12 or 14 words`);
+      assert(SEED_LENGTHS.includes(phrase.split(" ").length), "Please enter 12 or 14 words");
 
-      assert(mnemonicValidate(phrase), 'Not a valid mnemonic seed');
+      assert(mnemonicValidate(phrase), "Not a valid mnemonic seed");
     }
 
     return true;
@@ -92,14 +92,14 @@ export function importViaSeed(suri: string, password: string) {
 
   // if (!isHex(phrase, 256)) throw new Error('Hex seed needs to be 256-bits');
 
-  if (!SEED_LENGTHS.includes(phrase.split(' ').length))
-    throw new Error(`Mnemonic needs to contain ${SEED_LENGTHS.join(', ')} words`);
+  if (!SEED_LENGTHS.includes(phrase.split(" ").length))
+    throw new Error(`Mnemonic needs to contain ${SEED_LENGTHS.join(", ")} words`);
 
-  if (!mnemonicValidate(phrase)) throw new Error('Not a valid mnemonic seed');
+  if (!mnemonicValidate(phrase)) throw new Error("Not a valid mnemonic seed");
 
   // todo revise with sam
   // todo move to separate function
-  return keyring.addUri(suri, password, {}, 'ed25519');
+  return keyring.addUri(suri, password, {}, "ed25519");
 }
 
 // Imports
@@ -108,16 +108,18 @@ export async function importFromMnemonic(seed: string, password: string) {
   const encodedKey = AES.encrypt(u8aToHex(key), password).toString();
   const encodedSeed = AES.encrypt(seed, password).toString();
   const { pair } = keyring.addUri(seed, password);
+  const accounts = keyring.getPairs();
+  const name = `Account ${accounts.length} (Import)`;
 
   const img = await generateRandomBase64Avatar();
   const newPair = addAccountMeta(pair.address, {
     encodedKey,
     encodedSeed,
-    name: pair.address,
-    img
+    name,
+    img,
   });
 
-  newPair.setMeta({ encodedKey, encodedSeed, name: pair.address, img });
+  newPair.setMeta({ encodedKey, encodedSeed, name, img });
 
   return newPair;
 }
@@ -170,7 +172,7 @@ export async function exportAccount(address: string, password: string) {
 
 export async function importJson(
   json: KeyringPair$Json | KeyringPairs$Json | undefined,
-  password: string
+  password: string,
 ) {
   if (!json) return;
   if (isKeyringPairs$Json(json)) {
@@ -209,32 +211,32 @@ export function addAccountMeta(address: string, obj: Record<string, any>): any {
 export function getNetworks(
   prices: Prices,
   tokenInfos: Network[],
-  disabledTokens?: Token[]
+  disabledTokens?: Token[],
 ): Network[] {
   if (!prices || !tokenInfos) return [];
 
   const networks: Network[] = [
     {
-      name: 'Polkadot',
+      name: "Polkadot",
       symbol: TokenSymbols.westend,
-      chain: 'westend',
-      node: 'wss://westend-rpc.polkadot.io',
-      prefix: 42
+      chain: "westend",
+      node: "wss://westend-rpc.polkadot.io",
+      prefix: 42,
     },
     {
-      name: 'Polkadot',
+      name: "Polkadot",
       symbol: TokenSymbols.polkadot,
-      chain: 'polkadot',
-      node: 'wss://rpc.polkadot.io',
-      prefix: 0
+      chain: "polkadot",
+      node: "wss://rpc.polkadot.io",
+      prefix: 0,
     },
     {
-      name: 'Kusama',
+      name: "Kusama",
       symbol: TokenSymbols.kusama,
-      chain: 'kusama',
-      node: 'wss://kusama-rpc.polkadot.io',
-      prefix: 2
-    }
+      chain: "kusama",
+      node: "wss://kusama-rpc.polkadot.io",
+      prefix: 2,
+    },
     // {
     //   name: 'Moonriver',
     //   symbol: 'movr',
@@ -262,8 +264,14 @@ export function getNetworks(
     //   chain: 'astar',
     //   node: 'wss://astar.api.onfinality.io/public-ws',
     //   prefix: 5
-    // }
-
+    // },
+    {
+      name: "Ethereum",
+      symbol: TokenSymbols.ethereum,
+      chain: "Ethereum",
+      node: "wss://eth-mainnet.g.alchemy.com/v2/IFip5pZqfpAsi50-O2a0ZEJoA82E8KR_",
+      prefix: 0,
+    },
     // wss://rpc.astar.network
 
     // {
@@ -292,6 +300,7 @@ export function getNetworks(
     //   symbol: 'EDG',
     //   chain: 'edgeware'
     // }
+    
   ];
 
   const ht = tokenInfos.reduce((acc: any, item: any) => {
@@ -313,7 +322,7 @@ export function getNetworks(
     return {
       ...network,
       price_change_percentage_24h: ht[network.symbol].price_change_percentage_24h as number,
-      marketCap: ht[network.symbol].market_cap as number
+      marketCap: ht[network.symbol].market_cap as number,
     };
   });
 
@@ -327,7 +336,7 @@ export async function getAssets(
   tokenInfos: Network[],
   balances: any,
   disabledTokens: Token[],
-  showZeroBalanceAssets?: boolean
+  showZeroBalanceAssets?: boolean,
 ): Promise<
   | {
       overallBalance: number;
@@ -374,7 +383,7 @@ export async function getAssets(
         calculatedPrice: calculatedPrice.toNumber(),
         price,
         prefix,
-        encodeType
+        encodeType,
       });
     } catch (err) {
       console.log(err);
@@ -387,7 +396,7 @@ export async function getAssets(
 // todo proper typing
 // todo refactor
 export function recodeAddress(address: string, prefix: any, type?: string): string {
-  if (type === 'ethereum') {
+  if (type === "ethereum") {
     const raw = decodeAddress(address);
     return ethereumEncode(raw);
   }
@@ -405,20 +414,20 @@ export function recodeAddressForTransaction(address: string, prefix: any) {
 export async function getApiInstance(node: string) {
   // todo put this into env
   const wsProvider = new WsProvider(
-    `wss://${node}.api.onfinality.io/ws?apikey=${process.env.REACT_APP_ONFINALITY_KEY}`
+    `wss://${node}.api.onfinality.io/ws?apikey=${process.env.REACT_APP_ONFINALITY_KEY}`,
   );
 
   return await ApiPromise.create({ provider: wsProvider });
 }
 
 export function isKeyringPairs$Json(
-  json: KeyringPair$Json | KeyringPairs$Json
+  json: KeyringPair$Json | KeyringPairs$Json,
 ): json is KeyringPairs$Json {
-  return json?.encoding?.content?.includes('batch-pkcs8');
+  return json?.encoding?.content?.includes("batch-pkcs8");
 }
 
 export function isKeyringJson(
-  json: KeyringPair$Json | KeyringPairs$Json
+  json: KeyringPair$Json | KeyringPairs$Json,
 ): json is KeyringPair$Json {
   try {
     if (isKeyringPairs$Json(json)) return false;
@@ -433,7 +442,7 @@ export function isKeyringJson(
 
 export async function isValidKeyringPassword(
   json: KeyringPair$Json | KeyringPairs$Json,
-  password: string
+  password: string,
 ): Promise<boolean> {
   try {
     // yet this is the only way found
@@ -528,12 +537,12 @@ export async function getLatestTransactionsForSingleChain(
   address: string,
   chain: string,
   page: number,
-  row: number
+  row: number,
 ): Promise<{ count: number; transactions: Transaction[] }> {
   const data = await fetchTransactions(address, chain, row, page);
   return {
     count: data?.data?.count,
-    transactions: data?.data?.transfers ? transformTransfers(data?.data?.transfers, chain) : []
+    transactions: data?.data?.transfers ? transformTransfers(data?.data?.transfers, chain) : [],
   };
 }
 

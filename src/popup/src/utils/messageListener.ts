@@ -8,11 +8,11 @@ import {
   changePendingToSign,
   changeConnectedApps,
   changeTokenReceived,
-  changePendingToSignRaw
-} from 'redux/actions';
-import { accountHasChanged } from 'utils';
-import { saveToStorage } from './chrome';
-import { Messages, StorageKeys } from './types';
+  changePendingToSignRaw,
+} from "redux/actions";
+import { accountHasChanged } from "utils";
+import { saveToStorage } from "./chrome";
+import { Messages, StorageKeys } from "./types";
 
 interface PriceUpdateMessage {
   type: string;

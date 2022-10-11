@@ -1,16 +1,16 @@
-import RightArrow from 'assets/svgComponents/RightArrow';
-import SecureWalletLogo from 'assets/svgComponents/SecureWalletLogo';
-import { ConfirmSecuritySkip } from 'components/popups/ConfirmSecuritySkip';
-import { MnemonicsDescription } from 'components/popups/MnemonicsDescription';
-import Button from 'components/primitives/Button';
-import { useEnterClickListener } from 'hooks/useEnterClickListener';
-import WizardHeader from 'pages/AddImportAccount/WizardHeader';
-import { useState } from 'react';
-import { useWizard } from 'react-use-wizard';
-import styled from 'styled-components';
-import { SecurityLevelEnum } from '../CreateAccount';
-import { useHistory } from 'react-router-dom';
-import { router } from 'router/router';
+import RightArrow from "assets/svgComponents/RightArrow";
+import SecureWalletLogo from "assets/svgComponents/SecureWalletLogo";
+import { ConfirmSecuritySkip } from "components/popups/ConfirmSecuritySkip";
+import { MnemonicsDescription } from "components/popups/MnemonicsDescription";
+import Button from "components/primitives/Button";
+import { useEnterClickListener } from "hooks/useEnterClickListener";
+import WizardHeader from "pages/AddImportAccount/WizardHeader";
+import { useState } from "react";
+import { useWizard } from "react-use-wizard";
+import styled from "styled-components";
+import { SecurityLevelEnum } from "../CreateAccount";
+import { useHistory } from "react-router-dom";
+import { router } from "router/router";
 
 // todo onBack Prop wizard
 
@@ -25,7 +25,7 @@ export default function ChooseSecurityLevel({
   setLevel,
   nextStepFromParent,
   redirectedFromSignUp,
-  redirectedFromDashboard
+  redirectedFromDashboard,
 }: Props) {
   const history = useHistory();
 
@@ -36,7 +36,7 @@ export default function ChooseSecurityLevel({
 
   useEnterClickListener(
     () => !isMnemonicDescriptionOpen && nextStep(),
-    [isMnemonicDescriptionOpen]
+    [isMnemonicDescriptionOpen],
   );
 
   return (
@@ -80,7 +80,7 @@ export default function ChooseSecurityLevel({
         </Icon>
       </IconContainer>
       <TextContainer>
-        To secure your wallet you&apos;ll be given a{' '}
+        To secure your wallet you&apos;ll be given a{" "}
         <span onClick={() => setIsMnemonicDescriptionOpen(true)}>seed phrase.</span> Store this in a
         safe place. It&apos;s the only way to recover your account if you get locked out of the app
         or get a new device.
@@ -93,7 +93,7 @@ export default function ChooseSecurityLevel({
             nextStep();
           }}
           Icon={<RightArrow width={23} fill="#fff" />}
-          text={'Start'}
+          text={"Start"}
           margin="14px 0px 0px 0px"
           justify="center"
         />
@@ -124,7 +124,7 @@ const Container = styled.div<{ redirectedFromDashboard?: boolean }>`
   justify-content: flex-start;
   background-color: #fff;
   padding: ${({ redirectedFromDashboard }) =>
-    redirectedFromDashboard ? '22px 16px 38px; ' : '22px 16px 11px'};
+    redirectedFromDashboard ? "22px 16px 38px; " : "22px 16px 11px"};
   box-sizing: border-box;
 `;
 

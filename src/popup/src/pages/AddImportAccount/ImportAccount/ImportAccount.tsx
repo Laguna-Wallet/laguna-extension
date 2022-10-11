@@ -1,33 +1,35 @@
-import styled from 'styled-components';
-import { useDispatch, useSelector } from 'react-redux';
-import { reset } from 'redux-form';
-import { Wizard } from 'react-use-wizard';
-import { RouteComponentProps, useHistory, useLocation } from 'react-router-dom';
-import { router } from 'router/router';
-import browser from 'webextension-polyfill';
+import styled from "styled-components";
+import { useDispatch, useSelector } from "react-redux";
+import { reset } from "redux-form";
+import { Wizard } from "react-use-wizard";
+import { RouteComponentProps, useHistory, useLocation } from "react-router-dom";
+import { router } from "router/router";
+import browser from "webextension-polyfill";
 
-import { mnemonicValidate } from '@polkadot/util-crypto';
-import { isHex } from '@polkadot/util';
+import { mnemonicValidate } from "@polkadot/util-crypto";
+import { isHex } from "@polkadot/util";
 import {
+  addAccountMeta,
   encryptKeyringPair,
   importFromMnemonic,
   importJson,
-  isValidPolkadotAddress
-} from 'utils/polkadot';
-import { KeyringPair$Json } from '@polkadot/keyring/types';
-import { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
-import { Messages, SEED_LENGTHS, StorageKeys } from 'utils/types';
+  isValidPolkadotAddress,
+} from "utils/polkadot";
+import { KeyringPair$Json } from "@polkadot/keyring/types";
+import { KeyringPairs$Json } from "@polkadot/ui-keyring/types";
+import { Messages, SEED_LENGTHS, StorageKeys } from "utils/types";
 
-import { State } from 'redux/store';
-import { useAccount } from 'context/AccountContext';
+import { State } from "redux/store";
+import { useAccount } from "context/AccountContext";
 
-import CreatePassword from '../CreateAccount/CreatePassword/CreatePassword';
-import EncodeAccount from 'pages/AddImportAccount/EncodeAccount';
-import SetupComplete from 'pages/AddImportAccount/SetupComplete';
-import ImportPhase from 'pages/AddImportAccount/ImportAccount/importPhase';
-import { saveToStorage } from 'utils/chrome';
-import { clearAccountsFromStorage, isObjectEmpty } from 'utils';
-import { toggleLoading } from 'redux/actions';
+import CreatePassword from "../CreateAccount/CreatePassword/CreatePassword";
+import EncodeAccount from "pages/AddImportAccount/EncodeAccount";
+import SetupComplete from "pages/AddImportAccount/SetupComplete";
+import ImportPhase from "pages/AddImportAccount/ImportAccount/importPhase";
+import { saveToStorage } from "utils/chrome";
+import { clearAccountsFromStorage, isObjectEmpty } from "utils";
+import { toggleLoading } from "redux/actions";
+import keyring from "@polkadot/ui-keyring";
 
 const validate = (values: any) => {
   const errors: any = {};
@@ -38,18 +40,18 @@ const validate = (values: any) => {
       !isValidPolkadotAddress(values.seedPhase) &&
       !mnemonicValidate(values.seedPhase)
     ) {
-      errors.seedPhase = `Please enter mnemonic seed or valid public address or private key`;
+      errors.seedPhase = "Please enter mnemonic seed or valid public address or private key";
     }
 
     if (/[!@#$%^&*(),.?":{}|<>]/g.test(values.seedPhase.toString())) {
-      errors.seedPhase = `Please remove special characters (!,#:*)`;
+      errors.seedPhase = "Please remove special characters (!,#:*)";
     }
 
     if (
-      values.seedPhase.split(' ').length > 2 &&
-      !SEED_LENGTHS.includes(values.seedPhase.split(' ').length)
+      values.seedPhase.split(" ").length > 2 &&
+      !SEED_LENGTHS.includes(values.seedPhase.split(" ").length)
     ) {
-      errors.seedPhase = `Please enter 12 or 24 words`;
+      errors.seedPhase = "Please enter 12 or 24 words";
     }
   }
 
@@ -70,6 +72,7 @@ function ImportAccount() {
   const account = useAccount();
   const activeAccount = account.getActiveAccount();
 
+
   const encoded = account.encryptedPassword;
 
   const dispatch = useDispatch();
@@ -86,9 +89,9 @@ function ImportAccount() {
     if (seedPhase) {
       if (mnemonicValidate(seedPhase)) {
         const pair = await importFromMnemonic(seedPhase, password);
+        
         if (redirectPassword) {
           clearAccountsFromStorage(pair.address);
-          account.saveActiveAccount(pair);
           dispatch(toggleLoading(true));
         }
 
@@ -99,21 +102,20 @@ function ImportAccount() {
         if (redirectPassword) {
           browser.runtime.sendMessage({
             type: Messages.ForgotPassword,
-            payload: { seed: seedPhase, password, meta: pair.meta }
+            payload: { seed: seedPhase, password, meta: pair.meta },
           });
         } else {
           browser.runtime.sendMessage({
             type: Messages.AddToKeyring,
-            payload: { seed: seedPhase, password, meta: pair.meta }
+            payload: { seed: seedPhase, password, meta: pair.meta },
           });
         }
       }
     } else if (file) {
       const pair: any = await importJson(
         file as KeyringPair$Json | KeyringPairs$Json | undefined,
-        jsonPassword
+        jsonPassword,
       );
-
       const newPair = await encryptKeyringPair(pair, jsonPassword, password);
 
       if (redirectPassword) {
@@ -129,25 +131,25 @@ function ImportAccount() {
       if (redirectPassword) {
         browser.runtime.sendMessage({
           type: Messages.ForgotPassword,
-          payload: { password, json: file, jsonPassword, meta: newPair.meta }
+          payload: { password, json: file, jsonPassword, meta: newPair.meta },
         });
       } else {
         browser.runtime.sendMessage({
           type: Messages.AddToKeyring,
-          payload: { password, json: file, jsonPassword, meta: newPair.meta }
+          payload: { password, json: file, jsonPassword, meta: newPair.meta },
         });
       }
     }
 
     browser.runtime.sendMessage({
       type: Messages.AuthUser,
-      payload: { password }
+      payload: { password },
     });
 
     saveToStorage({ key: StorageKeys.OnBoarding, value: true });
 
-    dispatch(reset('ImportPhase'));
-    dispatch(reset('EncodeAccount'));
+    dispatch(reset("ImportPhase"));
+    dispatch(reset("EncodeAccount"));
 
     if (redirectPassword) {
       history.push(router.home);
@@ -155,8 +157,8 @@ function ImportAccount() {
   };
 
   const onClose = () => {
-    dispatch(reset('ImportPhase'));
-    dispatch(reset('EncodeAccount'));
+    dispatch(reset("ImportPhase"));
+    dispatch(reset("EncodeAccount"));
     if (redirectedFromSignUp) {
       history.push(router.signUp);
     } else if (redirectedFromForgotPassword) {

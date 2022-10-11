@@ -1,28 +1,28 @@
-import styled from 'styled-components';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import styled from "styled-components";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   copyToClipboard,
   generateNumberAbbreviation,
   generateThreeRandomMnemonicIndexes,
-  validateMnemonicChoice
-} from 'utils';
-import Button from 'components/primitives/Button';
-import { useAccount } from 'context/AccountContext';
-import { MnemonicsTriple } from 'utils/types';
-import RightArrow from 'assets/svgComponents/RightArrow';
-import arrayShuffle from 'array-shuffle';
-import Snackbar from 'components/Snackbar/Snackbar';
-import { useWizard } from 'react-use-wizard';
-import WizardHeader from 'pages/AddImportAccount/WizardHeader';
-import { addAccountMeta } from 'utils/polkadot';
-import { useEnterClickListener } from 'hooks/useEnterClickListener';
-import { useHistory } from 'react-router-dom';
-import { router } from 'router/router';
+  validateMnemonicChoice,
+} from "utils";
+import Button from "components/primitives/Button";
+import { useAccount } from "context/AccountContext";
+import { MnemonicsTriple } from "utils/types";
+import RightArrow from "assets/svgComponents/RightArrow";
+import arrayShuffle from "array-shuffle";
+import Snackbar from "components/Snackbar/Snackbar";
+import { useWizard } from "react-use-wizard";
+import WizardHeader from "pages/AddImportAccount/WizardHeader";
+import { addAccountMeta } from "utils/polkadot";
+import { useEnterClickListener } from "hooks/useEnterClickListener";
+import { useHistory } from "react-router-dom";
+import { router } from "router/router";
 
 const calculateWordColor = (index: number, mnemonicIndexToChoose: number) => {
-  if (index === mnemonicIndexToChoose) return '#F9F7CD';
-  if (index < mnemonicIndexToChoose) return '#CDF9D0';
-  return '#F9F9F9';
+  if (index === mnemonicIndexToChoose) return "#F9F7CD";
+  if (index < mnemonicIndexToChoose) return "#CDF9D0";
+  return "#F9F9F9";
 };
 
 type Props = {
@@ -34,7 +34,7 @@ type Props = {
 export default function ConfirmSeed({
   redirectedFromSignUp,
   redirectedFromDashboard,
-  nextStepFromParent
+  nextStepFromParent,
 }: Props) {
   const history = useHistory();
   const account = useAccount();
@@ -73,7 +73,7 @@ export default function ConfirmSeed({
       }
 
       nextStepFromParent();
-      copyToClipboard('');
+      copyToClipboard("");
     }
   };
 
@@ -82,7 +82,7 @@ export default function ConfirmSeed({
       const isValid = validateMnemonicChoice(
         mnemonics,
         chosenMnemonics,
-        mnemonicIndexes as MnemonicsTriple
+        mnemonicIndexes as MnemonicsTriple,
       );
 
       if (isValid) {
@@ -101,7 +101,7 @@ export default function ConfirmSeed({
 
   useEnterClickListener(
     () => handleWrittenClick(),
-    [mnemonics, chosenMnemonics, mnemonicIndexes, isSnackbarOpen]
+    [mnemonics, chosenMnemonics, mnemonicIndexes, isSnackbarOpen],
   );
 
   return (
@@ -162,9 +162,9 @@ export default function ConfirmSeed({
         disabled={
           !validateMnemonicChoice(mnemonics, chosenMnemonics, mnemonicIndexes as MnemonicsTriple)
         }
-        text={'I’ve Written it Down'}
+        text={"I’ve Written it Down"}
         Icon={<RightArrow width={23} fill="#fff" />}
-        bgColor={'#000000'}
+        bgColor={"#000000"}
         borderColor="#000000"
         justify="center"
         margin="auto 10px 0px"
@@ -230,7 +230,7 @@ const Mnemonic = styled.div<{ indexesHt?: Record<string, string>; active: boolea
   width: 97px;
   height: 34px;
   border-radius: 3px;
-  background-color: ${({ active }) => (active ? '#eee' : '#fff')};
+  background-color: ${({ active }) => (active ? "#eee" : "#fff")};
   display: flex;
   justify-content: center;
   align-items: center;
@@ -264,5 +264,5 @@ const Word = styled.div<{ bgColor: string }>`
 
 const MnemonicName = styled.span<{ active?: boolean }>`
   font-weight: 500;
-  opacity: ${({ active }) => (active ? '0.6' : '1')};
+  opacity: ${({ active }) => (active ? "0.6" : "1")};
 `;

@@ -1,7 +1,7 @@
-import NetworkIcons from 'components/primitives/NetworkIcons';
-import styled from 'styled-components';
-import { Network } from 'utils/types';
-import SelectArrowIcon from 'assets/svgComponents/SelectArrowIcon';
+import NetworkIcons from "components/primitives/NetworkIcons";
+import styled from "styled-components";
+import { Network } from "utils/types";
+import SelectArrowIcon from "assets/svgComponents/SelectArrowIcon";
 
 type Props = {
   options: string[] | undefined;

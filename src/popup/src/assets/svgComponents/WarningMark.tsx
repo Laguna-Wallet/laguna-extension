@@ -1,5 +1,5 @@
-import * as React from 'react';
-import { SVGProps } from 'react';
+import * as React from "react";
+import { SVGProps } from "react";
 
 const WarningMark = (props: SVGProps<SVGSVGElement>) => (
   <svg width={11} height={10} fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>

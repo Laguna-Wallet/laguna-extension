@@ -1,4 +1,4 @@
-import { SVGProps } from 'react';
+import { SVGProps } from "react";
 
 const CheckBoxCheckMarkIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg width={10} height={7} fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>

@@ -1,17 +1,17 @@
-import { useState } from 'react';
-import styled from 'styled-components';
-import MenuHeader from 'components/MenuHeader/MenuHeader';
-import AddressMenuIcon from 'assets/svgComponents/MenuIcons/AddressMenuIcon';
-import ConnectedSitesMenuIcon from 'assets/svgComponents/MenuIcons/ConnectedSitesMenuIcon';
-import AutoLockTimerMenuIcon from 'assets/svgComponents/MenuIcons/AutoLockTimerMenuIcon';
-import ChangePasswordMenuIcon from 'assets/svgComponents/MenuIcons/ChangePasswordMenuIcon';
-import BackupMenuIcon from 'assets/svgComponents/MenuIcons/BackupMenuIcon';
-import RemoveWalletMenuIcon from 'assets/svgComponents/MenuIcons/RemoveWalletMenuIcon';
-import RightArrowMenuIcon from 'assets/svgComponents/MenuIcons/RightArrowMenuIcon';
-import { useAccount } from 'context/AccountContext';
+import { useState } from "react";
+import styled from "styled-components";
+import MenuHeader from "components/MenuHeader/MenuHeader";
+import AddressMenuIcon from "assets/svgComponents/MenuIcons/AddressMenuIcon";
+import ConnectedSitesMenuIcon from "assets/svgComponents/MenuIcons/ConnectedSitesMenuIcon";
+import AutoLockTimerMenuIcon from "assets/svgComponents/MenuIcons/AutoLockTimerMenuIcon";
+import ChangePasswordMenuIcon from "assets/svgComponents/MenuIcons/ChangePasswordMenuIcon";
+import BackupMenuIcon from "assets/svgComponents/MenuIcons/BackupMenuIcon";
+import RemoveWalletMenuIcon from "assets/svgComponents/MenuIcons/RemoveWalletMenuIcon";
+import RightArrowMenuIcon from "assets/svgComponents/MenuIcons/RightArrowMenuIcon";
+import { useAccount } from "context/AccountContext";
 
-import { Link } from 'react-router-dom';
-import { router } from 'router/router';
+import { Link } from "react-router-dom";
+import { router } from "router/router";
 
 type Props = {
   onClose: () => void;
@@ -22,10 +22,11 @@ export default function Menu({ onClose }: Props) {
 
   const activeUser = account.getActiveAccount();
   const [isOpen, setOpen] = useState<boolean>(true);
+  const manifestVersion = chrome.runtime.getManifest();
 
   const backupLocation = {
     pathname: activeUser?.meta?.notSecured ? router.createAccount : router.backupAccount,
-    state: { redirectedFromDashboard: true }
+    state: { redirectedFromDashboard: true },
   };
 
   return (
@@ -105,6 +106,10 @@ export default function Menu({ onClose }: Props) {
         <LogoutIcon width={15} />
         <span>Log Out</span>
       </StyledLogoutLink> */}
+      <Footer>
+        <div> v1.0{manifestVersion.manifest_version}</div>
+        <a href="https://lagu.na/wallet/" target="_blank" rel="noreferrer" >Website</a>
+      </Footer>
     </Container>
   );
 }
@@ -211,7 +216,7 @@ const StyledLink = styled(Link)<{ color?: string }>`
   cursor: pointer;
   font-family: Inter;
   font-size: 18px;
-  color: ${({ color }) => color || '#efeeeee2'};
+  color: ${({ color }) => color || "#efeeeee2"};
 
   ${ListItem}:hover & {
     color: #fff;
@@ -219,5 +224,27 @@ const StyledLink = styled(Link)<{ color?: string }>`
   span {
     margin-left: 13px;
     margin-right: auto;
+  }
+`;
+
+const Footer = styled.div`
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  color: #777E91;
+  font-size: 15px;
+  margin-bottom: 2rem;
+  padding: 0 10px;
+  gap: 1rem;
+
+  a {
+    text-decoration: none;
+    color: #777E91;
+    font-size: 15px;
+  }
+
+  a:hover {
+    color: #B1B5C4;
+    transition: 400ms;
   }
 `;
