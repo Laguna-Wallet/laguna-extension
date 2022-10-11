@@ -18,7 +18,7 @@ import { isNumeric } from "utils/validations";
 import { useDispatch, useSelector, connect } from "react-redux";
 import { Field, change, reset, reduxForm, getFormSyncErrors, formValueSelector } from "redux-form";
 import Snackbar from "components/Snackbar/Snackbar";
-import { isObjectEmpty, objectToArray, truncateString } from "utils";
+import { fiatToCrypto, isObjectEmpty, objectToArray, truncateString } from "utils";
 import NetworkIcons from "components/primitives/NetworkIcons";
 import AccountsPopup from "./AccountsPopup";
 import BarcodeSendIcon from "assets/svgComponents/BarcodeSendIcon";
@@ -224,6 +224,16 @@ function SendToken({
     setCurrencyType(CurrencyType.Crypto);
   };
 
+  const handleAmount = (amount: string, price: number, currencyType: CurrencyType) => {
+    if (!amount || !price) return "0.00";
+
+    if (currencyType === CurrencyType.Fiat) {
+      return fiatToCrypto(Number(amount), price).toFixed(8);
+    }
+
+    return new BigNumber(amount).times(price).toFormat(2);
+  };
+
   return (
     <Container>
       <Header
@@ -250,6 +260,7 @@ function SendToken({
               fiatList={["USD"]}
               value={amount}
               currencyType={currencyType}
+              price={price}
               onChangeCallback={() => {
                 setLoading(true);
                 setAbilityToTransfer(false);
@@ -265,7 +276,9 @@ function SendToken({
                 {symbol?.toUpperCase()}
               </span>
               <span>
-                ${amount && price ? new BigNumber(amount).times(price).toFormat(2) : "0.00"} USD
+                {currencyType === CurrencyType.Crypto ? "$" : ""}{" "}
+                {handleAmount(amount, price, currencyType)}
+                {currencyType === CurrencyType.Crypto ? "USD" : symbol}
                 <ExchangeIconContainer onClick={() => handleCurrencyType(currencyType)}>
                   <ExchangeIcon />
                 </ExchangeIconContainer>

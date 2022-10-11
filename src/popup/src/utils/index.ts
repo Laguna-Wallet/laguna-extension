@@ -302,5 +302,6 @@ export function cryptoToFiat(crypto: number, price: number): number {
 }
 
 export function fiatToCrypto(fiat: number, price: number): number {
+  if (!fiat || fiat === 0) return 0;
   return new BigNumber(fiat).dividedBy(price).toNumber();
 }

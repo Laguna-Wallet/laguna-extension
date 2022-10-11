@@ -8,6 +8,7 @@ import useOnClickOutside from "hooks/useOnClickOutside";
 import { useEffect } from "react";
 import debounce from "lodash.debounce";
 import { CurrencyType } from "utils/types";
+import { cryptoToFiat } from "utils";
 
 type Props = {
   Icon: any;
@@ -16,6 +17,7 @@ type Props = {
   value?: string;
   currencyType: CurrencyType;
   onChangeCallback: () => void;
+  price: number;
 };
 
 export default function TokenAndAmountSelect({
@@ -24,6 +26,7 @@ export default function TokenAndAmountSelect({
   Icon,
   value,
   currencyType,
+  price,
   onChangeCallback,
 }: Props) {
   const optionContainerRef = useRef<HTMLDivElement | null>(null);
@@ -33,7 +36,6 @@ export default function TokenAndAmountSelect({
 
   const selectOptions = currencyType === CurrencyType.Crypto ? tokens : fiatList;
 
-  console.log("~ currencyType", currencyType);
   // cryptoToFiat
   // fiatToCrypto
   const renderSelect = () => {
@@ -58,6 +60,16 @@ export default function TokenAndAmountSelect({
     );
   };
 
+  const handleAmountDisplay = (amount: number) => {
+    if (!amount) return "";
+
+    if (currencyType === CurrencyType.Crypto) {
+      return amount;
+    }
+
+    return cryptoToFiat(amount, price);
+  };
+
   return (
     <Container>
       {/* {value && } */}
@@ -66,8 +78,10 @@ export default function TokenAndAmountSelect({
         name="amount"
         type="text"
         label="amount"
+        defaultValue={" "}
         component={Input}
         onChangeCallback={onChangeCallback}
+        format={handleAmountDisplay}
       />
       <Field name="token" label="token" component={renderSelect} />
       {/* <IconContainer>
@@ -78,11 +92,13 @@ export default function TokenAndAmountSelect({
 }
 
 const Input = ({ input: { value, onChange }, onChangeCallback }: any) => {
-  const changeHandler = (event: any) => {
-    onChange(parseNumeric(event.target.value));
+  const changeHandler = (value: any) => {
+    onChange(parseNumeric(value));
   };
 
-  const debouncedChangeHandler = useMemo(() => debounce(changeHandler, 3000), []);
+  // const debouncedChangeHandler = useMemo(() => debounce(changeHandler, 3000), [value]);
+  // const debouncedChangeHandler = debounce(changeHandler, 3000);
+  const debouncedChangeHandler = changeHandler;
 
   useEffect(() => {
     return () => {
@@ -94,7 +110,7 @@ const Input = ({ input: { value, onChange }, onChangeCallback }: any) => {
     <StyledInput
       type="text"
       isvalue={!value}
-      // value={value}
+      value={value}
       // onChange={(e) => {
       //   if (parseNumeric(e, e.target.value)) {
       //     onChange(e.target.value);
@@ -102,9 +118,11 @@ const Input = ({ input: { value, onChange }, onChangeCallback }: any) => {
       // }}
       // todo proper typing
       onChange={(e) => {
+        e.persist();
+
         // onChange(e);
         onChangeCallback();
-        debouncedChangeHandler(e);
+        debouncedChangeHandler(e.target.value);
       }}
       placeholder="Amount"
       // debounceTimeout={600}
