@@ -1,13 +1,10 @@
 import { BigNumber } from "bignumber.js";
-import keyring from "@polkadot/ui-keyring";
 import axios from "axios";
-import { AES } from "crypto-js";
-import Utf8 from "crypto-js/enc-utf8";
 import { ethers } from "ethers";
 import { changeAccountsBalances, changeTokenReceived } from "redux/actions";
 import { checkBalanceChange, timer } from "utils";
 import { getFromStorage, saveToStorage } from "./chrome";
-import { getEVMBalance } from "utils/evm/api";
+import * as evmUtils from "utils/evm";
 import { EVMNetwork } from "networks/evm";
 import { EvmAssets } from "networks/evm/asset";
 import { recodeAddress } from "./polkadot";
@@ -88,7 +85,7 @@ export async function fetchAccountsBalances(
             network.chain === EVMNetwork.AVALANCHE_TESTNET_FUJI) &&
           ethAddress
         ) {
-          const ethBalance = await getEVMBalance(
+          const ethBalance = await evmUtils.getBalance(
             network.chain,
             ethAddress,
             EvmAssets[network.chain][network.symbol],

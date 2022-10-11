@@ -1,5 +1,5 @@
 import { timer } from "utils";
-import { getEVMHistoricalTransactions } from "./evm/api";
+import { getHistoricalTransactions } from "./evm";
 import { EVMAssetId, EVMNetwork } from "networks/evm";
 import { chains, Transaction } from "./types";
 

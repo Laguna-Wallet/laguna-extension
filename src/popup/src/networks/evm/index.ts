@@ -18,7 +18,7 @@ export const networks: { [network: string]: IEVMNetwork } = {
   [EVMNetwork.ETHEREUM]: {
     isTestnet: false,
     chainId: 1,
-    nodeUrl: "https://eth-mainnet.g.alchemy.com/v2/IFip5pZqfpAsi50-O2a0ZEJoA82E8KR_",
+    nodeUrl: "https://cloudflare-eth.com",
     explorerUrlAddress: "https://etherscan.io/address/{{hash}}",
     explorerUrlTransaction: "https://etherscan.io/tx/{{hash}}",
   },

@@ -24,7 +24,7 @@ import { useHistory } from "react-router-dom";
 import Select, { components } from "react-select";
 import NetworkIcons from "components/primitives/NetworkIcons";
 import { EVMAssetId, EVMNetwork } from "networks/evm";
-import { getEVMHistoricalTransactions } from "utils/evm/api";
+import { getHistoricalTransactions as getEVMHistoricalTransactions } from "utils/evm";
 import EthIcon from "assets/svgComponents/EthIcon";
 
 type Props = {

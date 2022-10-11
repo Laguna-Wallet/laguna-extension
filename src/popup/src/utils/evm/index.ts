@@ -1,28 +1,10 @@
 import { ethers } from "ethers";
-import {
-  IEVMAssetERC20,
-  IEVMAsset,
-  IEVMBuildTransaction,
-  IEVMToBeSignTransaction,
-  Response,
-  IEVMBuildTransactionOnChainParam,
-  IEVMNetwork,
-  IEVMHistoricalTransaction,
-  IAlchemyTransferObject,
-  IAlchemyTransferParam,
-} from "./interfaces";
-import ERC20ABI from "./abi/ERC20.json";
 import fs from "fs";
 import BigNumber from "bignumber.js";
-import {
-  EVMNetwork,
-  nativeCurrencyByNetwork,
-  networks,
-  assetByNetwork,
-  EVMAssetId,
-  EVMAssetType,
-  assets,
-} from "networks/evm";
+import { IEVMAssetERC20, IEVMAsset, IEVMBuildTransaction, IEVMToBeSignTransaction, Response, IEVMBuildTransactionOnChainParam, IEVMNetwork, IEVMHistoricalTransaction } from "./interfaces";
+import { EVMNetwork, nativeCurrencyByNetwork, networks, assetByNetwork, EVMAssetId, EVMAssetType } from "networks/evm";
+import * as alchemyApi from "./api/alchemy";
+import * as covalenthqApi from "./api/covalenthq";
 
 export const generateNewWalletAddress = (mnemonicSeed: string): string => {
   const wallet = ethers.Wallet.fromMnemonic(mnemonicSeed as string);
@@ -34,7 +16,7 @@ export const toCheckSumAddress = (address: string): string => {
   return checksumAddress;
 };
 
-export const isValidEVMAddress = (address: string): Response => {
+export const isValidAddress = (address: string): Response => {
   try {
     if (!address.startsWith("0x")) throw "EVM address should start with 0x";
     if (address.length != 42) throw "invalid address length";
@@ -72,24 +54,22 @@ export const getAssetInfo = (
 };
 
 export const getNonce = async (network: EVMNetwork, address: string): Promise<BigNumber> => {
-  const provider = new ethers.providers.JsonRpcProvider(networks[network].nodeUrl);
+  const provider = getProvider(network);
   const nonce = await provider.getTransactionCount(address, "latest");
   return new BigNumber(nonce);
 };
 
-export const getEvmGasPrice = async (network: EVMNetwork): Promise<BigNumber> => {
-  const provider = new ethers.providers.JsonRpcProvider(networks[network].nodeUrl);
+export const getGasPrice = async (network: EVMNetwork): Promise<BigNumber> => {
+  const provider = getProvider(network);
   const gasPrice = await provider.getGasPrice();
   return new BigNumber(gasPrice.toString());
 };
 
-export const estimateGas = async (
-  network: EVMNetwork,
-  toBeSignTransaction: IEVMToBeSignTransaction,
-): Promise<BigNumber> => {
-  const provider = new ethers.providers.JsonRpcProvider(networks[network].nodeUrl);
-  if (await isSmartContractAddress(network, toBeSignTransaction.to)) {
-    const estimateResult = await provider.estimateGas(toBeSignTransaction);
+export const estimateGasLimit = async (network: EVMNetwork, param: IEVMBuildTransaction): Promise<BigNumber> => {
+  const provider = getProvider(network);
+  const transaction = buildTransaction(param);
+  if (await isSmartContractAddress(network, param.toAddress)) {
+    const estimateResult = await provider.estimateGas(transaction);
     return new BigNumber(estimateResult.toString()).multipliedBy(1.5);
   } else {
     return new BigNumber(21000);
@@ -120,13 +100,13 @@ export const getBuildTransactionOnChainParam = async (
 ): Promise<IEVMBuildTransactionOnChainParam> => {
   const [nonce, gasPriceInGwei, nativeCurrenyBalance, assetBalance] = await Promise.all([
     await getNonce(networkId, fromAddress),
-    await getEvmGasPrice(networkId),
-    await getEVMBalance(
+    await getGasPrice(networkId),
+    await getBalance(
       networkId,
       fromAddress,
       getAssetInfo(networkId, nativeCurrencyByNetwork[networkId]),
     ),
-    await getEVMBalance(networkId, fromAddress, getAssetInfo(networkId, assetId)),
+    await getBalance(networkId, fromAddress, getAssetInfo(networkId, assetId)),
   ]);
   return {
     nonce,
@@ -136,10 +116,9 @@ export const getBuildTransactionOnChainParam = async (
   };
 };
 
-export const buildEvmTransaction = async (
-  param: IEVMBuildTransaction,
-): Promise<IEVMToBeSignTransaction> => {
-  const { network, asset, amount, fromAddress, toAddress, nonce, gasPriceInGwei, gasLimit } = param;
+export const buildTransaction = (  param: IEVMBuildTransaction  )
+: IEVMToBeSignTransaction => {
+  const {network, asset, amount, fromAddress, toAddress, nonce,gasPriceInGwei, gasLimit} = param;
 
   if (asset.assetType === EVMAssetType.NATIVE) {
     const toBeSignTransaction: IEVMToBeSignTransaction = {
@@ -195,7 +174,7 @@ export const broadcastTransaction = async (
   return transactionReceipt.hash;
 };
 
-export const getEVMBalance = async (
+export const getBalance = async (
   network: EVMNetwork,
   address: string,
   asset: IEVMAsset | IEVMAssetERC20,
@@ -221,7 +200,7 @@ export const getEVMBalance = async (
 const initERC20SmartContract = (network: EVMNetwork, asset: IEVMAssetERC20): ethers.Contract => {
   const provider = getProvider(network);
   const abiFileName = "ERC20";
-  // const ERC20ABI = JSON.parse(fs.readFileSync(`./abi/${abiFileName}.json`, "utf-8"));
+  const ERC20ABI = JSON.parse(fs.readFileSync(`./abi/${abiFileName}.json`, "utf-8"));
   return new ethers.Contract((asset as IEVMAssetERC20).contractAddress, ERC20ABI, provider);
 };
 
@@ -241,106 +220,18 @@ export const getAssetIdBySmartContractAddress = (
   return contractObject.symbol;
 };
 
-export const getEVMHistoricalTransactions = async (
-  address: string,
-  network: EVMNetwork,
-  assetId: EVMAssetId,
-): Promise<IEVMHistoricalTransaction[]> => {
-  return getHistoricalTransactionsByAlchemy(address, network, assetId);
-};
-
-export const getHistoricalTransactionsByAlchemy = async (
-  address: string,
-  networkId: EVMNetwork,
-  assetId: EVMAssetId,
-  fromBlock?: BigNumber,
-): Promise<IEVMHistoricalTransaction[]> => {
-  const startTime = Date.now();
-  try {
-    // let pageKey: string | null = null;
-    const historicalTransactions: IEVMHistoricalTransaction[] = [];
-    const asset: IEVMAsset | IEVMAssetERC20 = assets[assetId];
-    let category: string[];
-    let contractAddresses: string[];
-    switch (assets[assetId].assetType) {
-      case EVMAssetType.NATIVE: {
-        category = ["internal", "external"];
-        contractAddresses = [];
-        break;
-      }
-      case EVMAssetType.ERC20: {
-        category = ["erc20"];
-        contractAddresses = [(asset as IEVMAssetERC20).contractAddress];
-        break;
-      }
-      default:
-        category = [];
-        contractAddresses = [];
-    }
-    let param: IAlchemyTransferParam = {
-      fromBlock: fromBlock?.isFinite() ? `0x${fromBlock.toString(16)}` : "0x0",
-      toBlock: "latest",
-      category: category,
-      withMetadata: false,
-      excludeZeroValue: false,
-      fromAddress: address,
-    };
-    if (asset.assetType !== EVMAssetType.NATIVE) {
-      param = {
-        ...param,
-        contractAddresses,
-      };
-    }
-    const options = {
-      method: "POST",
-      headers: { Accept: "application/json", "Content-Type": "application/json" },
-      body: JSON.stringify({
-        id: 1,
-        jsonrpc: "2.0",
-        method: "alchemy_getAssetTransfers",
-        params: [param],
-      }),
-    };
-
-    const provider = getProvider(networkId);
-    const res = await fetch(networks[networkId].nodeUrl, options);
-    const data = await res.json();
-
-    if (data.error) {
-      throw data.error;
-    }
-    do {
-      for (const transfer of data.result.transfers) {
-        const transferObj: IEVMHistoricalTransaction = {
-          assetId: assetId.toString(),
-          amount: new BigNumber(transfer.value),
-          from: toCheckSumAddress(transfer.from),
-          to: toCheckSumAddress(transfer.to),
-          fee: new BigNumber(0),
-          nonce: new BigNumber(0),
-          blockNumber: new BigNumber(transfer.blockNumber),
-          transactionHash: transfer.hash,
-          timestamp: 0,
-        };
-        historicalTransactions.push(transferObj);
-      }
-    } while (data.result.pageKey);
-    const chunkSize = 20;
-    for (let i = 0; i < historicalTransactions.length; i += chunkSize) {
-      const chunk = historicalTransactions.slice(i, i + chunkSize);
-      await Promise.all(
-        chunk.map(async (historicalTransaction) => {
-          const transaction = await provider.getTransaction(historicalTransaction.transactionHash);
-          // const transactionReceipt = await provider.getTransactionReceipt(historicalTransaction.transactionHash);
-          // historicalTransaction.fee = new BigNumber(transactionReceipt.gasUsed.mul(transactionReceipt.effectiveGasPrice)._hex);
-          // historicalTransaction.nonce = new BigNumber(transaction.nonce);
-          historicalTransaction.timestamp = transaction.timestamp ? transaction.timestamp : 0;
-        }),
-      );
-    }
-    return historicalTransactions;
-  } catch (err) {
-    console.log("Failed to getHistoricalTransactionsByAlchemy", err);
-    throw err;
+export const getHistoricalTransactions = async (address: string, networkId: EVMNetwork, assetId: EVMAssetId)
+: Promise<IEVMHistoricalTransaction[]> => {
+  console.log(address, networkId, assetId);
+  switch (networkId) {
+    case EVMNetwork.LOCALHOST:
+      return [];
+    case EVMNetwork.ETHEREUM:
+    case EVMNetwork.ETHEREUM_TESTNET_GOERLI:
+      return await alchemyApi.getHistoricalTransactions(address, networkId, assetId);
+    case EVMNetwork.AVALANCHE_TESTNET_FUJI:
+      return await covalenthqApi.getHistoricalTransactions(address, networkId, assetId);
+    default:
+      throw new Error("Non Supported Network");
   }
 };

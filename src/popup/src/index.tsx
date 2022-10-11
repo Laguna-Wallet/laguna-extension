@@ -13,10 +13,7 @@ import { AccountProvider } from "context/AccountContext";
 import { Provider } from "react-redux";
 import { AccountsStore } from "utils/stores";
 import generateStore from "redux/store";
-import { IdleTimerProvider, useIdleTimerContext } from "react-idle-timer";
 import IdleTimeoutWrapper from "pages/IdleTimeoutWrapper/IdleTimeoutWrapper";
-import { getEVMHistoricalTransactions } from "utils/evm/api";
-import { EVMNetwork, EVMAssetId } from "networks/evm";
 
 generateStore().then((store) => {
   // load all available addresses and accounts

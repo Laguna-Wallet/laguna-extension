@@ -24,14 +24,8 @@ import { PropsFromTokenDashboard } from "pages/Recieve/Receive";
 import { selectAsset } from "redux/actions";
 import { State } from "redux/store";
 import { useLocation } from "react-router-dom";
-import {
-  buildEvmTransaction,
-  estimateGas,
-  getBuildTransactionOnChainParam,
-  getEvmGasPrice,
-  getNonce,
-  isValidEVMAddress,
-} from "utils/evm/api";
+import * as evmUtils from "utils/evm";
+
 import { EvmAssets } from "networks/evm/asset";
 import { ethers } from "ethers";
 import {
@@ -160,7 +154,7 @@ function Send({ initialIsContactsPopupOpen }: Props) {
       // todo not valid eth address error
       if (
         !reduxSendTokenState.selectedAsset ||
-        !isValidEVMAddress(form?.address)?.success ||
+        !evmUtils.isValidAddress(form?.address)?.success ||
         !form?.amount
       )
         return;
@@ -176,26 +170,29 @@ function Send({ initialIsContactsPopupOpen }: Props) {
         reduxSendTokenState?.selectedAsset?.symbol
       ] as IEVMAssetERC20;
 
-      const { nonce, gasPriceInGwei, nativeCurrenyBalance, assetBalance } =
-        await getBuildTransactionOnChainParam(ethNetwork, form.address, ethAsset.assetId);
-
-      // const gasLimit = estimateGasLimit(param);
-      const toSignTransaction: IEVMToBeSignTransaction = await buildEvmTransaction({
+      const { 
+        nonce, 
+        gasPriceInGwei, 
+        nativeCurrenyBalance, 
+        assetBalance,
+      } = await evmUtils.getBuildTransactionOnChainParam(ethNetwork, form.address, ethAsset.assetId);
+      const buildTransactionParam: IEVMBuildTransaction = {
         network: ethNetwork,
         asset: ethAsset,
         amount: new BigNumber(form.amount),
         fromAddress: activeAccount?.meta?.ethAddress,
         toAddress: form?.address,
         nonce,
-        gasPriceInGwei: new BigNumber(100),
+        gasPriceInGwei: new BigNumber(1),
         gasLimit: new BigNumber(100000),
-        // numOfPendingTransaction: BigNumber; // TODO for adding up nonce, blocked by cache pending txn
-      });
-      const estimatedGas = await estimateGas(ethNetwork, toSignTransaction);
-      const ethValue = await ethers.utils.formatUnits(estimatedGas.toNumber());
+      };
+      const estimatedGasPriceInGwei = await evmUtils.estimateGasLimit(ethNetwork, buildTransactionParam);
+      buildTransactionParam.gasPriceInGwei = estimatedGasPriceInGwei;
+      const toSignTransaction: IEVMToBeSignTransaction = await evmUtils.buildTransaction(buildTransactionParam);
+      const ethValue = await ethers.utils.formatUnits(estimatedGasPriceInGwei.toNumber());
 
       setToBeSignTransaction(toSignTransaction);
-      setFee(ethValue);
+      setFee(ethValue); // TODO fee = gasPrice * gasLimit
       setRecoded(form?.address);
       // todo check if balance is enough
       setAbilityToTransfer(true);

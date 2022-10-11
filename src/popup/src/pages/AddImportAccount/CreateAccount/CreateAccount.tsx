@@ -17,7 +17,7 @@ import { RouteComponentProps, useHistory } from "react-router-dom";
 import { router } from "router/router";
 import browser from "webextension-polyfill";
 import { useLocation } from "react-router-dom";
-import { generateNewWalletAddress } from "utils/evm/api";
+import { generateNewWalletAddress } from "utils/evm";
 
 type Props = {
   existingAccount?: boolean;
