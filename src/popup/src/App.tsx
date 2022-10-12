@@ -39,7 +39,6 @@ import Receive from "pages/Recieve/Receive";
 import AddRemoveToken from "pages/AddRemoveToken/AddRemoveToken";
 import { fetchAccountsBalances } from "utils/Api";
 import { useAccount } from "context/AccountContext";
-import keyring from "@polkadot/ui-keyring";
 
 function App() {
   const dispatch = useDispatch();
