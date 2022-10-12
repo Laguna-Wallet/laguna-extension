@@ -30,6 +30,8 @@ import HashtagIcon from "assets/svgComponents/HashtagIcon";
 import { useHistory } from "react-router-dom";
 import { router } from "router/router";
 import { EVMNetwork } from "networks/evm";
+import EthSettingsIcon from "assets/svgComponents/EthSettingsIcon";
+import GasSettingsPopup from "./GasSettingsPopup";
 
 const validate = (values: { address: string; amount: number }) => {
   const errors: any = {};
@@ -98,6 +100,7 @@ function SendToken({
   const [isAccountsPopupOpen, setIsAccountsPopupOpen] = useState<boolean>(false);
   const [isQRPopupOpen, setIsQRPopupOpen] = useState<boolean>(false);
   const [isContactsPopupOpen, setIsContactsPopupOpen] = useState<boolean>(false);
+  const [isGasSettingsOpen, setIsGasSettingsOpen] = useState<boolean>(false);
 
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
   const [snackbarError, setSnackbarError] = useState<string>("");
@@ -157,6 +160,10 @@ function SendToken({
 
     const pair = keyring.getAddress(address);
     setAccountMeta({ name: pair?.meta?.name as string, img: pair?.meta?.img as string });
+  };
+
+  const handleGasSettings = () => {
+    setIsGasSettingsOpen(true);
   };
 
   const submit = (values: any) => {
@@ -272,7 +279,7 @@ function SendToken({
                 Balance:{" "}
                 {new BigNumber(selectedAsset.balance.overall)
                   .minus(selectedAsset.balance.locked)
-                  .toString()}{" "}
+                  .toFixed(12)}{" "}
                 {symbol?.toUpperCase()}
               </span>
               <span>
@@ -356,9 +363,14 @@ function SendToken({
               <Info>
                 <InfoRow>
                   <span>Network Fee</span>
-                  <span>
-                    {loading ? "..." : fee} {selectedAsset?.symbol.toUpperCase()}
-                  </span>
+                  <InfoRowRIght>
+                    <span>
+                      {loading ? "..." : fee} {selectedAsset?.symbol.toUpperCase()}
+                    </span>{" "}
+                    <EthSettingsIconContainer onClick={handleGasSettings}>
+                      <EthSettingsIcon />
+                    </EthSettingsIconContainer>
+                  </InfoRowRIght>
                 </InfoRow>
                 <InfoRow>
                   <span>Max Total</span>
@@ -436,6 +448,8 @@ function SendToken({
           handleCloseContacts={handleCloseContacts}
         />
       )}
+
+      {isGasSettingsOpen && <GasSettingsPopup onClose={() => setIsGasSettingsOpen(false)} />}
     </Container>
   );
 }
@@ -589,6 +603,10 @@ const Info = styled.div`
     font-size: 12px;
   }
 `;
+
+const InfoRowRIght = styled.div``;
+
+const EthSettingsIconContainer = styled.div``;
 
 const InfoRow = styled.div`
   display: flex;
