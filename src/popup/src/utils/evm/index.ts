@@ -1,8 +1,24 @@
 import { ethers } from "ethers";
 import fs from "fs";
 import BigNumber from "bignumber.js";
-import { IEVMAssetERC20, IEVMAsset, IEVMBuildTransaction, IEVMToBeSignTransaction, Response, IEVMBuildTransactionOnChainParam, IEVMNetwork, IEVMHistoricalTransaction } from "./interfaces";
-import { EVMNetwork, nativeCurrencyByNetwork, networks, assetByNetwork, EVMAssetId, EVMAssetType } from "networks/evm";
+import {
+  IEVMAssetERC20,
+  IEVMAsset,
+  IEVMBuildTransaction,
+  IEVMToBeSignTransaction,
+  Response,
+  IEVMBuildTransactionOnChainParam,
+  IEVMNetwork,
+  IEVMHistoricalTransaction,
+} from "./interfaces";
+import {
+  EVMNetwork,
+  nativeCurrencyByNetwork,
+  networks,
+  assetByNetwork,
+  EVMAssetId,
+  EVMAssetType,
+} from "networks/evm";
 import * as alchemyApi from "./api/alchemy";
 import * as covalenthqApi from "./api/covalenthq";
 
@@ -34,8 +50,8 @@ export const isValidAddress = (address: string): Response => {
 };
 
 export const getProvider = (network: EVMNetwork): ethers.providers.JsonRpcProvider => {
-  // return new ethers.providers.JsonRpcProvider("HTTP://127.0.0.1:7545");
   return new ethers.providers.JsonRpcProvider(networks[network].nodeUrl);
+  // return new ethers.providers.JsonRpcProvider("HTTP://127.0.0.1:7545");
 };
 
 export const getNetworkInfo = (network: EVMNetwork): IEVMNetwork => {
@@ -65,7 +81,10 @@ export const getGasPrice = async (network: EVMNetwork): Promise<BigNumber> => {
   return new BigNumber(gasPrice.toString());
 };
 
-export const estimateGasLimit = async (network: EVMNetwork, param: IEVMBuildTransaction): Promise<BigNumber> => {
+export const estimateGasLimit = async (
+  network: EVMNetwork,
+  param: IEVMBuildTransaction,
+): Promise<BigNumber> => {
   const provider = getProvider(network);
   const transaction = buildTransaction(param);
   if (await isSmartContractAddress(network, param.toAddress)) {
@@ -116,9 +135,8 @@ export const getBuildTransactionOnChainParam = async (
   };
 };
 
-export const buildTransaction = (  param: IEVMBuildTransaction  )
-: IEVMToBeSignTransaction => {
-  const {network, asset, amount, fromAddress, toAddress, nonce,gasPriceInGwei, gasLimit} = param;
+export const buildTransaction = (param: IEVMBuildTransaction): IEVMToBeSignTransaction => {
+  const { network, asset, amount, fromAddress, toAddress, nonce, gasPriceInGwei, gasLimit } = param;
 
   if (asset.assetType === EVMAssetType.NATIVE) {
     const toBeSignTransaction: IEVMToBeSignTransaction = {
@@ -220,8 +238,11 @@ export const getAssetIdBySmartContractAddress = (
   return contractObject.symbol;
 };
 
-export const getHistoricalTransactions = async (address: string, networkId: EVMNetwork, assetId: EVMAssetId)
-: Promise<IEVMHistoricalTransaction[]> => {
+export const getHistoricalTransactions = async (
+  address: string,
+  networkId: EVMNetwork,
+  assetId: EVMAssetId,
+): Promise<IEVMHistoricalTransaction[]> => {
   console.log(address, networkId, assetId);
   switch (networkId) {
     case EVMNetwork.LOCALHOST:
