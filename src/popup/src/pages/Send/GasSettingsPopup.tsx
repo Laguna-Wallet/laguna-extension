@@ -14,15 +14,49 @@ import BackIcon from "assets/svgComponents/CopyIcon";
 import LeftArrowIcon from "assets/svgComponents/LeftArrowIcon";
 import CloseIcon from "assets/svgComponents/CloseIcon";
 import HintIcon from "assets/svgComponents/HintIcon";
+import HintIconSmall from "assets/svgComponents/HintIconSmall";
+import { Field, InjectedFormProps, reduxForm } from "redux-form";
+import { IEVMBuildTransaction, IEVMToBeSignTransaction } from "utils/evm/interfaces";
+import { connect } from "react-redux";
+import BigNumber from "bignumber.js";
+import { buildEvmTransaction } from "utils/evm/api";
 
-type Props = { onClose: () => void };
+// todo proper handleSubmit Typing
+type Props = {
+  onClose: () => void;
+  setToBeSignTransaction: (toBeSignTransaction: IEVMToBeSignTransaction) => void;
+  toBeSignTransactionParams: IEVMBuildTransaction | undefined;
+  handleSubmit?: any;
+};
 
-export default function GasSettings({ onClose }: Props) {
+function GasSettingsPopup({
+  handleSubmit,
+  onClose,
+  setToBeSignTransaction,
+  toBeSignTransactionParams,
+}: Props) {
+  const submit = async (values: any) => {
+    const gasLimit = new BigNumber(values.gasLimit);
+    const gasPriceInGwei = new BigNumber(values.gasPrice);
+    const nonce = new BigNumber(values.nonce);
+
+    const toSignTransaction: IEVMToBeSignTransaction = await buildEvmTransaction({
+      ...toBeSignTransactionParams,
+      gasLimit,
+      gasPriceInGwei,
+      nonce,
+    } as IEVMBuildTransaction);
+
+    setToBeSignTransaction(toSignTransaction);
+
+    onClose();
+  };
+
   return (
     <Container>
       <InnerContainer>
         <Heading>
-          <BackButtonContainer>
+          <BackButtonContainer onClick={onClose}>
             <LeftArrowIcon />
           </BackButtonContainer>
           <Title>Advanced</Title>
@@ -30,21 +64,114 @@ export default function GasSettings({ onClose }: Props) {
             <HintIconContainer>
               <HintIcon />
             </HintIconContainer>
-            <CloseButtonContainer>
+            <CloseButtonContainer onClick={onClose}>
               <CloseIcon />
             </CloseButtonContainer>
           </HeadingRight>
         </Heading>
         <TextRow>
-          <TextRowRight>Current gas price</TextRowRight>
+          <TextRowRight>
+            <span>Current gas price</span>
+            <HintIconSmallContainer>
+              <HintIconSmall />
+            </HintIconSmallContainer>
+          </TextRowRight>
           <span>14.234 Gwei</span>
         </TextRow>
-        <Form></Form>
-        {/* <Button /> */}
+        <Form onSubmit={handleSubmit(submit)}>
+          <Field
+            id="gasPrice"
+            name="gasPrice"
+            type="text"
+            placeholder="Gas price in Gwei"
+            component={HumbleInput}
+            props={{
+              type: "text",
+              topLabel: "Gas Price (Gwei)",
+              bgColor: "#fff",
+              padding: "15px 11px 15px 16px",
+              color: "#11171D",
+              placeholderColor: "#b1b5c3",
+              errorBorderColor: "#fb5a5a",
+              height: "48px",
+              marginTop: "12px",
+              borderColor: "#c4d0d9",
+              // showError: true,
+              // errorColor: '#FB5A5A'
+            }}
+          />
+          <Field
+            id="gasLimit"
+            name="gasLimit"
+            type="text"
+            label="Gas Limit"
+            placeholder="Gas limit"
+            component={HumbleInput}
+            props={{
+              type: "text",
+              bgColor: "#fff",
+              topLabel: "Gas Limit",
+              padding: "15px 11px 15px 16px",
+              color: "#11171D",
+              placeholderColor: "#b1b5c3",
+              errorBorderColor: "#fb5a5a",
+              height: "48px",
+              marginTop: "12px",
+              borderColor: "#c4d0d9",
+              // showError: true,
+              // errorColor: '#FB5A5A'
+            }}
+          />
+          <Field
+            id="nonce"
+            name="nonce"
+            type="text"
+            label="Nonce"
+            placeholder="Nonce"
+            component={HumbleInput}
+            props={{
+              type: "text",
+              bgColor: "#fff",
+              topLabel: "Nonce",
+              padding: "15px 11px 15px 16px",
+              color: "#11171D",
+              placeholderColor: "#b1b5c3",
+              errorBorderColor: "#fb5a5a",
+              height: "48px",
+              marginTop: "12px",
+              borderColor: "#c4d0d9",
+              // showError: true,
+              // errorColor: '#FB5A5A'
+            }}
+          />
+          <Button
+            type="submit"
+            text="Save"
+            color="#fff"
+            bgColor="#11171D"
+            borderColor="#11171D"
+            justify="center"
+            margin="auto 0 16px 0"
+          />
+        </Form>
       </InnerContainer>
     </Container>
   );
 }
+
+export default connect((state: any, props: Props) => ({
+  initialValues: {
+    gasPrice: props?.toBeSignTransactionParams?.gasPriceInGwei?.toString(),
+    gasLimit: props?.toBeSignTransactionParams?.gasLimit?.toString(),
+    nonce: props?.toBeSignTransactionParams?.nonce?.toString(),
+  },
+  // errors: getFormSyncErrors("CreatePassword")(state),
+}))(
+  reduxForm<Record<string, unknown>, Props>({
+    form: "GasSettingsPopup",
+    // validate,
+  })(GasSettingsPopup),
+);
 
 const Container = styled.div<{ bg?: string }>`
   display: flex;
@@ -114,9 +241,31 @@ const HintIconContainer = styled.div`
 `;
 
 const TextRow = styled.div`
-    display: 0 ;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 35px;
+  font-family: "Inter";
+  font-size: 14px;
+  letter-spacing: 0.25px;
+  color: #11171d;
 `;
 
-const TextRowRight = styled.div``;
+const TextRowRight = styled.div`
+  display: flex;
+  align-items: center;
+  color: #62768a;
+`;
 
-const Form = styled.div``;
+const HintIconSmallContainer = styled.div`
+  margin-top: 5px;
+  margin-left: 3px;
+`;
+
+const Form = styled.form`
+  width: 100%;
+  height: 83%;
+  display: flex;
+  flex-direction: column;
+  margin-top: 16px;
+`;

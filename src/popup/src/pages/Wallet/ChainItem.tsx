@@ -13,7 +13,7 @@ type Props = {
 };
 
 export default function ChainItem({ asset, handleClick, iconSize }: Props) {
-  const { chain, symbol, balance, calculatedPrice } = asset;
+  const { chain, name, symbol, balance, calculatedPrice } = asset;
   const iconCurrentSize = iconSize || "36px";
   return (
     // <StyledLink to={router.tokenDashboard} props={{ asset }}>
@@ -28,7 +28,7 @@ export default function ChainItem({ asset, handleClick, iconSize }: Props) {
         />
       </ListItemIcon>
       <ListItemText>
-        <Title>{chain}</Title>
+        <Title>{name}</Title>
         <Tag>{chain} Chain</Tag>
       </ListItemText>
       <ListItemText>

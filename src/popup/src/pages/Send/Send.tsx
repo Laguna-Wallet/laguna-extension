@@ -69,6 +69,7 @@ function Send({ initialIsContactsPopupOpen }: Props) {
   const [flow, setFlow] = useState<FlowValue | undefined>(undefined);
   const [assets, setAssets] = useState<Asset[] | undefined>(undefined);
   const [accountMeta, setAccountMeta] = useState<AccountMeta>();
+  const [nonce, setNonce] = useState<string>("");
 
   const location = useLocation<LocationState>();
   const { propsFromTokenDashboard } = location?.state || {};
@@ -99,6 +100,9 @@ function Send({ initialIsContactsPopupOpen }: Props) {
   const [abilityToTransfer, setAbilityToTransfer] = useState<boolean>(true);
   const [blockHash, setBlockHash] = useState<string>("");
   const [toBeSignTransaction, setToBeSignTransaction] = useState<IEVMToBeSignTransaction>();
+
+  const [toBeSignTransactionParams, setToBeSignTransactionParams] =
+    useState<IEVMBuildTransaction>();
 
   const reduxSendTokenState = useSelector((state: any) => state.sendToken);
   const form = useSelector((state: any) => state?.form?.sendToken?.values);
@@ -175,28 +179,41 @@ function Send({ initialIsContactsPopupOpen }: Props) {
         reduxSendTokenState?.selectedAsset?.symbol
       ] as IEVMAssetERC20;
 
-      const { nonce, gasPriceInGwei, nativeCurrenyBalance, assetBalance } =
-        await getBuildTransactionOnChainParam(ethNetwork, form.address, EVMAssetId.ETHEREUM_ETH);
+      const {
+        nonce: currentNonce,
+        gasPriceInGwei,
+        nativeCurrenyBalance,
+        assetBalance,
+      } = await getBuildTransactionOnChainParam(
+        ethNetwork,
+        form.address,
+        EVMAssetId.AVALANCHE_TESTNET_FUJI_AVAX,
+      );
 
       // const gasLimit = estimateGasLimit(param);
 
-      const toSignTransaction: IEVMToBeSignTransaction = await buildEvmTransaction({
+      const params = {
         network: ethNetwork,
         asset: ethAsset,
         amount: new BigNumber(form.amount),
         fromAddress: activeAccount?.meta?.ethAddress,
         toAddress: form?.address,
-        nonce,
+        nonce: currentNonce,
         gasPriceInGwei,
         gasLimit: new BigNumber(100000),
         // numOfPendingTransaction: BigNumber; // TODO for adding up nonce, blocked by cache pending txn
-      });
+      };
+
+      const toSignTransaction: IEVMToBeSignTransaction = await buildEvmTransaction(params);
 
       const estimatedGas = await estimateGas(ethNetwork, toSignTransaction);
       const ethValue = await ethers.utils.formatUnits(estimatedGas.toNumber());
 
+      setToBeSignTransactionParams(params);
+
       setToBeSignTransaction(toSignTransaction);
       setFee(ethValue);
+      setNonce(currentNonce.toString());
       setRecoded(form?.address);
       // todo check if balance is enough
       setAbilityToTransfer(true);
@@ -231,6 +248,7 @@ function Send({ initialIsContactsPopupOpen }: Props) {
           flow={flow}
           setFlow={setFlow}
           fee={fee}
+          nonce={nonce}
           setLoading={setLoading}
           loading={loading}
           abilityToTransfer={abilityToTransfer}
@@ -238,6 +256,8 @@ function Send({ initialIsContactsPopupOpen }: Props) {
           propsFromTokenDashboard={propsFromTokenDashboard}
           accountMeta={accountMeta}
           setAccountMeta={setAccountMeta}
+          setToBeSignTransaction={setToBeSignTransaction}
+          toBeSignTransactionParams={toBeSignTransactionParams}
         />
 
         {/* todo pass one payload prop for all the chains   */}

@@ -29,6 +29,18 @@ export const generateNewWalletAddress = (mnemonicSeed: string): string => {
   return wallet.address;
 };
 
+export const isEVMChain = (chain: string): boolean => {
+  if (
+    chain === EVMNetwork.ETHEREUM ||
+    chain === EVMNetwork.AVALANCHE_TESTNET_FUJI ||
+    chain === EVMNetwork.ETHEREUM_TESTNET_GOERLI
+  ) {
+    return true;
+  }
+
+  return false;
+};
+
 export const toCheckSumAddress = (address: string): string => {
   const checksumAddress = ethers.utils.getAddress(address);
   return checksumAddress;

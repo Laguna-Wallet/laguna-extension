@@ -10,6 +10,7 @@ import {
 
 import {
   Asset,
+  HardcodedAssetList,
   Network,
   networks,
   Prices,
@@ -279,7 +280,7 @@ export async function getAssets(
 
       let balance = balances[chain];
 
-      if (!balance && !showZeroBalanceAssets) continue;
+      if (!balance && !showZeroBalanceAssets && !HardcodedAssetList[symbol]) continue;
 
       if (showZeroBalanceAssets) {
         balance = !balance ? 0 : balance;
@@ -287,7 +288,7 @@ export async function getAssets(
       const price = prices[chain.toLowerCase()]?.usd;
 
       // todo rename calculatedBalance
-      const calculatedPrice = new BigNumber(balance.overall).multipliedBy(price || 0);
+      const calculatedPrice = new BigNumber(balance?.overall || 0).multipliedBy(price || 0);
 
       if (price) {
         overallBalance += calculatedPrice.toNumber();

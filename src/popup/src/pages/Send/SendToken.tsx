@@ -32,6 +32,7 @@ import { router } from "router/router";
 import { EVMNetwork } from "networks/evm";
 import EthSettingsIcon from "assets/svgComponents/EthSettingsIcon";
 import GasSettingsPopup from "./GasSettingsPopup";
+import { IEVMBuildTransaction, IEVMToBeSignTransaction } from "utils/evm/interfaces";
 
 const validate = (values: { address: string; amount: number }) => {
   const errors: any = {};
@@ -54,6 +55,7 @@ type Props = {
   flow: FlowValue | undefined;
   setFlow: (flow: FlowValue | undefined) => void;
   fee: string;
+  nonce: string;
   setLoading: (loading: boolean) => void;
   loading: boolean;
   handleSubmit?: any;
@@ -64,6 +66,8 @@ type Props = {
   propsFromTokenDashboard?: PropsFromTokenDashboard;
   accountMeta: AccountMeta | undefined;
   setAccountMeta: (accountMeta: AccountMeta) => void;
+  setToBeSignTransaction: (toBeSignTransaction: IEVMToBeSignTransaction) => void;
+  toBeSignTransactionParams: IEVMBuildTransaction | undefined;
 };
 
 const handleShowAccountInput = (flow: string | undefined, address: string | undefined): boolean => {
@@ -91,6 +95,9 @@ function SendToken({
   propsFromTokenDashboard,
   accountMeta,
   setAccountMeta,
+  nonce,
+  setToBeSignTransaction,
+  toBeSignTransactionParams,
 }: Props) {
   const history = useHistory();
 
@@ -359,7 +366,7 @@ function SendToken({
             </ContentItem>
           )}
           <ContentItem>
-            {chain === EVMNetwork.ETHEREUM ? (
+            {chain === EVMNetwork.ETHEREUM || chain === EVMNetwork.AVALANCHE_TESTNET_FUJI ? (
               <Info>
                 <InfoRow>
                   <span>Network Fee</span>
@@ -392,7 +399,7 @@ function SendToken({
               type="text"
               placeholder="Enter note"
               component={HumbleInput}
-              props={{
+              props={{    
                 type: "text",
                 bgColor: "#f2f2f2",
                 color: "#18191a",
@@ -449,7 +456,13 @@ function SendToken({
         />
       )}
 
-      {isGasSettingsOpen && <GasSettingsPopup onClose={() => setIsGasSettingsOpen(false)} />}
+      {isGasSettingsOpen && (
+        <GasSettingsPopup
+          onClose={() => setIsGasSettingsOpen(false)}
+          setToBeSignTransaction={setToBeSignTransaction}
+          toBeSignTransactionParams={toBeSignTransactionParams}
+        />
+      )}
     </Container>
   );
 }

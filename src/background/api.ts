@@ -26,7 +26,6 @@ export async function sendTransaction(pairs, ethWallets, payload) {
         return wallet.address === payload.toBeSignTransaction.from
       })
 
-      console.log("~ payload.toBeSignTransaction", payload.toBeSignTransaction)
       const signedTx = await signTransaction(wallet, payload.toBeSignTransaction)
 
       const dta = await broadcastTransaction(payload.chain, signedTx)

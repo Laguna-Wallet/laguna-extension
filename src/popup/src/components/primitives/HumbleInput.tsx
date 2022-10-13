@@ -36,6 +36,7 @@ type InputProps = {
   copy?: boolean;
   handleClickCopy?: (value: string) => void;
   rightLabel?: string;
+  topLabel?: string;
   // todo asap
   Icon?: ReactElement;
   IconAlignment?: "left" | "right";
@@ -71,6 +72,7 @@ function HumbleInput({
   showError,
   truncate,
   rightLabel,
+  topLabel,
   placeholderColor,
   Icon,
   padding,
@@ -97,6 +99,7 @@ function HumbleInput({
 
   return (
     <Container marginBottom={marginBottom} marginTop={marginTop}>
+      {topLabel && <TopLabel>{topLabel}</TopLabel>}
       <InputContainer
         error={(!touched && !!error) || (meta?.touched && meta?.error)}
         errorBorderColor={errorBorderColor}
@@ -325,7 +328,7 @@ const Copy = styled.div`
 `;
 
 const Text = styled.p`
-  font-family: 'IBMPlexSans';
+  font-family: "IBMPlexSans";
   font-size: 12px;
   line-height: 1.35;
   display: flex;
@@ -333,8 +336,7 @@ const Text = styled.p`
   text-align: center;
   color: #ffffff;
   margin-left: 4px;
-  font-family: 'IBM Plex Sans';
-
+  font-family: "IBM Plex Sans";
 `;
 
 const RightLabel = styled.span`
@@ -345,6 +347,14 @@ const RightLabel = styled.span`
   color: #777e90;
   font-size: 16px;
   backdrop-filter: blur(16px);
+`;
+
+const TopLabel = styled.div`
+  color: #62768a;
+  font-size: 12px;
+  letter-spacing: 0.25px;
+  margin-bottom: 5px;
+  font-family: Inter;
 `;
 
 const ErrorContainer = styled.div`
