@@ -26,6 +26,7 @@ import NetworkIcons from "components/primitives/NetworkIcons";
 import { EVMAssetId, EVMNetwork } from "networks/evm";
 import { getEVMHistoricalTransactions } from "utils/evm/api";
 import EthIcon from "assets/svgComponents/EthIcon";
+import PolkadotIcon from "assets/svgComponents/PolkadotIcon";
 
 type Props = {
   isMenuOpen?: boolean;
@@ -79,9 +80,9 @@ export const ActivityItem = ({ transaction, onClick, bgColor }: Props) => {
           {"  "} {format(Number(transaction.timestamp) * 1000, "dd MMM yyyy")}
         </InfoBottom>
       </Info>
-      <Actions>
+      {/* <Actions>
         <ThreeDotsIcon />
-      </Actions>
+      </Actions> */}
       {/* </StyledLink> */}
     </ActivityItemContainer>
   );
@@ -221,7 +222,11 @@ export default function Activity() {
                 ),
               }}
               options={options}
-              components={{ Option: IconOption, SingleValue: customSingleValue }}
+              components={{
+                Option: IconOption,
+                SingleValue: customSingleValue,
+                IndicatorSeparator: () => null,
+              }}
             />
           </SelectContainer>
           {transactions?.length ? (
@@ -400,7 +405,7 @@ const Icon = styled.div`
   width: 36px;
   height: 36px;
   border-radius: 100%;
-  background-color: #eeeeee;
+  background-color: transparent;
   position: relative;
   display: flex;
   align-items: center;

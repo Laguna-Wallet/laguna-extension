@@ -7,8 +7,6 @@ import { getLatestTransactionsForSingleChain } from "utils/polkadot";
 import { useEffect, useState } from "react";
 import ActivityInfo from "./ActivityInfo";
 import { useSelector } from "react-redux";
-import PolkadotLogoIcon from "assets/svgComponents/PolkadotLogoIcon";
-import KusamaLogoIcon from "assets/svgComponents/KusamaLogoIcon";
 import { Asset, Transaction } from "utils/types";
 import Popup from "components/Popup/Popup";
 import { ActivityItem } from "./Activity";
@@ -106,7 +104,7 @@ export default function ChainActivity() {
             dataLength={transactions.length}
             next={fetchMoreData}
             hasMore={count !== transactions.length}
-            style={{ display: "flex", flexDirection: "column" }}
+            style={{ display: "flex", flexDirection: "column", width: "100%" }}
             scrollableTarget="scrollableDiv"
             loader={<h4>Loading...</h4>}>
             {transactions &&
@@ -121,23 +119,6 @@ export default function ChainActivity() {
               })}
           </InfiniteScroll>
         </div>
-
-        {/* {!loading ? (
-          <ActivityItemsContainer>
-            {transactions &&
-              transactions.map((transaction: any) => {
-                return (
-                  <ActivityItem
-                    onClick={() => handleClick(transaction)}
-                    key={transaction.hex}
-                    transaction={transaction}
-                  />
-                );
-              })}
-          </ActivityItemsContainer>
-        ) : (
-          <Loading>Loading...</Loading>
-        )} */}
       </Content>
 
       {isPopupOpen && transaction && (
@@ -151,21 +132,6 @@ export default function ChainActivity() {
       <Footer activeItem="wallet" />
     </Container>
   );
-}
-
-function handleIcons(chain: any) {
-  switch (chain) {
-    case "westend":
-      return <PolkadotLogoIcon width={20} height={20} />;
-      break;
-    case "polkadot":
-      return <PolkadotLogoIcon width={20} height={20} />;
-      break;
-    case "kusama":
-      return <KusamaLogoIcon fill="#111" stroke="#111" />;
-      break;
-    default:
-  }
 }
 
 const Container = styled.div<{ bg: string }>`
@@ -190,6 +156,10 @@ const Content = styled.div`
   flex-direction: column;
   padding: 15px;
   box-sizing: border-box;
+
+  .infinite-scroll-component__outerdiv {
+    width: 100%;
+  }
 `;
 
 const ActivityItemsContainer = styled.div`
@@ -252,7 +222,7 @@ const Info = styled.span`
 `;
 
 const InfoTop = styled.span`
-  font-family: 'IBM Plex Sans';
+  font-family: "IBM Plex Sans";
   font-size: 14px;
   font-weight: 500;
   color: #18191a;
@@ -263,7 +233,7 @@ const InfoTop = styled.span`
 `;
 
 const InfoBottom = styled.div`
-  font-family: 'IBM Plex Sans';
+  font-family: "IBM Plex Sans";
   font-size: 12px;
   color: #777e90;
 `;

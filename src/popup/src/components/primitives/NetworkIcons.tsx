@@ -1,6 +1,8 @@
 import KusamaIcon from "assets/imgs/NetworkIcons/KusamaCircle.png";
 import MoonriverIcon from "assets/svgComponents/MoonriverIcon";
-import PolkadotIcon from "assets/imgs/NetworkIcons/polkadotPink.png";
+import PolkadotPinkIcon from "assets/imgs/NetworkIcons/polkadotPink.png";
+import PolkadotIcon from "assets/imgs/NetworkIcons/PolkadotIcon.png";
+
 import AstarIcon from "assets/imgs/NetworkIcons/AstarIcon.png";
 import AvalancheIcon from "assets/imgs/NetworkIcons/Avalanche.png";
 import USDCIcon from "assets/imgs/NetworkIcons/USDC.png";
@@ -20,6 +22,7 @@ type Props = {
   token?: string;
   fill?: string;
   isSmallIcon?: boolean;
+  iconType?: "full" | "thin";
 };
 
 export default function NetworkIcons({
@@ -29,9 +32,14 @@ export default function NetworkIcons({
   token,
   isSmallIcon = false,
   fill,
+  iconType,
 }: Props) {
-  if (chain === "polkadot" || chain === "westend") {
+  if ((chain === "polkadot" || chain === "westend") && iconType === "thin") {
     return <IconContainer width={width} height={height} img={PolkadotIcon} />;
+  }
+
+  if (chain === "polkadot" || chain === "westend") {
+    return <IconContainer width={width} height={height} img={PolkadotPinkIcon} />;
   }
 
   if (chain === "kusama") {

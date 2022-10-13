@@ -103,7 +103,7 @@ export async function fetchTransactions(
     credentials: "same-origin",
     headers: {
       "Content-Type": "application/json",
-      "X-API-Key": process.env.REACT_APP_SUBSCAN_KEY as string,
+      // "X-API-Key": process.env.REACT_APP_SUBSCAN_KEY as string,
     },
     body: JSON.stringify({ address, row: 30, page }),
   });

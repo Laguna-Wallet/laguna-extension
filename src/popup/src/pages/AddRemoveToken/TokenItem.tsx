@@ -113,7 +113,7 @@ const Text = styled.div`
 `;
 
 const ChainTitle = styled.span`
-  font-family: 'IBM Plex Sans';
+  font-family: "IBM Plex Sans";
   font-size: 14px;
   font-weight: 500;
   color: #000;
@@ -121,7 +121,7 @@ const ChainTitle = styled.span`
 `;
 
 const Balance = styled.span`
-  font-family: 'IBM Plex Sans';
+  font-family: "IBM Plex Sans";
   font-size: 10px;
   color: #23262f;
 `;

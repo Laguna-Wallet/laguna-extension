@@ -167,7 +167,7 @@ function Wallet({ snackbar }: Props) {
           assets.map((asset: any) => {
             return (
               <ChainItem
-                key={asset.chain}
+                key={asset.symbol}
                 asset={asset}
                 accountAddress={account.getActiveAccount()?.address}
                 handleClick={() => {

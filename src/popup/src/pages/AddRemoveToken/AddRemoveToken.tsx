@@ -1,5 +1,5 @@
 import { useState } from "react";
-import styled from "styled-components";
+import styled from "styled-components/macro";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { router } from "router/router";
@@ -94,12 +94,12 @@ const Container = styled.div`
   box-sizing: border-box;
   position: relative;
   background-size: cover;
-  padding-top: 110px;
+  padding-top: 90px;
 `;
 
 const Content = styled.div`
   height: 100%;
-  padding: 15px;
+  padding: 0px 26px;
   border-top-right-radius: 15px;
   border-top-left-radius: 15px;
   background-color: #fff;
