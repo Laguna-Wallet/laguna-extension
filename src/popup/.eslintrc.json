@@ -30,6 +30,7 @@
     "semi": [2, "always"],
     "comma-dangle": ["error", "always-multiline"],
     "@typescript-eslint/no-explicit-any": ["off", { "ignoreRestArgs": true }],
+    "@typescript-eslint/no-empty-interface": 0,
     "no-unused-expressions": 0,
     "no-use-before-define": 0,
     "no-unused-vars": 0,

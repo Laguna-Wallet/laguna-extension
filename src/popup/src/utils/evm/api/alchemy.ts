@@ -33,17 +33,17 @@ export interface IAlchemyTransferObject {
 }
 
 const getApiUrl = (networkId: EVMNetwork) : string => {
-    switch (networkId) {
-      case EVMNetwork.ETHEREUM:
-        return `https://eth-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_KEY}`;
-      case EVMNetwork.ETHEREUM_TESTNET_GOERLI:
-        return `https://eth-goerli.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_KEY}`;
-      default:
-        throw new Error("Non Supported Network");
-    }
-  };
-  
-  export const getHistoricalTransactions = async (address: string, networkId: EVMNetwork, assetId: EVMAssetId, fromBlock?: BigNumber)
+  switch (networkId) {
+    case EVMNetwork.ETHEREUM:
+      return `https://eth-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_KEY}`;
+    case EVMNetwork.ETHEREUM_TESTNET_GOERLI:
+      return `https://eth-goerli.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_KEY}`;
+    default:
+      throw new Error("Non Supported Network");
+  }
+};
+
+export const getHistoricalTransactions = async (address: string, networkId: EVMNetwork, assetId: EVMAssetId, fromBlock?: BigNumber)
   : Promise<IEVMHistoricalTransaction[]> => {
     const startTime = Date.now();
     try {

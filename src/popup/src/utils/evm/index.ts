@@ -222,7 +222,6 @@ export const getAssetIdBySmartContractAddress = (
 
 export const getHistoricalTransactions = async (address: string, networkId: EVMNetwork, assetId: EVMAssetId)
 : Promise<IEVMHistoricalTransaction[]> => {
-  console.log(address, networkId, assetId);
   switch (networkId) {
     case EVMNetwork.LOCALHOST:
       return [];
