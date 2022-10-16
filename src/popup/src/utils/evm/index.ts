@@ -59,10 +59,10 @@ export const getNonce = async (network: EVMNetwork, address: string): Promise<Bi
   return new BigNumber(nonce);
 };
 
-export const getGasPrice = async (network: EVMNetwork): Promise<BigNumber> => {
+export const getGasPriceInGwei = async (network: EVMNetwork): Promise<BigNumber> => {
   const provider = getProvider(network);
   const gasPrice = await provider.getGasPrice();
-  return new BigNumber(gasPrice.toString());
+  return new BigNumber(gasPrice.toString()).dividedBy("1E9");
 };
 
 export const estimateGasLimit = async (network: EVMNetwork, param: IEVMBuildTransaction): Promise<BigNumber> => {
@@ -100,7 +100,7 @@ export const getBuildTransactionOnChainParam = async (
 ): Promise<IEVMBuildTransactionOnChainParam> => {
   const [nonce, gasPriceInGwei, nativeCurrenyBalance, assetBalance] = await Promise.all([
     await getNonce(networkId, fromAddress),
-    await getGasPrice(networkId),
+    await getGasPriceInGwei(networkId),
     await getBalance(
       networkId,
       fromAddress,
