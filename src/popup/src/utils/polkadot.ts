@@ -30,11 +30,20 @@ import { decodeAddress, encodeAddress } from "@polkadot/keyring";
 import BigNumber from "bignumber.js";
 import * as AES from "crypto-js/aes";
 import Utf8 from "crypto-js/enc-utf8";
-import { fetchTransactions, transformTransfers } from "./fetchTransactions";
-import { generateRandomBase64Avatar } from "utils";
-import { generateNewWalletAddress } from "./evm/api";
-import { EVMNetwork } from "networks/evm";
-import { EVMAssetType } from "networks/evm/asset";
+import {
+  fetchSubstrateAccountTransactionsByChain,
+  fetchTransactions,
+  transformTransfers,
+} from "./fetchTransactions";
+import { generateRandomBase64Avatar, transformEVMHistoryToTransaction } from "utils";
+import {
+  generateNewWalletAddress,
+  getAssetIdBySmartContractAddress,
+  getEVMHistoricalTransactions,
+  isEVMChain,
+} from "./evm/api";
+import { EVMAssetId, EVMNetwork } from "networks/evm";
+import { EvmAssets, EVMAssetType } from "networks/evm/asset";
 
 // TODO appropriate typing
 
@@ -470,10 +479,36 @@ export function accountsChangePassword(address: string, oldPass: string, newPass
 export async function getLatestTransactionsForSingleChain(
   address: string,
   chain: string,
+  symbol: string,
   page: number,
   row: number,
 ): Promise<{ count: number; transactions: Transaction[] }> {
   // TODO Token
+  let transactions = [];
+  if (isEVMChain(chain)) {
+    const ethAsset = EvmAssets[chain][symbol];
+
+    // todo revise with Evelin about contract address
+    const assetId = getAssetIdBySmartContractAddress(
+      ethAsset?.contractAddress as string,
+      chain as EVMNetwork,
+    );
+
+    const ethHistory = await getEVMHistoricalTransactions(
+      address,
+      EVMNetwork.ETHEREUM,
+      assetId as EVMAssetId,
+    );
+
+    transactions = transformEVMHistoryToTransaction(ethHistory);
+  } else {
+    transactions = (await fetchSubstrateAccountTransactionsByChain(
+      address,
+      chain,
+      symbol,
+    )) as Transaction[];
+  }
+  console.log("~ transactions", transactions);
   const data = await fetchTransactions(address, chain, "USDC", row, page);
   return {
     count: data?.data?.count,

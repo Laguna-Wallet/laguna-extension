@@ -56,7 +56,6 @@ export async function fetchSubstrateAccountTransactionsByChain(
     let retrieved_count = 0;
     let page = 0;
     //   let accountTransfers = [];
-    console.log("hi");
 
     const res = await fetchTransactions(address, chain, token, 30, page);
 

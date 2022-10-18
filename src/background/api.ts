@@ -21,8 +21,9 @@ export async function Retrieve_balance_change_rates() {
 
 export async function sendTransaction(pairs, ethWallets, payload) {
   try {
+    console.log("~ payload", payload)
+
     if (payload.chain === EVMNetwork.ETHEREUM || payload.chain === EVMNetwork.AVALANCHE_TESTNET_FUJI) {
-      console.log("~ payload", payload)
       const wallet = ethWallets.find((wallet) => {
         return wallet.address === payload.toBeSignTransaction.from
       })

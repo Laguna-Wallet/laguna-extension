@@ -7,7 +7,7 @@ import { ethers } from "ethers";
 import { changeAccountsBalances, changeTokenReceived } from "redux/actions";
 import { checkBalanceChange, timer } from "utils";
 import { getFromStorage, saveToStorage } from "./chrome";
-import { getEVMBalance } from "utils/evm/api";
+import { getEVMBalance, isEVMChain } from "utils/evm/api";
 import { EVMNetwork } from "networks/evm";
 import { EvmAssets } from "networks/evm/asset";
 import { recodeAddress } from "./polkadot";
@@ -74,27 +74,17 @@ export async function fetchAccountsBalances(
         await timer(1000);
         const network = networks[i];
 
-        if (
-          (network.chain === EVMNetwork.ETHEREUM ||
-            network.chain === EVMNetwork.AVALANCHE_TESTNET_FUJI) &&
-          !ethAddress
-        ) {
+        if (isEVMChain(network.chain) && !ethAddress) {
           i++;
           continue;
         }
 
-        if (
-          ethAddress &&
-          (network.chain === EVMNetwork.ETHEREUM ||
-            network.chain === EVMNetwork.AVALANCHE_TESTNET_FUJI)
-        ) {
+        if (ethAddress && isEVMChain(network.chain)) {
           const ethBalance = await getEVMBalance(
-            network.chain,
+            network.chain as EVMNetwork,
             ethAddress,
             EvmAssets[network.chain][network.symbol],
           );
-
-          console.log("~ ethBalance", ethBalance);
 
           if (new BigNumber(ethBalance.toString()).isEqualTo(0)) {
             i++;

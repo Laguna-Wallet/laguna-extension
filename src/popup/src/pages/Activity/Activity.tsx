@@ -24,7 +24,7 @@ import { useHistory } from "react-router-dom";
 import Select, { components } from "react-select";
 import NetworkIcons from "components/primitives/NetworkIcons";
 import { EVMAssetId, EVMNetwork } from "networks/evm";
-import { getEVMHistoricalTransactions } from "utils/evm/api";
+import { getEVMHistoricalTransactions, isEVMChain } from "utils/evm/api";
 import EthIcon from "assets/svgComponents/EthIcon";
 import PolkadotIcon from "assets/svgComponents/PolkadotIcon";
 
@@ -124,7 +124,7 @@ export default function Activity() {
       setLoading(true);
       let transactions: Transaction[] = [];
 
-      if (chain.value.chain === EVMNetwork.ETHEREUM) {
+      if (isEVMChain(chain.value.chain)) {
         const ethHistory = await getEVMHistoricalTransactions(
           address,
           EVMNetwork.ETHEREUM,

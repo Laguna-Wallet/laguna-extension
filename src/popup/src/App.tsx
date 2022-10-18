@@ -125,101 +125,102 @@ function App() {
   if (isLoading) {
     <div>Loading</div>;
   }
+  return <TransactionSentEVM blockHash="asd" />;
 
-  return (
-    <div className="App">
-      <Switch>
-        <Route exact path={router.home}>
-          <Wallet />
-        </Route>
+  // return (
+  //   <div className="App">
+  //     <Switch>
+  //       <Route exact path={router.home}>
+  //         <Wallet />
+  //       </Route>
 
-        <Route path={router.importAccount}>
-          <ImportAccount />
-        </Route>
-        <Route path={router.importPhase}>
-          <ImportPhase />
-        </Route>
-        <Route path={router.encodeAccount}>
-          <EncodeAccount />
-        </Route>
-        <Route path={router.createPassword}>
-          <CreatePassword />
-        </Route>
-        <Route path={router.setupComplete}>
-          <SetupComplete />
-        </Route>
-        <Route path={router.addressBook}>
-          <AddressBook />
-        </Route>
-        <Route path={router.connectedSites}>
-          <ConnectedSites />
-        </Route>
-        <Route path={router.autoLockTimer}>
-          <AutoLockTimer />
-        </Route>
-        <Route path={router.changePassword}>
-          <ChangePassword />
-        </Route>
-        <Route path={router.createAccount}>
-          <CreateAccount />
-        </Route>
-        <Route path={router.backupAccount}>
-          <BackupAccount />
-        </Route>
-        <Route path={router.removeAccount}>
-          <RemoveAccount />
-        </Route>
-        <Route path={router.welcomeBack}>
-          <WelcomeBack />
-        </Route>
-        <Route path={router.signUp}>
-          <SignUp />
-        </Route>
-        <Route path={router.requestToConnect}>
-          <RequestToConnect />
-        </Route>
-        <Route path={router.requestToSign}>
-          <RequestToSign />
-        </Route>
-        <Route path={router.requestToSignRaw}>
-          <RequestToSignRaw />
-        </Route>
-        <Route path={router.activity}>
-          <Activity />
-        </Route>
-        <Route path={router.tokenDashboard}>
-          <TokenDashboard />
-        </Route>
-        <Route path={router.addImportForBoardedUser}>
-          <AddImportForBoardedUser />
-        </Route>
-        <Route path={router.addAddress}>
-          <AddAddress />
-        </Route>
-        <Route path={router.send}>
-          <Send />
-        </Route>
-        <Route path={router.chainActivity}>
-          <ChainActivity />
-        </Route>
-        <Route path={router.receive}>
-          <Receive />
-        </Route>
-        <Route path={router.addRemoveToken}>
-          <AddRemoveToken />
-        </Route>
-      </Switch>
-      <Snackbar
-        width="194.9px"
-        isOpen={tokenReceived}
-        close={() => dispatch(changeTokenReceived({ tokenReceived: false }))}
-        message={"New Deposit Received"}
-        type="success"
-        // left="110px"
-        bottom="70px"
-      />
-    </div>
-  );
+  //       <Route path={router.importAccount}>
+  //         <ImportAccount />
+  //       </Route>
+  //       <Route path={router.importPhase}>
+  //         <ImportPhase />
+  //       </Route>
+  //       <Route path={router.encodeAccount}>
+  //         <EncodeAccount />
+  //       </Route>
+  //       <Route path={router.createPassword}>
+  //         <CreatePassword />
+  //       </Route>
+  //       <Route path={router.setupComplete}>
+  //         <SetupComplete />
+  //       </Route>
+  //       <Route path={router.addressBook}>
+  //         <AddressBook />
+  //       </Route>
+  //       <Route path={router.connectedSites}>
+  //         <ConnectedSites />
+  //       </Route>
+  //       <Route path={router.autoLockTimer}>
+  //         <AutoLockTimer />
+  //       </Route>
+  //       <Route path={router.changePassword}>
+  //         <ChangePassword />
+  //       </Route>
+  //       <Route path={router.createAccount}>
+  //         <CreateAccount />
+  //       </Route>
+  //       <Route path={router.backupAccount}>
+  //         <BackupAccount />
+  //       </Route>
+  //       <Route path={router.removeAccount}>
+  //         <RemoveAccount />
+  //       </Route>
+  //       <Route path={router.welcomeBack}>
+  //         <WelcomeBack />
+  //       </Route>
+  //       <Route path={router.signUp}>
+  //         <SignUp />
+  //       </Route>
+  //       <Route path={router.requestToConnect}>
+  //         <RequestToConnect />
+  //       </Route>
+  //       <Route path={router.requestToSign}>
+  //         <RequestToSign />
+  //       </Route>
+  //       <Route path={router.requestToSignRaw}>
+  //         <RequestToSignRaw />
+  //       </Route>
+  //       <Route path={router.activity}>
+  //         <Activity />
+  //       </Route>
+  //       <Route path={router.tokenDashboard}>
+  //         <TokenDashboard />
+  //       </Route>
+  //       <Route path={router.addImportForBoardedUser}>
+  //         <AddImportForBoardedUser />
+  //       </Route>
+  //       <Route path={router.addAddress}>
+  //         <AddAddress />
+  //       </Route>
+  //       <Route path={router.send}>
+  //         <Send />
+  //       </Route>
+  //       <Route path={router.chainActivity}>
+  //         <ChainActivity />
+  //       </Route>
+  //       <Route path={router.receive}>
+  //         <Receive />
+  //       </Route>
+  //       <Route path={router.addRemoveToken}>
+  //         <AddRemoveToken />
+  //       </Route>
+  //     </Switch>
+  //     <Snackbar
+  //       width="194.9px"
+  //       isOpen={tokenReceived}
+  //       close={() => dispatch(changeTokenReceived({ tokenReceived: false }))}
+  //       message={"New Deposit Received"}
+  //       type="success"
+  //       // left="110px"
+  //       bottom="70px"
+  //     />
+  //   </div>
+  // );
 }
 
 export default App;

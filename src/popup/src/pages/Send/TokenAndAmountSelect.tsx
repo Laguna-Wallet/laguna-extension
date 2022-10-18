@@ -36,8 +36,6 @@ export default function TokenAndAmountSelect({
 
   const selectOptions = currencyType === CurrencyType.Crypto ? tokens : fiatList;
 
-  // cryptoToFiat
-  // fiatToCrypto
   const renderSelect = () => {
     return (
       <StyledSelect>
@@ -60,15 +58,9 @@ export default function TokenAndAmountSelect({
     );
   };
 
-  const handleAmountDisplay = (amount: number) => {
-    if (!amount) return "";
-
-    if (currencyType === CurrencyType.Crypto) {
-      return amount;
-    }
-
-    return cryptoToFiat(amount, price);
-  };
+  // const handleAmountDisplay = (amount: number, currencyType: CurrencyType) => {
+  //   console.log("~ amount", amount);
+  // };
 
   return (
     <Container>
@@ -81,7 +73,6 @@ export default function TokenAndAmountSelect({
         defaultValue={" "}
         component={Input}
         onChangeCallback={onChangeCallback}
-        format={handleAmountDisplay}
       />
       <Field name="token" label="token" component={renderSelect} />
       {/* <IconContainer>

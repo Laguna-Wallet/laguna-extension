@@ -26,6 +26,7 @@ import { recodeAddress } from "utils/polkadot";
 import { sendMessagePromise } from "utils/chrome";
 import { IEVMBuildTransaction, IEVMToBeSignTransaction } from "utils/evm/interfaces";
 import { EVMNetwork } from "networks/evm";
+import { isEVMChain } from "utils/evm/api";
 
 type Props = {
   fee: string;
@@ -72,7 +73,7 @@ function Confirm({
   const name = account?.getActiveAccount()?.meta?.name;
 
   const handleClick = async () => {
-    if (chain === EVMNetwork.ETHEREUM || chain === EVMNetwork.AVALANCHE_TESTNET_FUJI) {
+    if (isEVMChain(chain)) {
       browser.runtime.sendMessage({
         type: Messages.SendTransaction,
         payload: { chain, toBeSignTransaction },

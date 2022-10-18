@@ -50,7 +50,7 @@ export default function ChainActivity() {
       setLoading(true);
       if (chain) {
         const { transactions, count }: { count: number; transactions: Transaction[] } =
-          await getLatestTransactionsForSingleChain(address, chain, 0, 10);
+          await getLatestTransactionsForSingleChain(address, chain, asset?.symbol as string, 0, 10);
 
         setTransactions(transactions);
         setCount(count);
@@ -72,7 +72,13 @@ export default function ChainActivity() {
     setLoading(true);
     if (chain) {
       const { transactions, count }: { count: number; transactions: Transaction[] } =
-        await getLatestTransactionsForSingleChain(address, chain, page, 10);
+        await getLatestTransactionsForSingleChain(
+          address,
+          chain,
+          asset?.symbol as string,
+          page,
+          10,
+        );
       setTransactions((prev) => [...prev, ...transactions]);
       setLoading(false);
       setPage((prev) => prev + 1);

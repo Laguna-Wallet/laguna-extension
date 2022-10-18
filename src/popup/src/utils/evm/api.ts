@@ -152,6 +152,14 @@ export const buildEvmTransaction = async (
   param: IEVMBuildTransaction,
 ): Promise<IEVMToBeSignTransaction> => {
   const { network, asset, amount, fromAddress, toAddress, nonce, gasPriceInGwei, gasLimit } = param;
+  console.log("network", network);
+  console.log("~ asset", asset);
+  console.log("~ amount", amount.toString());
+  console.log("fromAddress", fromAddress);
+  console.log("toAddress", toAddress);
+  console.log("nonce", nonce.toString());
+  console.log("gasPriceInGwei", gasPriceInGwei.toString());
+  console.log("gasLimit", gasLimit?.toString());
 
   if (asset.assetType === EVMAssetType.NATIVE) {
     const toBeSignTransaction: IEVMToBeSignTransaction = {

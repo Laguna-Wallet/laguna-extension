@@ -11,7 +11,7 @@ import {
   recodeAddressForTransaction,
 } from "utils/polkadot";
 import { useEffect, useReducer, useState } from "react";
-import { AccountMeta, Asset, Network, SelectType } from "utils/types";
+import { AccountMeta, Asset, CurrencyType, Network, SelectType } from "utils/types";
 import { useWizard, Wizard } from "react-use-wizard";
 import TransactionSent from "./SuccesPage/TransactionSentSubstrate";
 import SendToken from "./SendToken";
@@ -40,6 +40,7 @@ import {
   IEVMToBeSignTransaction,
 } from "utils/evm/interfaces";
 import { EVMAssetId, EVMNetwork } from "networks/evm";
+import { handleCurrencyCorrection } from "utils";
 
 export enum SendAccountFlowEnum {
   SendToTrustedContact = "SendToTrustedContact",
@@ -100,12 +101,15 @@ function Send({ initialIsContactsPopupOpen }: Props) {
   const [abilityToTransfer, setAbilityToTransfer] = useState<boolean>(true);
   const [blockHash, setBlockHash] = useState<string>("");
   const [toBeSignTransaction, setToBeSignTransaction] = useState<IEVMToBeSignTransaction>();
+  const [currencyType, setCurrencyType] = useState<CurrencyType>(CurrencyType.Crypto);
 
   const [toBeSignTransactionParams, setToBeSignTransactionParams] =
     useState<IEVMBuildTransaction>();
 
   const reduxSendTokenState = useSelector((state: any) => state.sendToken);
   const form = useSelector((state: any) => state?.form?.sendToken?.values);
+  const price =
+    reduxSendTokenState?.selectedAsset && prices[reduxSendTokenState?.selectedAsset?.symbol];
 
   useEffect(() => {
     async function goPolkadot() {
@@ -120,7 +124,10 @@ function Send({ initialIsContactsPopupOpen }: Props) {
       const api = await getApiInstance(reduxSendTokenState.selectedAsset.chain);
 
       const factor = new BigNumber(10).pow(new BigNumber(api.registry.chainDecimals[0]));
-      const amount = new BigNumber(form.amount).multipliedBy(factor);
+
+      const amount = new BigNumber(
+        handleCurrencyCorrection(form.amount, currencyType, price),
+      ).multipliedBy(factor);
 
       const balance = await api.derive.balances.all(activeAccount?.address);
       const available = `${balance.availableBalance}`;
@@ -195,12 +202,12 @@ function Send({ initialIsContactsPopupOpen }: Props) {
       const params = {
         network: ethNetwork,
         asset: ethAsset,
-        amount: new BigNumber(form.amount),
+        amount: new BigNumber(handleCurrencyCorrection(form.amount, currencyType, price)),
         fromAddress: activeAccount?.meta?.ethAddress,
         toAddress: form?.address,
         nonce: currentNonce,
         gasPriceInGwei,
-        gasLimit: new BigNumber(100000),
+        gasLimit: gasPriceInGwei,
         // numOfPendingTransaction: BigNumber; // TODO for adding up nonce, blocked by cache pending txn
       };
 
@@ -219,9 +226,9 @@ function Send({ initialIsContactsPopupOpen }: Props) {
       setAbilityToTransfer(true);
 
       setLoading(false);
-      // setAmountToSend(ethValue.toString());
+      setAmountToSend(handleCurrencyCorrection(form.amount, currencyType, price).toString());
 
-      //   // setTransfer(transfer);
+      setTransfer(transfer);
     }
 
     if (
@@ -258,6 +265,8 @@ function Send({ initialIsContactsPopupOpen }: Props) {
           setAccountMeta={setAccountMeta}
           setToBeSignTransaction={setToBeSignTransaction}
           toBeSignTransactionParams={toBeSignTransactionParams}
+          currencyType={currencyType}
+          setCurrencyType={setCurrencyType}
         />
 
         {/* todo pass one payload prop for all the chains   */}

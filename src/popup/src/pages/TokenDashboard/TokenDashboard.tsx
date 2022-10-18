@@ -80,6 +80,7 @@ export default function TokenDashboard() {
         const { transactions } = await getLatestTransactionsForSingleChain(
           currAccountAddress,
           chain,
+          symbol,
           0,
           10,
         );
