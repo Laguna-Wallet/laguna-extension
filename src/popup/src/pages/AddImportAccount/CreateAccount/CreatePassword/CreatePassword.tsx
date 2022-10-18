@@ -206,7 +206,7 @@ const Form = styled.form<{ redirectedFromForgotPassword?: boolean }>`
 `;
 
 const Title = styled.span`
-  font-family: 'IBM Plex Sans';
+  font-family: "IBM Plex Sans";
   font-size: 22px;
   font-weight: 600;
   line-height: 1.82;

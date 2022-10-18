@@ -1,14 +1,15 @@
 import { useRef } from "react";
 import RightArrow from "assets/svgComponents/RightArrow";
 import SuccessfullySentIcon from "assets/svgComponents/SuccesfullySentIcon";
+import bg from "assets/imgs/ethSendSuccessBg.png";
 import Button from "components/primitives/Button";
 import styled from "styled-components";
-import bg from "../../assets/imgs/transaction-sent.png";
 import { useDispatch, useSelector } from "react-redux";
 import { reset } from "redux-form";
 import { useHistory } from "react-router-dom";
 import { router } from "router/router";
 import browser from "webextension-polyfill";
+import EthSuccessIcon from "assets/svgComponents/EthSuccessIcon";
 
 type Props = {
   blockHash: string;
@@ -17,10 +18,10 @@ export default function TransactionSentEVM({ blockHash }: Props) {
   const history = useHistory();
 
   const dispatch = useDispatch();
-  const chain = useSelector((state: any) => state.sendToken.selectedAsset.chain);
-  const onClick = (hash: string, chain: string) => {
-    browser.windows.create({ url: `https://${chain}.subscan.io/extrinsic/${hash}` });
-  };
+  // const chain = useSelector((state: any) => state.sendToken.selectedAsset.chain);
+  // const onClick = (hash: string, chain: string) => {
+  // browser.windows.create({ url: `https://${chain}.subscan.io/extrinsic/${hash}` });
+  // };
 
   const handleClick = () => {
     dispatch(reset("sendToken"));
@@ -30,14 +31,14 @@ export default function TransactionSentEVM({ blockHash }: Props) {
   return (
     <Container>
       <Content>
-        <IconContainer bg={bg}>
-          <SuccessfullySentIcon fill="#fff" />
+        <IconContainer>
+          <EthSuccessIcon />
         </IconContainer>
         <Text>TRANSACTION SENT</Text>
       </Content>
       <ButtonsContainer>
         <Button
-          onClick={() => onClick(blockHash, chain)}
+          // onClick={() => onClick(blockHash, chain)}
           text="View on Blockchain"
           Icon={<RightArrow width={23} />}
           bgColor="#e2e2e2"
@@ -83,11 +84,9 @@ const Content = styled.div`
   align-items: center;
 `;
 
-const IconContainer = styled.div<{ bg: string }>`
+const IconContainer = styled.div`
   width: 225px;
   height: 225px;
-  background-image: ${({ bg }) => `url(${bg})`};
-  background-size: cover;
   border-radius: 100%;
   display: flex;
   align-items: center;

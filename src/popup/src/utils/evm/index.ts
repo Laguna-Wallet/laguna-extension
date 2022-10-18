@@ -27,6 +27,18 @@ export const generateNewWalletAddress = (mnemonicSeed: string): string => {
   return wallet.address;
 };
 
+export const isEVMChain = (chain: string): boolean => {
+  if (
+    chain === EVMNetwork.ETHEREUM ||
+    chain === EVMNetwork.AVALANCHE_TESTNET_FUJI ||
+    chain === EVMNetwork.ETHEREUM_TESTNET_GOERLI
+  ) {
+    return true;
+  }
+
+  return false;
+};
+
 export const toCheckSumAddress = (address: string): string => {
   const checksumAddress = ethers.utils.getAddress(address);
   return checksumAddress;
@@ -50,8 +62,8 @@ export const isValidAddress = (address: string): Response => {
 };
 
 export const getProvider = (network: EVMNetwork): ethers.providers.JsonRpcProvider => {
-  return new ethers.providers.JsonRpcProvider(networks[network].nodeUrl);
   // return new ethers.providers.JsonRpcProvider("HTTP://127.0.0.1:7545");
+  return new ethers.providers.JsonRpcProvider(networks[network].nodeUrl);
 };
 
 export const getNetworkInfo = (network: EVMNetwork): IEVMNetwork => {
@@ -137,6 +149,14 @@ export const getBuildTransactionOnChainParam = async (
 
 export const buildTransaction = (param: IEVMBuildTransaction): IEVMToBeSignTransaction => {
   const { network, asset, amount, fromAddress, toAddress, nonce, gasPriceInGwei, gasLimit } = param;
+  console.log("network", network);
+  console.log("~ asset", asset);
+  console.log("~ amount", amount.toString());
+  console.log("fromAddress", fromAddress);
+  console.log("toAddress", toAddress);
+  console.log("nonce", nonce.toString());
+  console.log("gasPriceInGwei", gasPriceInGwei.toString());
+  console.log("gasLimit", gasLimit?.toString());
 
   if (asset.assetType === EVMAssetType.NATIVE) {
     const toBeSignTransaction: IEVMToBeSignTransaction = {

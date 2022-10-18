@@ -2,7 +2,7 @@ import { KeypairType } from "@polkadot/util-crypto/types";
 import type { Signer as InjectedSigner } from "@polkadot/api/types";
 import type { ExtDef } from "@polkadot/types/extrinsic/signedExtensions/types";
 import type { ProviderInterface } from "@polkadot/rpc-provider/types";
-import { EVMAssetType } from "networks/evm/asset";
+import { EvmAssets, EVMAssetType } from "networks/evm/asset";
 import { EVMNetwork } from "networks/evm";
 
 export enum SecurityOptionsEnum {
@@ -163,6 +163,15 @@ export type Token =
   | TokenSymbols.ALOT
   | TokenSymbols.AVAX;
 
+export const HardcodedAssetList: Record<string, boolean> = {
+  [TokenSymbols.polkadot]: true,
+  [TokenSymbols.kusama]: true,
+  [TokenSymbols.ethereum]: true,
+  [TokenSymbols.USDC]: true,
+  [TokenSymbols.USDT]: true,
+  //   wBTC
+};
+
 // todo move chain names to enum
 export interface Transaction {
   chain:
@@ -310,7 +319,7 @@ export interface AccountMeta {
 
 export const networks: Network[] = [
   {
-    name: "Polkadot",
+    name: "Westend",
     symbol: TokenSymbols.westend,
     chain: "westend",
     node: "wss://westend-rpc.polkadot.io",
@@ -337,22 +346,22 @@ export const networks: Network[] = [
     decimal: 18,
     assetType: EVMAssetType.NATIVE,
   },
-  // {
-  //   name: "USD Coin",
-  //   symbol: TokenSymbols.USDC,
-  //   chain: EVMNetwork.ETHEREUM,
-  //   decimal: 6,
-  //   assetType: EVMAssetType.ERC20,
-  //   contractAddress: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
-  // },
-  // {
-  //   name: "Tether USD",
-  //   symbol: TokenSymbols.USDT,
-  //   chain: EVMNetwork.ETHEREUM,
-  //   decimal: 6,
-  //   assetType: EVMAssetType.ERC20,
-  //   contractAddress: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
-  // },
+  {
+    name: "USD Coin",
+    symbol: TokenSymbols.USDC,
+    chain: EVMNetwork.ETHEREUM,
+    decimal: 6,
+    assetType: EVMAssetType.ERC20,
+    contractAddress: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+  },
+  {
+    name: "Tether USD",
+    symbol: TokenSymbols.USDT,
+    chain: EVMNetwork.ETHEREUM,
+    decimal: 6,
+    assetType: EVMAssetType.ERC20,
+    contractAddress: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+  },
   // {
   //   name: "Ethereum",
   //   symbol: TokenSymbols.ethereum,

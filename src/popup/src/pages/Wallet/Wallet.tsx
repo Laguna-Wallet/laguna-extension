@@ -160,29 +160,14 @@ function Wallet({ snackbar }: Props) {
     [assets, filtered, reduceAssets],
   );
 
-  const renderAssets = isEmpty ? (
-    <ListContentChild>
-      {emptyAssets.map((asset: Asset) => {
-        return (
-          <ChainItem
-            key={asset.chain}
-            asset={asset}
-            accountAddress={account.getActiveAccount()?.address}
-            handleClick={() => {
-              history.push({ pathname: router.tokenDashboard, state: { asset } });
-            }}
-          />
-        );
-      })}
-    </ListContentChild>
-  ) : (
+  const renderAssets = (
     <ListContentChild>
       {activeTab === 1
         ? assets.length > 0 &&
           assets.map((asset: any) => {
             return (
               <ChainItem
-                key={asset.chain}
+                key={asset.symbol}
                 asset={asset}
                 accountAddress={account.getActiveAccount()?.address}
                 handleClick={() => {

@@ -18,7 +18,7 @@ import { isNumeric } from "utils/validations";
 import { useDispatch, useSelector, connect } from "react-redux";
 import { Field, change, reset, reduxForm, getFormSyncErrors, formValueSelector } from "redux-form";
 import Snackbar from "components/Snackbar/Snackbar";
-import { isObjectEmpty, objectToArray, truncateString } from "utils";
+import { cryptoToFiat, fiatToCrypto, isObjectEmpty, objectToArray, truncateString } from "utils";
 import NetworkIcons from "components/primitives/NetworkIcons";
 import AccountsPopup from "./AccountsPopup";
 import BarcodeSendIcon from "assets/svgComponents/BarcodeSendIcon";
@@ -30,6 +30,10 @@ import HashtagIcon from "assets/svgComponents/HashtagIcon";
 import { useHistory } from "react-router-dom";
 import { router } from "router/router";
 import { EVMNetwork } from "networks/evm";
+import EthSettingsIcon from "assets/svgComponents/EthSettingsIcon";
+import GasSettingsPopup from "./GasSettingsPopup";
+import { IEVMBuildTransaction, IEVMToBeSignTransaction } from "utils/evm/interfaces";
+import { isEVMChain } from "utils/evm";
 
 const validate = (values: { address: string; amount: number }) => {
   const errors: any = {};
@@ -52,6 +56,7 @@ type Props = {
   flow: FlowValue | undefined;
   setFlow: (flow: FlowValue | undefined) => void;
   fee: string;
+  nonce: string;
   setLoading: (loading: boolean) => void;
   loading: boolean;
   handleSubmit?: any;
@@ -62,6 +67,10 @@ type Props = {
   propsFromTokenDashboard?: PropsFromTokenDashboard;
   accountMeta: AccountMeta | undefined;
   setAccountMeta: (accountMeta: AccountMeta) => void;
+  setToBeSignTransaction: (toBeSignTransaction: IEVMToBeSignTransaction) => void;
+  toBeSignTransactionParams: IEVMBuildTransaction | undefined;
+  currencyType: CurrencyType;
+  setCurrencyType: (currencyType: CurrencyType) => void;
 };
 
 const handleShowAccountInput = (flow: string | undefined, address: string | undefined): boolean => {
@@ -89,22 +98,27 @@ function SendToken({
   propsFromTokenDashboard,
   accountMeta,
   setAccountMeta,
+  nonce,
+  setToBeSignTransaction,
+  toBeSignTransactionParams,
+  currencyType,
+  setCurrencyType,
 }: Props) {
   const history = useHistory();
-
   const dispatch = useDispatch();
   const { nextStep, previousStep } = useWizard();
 
   const [isAccountsPopupOpen, setIsAccountsPopupOpen] = useState<boolean>(false);
   const [isQRPopupOpen, setIsQRPopupOpen] = useState<boolean>(false);
   const [isContactsPopupOpen, setIsContactsPopupOpen] = useState<boolean>(false);
+  const [isGasSettingsOpen, setIsGasSettingsOpen] = useState<boolean>(false);
 
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
   const [snackbarError, setSnackbarError] = useState<string>("");
 
   // todo proper typing
-  const [currencyType, setCurrencyType] = useState<CurrencyType>(CurrencyType.Crypto);
   const { selectedAsset } = useSelector((state: any) => state.sendToken);
+
   const { prices } = useSelector((state: any) => state.wallet);
   const chain = selectedAsset?.chain;
   const symbol = selectedAsset?.symbol;
@@ -157,6 +171,10 @@ function SendToken({
 
     const pair = keyring.getAddress(address);
     setAccountMeta({ name: pair?.meta?.name as string, img: pair?.meta?.img as string });
+  };
+
+  const handleGasSettings = () => {
+    setIsGasSettingsOpen(true);
   };
 
   const submit = (values: any) => {
@@ -215,13 +233,30 @@ function SendToken({
     return value;
   };
 
-  const handleCurrencyType = (currencyType: CurrencyType) => {
+  const handleCurrencyTypeChange = (amount: string, currencyType: CurrencyType, price: number) => {
     if (currencyType === CurrencyType.Crypto) {
+      dispatch(change("sendToken", "amount", cryptoToFiat(Number(amount), price)));
       setCurrencyType(CurrencyType.Fiat);
       return;
     }
 
+    dispatch(change("sendToken", "amount", fiatToCrypto(Number(amount), price)));
     setCurrencyType(CurrencyType.Crypto);
+  };
+
+  const handleAmount = (amount: string, price: number, currencyType: CurrencyType) => {
+    if (!amount || !price) return "0.00";
+
+    if (currencyType === CurrencyType.Fiat) {
+      return fiatToCrypto(Number(amount), price).toFixed(8);
+    }
+
+    return new BigNumber(amount).times(price).toFormat(2);
+  };
+
+  const handleMax = (balance: string) => {
+    const maxAmount = new BigNumber(balance).toNumber();
+    dispatch(change("sendToken", "amount", maxAmount));
   };
 
   return (
@@ -242,7 +277,7 @@ function SendToken({
           <ContentItem>
             <ContentItemTitle>
               <span>Amount</span>
-              <span>Max</span>
+              <span onClick={() => handleMax(selectedAsset.balance.overall)}>Max</span>
             </ContentItemTitle>
             <TokenAndAmountSelect
               Icon={<NetworkIcons isSmallIcon width="28px" height="28px" chain={chain} />}
@@ -250,6 +285,7 @@ function SendToken({
               fiatList={["USD"]}
               value={amount}
               currencyType={currencyType}
+              price={price}
               onChangeCallback={() => {
                 setLoading(true);
                 setAbilityToTransfer(false);
@@ -261,12 +297,15 @@ function SendToken({
                 Balance:{" "}
                 {new BigNumber(selectedAsset.balance.overall)
                   .minus(selectedAsset.balance.locked)
-                  .toString()}{" "}
+                  .toFixed(12)}{" "}
                 {symbol?.toUpperCase()}
               </span>
               <span>
-                ${amount && price ? new BigNumber(amount).times(price).toFormat(2) : "0.00"} USD
-                <ExchangeIconContainer onClick={() => handleCurrencyType(currencyType)}>
+                {currencyType === CurrencyType.Crypto ? "$" : ""}{" "}
+                {handleAmount(amount, price, currencyType)}
+                {currencyType === CurrencyType.Crypto ? "USD" : symbol.toUpperCase()}
+                <ExchangeIconContainer
+                  onClick={() => handleCurrencyTypeChange(amount, currencyType, price)}>
                   <ExchangeIcon />
                 </ExchangeIconContainer>
               </span>
@@ -339,24 +378,27 @@ function SendToken({
             </ContentItem>
           )}
           <ContentItem>
-            {chain === EVMNetwork.ETHEREUM ? (
-              <Info>
-                <InfoRow>
-                  <span>Network Fee</span>
+            <Info>
+              <InfoRow>
+                <span>Network Fee</span>
+                <InfoRowRIght>
                   <span>
                     {loading ? "..." : fee} {selectedAsset?.symbol.toUpperCase()}
-                  </span>
-                </InfoRow>
-                <InfoRow>
-                  <span>Max Total</span>
-                  <span>
-                    {loading ? "..." : fee} {selectedAsset?.symbol.toUpperCase()}
-                  </span>
-                </InfoRow>
-              </Info>
-            ) : (
-              ""
-            )}
+                  </span>{" "}
+                  {isEVMChain(chain) && (
+                    <EthSettingsIconContainer onClick={handleGasSettings}>
+                      <EthSettingsIcon />
+                    </EthSettingsIconContainer>
+                  )}
+                </InfoRowRIght>
+              </InfoRow>
+              <InfoRow>
+                <span>Max Total</span>
+                <span>
+                  {loading ? "..." : fee} {selectedAsset?.symbol.toUpperCase()}
+                </span>
+              </InfoRow>
+            </Info>
           </ContentItem>
 
           {/* <ContentItem>
@@ -367,7 +409,7 @@ function SendToken({
               type="text"
               placeholder="Enter note"
               component={HumbleInput}
-              props={{
+              props={{    
                 type: "text",
                 bgColor: "#f2f2f2",
                 color: "#18191a",
@@ -421,6 +463,14 @@ function SendToken({
             history.push(router.home);
           }}
           handleCloseContacts={handleCloseContacts}
+        />
+      )}
+
+      {isGasSettingsOpen && (
+        <GasSettingsPopup
+          onClose={() => setIsGasSettingsOpen(false)}
+          setToBeSignTransaction={setToBeSignTransaction}
+          toBeSignTransactionParams={toBeSignTransactionParams}
         />
       )}
     </Container>
@@ -575,6 +625,15 @@ const Info = styled.div`
     font-family: "IBM Plex Sans";
     font-size: 12px;
   }
+`;
+
+const InfoRowRIght = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const EthSettingsIconContainer = styled.div`
+  margin-left: 5px;
 `;
 
 const InfoRow = styled.div`

@@ -4,6 +4,7 @@ import { EVMNetwork, networks } from "../../popup/src/networks/evm"
 import { IEVMToBeSignTransaction } from "../../popup/src/utils/evm/interfaces"
 
 export const getProvider = (network: EVMNetwork): ethers.providers.JsonRpcProvider => {
+  // return new ethers.providers.JsonRpcProvider("HTTP://127.0.0.1:7545")
   return new ethers.providers.JsonRpcProvider(networks[network].nodeUrl)
 }
 

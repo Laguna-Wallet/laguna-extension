@@ -1,21 +1,15 @@
-import * as React from "react";
 import { SVGProps } from "react";
 
-const SvgComponent = (props: SVGProps<SVGSVGElement>) => (
-  <svg
-    width={16}
-    height={16}
-    fill={props.fill || "none"}
-    xmlns="http://www.w3.org/2000/svg"
-    {...props}>
+const CloseIcon = (props: SVGProps<SVGSVGElement>) => (
+  <svg width={15} height={14} fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
     <path
-      d="m4 12 8-8M4 4l8 8"
-      stroke={props.stroke || "#11171D"}
-      strokeWidth={props.strokeWidth || "none"}
+      d="m1.51 13 12-12m-12 0 12 12"
+      stroke="#11171D"
+      strokeWidth={1.5}
       strokeLinecap="round"
       strokeLinejoin="round"
     />
   </svg>
 );
 
-export default SvgComponent;
+export default CloseIcon;

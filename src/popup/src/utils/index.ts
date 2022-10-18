@@ -1,3 +1,4 @@
+import { CurrencyType } from "utils/types";
 import { MnemonicsTriple, StorageKeys, Transaction } from "./types";
 import { saveAs } from "file-saver";
 import { KeyringPair$Json } from "@polkadot/keyring/types";
@@ -297,16 +298,22 @@ export function transformEVMHistoryToTransaction(
   }));
 }
 
-// amount
-// from
-// blockNumber
-// transactionHash
+export function cryptoToFiat(crypto: number, price: number): number {
+  return new BigNumber(crypto).times(price).toNumber();
+}
 
-// chain: "westend" | "polkadot" | "kusama" | "moonriver" | "moonbeam" | "shiden" | "astar" | "ethereum";
-// amount: string;
-// fee: string;
-// from: string;
-// to: string;
-// nonce: string;
-// hash: string;
-// timestamp: string;
+export function fiatToCrypto(fiat: number, price: number): number {
+  if (!fiat || fiat === 0) return 0;
+  return new BigNumber(fiat).dividedBy(price).toNumber();
+}
+
+export function handleCurrencyCorrection(
+  amount: number,
+  currencyType: CurrencyType,
+  price: number,
+): number {
+  if (currencyType === CurrencyType.Fiat) {
+    return fiatToCrypto(amount, price);
+  }
+  return amount;
+}

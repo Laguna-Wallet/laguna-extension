@@ -56,7 +56,6 @@ export async function fetchSubstrateAccountTransactionsByChain(
     let retrieved_count = 0;
     let page = 0;
     //   let accountTransfers = [];
-    console.log("hi");
 
     const res = await fetchTransactions(address, chain, token, 30, page);
 
@@ -103,7 +102,7 @@ export async function fetchTransactions(
     credentials: "same-origin",
     headers: {
       "Content-Type": "application/json",
-      "X-API-Key": process.env.REACT_APP_SUBSCAN_KEY as string,
+      // "X-API-Key": process.env.REACT_APP_SUBSCAN_KEY as string,
     },
     body: JSON.stringify({ address, row: 30, page }),
   });

@@ -10,6 +10,7 @@ import {
 
 import {
   Asset,
+  HardcodedAssetList,
   Network,
   networks,
   Prices,
@@ -29,11 +30,20 @@ import { decodeAddress, encodeAddress } from "@polkadot/keyring";
 import BigNumber from "bignumber.js";
 import * as AES from "crypto-js/aes";
 import Utf8 from "crypto-js/enc-utf8";
-import { fetchTransactions, transformTransfers } from "./fetchTransactions";
-import { generateRandomBase64Avatar } from "utils";
-import { generateNewWalletAddress } from "./evm";
-import { EVMNetwork } from "networks/evm";
-import { EVMAssetType } from "networks/evm/asset";
+import {
+  fetchSubstrateAccountTransactionsByChain,
+  fetchTransactions,
+  transformTransfers,
+} from "./fetchTransactions";
+import { generateRandomBase64Avatar, transformEVMHistoryToTransaction } from "utils";
+import {
+  generateNewWalletAddress,
+  getAssetIdBySmartContractAddress,
+  getHistoricalTransactions,
+  isEVMChain,
+} from "./evm";
+import { EVMAssetId, EVMNetwork } from "networks/evm";
+import { EvmAssets, EVMAssetType } from "networks/evm/asset";
 
 // TODO appropriate typing
 
@@ -239,8 +249,8 @@ export function getNetworks(
 
     return {
       ...network,
-      price_change_percentage_24h: ht[network.symbol.toLowerCase()]
-        .price_change_percentage_24h as number,
+      price_change_percentage_24h:
+        (ht[network.symbol.toLowerCase()]?.price_change_percentage_24h as number) || 0,
       marketCap: ht[network.symbol.toLowerCase()].market_cap as number,
     };
   });
@@ -279,7 +289,7 @@ export async function getAssets(
 
       let balance = balances[chain];
 
-      if (!balance && !showZeroBalanceAssets) continue;
+      if (!balance && !showZeroBalanceAssets && !HardcodedAssetList[symbol]) continue;
 
       if (showZeroBalanceAssets) {
         balance = !balance ? 0 : balance;
@@ -287,11 +297,11 @@ export async function getAssets(
       const price = prices[chain.toLowerCase()]?.usd;
 
       // todo rename calculatedBalance
-      const calculatedPrice = new BigNumber(balance.overall).multipliedBy(price || 0);
+      const calculatedPrice = new BigNumber(balance?.overall || 0).multipliedBy(price || 0);
 
       if (price) {
         overallBalance += calculatedPrice.toNumber();
-        overallPriceChange += Number(price_change_percentage_24h);
+        overallPriceChange += Number(price_change_percentage_24h) || 0;
       }
 
       assets.push({
@@ -469,10 +479,36 @@ export function accountsChangePassword(address: string, oldPass: string, newPass
 export async function getLatestTransactionsForSingleChain(
   address: string,
   chain: string,
+  symbol: string,
   page: number,
   row: number,
 ): Promise<{ count: number; transactions: Transaction[] }> {
   // TODO Token
+  let transactions = [];
+  if (isEVMChain(chain)) {
+    const ethAsset = EvmAssets[chain][symbol];
+
+    // todo revise with Evelin about contract address
+    const assetId = getAssetIdBySmartContractAddress(
+      ethAsset?.contractAddress as string,
+      chain as EVMNetwork,
+    );
+
+    const ethHistory = await getHistoricalTransactions(
+      address,
+      EVMNetwork.ETHEREUM,
+      assetId as EVMAssetId,
+    );
+
+    transactions = transformEVMHistoryToTransaction(ethHistory);
+  } else {
+    transactions = (await fetchSubstrateAccountTransactionsByChain(
+      address,
+      chain,
+      symbol,
+    )) as Transaction[];
+  }
+  console.log("~ transactions", transactions);
   const data = await fetchTransactions(address, chain, "USDC", row, page);
   return {
     count: data?.data?.count,

@@ -35,10 +35,7 @@ import { AccountsStore } from "./stores"
 import { cryptoWaitReady } from "@polkadot/util-crypto"
 import type { KeyringPair } from "@polkadot/keyring/types"
 import assert = require("assert")
-import type { SignerPayloadJSON, SignerPayloadRaw } from "@polkadot/types/types"
-import { hexToString } from "@polkadot/util"
 import browser from "webextension-polyfill"
-import { userInfo } from "os"
 
 // import { getCurrentTab } from "./utils"
 

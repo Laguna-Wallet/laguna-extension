@@ -71,11 +71,7 @@ export async function fetchAccountsBalances(
         await timer(1000);
         const network = networks[i];
 
-        if (
-          (network.chain === EVMNetwork.ETHEREUM ||
-            network.chain === EVMNetwork.AVALANCHE_TESTNET_FUJI) &&
-          !ethAddress
-        ) {
+        if (evmUtils.isEVMChain(network.chain) && !ethAddress) {
           i++;
           continue;
         }

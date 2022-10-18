@@ -72,7 +72,6 @@ function ImportAccount() {
   const account = useAccount();
   const activeAccount = account.getActiveAccount();
 
-
   const encoded = account.encryptedPassword;
 
   const dispatch = useDispatch();
@@ -89,7 +88,7 @@ function ImportAccount() {
     if (seedPhase) {
       if (mnemonicValidate(seedPhase)) {
         const pair = await importFromMnemonic(seedPhase, password);
-        
+
         if (redirectPassword) {
           clearAccountsFromStorage(pair.address);
           dispatch(toggleLoading(true));
