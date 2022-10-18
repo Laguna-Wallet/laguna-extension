@@ -70,7 +70,9 @@ export async function Retrieve_Coin_Prices() {
 // todo proper typing and get rid of unneeded fields from the return object
 export async function Retrieve_Coin_Infos() {
   // moonriver, moonbeam,მო სულიკო რაზედ მოგიცკენიააა    shiden, astar
-  const data = await fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=polkadot,kusama,ethereum&order=market_cap_desc&per_page=100&page=1&sparkline=false`)
+  const data = await fetch(
+    `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=polkadot,kusama,ethereum,usdc,usdt&order=market_cap_desc&per_page=100&page=1&sparkline=false`
+  )
   return await data.json()
 }
 

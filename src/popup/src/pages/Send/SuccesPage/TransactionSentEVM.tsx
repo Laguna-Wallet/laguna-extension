@@ -29,7 +29,7 @@ export default function TransactionSentEVM({ blockHash }: Props) {
   };
 
   return (
-    <Container bg={bg}>
+    <Container>
       <Content>
         <IconContainer>
           <EthSuccessIcon />

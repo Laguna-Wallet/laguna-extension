@@ -191,11 +191,7 @@ function Send({ initialIsContactsPopupOpen }: Props) {
         gasPriceInGwei,
         nativeCurrenyBalance,
         assetBalance,
-      } = await getBuildTransactionOnChainParam(
-        ethNetwork,
-        form.address,
-        EVMAssetId.AVALANCHE_TESTNET_FUJI_AVAX,
-      );
+      } = await getBuildTransactionOnChainParam(ethNetwork, form.address, EVMAssetId.ETHEREUM_ETH);
 
       // const gasLimit = estimateGasLimit(param);
 

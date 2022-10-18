@@ -249,8 +249,8 @@ export function getNetworks(
 
     return {
       ...network,
-      price_change_percentage_24h: ht[network.symbol.toLowerCase()]
-        .price_change_percentage_24h as number,
+      price_change_percentage_24h:
+        (ht[network.symbol.toLowerCase()]?.price_change_percentage_24h as number) || 0,
       marketCap: ht[network.symbol.toLowerCase()].market_cap as number,
     };
   });
@@ -301,7 +301,7 @@ export async function getAssets(
 
       if (price) {
         overallBalance += calculatedPrice.toNumber();
-        overallPriceChange += Number(price_change_percentage_24h);
+        overallPriceChange += Number(price_change_percentage_24h) || 0;
       }
 
       assets.push({
