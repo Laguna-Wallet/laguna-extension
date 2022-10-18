@@ -9,7 +9,6 @@ export const getProvider = (network: EVMNetwork): ethers.providers.JsonRpcProvid
 
 export const signTransaction = async (keyPair: any, toBeSignTransaction: IEVMToBeSignTransaction): Promise<string> => {
   const privateKey = Buffer.from(keyPair.privateKey.substring(2, 66), "hex")
-  console.log("~ toBeSignTransaction", toBeSignTransaction)
 
   const tx: Transaction = Transaction.fromTxData({
     nonce: toBeSignTransaction.nonce,

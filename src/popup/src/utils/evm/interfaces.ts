@@ -21,7 +21,7 @@ export interface IEVMAsset {
   assetType: EVMAssetType;
   network?: EVMNetwork;
   contractAddress?: string;
-  assetId: EVMAssetId;
+  assetId?: EVMAssetId;
 }
 
 export interface IEVMAssetERC20 extends IEVMAsset {
@@ -76,7 +76,6 @@ export interface Response {
   success: boolean;
   message: string;
 }
-
 
 export interface IEVMHistoricalTransaction {
   assetId: string;

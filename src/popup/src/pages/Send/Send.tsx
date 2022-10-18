@@ -162,20 +162,17 @@ function Send({ initialIsContactsPopupOpen }: Props) {
       setLoading(true);
 
       const ethNetwork = reduxSendTokenState?.selectedAsset?.chain;
-      console.log("~ ethNetwork", ethNetwork);
-      // const gasPrice = await getEvmGasPrice(ethNetwork);
-      console.log(3);
       // todo revise with Evelyn
       const ethAsset = EvmAssets[ethNetwork][
         reduxSendTokenState?.selectedAsset?.symbol
       ] as IEVMAssetERC20;
 
-      const { 
-        nonce, 
-        gasPriceInGwei, 
-        nativeCurrenyBalance, 
-        assetBalance,
-      } = await evmUtils.getBuildTransactionOnChainParam(ethNetwork, form.address, ethAsset.assetId);
+      const { nonce, gasPriceInGwei, nativeCurrenyBalance, assetBalance } =
+        await evmUtils.getBuildTransactionOnChainParam(
+          ethNetwork,
+          form.address,
+          ethAsset.assetId as EVMAssetId,
+        );
       const buildTransactionParam: IEVMBuildTransaction = {
         network: ethNetwork,
         asset: ethAsset,
@@ -186,9 +183,14 @@ function Send({ initialIsContactsPopupOpen }: Props) {
         gasPriceInGwei: new BigNumber(1),
         gasLimit: new BigNumber(100000),
       };
-      const estimatedGasPriceInGwei = await evmUtils.estimateGasLimit(ethNetwork, buildTransactionParam);
+      const estimatedGasPriceInGwei = await evmUtils.estimateGasLimit(
+        ethNetwork,
+        buildTransactionParam,
+      );
       buildTransactionParam.gasPriceInGwei = estimatedGasPriceInGwei;
-      const toSignTransaction: IEVMToBeSignTransaction = await evmUtils.buildTransaction(buildTransactionParam);
+      const toSignTransaction: IEVMToBeSignTransaction = await evmUtils.buildTransaction(
+        buildTransactionParam,
+      );
       const ethValue = await ethers.utils.formatUnits(estimatedGasPriceInGwei.toNumber());
 
       setToBeSignTransaction(toSignTransaction);
