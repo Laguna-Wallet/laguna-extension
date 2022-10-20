@@ -5,16 +5,16 @@
 
 A powerfully simple, open-source wallet that bridges millions of new users to DeFi, Dapps and web3.
 
-#####Non-Custodial
+##### Non-Custodial
 We never have access to your data. Your data, funds and passphrase is stored with you alone.
 
-#####Multi-Chain
+##### Multi-Chain
 We leverage only the highest quality blockchains, utilizing projects that serve our users the best.
 
-#####Private
+##### Private
 We do not track or record any identifiable user data so your wealth stored safely away from prying eyes.
 
-#####The Vision
+##### The Vision
 Laguna Labs is a team of consummate builders with a track-record to bringing innovative products to market. We're a global group pedigreed, degen, and populated by those who don't mind grinding — all rolled into one decentralized startup. We're here to make your money life better and beautiful. And we mean it.
 
 ## Installation
