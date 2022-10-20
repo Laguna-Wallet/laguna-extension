@@ -1,55 +1,81 @@
-# Extension is divided into two separate projects, Background and Popup
+[![polkadotjs](https://img.shields.io/badge/laguna-extension-orange?style=flat-square)](https://lagun.na/wallet)
+![license](https://img.shields.io/badge/License-Apache%202.0-blue?logo=apache&style=flat-square)
 
-Background manages communication with 3rd party apis and saving data into localStorage,alongside saving some persistent state
-in the memory, user logged in or opened keyRings.
+# ![laguna wallet extension](docs/logo_bw.png)
+
+A powerfully simple, open-source wallet that bridges millions of new users to DeFi, Dapps and web3.
+
+#####Non-Custodial
+We never have access to your data. Your data, funds and passphrase is stored with you alone.
+
+#####Multi-Chain
+We leverage only the highest quality blockchains, utilizing projects that serve our users the best.
+
+#####Private
+We do not track or record any identifiable user data so your wealth stored safely away from prying eyes.
+
+#####The Vision
+Laguna Labs is a team of consummate builders with a track-record to bringing innovative products to market. We're a global group pedigreed, degen, and populated by those who don't mind grinding — all rolled into one decentralized startup. We're here to make your money life better and beautiful. And we mean it.
+
+## Installation
+
+- On Chrome, install via [Chrome web store](https://chrome.google.com/webstore/detail/laguna-wallet/oomiehgikgjgboniolignjnaflncbamj)
+
+![interface screenshot](docs/promo.jpg)
+
+## Development version
+
+Steps to build the extension and view your changes in a browser:
+
+1. Build via `yarn build` or `yarn watch`
+2. Install the extension
+  - Chrome:
+    - go to `chrome://extensions/`
+    - ensure you have the Development flag set
+    - "Load unpacked" and point to `packages/extension/build`
+    - if developing, after making changes - refresh the extension
+  - Firefox:
+    - go to `about:debugging#addons`
+    - check "Enable add-on debugging"
+    - click on "Load Temporary Add-on" and point to `packages/extension/build/manifest.json`
+    - if developing, after making changes - reload the extension
+3. When visiting `https://polkadot.js.org/apps/` it will inject the extension
+
+Once added, you can create an account (via a generated seed) or import via an existing seed.
+
+## Development
+
+### Extension is divided into two separate projects, Background and Popup
+
+Background manages communication with 3rd party APIs and saves data into localStorage. Persistent state - user logged in status, opened keyRings - is stored in memory.
 
 Popup consists of ui components, routing and managing application state, partially grabbed from localStorage.
 
-Communication is held by sending messages to each other via [chrome.runtime.sendMessage]
+Communication between background and popup is via [chrome.runtime.sendMessage]
 
-# Background
+##### Background
 
-On Extension install background.js will start polling data from apis.
+On Extension install, background.js will start polling data from APIs.
 PRICES_UPDATED
 COIN_INFO_UPDATED
 ACCOUNTS_BALANCE_UPDATED
 TOKEN_DECIMALS_UPDATED
 
-coin prices, meta information are grabbed from Coingecko
-token decimals, balances for account from Subscan.
+Coin prices and other metadata are grabbed from Coingecko.
 
-for generating keyRings, mnemonics we are using Polkadot.js utils
-https://polkadot.js.org/docs/api/start/keyring
-https://polkadot.js.org/docs/util-crypto/examples/create-mnemonic
+Token decimals and account balances are from Subscan.
 
-Transaction data is passed from popup to background, signAndSend is happening from background.ts, after sending appropriate message is send to Popup.
+##### Popup
 
-# Popup
+For routing popup uses [react-chrome-extension-router](https://www.npmjs.com/package/react-chrome-extension-router)
 
-For routing popup uses third party package ->
-https://www.npmjs.com/package/react-chrome-extension-router
+Application uses Redux for state managment, Redux-from for managing complex forms, some of the components use Formik for managing forms.
 
-application uses Redux for state managment, Redux-from for managing complex forms, some of the components use Formik for managing forms.
+Formik can be removed altogather, this will be refactored in the future.
 
-formik can be removed altogather, this will be refactored in the future.
 
-# Build And Development server
+## Mnemonics, Passwords, and Imports/Exports
 
-after loading unpacked in the browser,running script "yarn watch" with fire up dev server,popup in the chrome will be automatically updated according to changes in the code, background.ts will be updated as well, but it needs to be refreshed from the chrome extensions page, in order to affect changes.
+### Using the mnemonic and password from the extension
 
-for uploading build to drive in zipped format it's enough to run script "yarn drive-upload-dev"
-
-Webpack is used as a bundler in background.js, bundle will get in dist folder
-
-Popup is CRA(create react application) and it's bundled in the dist folder as weel,
-
-maybe in the future releases Yarn Workspaces will be introduced.
-
-# Accounts
-
-Polkadot.js saves encoded Keyrings in the localStorage.
-
-Active account is saved in localStorage alongside with React Context.
-after user logs in pairs from localStorage are grabbed in background js, unlocked(in order to make transaction pairs should be unlocked) and saved into variable, this will be persistent, till user will be logged out.
-
-One keyring can be used on multiple chains: [kusama, westend, polkadot], all the corresponding balances for the user are saved in the localStorage with key [account-balances]
+When you create a keypair via the extension, it supplies a 12-word mnemonic seed and asks you to create a password. This password only encrypts the private key on disk so that the password is required to spend funds or to import the account from backup. The password does not protect the mnemonic phrase. That is, if an attacker were to acquire the mnemonic phrase, they would be able to use it to spend funds without the password.
