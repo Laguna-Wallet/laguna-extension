@@ -1,6 +1,6 @@
 import { SVGProps } from "react";
 
-const BackIcon = (props: SVGProps<SVGSVGElement>) => (
+const CopyIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
     width="14"
     height="14"
@@ -15,4 +15,4 @@ const BackIcon = (props: SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
-export default BackIcon;
+export default CopyIcon;

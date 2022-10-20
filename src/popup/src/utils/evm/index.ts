@@ -21,6 +21,7 @@ import {
 } from "networks/evm";
 import * as alchemyApi from "./api/alchemy";
 import * as covalenthqApi from "./api/covalenthq";
+import ERC20ABI from "./abi/ERC20.json";
 
 export const generateNewWalletAddress = (mnemonicSeed: string): string => {
   const wallet = ethers.Wallet.fromMnemonic(mnemonicSeed as string);
@@ -238,7 +239,7 @@ export const getBalance = async (
 const initERC20SmartContract = (network: EVMNetwork, asset: IEVMAssetERC20): ethers.Contract => {
   const provider = getProvider(network);
   const abiFileName = "ERC20";
-  const ERC20ABI = JSON.parse(fs.readFileSync(`./abi/${abiFileName}.json`, "utf-8"));
+  // const ERC20ABI = JSON.parse(fs.readFileSync(`./abi/${abiFileName}.json`, "utf-8"));
   return new ethers.Contract((asset as IEVMAssetERC20).contractAddress, ERC20ABI, provider);
 };
 

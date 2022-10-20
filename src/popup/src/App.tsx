@@ -125,7 +125,7 @@ function App() {
   if (isLoading) {
     <div>Loading</div>;
   }
-  // return <TransactionSentEVM blockHash="asd" />;
+  return <TransactionSentEVM blockHash="asd" />;
 
   return (
     <div className="App">
