@@ -45,7 +45,7 @@ module.exports = {
         https: false
       };
 
-      // paths.appBuild = webpackConfig.output.path = path.resolve('../../dist/popup');
+      paths.appBuild = webpackConfig.output.path = path.resolve('../../dist/popup');
       return {
         ...webpackConfig,
         entry: {

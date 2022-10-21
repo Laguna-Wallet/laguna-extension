@@ -8,7 +8,7 @@
     "watch:background": "NODE_ENV=development webpack --config webpack.config.js -w",
     "watch:popup": "npm run watch:build --prefix src/popup",
     "build:background": "NODE_ENV=production webpack --config webpack.config.js",
-    "build:popup": "INLINE_RUNTIME_CHUNK=false npm run build --prefix src/popup && cd src/popup/build && cpy * /static/* ../../../dist/popup --parents",
+    "build:popup": "npm run build --prefix src/popup",
     "build": "npm run build:background && npm run build:popup",
     "clean": "rm -rf dist && cpy manifest.json dist && cpy src/assets/* dist/assets",
     "prebuild": "npm run clean",
