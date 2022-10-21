@@ -4,6 +4,7 @@
   "description": "Multi-currency browser extension wallet supporting Laguna Chain",
   "main": "index.js",
   "scripts": {
+    "lint": "cd src/popup && yarn lint",
     "watch": "npm-run-all --parallel watch:*",
     "watch:background": "NODE_ENV=development webpack --config webpack.config.js -w",
     "watch:popup": "npm run watch:build --prefix src/popup",
