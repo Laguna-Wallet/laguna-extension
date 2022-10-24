@@ -25,19 +25,29 @@ Laguna Labs is a team of consummate builders with a track-record to bringing inn
 
 ## Development version
 
-Steps to build the extension and view your changes in a browser:
+Follow these steps to build the extension and view your changes in a browser.
 
-1. Build via `yarn build` or `yarn watch`
+**If this is your first time building the extension** *(you only need to perform these actions once, before your first build)*:
+
+1. Install all necessary dependencies by running `yarn setup`
+2. Rename `.env.sample` to `.env` and provide your Subscan and OnFinality API keys
+3. Rename `src/popup/.env.sample` to `src/popup/.env` and provide your Sbscan and OnFinality API keys
+
+**To build the extension:**
+
+1. Build via `yarn build` *(production)* or `yarn watch`*(development)*. This will build the extension in the `dist` directory
 2. Install the extension
   - Chrome:
     - go to `chrome://extensions/`
     - ensure you have the Development flag set
-    - "Load unpacked" and point to `packages/extension/build`
-    - if developing, after making changes - refresh the extension
+    - "Load unpacked" and point to `dist`
+    - if in `watch` mode, after making changes - refresh the extension and changes will be visible
   - Firefox:
+    - Firefox does not currently support Manifest V3 by default (it will in future releases), so you need to turn on Developer Preview by following [this guide](https://extensionworkshop.com/documentation/develop/manifest-v3-migration-guide/)
+    - delete `dist/manifest.json` and rename `dist/manifest-ff.json` to `dist/manifest.json`
     - go to `about:debugging#addons`
     - check "Enable add-on debugging"
-    - click on "Load Temporary Add-on" and point to `packages/extension/build/manifest.json`
+    - click on "Load Temporary Add-on" and point to `dist/manifest.json`
     - if developing, after making changes - reload the extension
 3. When visiting `https://polkadot.js.org/apps/` it will inject the extension
 

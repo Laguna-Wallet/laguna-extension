@@ -1,6 +1,6 @@
 {
-  "name": "hydrox-client",
-  "version": "0.1.0",
+  "name": "laguna-extension-popup",
+  "version": "1.0.3",
   "private": true,
   "dependencies": {
     "@actions/core": "^1.6.0",
