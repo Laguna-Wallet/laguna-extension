@@ -31,7 +31,7 @@ Follow these steps to build the extension and view your changes in a browser.
 
 1. Install all necessary dependencies by running `yarn setup`
 2. Rename `.env.sample` to `.env` and provide your Subscan and OnFinality API keys
-3. Rename `src/popup/.env.sample` to `src/popup/.env` and provide your Sbscan and OnFinality API keys
+3. Rename `src/popup/.env.sample` to `src/popup/.env` and provide your Subscan and OnFinality API keys
 
 **To build the extension:**
 
