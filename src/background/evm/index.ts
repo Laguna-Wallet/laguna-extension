@@ -34,8 +34,8 @@ export const signTransaction = async (wallet: ethers.Wallet, toBeSignTransaction
   // return `${signedTransaction.serialize().toString("hex")}`
 }
 
-export const broadcastTransaction = async (network: EVMNetwork, signedTx: string): Promise<string> => {
+export const broadcastTransaction = async (network: EVMNetwork, signedTransaction: string): Promise<string> => {
   const provider = getProvider(network)
-  const transactionReceipt = await provider.sendTransaction(`0x${signedTx}`)
+  const transactionReceipt = await provider.sendTransaction(signedTransaction)
   return transactionReceipt.hash
 }
