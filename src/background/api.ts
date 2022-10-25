@@ -29,7 +29,8 @@ export async function sendTransaction(pairs, ethWallets, payload) {
       console.log("wallet", wallet)
       console.log("~ payload", payload)
       const signedTx = await signTransaction(wallet, payload.toBeSignTransaction)
-      const data = await broadcastTransaction(payload.chain, signedTx)
+      const transactionHash = await broadcastTransaction(payload.chain, signedTx);
+      console.log("~ broadcastedTransactionHash", transactionHash)
     } else {
       const pair = pairs.find((pair) => {
         return recodeToPolkadotAddress(pair.address) === recodeToPolkadotAddress(payload.sendFrom)
