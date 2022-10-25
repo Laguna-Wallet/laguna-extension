@@ -9,26 +9,29 @@ export const getProvider = (network: EVMNetwork): ethers.providers.JsonRpcProvid
 }
 
 export const signTransaction = async (wallet: ethers.Wallet, toBeSignTransaction: IEVMToBeSignTransaction): Promise<string> => {
-  console.log("wallet.privateKey", wallet.privateKey)
-  const privateKey = Buffer.from(wallet.privateKey.substring(2, 66), "hex")
-  console.log("privateKey", privateKey)
-  console.log("wallet.address", wallet.address)
-  console.log("toBeSignTransaction.from", toBeSignTransaction.from)
-  console.log("toBeSignTransaction", toBeSignTransaction)
+  // const privateKey = Buffer.from(wallet.privateKey.substring(2, 66), "hex")
+  // console.log("privateKey", privateKey)
+  // console.log("wallet.address", wallet.address)
+  // console.log("toBeSignTransaction.from", toBeSignTransaction.from)
+  // console.log("toBeSignTransaction", toBeSignTransaction)
 
-  const tx: Transaction = Transaction.fromTxData({
-    nonce: toBeSignTransaction.nonce,
-    gasPrice: toBeSignTransaction.gasPrice,
-    gasLimit: toBeSignTransaction.gasLimit,
-    to: toBeSignTransaction.to,
-    data: toBeSignTransaction.data ? toBeSignTransaction.data.toString() : "",
-    value: toBeSignTransaction.value,
-    chainId: toBeSignTransaction.chainId.toString(),
-  } as TxData)
-  console.log("tx: Transaction", tx)
-  const signedTransaction = tx.sign(privateKey)
-  console.log("signedTransaction", signedTransaction)
-  return `${signedTransaction.serialize().toString("hex")}`
+  // const tx: Transaction = Transaction.fromTxData({
+  //   nonce: toBeSignTransaction.nonce,
+  //   gasPrice: toBeSignTransaction.gasPrice,
+  //   gasLimit: toBeSignTransaction.gasLimit,
+  //   to: toBeSignTransaction.to,
+  //   data: toBeSignTransaction.data ? toBeSignTransaction.data.toString() : "",
+  //   value: toBeSignTransaction.value,
+  //   chainId: toBeSignTransaction.chainId.toString(),
+  // } as TxData)
+  // console.log("tx: Transaction", tx)
+  // const signedTransaction = tx.sign(privateKey)
+  // console.log("signedTransaction", signedTransaction)
+
+  const signedTransaction = await wallet.signTransaction(toBeSignTransaction)
+  console.log("** signedTransaction **", signedTransaction)
+  return signedTransaction
+  // return `${signedTransaction.serialize().toString("hex")}`
 }
 
 export const broadcastTransaction = async (network: EVMNetwork, signedTx: string): Promise<string> => {
