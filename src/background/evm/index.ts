@@ -8,9 +8,10 @@ export const getProvider = (network: EVMNetwork): ethers.providers.JsonRpcProvid
   return new ethers.providers.JsonRpcProvider(networks[network].nodeUrl)
 }
 
-export const signTransaction = async (keyPair: any, toBeSignTransaction: IEVMToBeSignTransaction): Promise<string> => {
-  const privateKey = Buffer.from(keyPair.privateKey.substring(2, 66), "hex")
-  console.log("privateKey", privateKey.toString())
+export const signTransaction = async (wallet: ethers.Wallet, toBeSignTransaction: IEVMToBeSignTransaction): Promise<string> => {
+  console.log("wallet.privateKey", wallet.privateKey)
+  const privateKey = Buffer.from(wallet.privateKey.substring(2, 66), "hex")
+  console.log("privateKey", privateKey)
 
   const tx: Transaction = Transaction.fromTxData({
     nonce: toBeSignTransaction.nonce,
