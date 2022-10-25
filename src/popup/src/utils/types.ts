@@ -384,14 +384,14 @@ export const networks: Network[] = [
     decimal: 18,
     assetType: EVMAssetType.NATIVE,
   },
-  // {
-  //   name: "Dexalot Token",
-  //   symbol: TokenSymbols.ALOT,
-  //   chain: EVMNetwork.AVALANCHE_TESTNET_FUJI,
-  //   decimal: 18,
-  //   assetType: EVMAssetType.ERC20,
-  //   contractAddress: "0x9983F755Bbd60d1886CbfE103c98C272AA0F03d6",
-  // },
+  {
+    name: "Dexalot Token",
+    symbol: TokenSymbols.ALOT,
+    chain: EVMNetwork.AVALANCHE_TESTNET_FUJI,
+    decimal: 18,
+    assetType: EVMAssetType.ERC20,
+    contractAddress: "0x9983F755Bbd60d1886CbfE103c98C272AA0F03d6",
+  },
 
   // {
   //   name: 'Astar',

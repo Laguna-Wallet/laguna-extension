@@ -184,9 +184,11 @@ function Send({ initialIsContactsPopupOpen }: Props) {
         ethAsset.assetId as EVMAssetId,
       );
 
+      console.log("getBuildTransactionOnChainParam =>", obj);
+
       const { nonce, gasPriceInGwei, nativeCurrenyBalance, assetBalance } = obj;
 
-      setNonce(nonce.toString());
+      // Todo check if nativeCurrenyBalance > gasPrice
 
       const buildTransactionParam: IEVMBuildTransaction = {
         network: ethNetwork,
@@ -195,7 +197,7 @@ function Send({ initialIsContactsPopupOpen }: Props) {
         fromAddress: activeAccount?.meta?.ethAddress,
         toAddress: form?.address,
         nonce,
-        gasPriceInGwei: new BigNumber(1),
+        gasPriceInGwei: gasPriceInGwei,
         gasLimit: new BigNumber(100000),
       };
 

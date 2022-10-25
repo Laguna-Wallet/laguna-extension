@@ -175,6 +175,8 @@ export const buildTransaction = (param: IEVMBuildTransaction): IEVMToBeSignTrans
     return toBeSignTransaction;
   } else if (asset.assetType === EVMAssetType.ERC20) {
     const contract = initERC20SmartContract(network, asset as IEVMAssetERC20);
+    console.log("initERC20SmartContract => network, asset", network, asset);
+    console.log("initERC20SmartContract => contract", contract);
     return {
       gasPrice: `0x${gasPriceInGwei.multipliedBy("1E9").toString(16)}`,
       gasLimit: gasLimit ? `0x${gasLimit.toString(16)}` : "",
