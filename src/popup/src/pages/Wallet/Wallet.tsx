@@ -80,6 +80,7 @@ function Wallet({ snackbar }: Props) {
         infos,
         balances,
         disabledTokens,
+        true,
       );
       setAssets(assets);
 

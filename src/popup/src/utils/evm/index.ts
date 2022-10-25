@@ -185,7 +185,7 @@ export const buildTransaction = (param: IEVMBuildTransaction): IEVMToBeSignTrans
       from: fromAddress,
       to: toCheckSumAddress(asset?.contractAddress),
       value: "0",
-      data: contract.methods
+      data: contract
         .transfer(
           toCheckSumAddress(toAddress),
           amount.multipliedBy(`1E${asset.decimal}`).toString(10),

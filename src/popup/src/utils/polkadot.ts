@@ -289,7 +289,7 @@ export async function getAssets(
 
       let balance = balances[chain];
 
-      if (!balance && !showZeroBalanceAssets && !HardcodedAssetList[symbol]) continue;
+      if (!balance && !showZeroBalanceAssets) continue;
 
       if (showZeroBalanceAssets) {
         balance = !balance ? 0 : balance;
