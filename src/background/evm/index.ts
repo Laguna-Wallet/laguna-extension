@@ -22,8 +22,9 @@ export const signTransaction = async (wallet: ethers.Wallet, toBeSignTransaction
     value: toBeSignTransaction.value,
     chainId: toBeSignTransaction.chainId.toString(),
   } as TxData)
-
+  console.log("tx: Transaction", tx)
   const signedTransaction = tx.sign(privateKey)
+  console.log("signedTransaction", signedTransaction)
   return `${signedTransaction.serialize().toString("hex")}`
 }
 
