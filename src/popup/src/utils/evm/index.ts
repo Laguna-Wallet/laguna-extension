@@ -83,6 +83,8 @@ export const getAssetInfo = (
 };
 
 export const getNonce = async (network: EVMNetwork, address: string): Promise<BigNumber> => {
+  console.log("network", network);
+  console.log("address", address);
   const provider = getProvider(network);
   const nonce = await provider.getTransactionCount(address, "latest");
   return new BigNumber(nonce);

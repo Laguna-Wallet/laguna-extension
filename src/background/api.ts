@@ -21,6 +21,8 @@ export async function Retrieve_balance_change_rates() {
 
 export async function sendTransaction(pairs, ethWallets, payload) {
   try {
+    console.log("payload.toBeSignTransaction", payload.toBeSignTransaction)
+    console.log("ethWallets", ethWallets)
     if (payload.chain === EVMNetwork.ETHEREUM || payload.chain === EVMNetwork.AVALANCHE_TESTNET_FUJI) {
       const wallet = ethWallets.find((wallet) => {
         return wallet.address === payload.toBeSignTransaction.from
@@ -29,7 +31,8 @@ export async function sendTransaction(pairs, ethWallets, payload) {
       console.log("wallet", wallet)
       console.log("~ payload", payload)
       const signedTx = await signTransaction(wallet, payload.toBeSignTransaction)
-      const data = await broadcastTransaction(payload.chain, signedTx)
+      const transactionHash = await broadcastTransaction(payload.chain, signedTx)
+      console.log("~ broadcastedTransactionHash", transactionHash)
     } else {
       const pair = pairs.find((pair) => {
         return recodeToPolkadotAddress(pair.address) === recodeToPolkadotAddress(payload.sendFrom)

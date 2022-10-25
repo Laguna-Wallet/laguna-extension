@@ -73,6 +73,7 @@ function Confirm({
   const name = account?.getActiveAccount()?.meta?.name;
 
   const handleClick = async () => {
+    console.log("onClick toBeSignTransaction", toBeSignTransaction);
     if (isEVMChain(chain)) {
       browser.runtime.sendMessage({
         type: Messages.SendTransaction,

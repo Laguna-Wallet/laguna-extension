@@ -8,7 +8,7 @@ import Utf8 from "crypto-js/enc-utf8"
 import { ethereumEncode } from "@polkadot/util-crypto"
 import { checkIfDenied } from "@polkadot/phishing"
 import type { KeyringPair } from "@polkadot/keyring/types"
-import { generateNewEvmWallet } from "./evm/utils/api"
+import { generateNewEvmWallet } from "./evm"
 
 export const getFromStorage = async function (key: string): Promise<string> {
   return new Promise((resolve, reject) => {

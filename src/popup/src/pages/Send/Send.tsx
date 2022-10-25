@@ -178,12 +178,16 @@ function Send({ initialIsContactsPopupOpen }: Props) {
         reduxSendTokenState?.selectedAsset?.symbol
       ] as IEVMAssetERC20;
 
-      const { nonce, gasPriceInGwei, nativeCurrenyBalance, assetBalance } =
-        await evmUtils.getBuildTransactionOnChainParam(
-          ethNetwork,
-          form.address,
-          ethAsset.assetId as EVMAssetId,
-        );
+      const obj = await evmUtils.getBuildTransactionOnChainParam(
+        ethNetwork,
+        activeAccount?.meta?.ethAddress,
+        ethAsset.assetId as EVMAssetId,
+      );
+
+      const { nonce, gasPriceInGwei, nativeCurrenyBalance, assetBalance } = obj;
+
+      setNonce(nonce.toString());
+
       const buildTransactionParam: IEVMBuildTransaction = {
         network: ethNetwork,
         asset: ethAsset,
@@ -194,14 +198,17 @@ function Send({ initialIsContactsPopupOpen }: Props) {
         gasPriceInGwei: new BigNumber(1),
         gasLimit: new BigNumber(100000),
       };
+
       const estimatedGasPriceInGwei = await evmUtils.estimateGasLimit(
         ethNetwork,
         buildTransactionParam,
       );
+
       buildTransactionParam.gasPriceInGwei = estimatedGasPriceInGwei;
       const toSignTransaction: IEVMToBeSignTransaction = await evmUtils.buildTransaction(
         buildTransactionParam,
       );
+
       const ethValue = await ethers.utils.formatUnits(estimatedGasPriceInGwei.toNumber());
 
       setToBeSignTransactionParams(buildTransactionParam);

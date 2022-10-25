@@ -45,7 +45,6 @@
     "@babel/core": "^7.17.5",
     "@babel/preset-env": "^7.16.11",
     "@babel/preset-react": "^7.16.7",
-    "@ethereumjs/tx": "4.0.0",
     "@polkadot/api": "^9.4.2",
     "@polkadot/extension-dapp": "^0.44.6",
     "@polkadot/extension-inject": "^0.44.6",
