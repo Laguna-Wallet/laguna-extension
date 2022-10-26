@@ -1,6 +1,6 @@
 {
-  "name": "hydrox-client",
-  "version": "0.1.0",
+  "name": "laguna-extension-popup",
+  "version": "1.0.3",
   "private": true,
   "dependencies": {
     "@actions/core": "^1.6.0",
@@ -78,7 +78,7 @@
     "start": "react-scripts start",
     "test": "react-scripts test",
     "watch:build-cra": "cra-build-watch -v --build-path ../../dist/popup",
-    "watch:build": "INLINE_RUNTIME_CHUNK=false craco start",
+    "watch:build": "craco start",
     "build": "react-scripts build",
     "eject": "react-scripts eject"
   },
