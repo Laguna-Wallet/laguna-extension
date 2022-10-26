@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Laguna Wallet",
   "version": "1.0.3",
-  "description": "Laguna Polkadot Wallet",
+  "description": "Laguna Wallet",
   "permissions": ["background", "storage", "alarms"],
   "host_permissions": ["<all_urls>"],
   "icons": {
