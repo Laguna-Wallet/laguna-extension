@@ -101,10 +101,12 @@ export const estimateGasLimit = async (
   param: IEVMBuildTransaction,
 ): Promise<BigNumber> => {
   const provider = getProvider(network);
-  const transaction = buildTransaction(param);
-  if (await isSmartContractAddress(network, param.toAddress)) {
+  const transaction = await buildTransaction(param);
+  if (param.asset.assetType != EVMAssetType.NATIVE ||
+    await isSmartContractAddress(network, param.toAddress)
+  ) {
     const estimateResult = await provider.estimateGas(transaction);
-    return new BigNumber(estimateResult.toString()).multipliedBy(1.5);
+    return new BigNumber(estimateResult.toString()).multipliedBy(2);
   } else {
     return new BigNumber(21000);
   }
@@ -150,7 +152,7 @@ export const getBuildTransactionOnChainParam = async (
   };
 };
 
-export const buildTransaction = (param: IEVMBuildTransaction): IEVMToBeSignTransaction => {
+export const buildTransaction = async (param: IEVMBuildTransaction): Promise<IEVMToBeSignTransaction> => {
   const { network, asset, amount, fromAddress, toAddress, nonce, gasPriceInGwei, gasLimit } = param;
   console.log("network", network);
   console.log("~ asset", asset);
@@ -176,7 +178,7 @@ export const buildTransaction = (param: IEVMBuildTransaction): IEVMToBeSignTrans
   } else if (asset.assetType === EVMAssetType.ERC20) {
     const contract = initERC20SmartContract(network, asset as IEVMAssetERC20);
     console.log("initERC20SmartContract => network, asset", network, asset);
-    console.log("initERC20SmartContract => contract", contract);
+    console.log("[buildTransaction] initERC20SmartContract => contract", contract);
     return {
       gasPrice: `0x${gasPriceInGwei.multipliedBy("1E9").toString(16)}`,
       gasLimit: gasLimit ? `0x${gasLimit.toString(16)}` : "",
@@ -184,13 +186,12 @@ export const buildTransaction = (param: IEVMBuildTransaction): IEVMToBeSignTrans
       chainId: networks[network].chainId,
       from: fromAddress,
       to: toCheckSumAddress(asset?.contractAddress),
-      value: "0",
-      data: contract
+      value: "0x0",
+      data: (await contract.populateTransaction
         .transfer(
           toCheckSumAddress(toAddress),
           amount.multipliedBy(`1E${asset.decimal}`).toString(10),
-        )
-        .encodeABI(),
+        )).data,
     } as IEVMToBeSignTransaction;
   }
   throw new Error("invalid assetType");
