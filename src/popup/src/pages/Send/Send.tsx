@@ -197,26 +197,26 @@ function Send({ initialIsContactsPopupOpen }: Props) {
         fromAddress: activeAccount?.meta?.ethAddress,
         toAddress: form?.address,
         nonce,
-        gasPriceInGwei: gasPriceInGwei,
+        gasPriceInGwei,
         gasLimit: new BigNumber(100000),
       };
 
-      const estimatedGasPriceInGwei = await evmUtils.estimateGasLimit(
+      const estimatedGasLimit = await evmUtils.estimateGasLimit(
         ethNetwork,
         buildTransactionParam,
       );
 
-      buildTransactionParam.gasPriceInGwei = estimatedGasPriceInGwei;
+      buildTransactionParam.gasLimit = estimatedGasLimit;
       const toSignTransaction: IEVMToBeSignTransaction = await evmUtils.buildTransaction(
         buildTransactionParam,
       );
 
-      const ethValue = await ethers.utils.formatUnits(estimatedGasPriceInGwei.toNumber());
+      const transactionFee = estimatedGasLimit.multipliedBy(gasPriceInGwei).dividedBy("1E9");
 
       setToBeSignTransactionParams(buildTransactionParam);
 
       setToBeSignTransaction(toSignTransaction);
-      setFee(ethValue); // TODO fee = gasPrice * gasLimit
+      setFee(transactionFee.toString());
       setRecoded(form?.address);
       // todo check if balance is enough
       setAbilityToTransfer(true);
