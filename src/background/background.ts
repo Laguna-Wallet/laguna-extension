@@ -336,9 +336,12 @@ browser.runtime.onMessage.addListener(async (msg, _sender) => {
       break
     case Messages.ForgotPassword:
       isLoggedIn = false
-      const newPair = handleUnlockPair(msg.payload)
+      const { newPair, ethWallet } = handleUnlockPair(msg.payload)
       clearAccountsFromStorage(newPair.address)
       keyPairs = [newPair]
+      if (ethWallet) {
+        ethWallets = [ethWallet]
+      }
       break
     case Messages.ConnectedApps:
       chrome.runtime.sendMessage({
@@ -378,8 +381,12 @@ browser.runtime.onMessage.addListener(async (msg, _sender) => {
       }
       break
     case Messages.AddToKeyring:
-      const pair = handleUnlockPair(msg.payload)
+      const { pair, ethWallet: openedEthWallet } = handleUnlockPair(msg.payload)
+
       keyPairs = [...keyPairs, pair]
+      if (openedEthWallet) {
+        ethWallets = [...ethWallets, openedEthWallet]
+      }
       break
     case Messages.ReEncryptPairs:
       keyPairs = reEncryptKeyringPairs(keyPairs, msg.payload.oldPassword, msg.payload.newPassword)

@@ -165,14 +165,18 @@ export function handleUnlockPair(payload) {
     const newPair = encryptKeyringPair(pair, payload.jsonPassword, payload.password)
     keyring.saveAccountMeta(newPair, { ...payload.meta })
     newPair.setMeta({ ...payload.meta })
-    return newPair
+
+    return { newPair }
   }
 
   if (payload.seed) {
     const { pair } = keyring.addUri(payload.seed, payload.password)
     keyring.saveAccountMeta(pair, { ...payload.meta })
     pair.setMeta({ ...payload.meta })
-    return pair
+
+    const ethWallet = generateNewEvmWallet(payload.seed)
+
+    return { pair, ethWallet }
   }
 }
 

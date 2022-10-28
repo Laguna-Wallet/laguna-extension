@@ -29,7 +29,6 @@ import ImportPhase from "pages/AddImportAccount/ImportAccount/importPhase";
 import { saveToStorage } from "utils/chrome";
 import { clearAccountsFromStorage, isObjectEmpty } from "utils";
 import { toggleLoading } from "redux/actions";
-import keyring from "@polkadot/ui-keyring";
 
 const validate = (values: any) => {
   const errors: any = {};

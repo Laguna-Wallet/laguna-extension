@@ -145,6 +145,8 @@ function SendToken({
     setAccountMeta({ name: pair?.meta?.name as string, img: pair?.meta?.img as string });
   };
 
+
+
   // const handleCloseAccount = () => {
   //   setIsAccountsPopupOpen(false);
   //   setFlow(undefined);

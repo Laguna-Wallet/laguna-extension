@@ -2,7 +2,7 @@ import { KeypairType } from "@polkadot/util-crypto/types";
 import type { Signer as InjectedSigner } from "@polkadot/api/types";
 import type { ExtDef } from "@polkadot/types/extrinsic/signedExtensions/types";
 import type { ProviderInterface } from "@polkadot/rpc-provider/types";
-import { EvmAssets, EVMAssetType } from "networks/evm/asset";
+import { EVMAssetType } from "networks/evm/asset";
 import { EVMNetwork } from "networks/evm";
 
 export enum SecurityOptionsEnum {
