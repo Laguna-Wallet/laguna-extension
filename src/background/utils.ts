@@ -160,13 +160,22 @@ export function transformTransfers(transfers: any[], chain: string) {
 }
 
 export function handleUnlockPair(payload) {
+  let ethWallet
+
   if (payload?.json) {
     const pair = keyring.restoreAccount(payload.json, payload.jsonPassword)
     const newPair = encryptKeyringPair(pair, payload.jsonPassword, payload.password)
     keyring.saveAccountMeta(newPair, { ...payload.meta })
     newPair.setMeta({ ...payload.meta })
 
-    return { newPair }
+    if (payload.meta.encodedSeed) {
+      const decodedSeedBytes = AES.decrypt(pair?.meta?.encodedSeed as string, payload.jsonPassword)
+      const decodedSeed = decodedSeedBytes.toString(Utf8)
+
+      ethWallet = generateNewEvmWallet(decodedSeed)
+    }
+
+    return { newPair, ethWallet }
   }
 
   if (payload.seed) {
