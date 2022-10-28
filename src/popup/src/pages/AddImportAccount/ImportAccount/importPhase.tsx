@@ -113,13 +113,13 @@ const ImportPhase = ({
     /* eslint-disable */
     if (seedPhase && /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(seedPhase)) {
       setIsSnackbarOpen(true);
-      setSnackbarError('Please Remove Special Characters (!,#:*)');
+      setSnackbarError("Please Remove Special Characters (!,#:*)");
     } else if ((seedLength === 12 || seedLength === 24) && !mnemonicValidate(seedPhase)) {
       setIsSnackbarOpen(true);
-      setSnackbarError('Not A Valid Blockchain Address');
+      setSnackbarError("Not A Valid Blockchain Address");
     } else if (seedLength > 12 && !mnemonicValidate(seedPhase)) {
       setIsSnackbarOpen(true);
-      setSnackbarError('Please Enter 12 Or 24 Words');
+      setSnackbarError("Please Enter 12 Or 24 Words");
     } else if ((seedLength === 12 || seedLength === 24) && mnemonicValidate(seedPhase)) {
       setIsFinishSlider(true);
     }
@@ -138,7 +138,7 @@ const ImportPhase = ({
       history.push(router.welcomeBack);
     } else {
       if (seedPhase || file || isLoading) {
-        dispatch(reset('ImportPhase'));
+        dispatch(reset("ImportPhase"));
         setUploaded(false);
         setIsSnackbarOpen(false);
         setIsLoading(false);
@@ -176,14 +176,14 @@ const ImportPhase = ({
   useEffect(() => {
     if (seedPhase) {
       const listener = (event: KeyboardEvent) => {
-        if (event.key === 'Enter') {
+        if (event.key === "Enter") {
           event.preventDefault();
           submit(formValues);
         }
       };
-      document.addEventListener('keydown', listener);
+      document.addEventListener("keydown", listener);
       return () => {
-        document.removeEventListener('keydown', listener);
+        document.removeEventListener("keydown", listener);
       };
     }
   }, [seedPhase]);
@@ -191,7 +191,7 @@ const ImportPhase = ({
   return (
     <Container>
       <WizardHeader
-        title={redirectedFromForgotPassword ? 'RESTORE ACCOUNT' : 'IMPORT ACCOUNT'}
+        title={redirectedFromForgotPassword ? "RESTORE ACCOUNT" : "IMPORT ACCOUNT"}
         isFinishSlider={isFinishSlider}
         isImportPhase
         onClose={onClose}
@@ -199,7 +199,7 @@ const ImportPhase = ({
       />
 
       <Form onSubmit={handleSubmit(submit)}>
-        <DndContainer {...getRootProps()} role={'Box'}>
+        <DndContainer {...getRootProps()} role={"Box"}>
           {!seedPhase && (
             <FileUploadContainer>
               <input {...getInputProps()} />
@@ -227,16 +227,16 @@ const ImportPhase = ({
                 placeholder="Enter your seed phrase, Polkadot address or drag and drop a JSON backup file"
                 component={HumbleInput}
                 props={{
-                  type: 'textarea',
-                  fontSize: '18px',
-                  marginTop: '20px',
-                  textAlign: 'center',
-                  bgColor: '#fff',
-                  borderColor: '#fff',
-                  color: isDisabled ? '#b1b5c3' : '#111',
-                  placeholderColor: '#b1b5c3',
+                  type: "textarea",
+                  fontSize: "18px",
+                  marginTop: "20px",
+                  textAlign: "center",
+                  bgColor: "#fff",
+                  borderColor: "#fff",
+                  color: isDisabled ? "#b1b5c3" : "#111",
+                  placeholderColor: "#b1b5c3",
                   hideErrorMsg: false,
-                  autoFocus: true.valueOf
+                  autoFocus: true.valueOf,
                 }}
               />
             </InputContainer>
@@ -257,21 +257,21 @@ const ImportPhase = ({
             placeholder="Enter Password for this file"
             component={HumbleInput}
             props={{
-              type: 'password',
-              height: '45px',
-              fontSize: '14px',
-              marginTop: '20px',
-              textAlign: 'center',
-              bgColor: '#f2f2f2',
-              errorBorderColor: '#fb5a5a',
-              color: '#b1b5c3',
-              placeholderColor: '#b1b5c3',
-              autoFocus: true
+              type: "password",
+              height: "45px",
+              fontSize: "14px",
+              marginTop: "20px",
+              textAlign: "center",
+              bgColor: "#f2f2f2",
+              errorBorderColor: "#fb5a5a",
+              color: "#b1b5c3",
+              placeholderColor: "#b1b5c3",
+              autoFocus: true,
             }}
           />
         )}
         {isPopupOpen && (
-          <Popup bg={'rgba(0, 0, 0, 0.3)'}>
+          <Popup bg={"rgba(0, 0, 0, 0.3)"}>
             <HelpImport onClose={() => setIsPopupOpen(false)} />
           </Popup>
         )}
@@ -290,7 +290,7 @@ const ImportPhase = ({
           close={() => setIsSnackbarOpen(false)}
           type="error"
           align="left"
-          bottom={file ? '140px' : '80px'}
+          bottom={file ? "140px" : "80px"}
         />
       </Form>
     </Container>
@@ -298,9 +298,9 @@ const ImportPhase = ({
 };
 
 export default reduxForm<Record<string, unknown>, any>({
-  form: 'ImportPhase',
+  form: "ImportPhase",
   validate,
-  destroyOnUnmount: false
+  destroyOnUnmount: false,
 })(ImportPhase);
 
 const Container = styled.div`
@@ -477,13 +477,13 @@ const IconContainer = styled.div<{ isDragActive?: boolean; acceptedFilesLength?:
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: ${({ acceptedFilesLength }) => (acceptedFilesLength ? '60px' : '25px')};
+  padding: ${({ acceptedFilesLength }) => (acceptedFilesLength ? "60px" : "25px")};
   box-sizing: border-box;
   box-sizing: border-box;
   border-radius: 100%;
   cursor: pointer;
   background-color: ${({ isDragActive, acceptedFilesLength }) =>
-    isDragActive || acceptedFilesLength ? '#f9fafb' : '#f9fafb'};
+    isDragActive || acceptedFilesLength ? "#f9fafb" : "#f9fafb"};
 `;
 
 const UploadedIconContainer = styled.div`
@@ -499,7 +499,7 @@ const UploadedIconContainer = styled.div`
 `;
 
 const Text = styled.div`
-  font-family: 'Inter';
+  font-family: "Inter";
   font-size: 18px;
   margin-top: 35.5px;
   color: #18191a;
@@ -516,7 +516,7 @@ const HelpButton = styled.div`
   width: 70px;
   height: 24px;
   cursor: pointer;
-  font-family: 'IBM Plex Sans';
+  font-family: "IBM Plex Sans";
   font-size: 12px;
   line-height: 1.35;
   text-align: center;

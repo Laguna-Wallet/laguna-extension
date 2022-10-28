@@ -320,8 +320,8 @@ const Tag = styled.div`
   box-sizing: border-box;
   border-radius: 50px;
   text-transform: capitalize;
-  color: #FFFFFF;
-  background-color: #6366F1;
+  color: #ffffff;
+  background-color: #6366f1;
 `;
 
 const Rate = styled.div<{ negativeValue: boolean }>`

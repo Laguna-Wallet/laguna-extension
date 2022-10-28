@@ -325,10 +325,10 @@ export async function getAssets(
 // todo proper typing
 // todo refactor
 export function recodeAddress(address: string, prefix: any, type?: string): string {
-  if (type === "ethereum") {
-    const raw = decodeAddress(address);
-    return ethereumEncode(raw);
-  }
+  // if (type === "ethereum") {
+  //   const raw = decodeAddress(address);
+  //   return ethereumEncode(raw);
+  // }
 
   const raw = decodeAddress(address);
   return encodeAddress(raw, prefix);
@@ -488,16 +488,10 @@ export async function getLatestTransactionsForSingleChain(
   if (isEVMChain(chain)) {
     const ethAsset = EvmAssets[chain][symbol];
 
-    // todo revise with Evelin about contract address
-    const assetId = getAssetIdBySmartContractAddress(
-      ethAsset?.contractAddress as string,
-      chain as EVMNetwork,
-    );
-
     const ethHistory = await getHistoricalTransactions(
       address,
       EVMNetwork.ETHEREUM,
-      assetId as EVMAssetId,
+      ethAsset.assetId as EVMAssetId,
     );
 
     transactions = transformEVMHistoryToTransaction(ethHistory);
@@ -508,7 +502,6 @@ export async function getLatestTransactionsForSingleChain(
       symbol,
     )) as Transaction[];
   }
-  console.log("~ transactions", transactions);
   const data = await fetchTransactions(address, chain, "USDC", row, page);
   return {
     count: data?.data?.count,
