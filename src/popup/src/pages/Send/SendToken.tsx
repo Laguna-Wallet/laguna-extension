@@ -56,7 +56,6 @@ type Props = {
   flow: FlowValue | undefined;
   setFlow: (flow: FlowValue | undefined) => void;
   fee: string;
-  nonce: string;
   setLoading: (loading: boolean) => void;
   loading: boolean;
   handleSubmit?: any;
@@ -69,6 +68,7 @@ type Props = {
   setAccountMeta: (accountMeta: AccountMeta) => void;
   setToBeSignTransaction: (toBeSignTransaction: IEVMToBeSignTransaction) => void;
   toBeSignTransactionParams: IEVMBuildTransaction | undefined;
+  handleSaveEthSettings: (values: Record<string, string>) => void;
   currencyType: CurrencyType;
   setCurrencyType: (currencyType: CurrencyType) => void;
 };
@@ -98,9 +98,9 @@ function SendToken({
   propsFromTokenDashboard,
   accountMeta,
   setAccountMeta,
-  nonce,
   setToBeSignTransaction,
   toBeSignTransactionParams,
+  handleSaveEthSettings,
   currencyType,
   setCurrencyType,
 }: Props) {
@@ -395,7 +395,8 @@ function SendToken({
               <InfoRow>
                 <span>Max Total</span>
                 <span>
-                  {loading ? "..." : fee} {selectedAsset?.symbol.toUpperCase()}
+                  {loading ? "..." : new BigNumber(amount).plus(fee).toString()}{" "}
+                  {selectedAsset?.symbol.toUpperCase()}
                 </span>
               </InfoRow>
             </Info>
@@ -471,6 +472,7 @@ function SendToken({
           onClose={() => setIsGasSettingsOpen(false)}
           setToBeSignTransaction={setToBeSignTransaction}
           toBeSignTransactionParams={toBeSignTransactionParams}
+          handleSaveEthSettings={handleSaveEthSettings}
         />
       )}
     </Container>
@@ -633,6 +635,7 @@ const InfoRowRIght = styled.div`
 `;
 
 const EthSettingsIconContainer = styled.div<{ loading?: boolean }>`
+  cursor: pointer;
   margin-left: 5px;
   opacity: ${({ loading }) => (loading ? "0.4" : "1")};
   pointer-events: ${({ loading }) => (loading ? "none" : "inherit")};

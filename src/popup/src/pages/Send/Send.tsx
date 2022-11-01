@@ -64,7 +64,6 @@ function Send({ initialIsContactsPopupOpen }: Props) {
   const [flow, setFlow] = useState<FlowValue | undefined>(undefined);
   const [assets, setAssets] = useState<Asset[] | undefined>(undefined);
   const [accountMeta, setAccountMeta] = useState<AccountMeta>();
-  const [nonce, setNonce] = useState<string>("");
 
   const location = useLocation<LocationState>();
   const { propsFromTokenDashboard } = location?.state || {};
@@ -178,17 +177,12 @@ function Send({ initialIsContactsPopupOpen }: Props) {
         reduxSendTokenState?.selectedAsset?.symbol
       ] as IEVMAssetERC20;
 
-      const obj = await evmUtils.getBuildTransactionOnChainParam(
-        ethNetwork,
-        activeAccount?.meta?.ethAddress,
-        ethAsset.assetId as EVMAssetId,
-      );
-
-      console.log("getBuildTransactionOnChainParam =>", obj);
-
-      const { nonce, gasPriceInGwei, nativeCurrenyBalance, assetBalance } = obj;
-
-      // Todo check if nativeCurrenyBalance > gasPrice
+      const { nonce, gasPriceInGwei, nativeCurrenyBalance, assetBalance } =
+        await evmUtils.getBuildTransactionOnChainParam(
+          ethNetwork,
+          activeAccount?.meta?.ethAddress,
+          ethAsset.assetId as EVMAssetId,
+        );
 
       const buildTransactionParam: IEVMBuildTransaction = {
         network: ethNetwork,
@@ -239,6 +233,31 @@ function Send({ initialIsContactsPopupOpen }: Props) {
     setAbilityToTransfer(false);
   }, [form?.amount]);
 
+  const handleSaveEthSettings = async (values: Record<string, string>) => {
+    const gasLimit = new BigNumber(values.gasLimit);
+    const gasPriceInGwei = new BigNumber(values.gasPrice);
+    const nonce = new BigNumber(values.nonce);
+
+    const toSignTransaction: IEVMToBeSignTransaction = await evmUtils.buildTransaction({
+      ...toBeSignTransactionParams,
+      gasLimit,
+      gasPriceInGwei,
+      nonce,
+    } as IEVMBuildTransaction);
+
+    setToBeSignTransaction(toSignTransaction);
+    setToBeSignTransactionParams({
+      ...toBeSignTransactionParams,
+      gasLimit,
+      gasPriceInGwei,
+      nonce,
+    } as IEVMBuildTransaction);
+
+    const transactionFee = new BigNumber(gasLimit).multipliedBy(gasPriceInGwei).dividedBy("1E9");
+
+    setFee(transactionFee?.toString());
+  };
+
   return (
     <Container>
       <Wizard>
@@ -248,7 +267,6 @@ function Send({ initialIsContactsPopupOpen }: Props) {
           flow={flow}
           setFlow={setFlow}
           fee={fee}
-          nonce={nonce}
           setLoading={setLoading}
           loading={loading}
           abilityToTransfer={abilityToTransfer}
@@ -258,6 +276,7 @@ function Send({ initialIsContactsPopupOpen }: Props) {
           setAccountMeta={setAccountMeta}
           setToBeSignTransaction={setToBeSignTransaction}
           toBeSignTransactionParams={toBeSignTransactionParams}
+          handleSaveEthSettings={handleSaveEthSettings}
           currencyType={currencyType}
           setCurrencyType={setCurrencyType}
         />
