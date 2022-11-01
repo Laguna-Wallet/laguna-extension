@@ -337,7 +337,7 @@ const SecureNowMessage = styled.div`
   /* margin-top: 20px; */
 
   span {
-    font-family: 'IBM Plex Sans';
+    font-family: "IBM Plex Sans";
     font-size: 11px;
     color: #000;
   }
@@ -358,7 +358,7 @@ const FirstTimeUserBalance = styled.div`
   }
 
   h2 {
-    font-family: 'IBM Plex Sans';
+    font-family: "IBM Plex Sans";
     font-size: 22px;
     margin-bottom: 10px;
     font-weight: 500;
@@ -382,7 +382,7 @@ const Balance = styled.div`
   justify-content: center;
   word-break: break-word;
   span {
-    font-family: 'IBM Plex Sans';
+    font-family: "IBM Plex Sans";
     font-size: 30px;
     font-weight: 500;
   }
@@ -410,7 +410,7 @@ const SubTitle = styled.div`
 `;
 
 const PriceChange = styled.div<{ negativeValue: boolean }>`
-  font-family: 'IBM Plex Sans';
+  font-family: "IBM Plex Sans";
   font-size: 14px;
   color: #606060;
   line-height: 19px;

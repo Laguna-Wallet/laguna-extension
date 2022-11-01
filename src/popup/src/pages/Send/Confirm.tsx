@@ -255,7 +255,7 @@ const Text = styled.div`
   }
 
   :nth-child(2) {
-    font-family: 'Work Sans';
+    font-family: "Work Sans";
     font-size: 27px;
     font-weight: 600;
     color: #18191a;
@@ -319,7 +319,7 @@ const Tag = styled.div`
   align-items: center;
   justify-content: center;
   border-radius: 60px;
-  font-family: 'IBM Plex Sans';
+  font-family: "IBM Plex Sans";
   font-size: 10px;
   color: #000;
   margin-left: 5px;

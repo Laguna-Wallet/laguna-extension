@@ -29,7 +29,7 @@ export enum SendAccountFlowEnum {
   SendToTrustedContact = "SendToTrustedContact",
   SendToAddress = "SendToAddress",
   SendToAccount = "SendToAccount",
-  ScanQR = "ScanQR"
+  ScanQR = "ScanQR",
 }
 
 export type FlowValue =
@@ -114,10 +114,10 @@ function Send({ initialIsContactsPopupOpen }: Props) {
       setRecoded(recoded);
 
       const transfer = await api.tx.balances.transfer(form.address, amount.toString());
-
+      console.log(1);
       const { partialFee, weight } = await transfer.paymentInfo(recoded);
       // const info = await transfer.paymentInfo(recoded);
-
+      console.log(2);
       const fees = new BigNumber(`${partialFee}`).multipliedBy(110).dividedBy(100);
 
       // todo check this

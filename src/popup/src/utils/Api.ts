@@ -1,13 +1,11 @@
 import keyring from "@polkadot/ui-keyring";
 import axios from "axios";
-import { AES } from "crypto-js";
-import Utf8 from "crypto-js/enc-utf8";
-import { ethers } from "ethers";
 import { changeAccountsBalances, changeTokenReceived } from "redux/actions";
+import { AppDispatch } from "redux/store";
 import { checkBalanceChange, timer } from "utils";
 import { getFromStorage, saveToStorage } from "./chrome";
 import { recodeAddress } from "./polkadot";
-import { networks, StorageKeys } from "./types";
+import { Messages, networks, StorageKeys } from "./types";
 
 interface PriceConverter {
   symbol: string;
