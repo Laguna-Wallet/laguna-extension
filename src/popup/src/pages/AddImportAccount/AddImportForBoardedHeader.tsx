@@ -122,7 +122,7 @@ const Title = styled.div`
   letter-spacing: 0.85px;
   text-align: center;
   color: #000;
-  font-family: 'IBM Plex Sans';
+  font-family: "IBM Plex Sans";
   font-size: 17px;
   font-weight: 500;
   margin-right: auto;
