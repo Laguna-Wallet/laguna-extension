@@ -201,10 +201,7 @@ function Send({ initialIsContactsPopupOpen }: Props) {
         gasLimit: new BigNumber(100000),
       };
 
-      const estimatedGasLimit = await evmUtils.estimateGasLimit(
-        ethNetwork,
-        buildTransactionParam,
-      );
+      const estimatedGasLimit = await evmUtils.estimateGasLimit(ethNetwork, buildTransactionParam);
 
       buildTransactionParam.gasLimit = estimatedGasLimit;
       const toSignTransaction: IEVMToBeSignTransaction = await evmUtils.buildTransaction(

@@ -145,8 +145,6 @@ function SendToken({
     setAccountMeta({ name: pair?.meta?.name as string, img: pair?.meta?.img as string });
   };
 
-
-
   // const handleCloseAccount = () => {
   //   setIsAccountsPopupOpen(false);
   //   setFlow(undefined);
@@ -388,7 +386,7 @@ function SendToken({
                     {loading ? "..." : fee} {selectedAsset?.symbol.toUpperCase()}
                   </span>{" "}
                   {isEVMChain(chain) && (
-                    <EthSettingsIconContainer onClick={handleGasSettings}>
+                    <EthSettingsIconContainer loading={loading} onClick={handleGasSettings}>
                       <EthSettingsIcon />
                     </EthSettingsIconContainer>
                   )}
@@ -634,8 +632,10 @@ const InfoRowRIght = styled.div`
   align-items: center;
 `;
 
-const EthSettingsIconContainer = styled.div`
+const EthSettingsIconContainer = styled.div<{ loading?: boolean }>`
   margin-left: 5px;
+  opacity: ${({ loading }) => (loading ? "0.4" : "1")};
+  pointer-events: ${({ loading }) => (loading ? "none" : "inherit")};
 `;
 
 const InfoRow = styled.div`

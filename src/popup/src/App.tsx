@@ -209,6 +209,9 @@ function App() {
         <Route path={router.addRemoveToken}>
           <AddRemoveToken />
         </Route>
+        <Route path={router.transactionSentEvm}>
+          <TransactionSentEVM />
+        </Route>
       </Switch>
       <Snackbar
         width="194.9px"
