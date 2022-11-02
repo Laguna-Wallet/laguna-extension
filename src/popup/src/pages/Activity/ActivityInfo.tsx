@@ -11,6 +11,7 @@ import RightBigArrowIcon from "assets/svgComponents/RightBigArrowIcon";
 import { useHistory } from "react-router-dom";
 import { router } from "router/router";
 import browser from "webextension-polyfill";
+import { EVMNetwork } from "networks/evm";
 
 type Props = {
   transaction: Transaction;
@@ -18,6 +19,7 @@ type Props = {
 };
 
 export default function AccountInfo({ transaction, closeAction }: Props) {
+  console.log("~ transaction", transaction);
   const history = useHistory();
 
   const { from, to, nonce, amount, fee, chain, hash } = transaction;
@@ -31,6 +33,12 @@ export default function AccountInfo({ transaction, closeAction }: Props) {
   const decimal = tokenDecimals[symbol.toUpperCase()];
 
   const onClick = (hash: string, chain: string) => {
+    // Todo Proper chain enum
+    if (chain.toUpperCase() === EVMNetwork.ETHEREUM) {
+      browser.windows.create({ url: `https://etherscan.io/tx/${hash}` });
+      return;
+    }
+
     browser.windows.create({ url: `https://${chain}.subscan.io/extrinsic/${hash}` });
   };
 
@@ -65,7 +73,9 @@ export default function AccountInfo({ transaction, closeAction }: Props) {
         <Row>
           <RowLeft>Status</RowLeft>
           <RowRight style={{ cursor: "pointer" }} onClick={() => onClick(hash, chain)}>
-            View on Polkadot explorer
+            {chain.toUpperCase() === EVMNetwork.ETHEREUM
+              ? "View on Etherscan"
+              : "View on Polkadot explorer"}
           </RowRight>
         </Row>
         <Row marginTop="8px">
@@ -165,7 +175,7 @@ const Title = styled.div`
   align-items: center;
   height: 24px;
   span {
-    font-family: 'IBM Plex Sans';
+    font-family: "IBM Plex Sans";
     font-size: 17px;
     font-weight: 500;
     color: #18191a;
@@ -194,7 +204,7 @@ const Row = styled.div<{ marginTop?: string }>`
 `;
 
 const RowLeft = styled.span`
-  font-family: 'IBM Plex Sans';
+  font-family: "IBM Plex Sans";
   font-size: 12px;
   line-height: 1.35;
   color: #18191a;
@@ -209,7 +219,7 @@ const BoldText = styled.div<{ fontSize?: string }>`
 `;
 
 const RowRight = styled.span`
-  font-family: 'IBM Plex Sans';
+  font-family: "IBM Plex Sans";
   font-size: 12px;
   color: #18191a;
 `;
@@ -260,7 +270,7 @@ const ExportButton = styled.div`
   justify-content: center;
   cursor: pointer;
   text-decoration: none;
-  font-family: 'IBM Plex Sans';
+  font-family: "IBM Plex Sans";
   font-size: 12px;
   margin-top: 17px;
   line-height: 1.35 span {

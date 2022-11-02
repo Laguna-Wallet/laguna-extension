@@ -1,7 +1,7 @@
 import "@polkadot/wasm-crypto/initOnlyAsm"
 // import "@polkadot/wasm-crypto/initWasmAsm"
 
-import { chains, Messages, networks, StorageKeys } from "./types"
+import { Messages, networks, StorageKeys } from "./types"
 import { ApiPromise, WsProvider } from "@polkadot/api"
 import { checkBalanceChange, getAccountAddresses, getFromStorage, recodeAddress, recodeToPolkadotAddress, saveToStorage, transformTransfers } from "./utils"
 // import { decodePair } from "@polkadot/keyring/pair/decode"
@@ -12,29 +12,44 @@ import { checkBalanceChange, getAccountAddresses, getFromStorage, recodeAddress,
 import { cryptoWaitReady } from "@polkadot/util-crypto"
 // import { initWasm } from "@polkadot/wasm-crypto/initOnlyAsm"
 import browser from "webextension-polyfill"
-import { rename } from "fs"
+import { broadcastTransaction, signTransaction } from "./evm"
+import { EVMNetwork } from "../popup/src/networks/evm"
 
 export async function Retrieve_balance_change_rates() {
   // const balances = getFromStorage()
 }
 
-export async function sendTransaction(pairs, { sendTo, sendFrom, amount, chain }) {
+export async function sendTransaction(pairs, ethWallets, payload) {
   try {
-    const pair = pairs.find((pair) => {
-      return recodeToPolkadotAddress(pair.address) === recodeToPolkadotAddress(sendFrom)
-    })
-    await cryptoWaitReady()
-    const wsProvider = new WsProvider(`wss://${chain}.api.onfinality.io/public-ws?apikey=${process.env.ONFINALITY_KEY}`)
-    const api = await ApiPromise.create({ provider: wsProvider })
-    const unsub = await api.tx.balances.transfer(sendTo, amount).signAndSend(pair, ({ status }: any) => {
-      if (status.isInBlock) {
-        chrome.runtime.sendMessage({ type: Messages.TransactionSuccess, payload: { amount, chain, block: status?.asInBlock?.toString() } })
-        unsub()
+    if (payload.chain === EVMNetwork.ETHEREUM || payload.chain === EVMNetwork.AVALANCHE_TESTNET_FUJI) {
+      const wallet = ethWallets.find((wallet) => {
+        return wallet.address === payload.toBeSignTransaction.from
+      })
 
-        api.disconnect()
+      console.log("wallet", wallet)
+      console.log("~ payload", payload)
+      const signedTx = await signTransaction(wallet, payload.toBeSignTransaction)
+      const transactionHash = await broadcastTransaction(payload.chain, signedTx)
+      if (transactionHash) {
+        chrome.runtime.sendMessage({ type: Messages.TransactionSuccess, payload: { block: transactionHash } })
       }
-    })
+    } else {
+      const pair = pairs.find((pair) => {
+        return recodeToPolkadotAddress(pair.address) === recodeToPolkadotAddress(payload.sendFrom)
+      })
 
+      await cryptoWaitReady()
+      const wsProvider = new WsProvider(`wss://${payload.chain}.api.onfinality.io/public-ws?apikey=${process.env.ONFINALITY_KEY}`)
+      const api = await ApiPromise.create({ provider: wsProvider })
+      const unsub = await api.tx.balances.transfer(payload.sendTo, payload.amount).signAndSend(pair, ({ status }: any) => {
+        if (status.isInBlock) {
+          chrome.runtime.sendMessage({ type: Messages.TransactionSuccess, payload: { amount: payload.amount, chain: payload.chain, block: status?.asInBlock?.toString() } })
+          unsub()
+
+          api.disconnect()
+        }
+      })
+    }
     // setTimeout(() => {
     //   unsub()
     // }, 30000)
@@ -47,9 +62,9 @@ export async function sendTransaction(pairs, { sendTo, sendFrom, amount, chain }
 export async function Retrieve_Coin_Prices() {
   // moonriver,
   // moonbeam,
-  // shiden,
+  // shiden,a
   // astar
-  const data = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=polkadot,kusama,&vs_currencies=usd`)
+  const data = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=polkadot,kusama,ethereum&vs_currencies=usd`)
   const json = await data.json()
   return json
 }
@@ -57,8 +72,9 @@ export async function Retrieve_Coin_Prices() {
 // todo proper typing and get rid of unneeded fields from the return object
 export async function Retrieve_Coin_Infos() {
   // moonriver, moonbeam,მო სულიკო რაზედ მოგიცკენიააა    shiden, astar
-  const data = await fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=polkadot,kusama,&order=market_cap_desc&per_page=100&page=1&sparkline=false`)
-
+  const data = await fetch(
+    `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=polkadot,kusama,ethereum,usdc,usdt&order=market_cap_desc&per_page=100&page=1&sparkline=false`
+  )
   return await data.json()
 }
 

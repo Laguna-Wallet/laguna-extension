@@ -9,6 +9,7 @@ import { useSelector } from "react-redux";
 import SelectNetwork from "./SelectNetwork";
 import { State } from "redux/store";
 import { useLocation } from "react-router-dom";
+import { EVMNetwork } from "networks/evm";
 export interface PropsFromTokenDashboard {
   fromTokenDashboard?: boolean;
   asset?: Asset;
@@ -37,6 +38,16 @@ export default function Receive() {
       if (!selectedNetwork) return;
       // const api = await getApiInstance(selectedNetwork.chain);
       // const prefix = api.consts.system.ss58Prefix;
+
+      if (
+        (selectedNetwork.chain === EVMNetwork.ETHEREUM ||
+          selectedNetwork.chain === EVMNetwork.AVALANCHE_TESTNET_FUJI) &&
+        activeAccount?.meta?.ethAddress
+      ) {
+        setRecoded(activeAccount?.meta?.ethAddress);
+        return;
+      }
+
       const recoded = recodeAddress(
         activeAccount.address,
         selectedNetwork?.prefix,
@@ -108,11 +119,11 @@ const ContentItem = styled.div`
 const Text = styled.div`
   font-size: 14px;
   color: #8c8c8c;
-  font-family: 'Sequel100Wide55Wide';
+  font-family: "Sequel100Wide55Wide";
 `;
 
 const BottomText = styled.div`
-  font-family: 'Inter';
+  font-family: "Inter";
   font-weight: 400;
   font-size: 14px;
   color: #000000;

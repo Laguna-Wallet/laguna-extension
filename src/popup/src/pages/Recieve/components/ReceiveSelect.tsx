@@ -63,18 +63,23 @@ const IconContainer = styled.div`
 
 const StyledSelect = styled.select`
   flex: 1;
+  max-width: 250px;
   height: 48px;
   border: 0;
   background-color: #f3f3f3;
   font-size: 16px;
   appearance: none;
-  font-family: 'Inter';
+  font-family: "Inter";
   font-weight: 400;
   display: flex;
   align-items: center;
   color: #18191a;
   margin-left: 8px;
   text-transform: capitalize;
+
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
   &:focus {
     outline: none;
   }

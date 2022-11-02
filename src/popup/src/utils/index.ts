@@ -1,4 +1,5 @@
-import { MnemonicsTriple, StorageKeys } from "./types";
+import { CurrencyType } from "utils/types";
+import { MnemonicsTriple, StorageKeys, Transaction } from "./types";
 import { saveAs } from "file-saver";
 import { KeyringPair$Json } from "@polkadot/keyring/types";
 import { KeyringPairs$Json } from "@polkadot/ui-keyring/types";
@@ -9,6 +10,7 @@ import keyring from "@polkadot/ui-keyring";
 import Resizer from "react-image-file-resizer";
 import { decodeAddress, encodeAddress } from "@polkadot/util-crypto";
 import BigNumber from "bignumber.js";
+import { IEVMHistoricalTransaction } from "./evm/interfaces";
 
 //==============================================================================
 // Mnemonics
@@ -273,10 +275,45 @@ export async function checkBalanceChange(
   const parsedOldBallance = JSON.parse(oldBalance)?.balances;
 
   for (const [key, balance] of Object.entries(newBalance)) {
-    if (balance?.overall > parsedOldBallance[key].overall) {
+    if (balance?.overall > parsedOldBallance[key]?.overall) {
       return true;
     }
   }
 
   return false;
+}
+
+export function transformEVMHistoryToTransaction(
+  evmHistory: IEVMHistoricalTransaction[],
+): Transaction[] {
+  return evmHistory.map(({ amount, from, to, transactionHash, nonce, timestamp, fee }) => ({
+    chain: "ethereum",
+    amount: amount.toString(),
+    from,
+    hash: transactionHash,
+    timestamp: timestamp.toString(),
+    fee: fee.toString(),
+    nonce: nonce.toString(),
+    to,
+  }));
+}
+
+export function cryptoToFiat(crypto: number, price: number): number {
+  return new BigNumber(crypto).times(price).toNumber();
+}
+
+export function fiatToCrypto(fiat: number, price: number): number {
+  if (!fiat || fiat === 0) return 0;
+  return new BigNumber(fiat).dividedBy(price).toNumber();
+}
+
+export function handleCurrencyCorrection(
+  amount: number,
+  currencyType: CurrencyType,
+  price: number,
+): number {
+  if (currencyType === CurrencyType.Fiat) {
+    return fiatToCrypto(amount, price);
+  }
+  return amount;
 }

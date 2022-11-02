@@ -8,6 +8,7 @@ import Utf8 from "crypto-js/enc-utf8"
 import { ethereumEncode } from "@polkadot/util-crypto"
 import { checkIfDenied } from "@polkadot/phishing"
 import type { KeyringPair } from "@polkadot/keyring/types"
+import { generateNewEvmWallet } from "./evm"
 
 export const getFromStorage = async function (key: string): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -159,19 +160,32 @@ export function transformTransfers(transfers: any[], chain: string) {
 }
 
 export function handleUnlockPair(payload) {
+  let ethWallet
+
   if (payload?.json) {
     const pair = keyring.restoreAccount(payload.json, payload.jsonPassword)
     const newPair = encryptKeyringPair(pair, payload.jsonPassword, payload.password)
     keyring.saveAccountMeta(newPair, { ...payload.meta })
     newPair.setMeta({ ...payload.meta })
-    return newPair
+
+    if (payload.meta.encodedSeed) {
+      const decodedSeedBytes = AES.decrypt(pair?.meta?.encodedSeed as string, payload.jsonPassword)
+      const decodedSeed = decodedSeedBytes.toString(Utf8)
+
+      ethWallet = generateNewEvmWallet(decodedSeed)
+    }
+
+    return { newPair, ethWallet }
   }
 
   if (payload.seed) {
     const { pair } = keyring.addUri(payload.seed, payload.password)
     keyring.saveAccountMeta(pair, { ...payload.meta })
     pair.setMeta({ ...payload.meta })
-    return pair
+
+    const ethWallet = generateNewEvmWallet(payload.seed)
+
+    return { pair, ethWallet }
   }
 }
 
@@ -185,15 +199,31 @@ export function encryptKeyringPair(pair: any, oldPassword: string, newPassword: 
 export function unlockKeyPairs(password: string) {
   try {
     const pairs = keyring.getPairs()
+    const openedEthWallets = []
+    const substratePairs = []
 
-    return pairs.map((pair) => {
+    for (let i = 0; i < pairs.length; i++) {
+      const pair = pairs[i]
       pair.unlock(password)
-      return pair
-    })
+
+      substratePairs.push(pair)
+
+      if (pair?.meta?.ethAddress) {
+        const decodedSeedBytes = AES.decrypt(pair?.meta?.encodedSeed as string, password)
+        const decodedSeed = decodedSeedBytes.toString(Utf8)
+
+        const wallet = generateNewEvmWallet(decodedSeed)
+        openedEthWallets.push(wallet)
+      }
+    }
+
+    return { substratePairs, openedEthWallets }
   } catch (err) {
     console.log("err", err)
   }
 }
+
+// unlockEthWallets
 
 export function removeFromKeypair(pairs, address) {
   keyring.forgetAccount(address)

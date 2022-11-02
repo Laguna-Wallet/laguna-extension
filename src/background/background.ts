@@ -2,6 +2,8 @@
 import { Messages, StorageKeys } from "./types"
 import { u8aToHex } from "@polkadot/util"
 import { wrapBytes } from "@polkadot/extension-dapp/wrapBytes"
+import { ethers } from "ethers"
+
 import {
   fetchAccountsBalances,
   // fetchAccountsTransactions,
@@ -33,10 +35,7 @@ import { AccountsStore } from "./stores"
 import { cryptoWaitReady } from "@polkadot/util-crypto"
 import type { KeyringPair } from "@polkadot/keyring/types"
 import assert = require("assert")
-import type { SignerPayloadJSON, SignerPayloadRaw } from "@polkadot/types/types"
-import { hexToString } from "@polkadot/util"
 import browser from "webextension-polyfill"
-import { userInfo } from "os"
 
 // import { getCurrentTab } from "./utils"
 
@@ -47,6 +46,9 @@ import { userInfo } from "os"
 
 let isLoggedIn = false
 let keyPairs: KeyringPair[] = []
+
+let ethWallets: ethers.Wallet[] = []
+
 let signRequestPending = false
 let signRequest = {}
 let signRawRequestPending = false
@@ -274,7 +276,10 @@ browser.runtime.onMessage.addListener(async (msg, _sender) => {
       if (validatePassword(msg.payload.password)) {
         isLoggedIn = true
         timeoutStart = Date.now()
-        keyPairs = unlockKeyPairs(msg.payload.password)
+        const { substratePairs, openedEthWallets } = unlockKeyPairs(msg.payload.password)
+
+        keyPairs = substratePairs
+        ethWallets = openedEthWallets
       }
       break
     case Messages.CheckPendingDappAuth:
@@ -294,6 +299,7 @@ browser.runtime.onMessage.addListener(async (msg, _sender) => {
     case Messages.LogOutUser:
       isLoggedIn = false
       keyPairs = []
+      ethWallets = []
       break
 
     case Messages.CheckPendingSign:
@@ -330,9 +336,12 @@ browser.runtime.onMessage.addListener(async (msg, _sender) => {
       break
     case Messages.ForgotPassword:
       isLoggedIn = false
-      const newPair = handleUnlockPair(msg.payload)
+      const { newPair, ethWallet } = handleUnlockPair(msg.payload)
       clearAccountsFromStorage(newPair.address)
       keyPairs = [newPair]
+      if (ethWallet) {
+        ethWallets = [ethWallet]
+      }
       break
     case Messages.ConnectedApps:
       chrome.runtime.sendMessage({
@@ -368,12 +377,16 @@ browser.runtime.onMessage.addListener(async (msg, _sender) => {
       break
     case Messages.SendTransaction:
       if (msg?.payload) {
-        await sendTransaction(keyPairs, msg.payload)
+        await sendTransaction(keyPairs, ethWallets, msg.payload)
       }
       break
     case Messages.AddToKeyring:
-      const pair = handleUnlockPair(msg.payload)
+      const { pair, ethWallet: openedEthWallet } = handleUnlockPair(msg.payload)
+
       keyPairs = [...keyPairs, pair]
+      if (openedEthWallet) {
+        ethWallets = [...ethWallets, openedEthWallet]
+      }
       break
     case Messages.ReEncryptPairs:
       keyPairs = reEncryptKeyringPairs(keyPairs, msg.payload.oldPassword, msg.payload.newPassword)
@@ -404,6 +417,7 @@ browser.runtime.onMessage.addListener(async (msg, _sender) => {
 
 browser.runtime.onInstalled.addListener(async (port) => {
   const prices = await Retrieve_Coin_Prices()
+  console.log("~ prices", prices)
   browser.runtime.sendMessage({
     type: Messages.PriceUpdated,
     payload: JSON.stringify(prices),
@@ -451,6 +465,7 @@ browser.runtime.onStartup.addListener(async () => {
     type: Messages.CoinInfoUpdated,
     payload: JSON.stringify(Infos),
   })
+
   saveToStorage({ key: StorageKeys.TokenInfos, value: JSON.stringify(Infos) })
 
   // browser.alarms.create("refresh", { periodInMinutes: 1 })

@@ -1,5 +1,6 @@
+import { useEffect, useState } from "react";
 import Header from "pages/Wallet/Header";
-import styled from "styled-components";
+import styled from "styled-components/macro";
 import { Asset, TokenInfo, Transaction } from "utils/types";
 import dashboardBG from "assets/imgs/dashboard-bg.jpg";
 import { useDispatch, useSelector } from "react-redux";
@@ -7,7 +8,6 @@ import NetworkIcons from "components/primitives/NetworkIcons";
 import BigNumber from "bignumber.js";
 import { selectAsset } from "redux/actions";
 import { ActivityItem } from "pages/Activity/Activity";
-import { useEffect, useState } from "react";
 import { getLatestTransactionsForSingleChain } from "utils/polkadot";
 import { useAccount } from "context/AccountContext";
 import Footer from "pages/Wallet/Footer";
@@ -80,6 +80,7 @@ export default function TokenDashboard() {
         const { transactions } = await getLatestTransactionsForSingleChain(
           currAccountAddress,
           chain,
+          symbol,
           0,
           10,
         );
@@ -129,11 +130,13 @@ export default function TokenDashboard() {
                     <span>
                       Locked
                       <ToolTipIconContainer>
-                        <MappleToolTip>
+                        <MappleToolTip direction="right">
                           <div>
                             <ToolTipIcon />
                           </div>
-                          <div>Locked balance is the balance your are currently staking</div>
+                          <ToolTipText>
+                            Locked balance is the balance your are currently staking
+                          </ToolTipText>
                         </MappleToolTip>
                       </ToolTipIconContainer>
                     </span>
@@ -177,7 +180,7 @@ export default function TokenDashboard() {
             </ButtonsContainer>
             <Transactions>
               <TransactionsHeader>
-                <TransactionsTitle>ACTIVITY</TransactionsTitle>
+                <TransactionsTitle>TRANSACTIONS</TransactionsTitle>
                 <TransactionsTitle
                   onClick={() => {
                     history.push({ pathname: router.chainActivity, state: { chain, asset } });
@@ -232,19 +235,18 @@ const Container = styled.div<{ bg: string }>`
 const Content = styled.div<{ isEmpty: boolean }>`
   width: 100%;
   height: 100%;
-  margin-top: ${({ isEmpty }) => (isEmpty ? "38px" : "60px")};
+  margin-top: ${({ isEmpty }) => (isEmpty ? "38px" : "40px")};
   box-sizing: border-box;
 `;
 
 const CardContainer = styled.div`
   width: 100%;
-  padding: 0px 15px 15px 15px;
+  padding: 0px 26px 24px 26px;
   box-sizing: border-box;
 `;
 
 const Card = styled.div`
   width: 100%;
-  height: 213px;
   background-color: #fff;
   border-radius: 5px;
   padding: 10px;
@@ -259,13 +261,13 @@ const Balance = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Work Sans';
+  font-family: "Work Sans";
   text-transform: uppercase;
   font-size: 27px;
   font-weight: 600;
   line-height: 1.48;
   color: #18191a;
-  margin-top: auto;
+  margin-top: 16px;
 
   span:nth-child(2) {
     margin-right: 5px;
@@ -291,7 +293,7 @@ const Balances = styled.div`
 const BalancesRow = styled.div`
   display: flex;
   justify-content: space-between;
-  font-family: 'IBM Plex Sans';
+  font-family: "IBM Plex Sans";
   font-weight: 400;
   font-size: 12px;
   &:nth-child(2) {
@@ -318,8 +320,8 @@ const Tag = styled.div`
   box-sizing: border-box;
   border-radius: 50px;
   text-transform: capitalize;
-  color: #FFFFFF;
-  background-color: #6366F1;
+  color: #ffffff;
+  background-color: #6366f1;
 `;
 
 const Rate = styled.div<{ negativeValue: boolean }>`
@@ -333,7 +335,6 @@ const ButtonsContainer = styled.div`
   display: flex;
   justify-content: center;
   color: #fff;
-  margin-top: 24px;
 `;
 
 const StyledLink = styled(Link)`
@@ -356,6 +357,8 @@ const Button = styled.div`
   border-radius: 4px;
   background: #ffffff;
   color: #111;
+  box-shadow: 5px 5px 50px rgba(0, 0, 0, 0.15);
+
   cursor: pointer;
   :nth-child(2) {
     margin-left: 10px;
@@ -386,8 +389,8 @@ const Transactions = styled.div`
   background-color: #ffffff;
   border-top-left-radius: 14.8px;
   border-top-right-radius: 14.8px;
-  margin-top: 20px;
-  padding: 20px 15px 0px 15px;
+  margin-top: 24px;
+  padding: 20px 26px 0px 26px;
   box-sizing: border-box;
 `;
 
@@ -411,4 +414,8 @@ const TransactionsTitle = styled.div`
 const ActivityContainer = styled.div`
   width: 323px;
   height: 429px;
+`;
+
+const ToolTipText = styled.span`
+  max-width: 220px;
 `;

@@ -40,6 +40,7 @@ import AddRemoveToken from "pages/AddRemoveToken/AddRemoveToken";
 import { fetchAccountsBalances } from "utils/Api";
 import { useAccount } from "context/AccountContext";
 import keyring from "@polkadot/ui-keyring";
+import TransactionSentEVM from "pages/Send/SuccesPage/TransactionSentEVM";
 
 function App() {
   const dispatch = useDispatch();
@@ -63,32 +64,8 @@ function App() {
     go();
   }, []);
 
-  // useEffect(() => {
-  //   const { pair } = keyring.addUri(
-  //     'inherit clap pledge rocket deliver chest wing afraid indoor panel woman payment',
-  //     '123123123'
-  //   );
-
-  //   pair.decodePkcs8('123123123');
-
-  //   keyring.encryptAccount(pair, '321321321');
-
-  //   const newPair = keyring.getPair(pair.address);
-
-  //   newPair.decodePkcs8('123123123');
-  //   console.log('~ newPair', newPair);
-  // }, []);
-
-  // useEffect(() => {
-  //   const pair = keyring.getPairs()[0];
-
-  //   pair.decodePkcs8('321321321');
-  //   console.log('~ pair', pair);
-  // }, []);
-
   useEffect(() => {
     async function go() {
-      //       // Login State
       const AuthResponse = await browser.runtime.sendMessage({ type: Messages.AuthCheck });
 
       const PendingDappAuthResponse = await browser.runtime.sendMessage({
@@ -148,10 +125,15 @@ function App() {
   if (isLoading) {
     <div>Loading</div>;
   }
+  // return <TransactionSentEVM blockHash="asd" />;
 
   return (
     <div className="App">
       <Switch>
+        <Route exact path={router.home}>
+          <Wallet />
+        </Route>
+
         <Route path={router.importAccount}>
           <ImportAccount />
         </Route>
@@ -227,8 +209,8 @@ function App() {
         <Route path={router.addRemoveToken}>
           <AddRemoveToken />
         </Route>
-        <Route exact path={router.home}>
-          <Wallet />
+        <Route path={router.transactionSentEvm}>
+          <TransactionSentEVM />
         </Route>
       </Switch>
       <Snackbar

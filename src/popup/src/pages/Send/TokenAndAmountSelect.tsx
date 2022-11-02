@@ -6,32 +6,48 @@ import SelectSmallIcon from "assets/svgComponents/SelectSmallIcon";
 import useOnClickOutside from "hooks/useOnClickOutside";
 // import debounce from 'lodash.debounce';
 import { useEffect } from "react";
+import debounce from "lodash.debounce";
+import { CurrencyType } from "utils/types";
+import { cryptoToFiat } from "utils";
 
 type Props = {
   Icon: any;
   tokens: string[];
+  fiatList: string[];
   value?: string;
+  currencyType: CurrencyType;
   onChangeCallback: () => void;
+  price: number;
 };
 
-export default function TokenAndAmountSelect({ tokens, Icon, value, onChangeCallback }: Props) {
+export default function TokenAndAmountSelect({
+  tokens,
+  fiatList,
+  Icon,
+  value,
+  currencyType,
+  price,
+  onChangeCallback,
+}: Props) {
   const optionContainerRef = useRef<HTMLDivElement | null>(null);
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   useOnClickOutside(optionContainerRef, () => setIsOpen(false));
 
+  const selectOptions = currencyType === CurrencyType.Crypto ? tokens : fiatList;
+
   const renderSelect = () => {
     return (
       <StyledSelect>
         <StyledOption onClick={() => setIsOpen(true)}>
-          {tokens[0].toUpperCase()}
+          {selectOptions[0].toUpperCase()}
           <IconContainer>
             <SelectSmallIcon />
           </IconContainer>
         </StyledOption>
-        {tokens && isOpen && (
+        {selectOptions && isOpen && (
           <OptionContainer ref={optionContainerRef}>
-            {tokens.map((symbol: string) => (
+            {selectOptions.map((symbol: string) => (
               <StyledOption key={symbol} onClick={() => setIsOpen(false)}>
                 {/* {symbol.toUpperCase()} */}
               </StyledOption>
@@ -42,6 +58,10 @@ export default function TokenAndAmountSelect({ tokens, Icon, value, onChangeCall
     );
   };
 
+  // const handleAmountDisplay = (amount: number, currencyType: CurrencyType) => {
+  //   console.log("~ amount", amount);
+  // };
+
   return (
     <Container>
       {/* {value && } */}
@@ -50,6 +70,7 @@ export default function TokenAndAmountSelect({ tokens, Icon, value, onChangeCall
         name="amount"
         type="text"
         label="amount"
+        defaultValue={" "}
         component={Input}
         onChangeCallback={onChangeCallback}
       />
@@ -62,11 +83,13 @@ export default function TokenAndAmountSelect({ tokens, Icon, value, onChangeCall
 }
 
 const Input = ({ input: { value, onChange }, onChangeCallback }: any) => {
-  const changeHandler = (event: any) => {
-    onChange(parseNumeric(event.target.value));
+  const changeHandler = (value: any) => {
+    onChange(parseNumeric(value));
   };
 
-  // const debouncedChangeHandler = useMemo(() => debounce(changeHandler, 3000), []);
+  // const debouncedChangeHandler = useMemo(() => debounce(changeHandler, 3000), [value]);
+  // const debouncedChangeHandler = debounce(changeHandler, 3000);
+  const debouncedChangeHandler = changeHandler;
 
   useEffect(() => {
     return () => {
@@ -78,7 +101,7 @@ const Input = ({ input: { value, onChange }, onChangeCallback }: any) => {
     <StyledInput
       type="text"
       isvalue={!value}
-      // value={value}
+      value={value}
       // onChange={(e) => {
       //   if (parseNumeric(e, e.target.value)) {
       //     onChange(e.target.value);
@@ -86,10 +109,13 @@ const Input = ({ input: { value, onChange }, onChangeCallback }: any) => {
       // }}
       // todo proper typing
       onChange={(e) => {
+        e.persist();
+
+        // onChange(e);
         onChangeCallback();
-        // debouncedChangeHandler(e);
+        debouncedChangeHandler(e.target.value);
       }}
-      placeholder="Enter Amount"
+      placeholder="Amount"
       // debounceTimeout={600}
     />
   );
@@ -99,7 +125,6 @@ const Container = styled.div`
   width: 100%;
   display: flex;
   align-items: center;
-  margin-top: 8px;
   padding: 0 20px 0 14px;
   border-radius: 5px;
   background-color: #f2f2f2;
@@ -119,7 +144,6 @@ const IconContainer = styled.div`
 
   svg {
     margin-left: 9px;
-
     min-width: 13px;
     min-height: 8px;
   }
@@ -150,11 +174,9 @@ const StyledInput = styled.input<{ isvalue: boolean }>`
   border-top-left-radius: 5px;
   border-bottom-left-radius: 5px;
   background-color: #f2f2f2;
-  color: #b1b5c3;
   font-family: Inter;
   font-size: 16px;
   color: #18191a;
-
   &::-webkit-inner-spin-button,
   &::-webkit-outer-spin-button {
     appearance: none;
@@ -162,6 +184,7 @@ const StyledInput = styled.input<{ isvalue: boolean }>`
 
   &::placeholder {
     color: #b1b5c3;
+    font-size: 14px;
   }
 
   &:focus {

@@ -44,7 +44,6 @@ export default function Header({
   const name = account?.getActiveAccount()?.meta?.name;
   const accountImg = account?.getActiveAccount()?.meta?.img;
 
-
   return (
     <Container bgColor={bgColor}>
       {isMenuOpen && <Menu onClose={() => setIsMenuOpen(false)} />}
@@ -136,7 +135,7 @@ const Avatar = styled.div<{ img: string }>`
 
 const UserName = styled.span`
   margin-left: 8px;
-  font-family: 'IBM Plex Sans';
+  font-family: "IBM Plex Sans";
   font-size: 14px;
   font-weight: 500;
   color: #18191a;
@@ -168,6 +167,7 @@ const TitleContainer = styled.div`
   align-items: center;
   text-transform: uppercase;
   margin-top: 7px;
+  text-align: center;
 `;
 
 const TopIconContainer = styled.div`
@@ -182,10 +182,16 @@ const CloseIconContainer = styled.div<{ smallIcon: boolean }>`
 const Title = styled.span`
   margin-left: auto;
   margin-right: auto;
-  font-family: 'IBM Plex Sans';
+  font-family: "IBM Plex Sans";
   color: #18191a;
   font-weight: 500;
   font-size: 17px;
   line-height: 40px;
   letter-spacing: 0.1em;
+  text-align: center;
+
+  width: 300px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 `;

@@ -24,6 +24,8 @@ import { router } from "router/router";
 import { isInPopup } from "utils/chrome";
 import { isObjectEmpty } from "utils";
 import keyring from "@polkadot/ui-keyring";
+import { ethereumEncode } from "@polkadot/util-crypto";
+
 export interface ShowSnackbar {
   message: string;
   show: boolean;
@@ -78,6 +80,7 @@ function Wallet({ snackbar }: Props) {
         infos,
         balances,
         disabledTokens,
+        true,
       );
       setAssets(assets);
 
@@ -158,29 +161,14 @@ function Wallet({ snackbar }: Props) {
     [assets, filtered, reduceAssets],
   );
 
-  const renderAssets = isEmpty ? (
-    <ListContentChild>
-      {emptyAssets.map((asset: Asset) => {
-        return (
-          <ChainItem
-            key={asset.chain}
-            asset={asset}
-            accountAddress={account.getActiveAccount()?.address}
-            handleClick={() => {
-              history.push({ pathname: router.tokenDashboard, state: { asset } });
-            }}
-          />
-        );
-      })}
-    </ListContentChild>
-  ) : (
+  const renderAssets = (
     <ListContentChild>
       {activeTab === 1
         ? assets.length > 0 &&
           assets.map((asset: any) => {
             return (
               <ChainItem
-                key={asset.chain}
+                key={asset.symbol}
                 asset={asset}
                 accountAddress={account.getActiveAccount()?.address}
                 handleClick={() => {
@@ -337,7 +325,7 @@ const SecureNowMessage = styled.div`
   /* margin-top: 20px; */
 
   span {
-    font-family: 'IBM Plex Sans';
+    font-family: "IBM Plex Sans";
     font-size: 11px;
     color: #000;
   }
@@ -358,7 +346,7 @@ const FirstTimeUserBalance = styled.div`
   }
 
   h2 {
-    font-family: 'IBM Plex Sans';
+    font-family: "IBM Plex Sans";
     font-size: 22px;
     margin-bottom: 10px;
     font-weight: 500;
@@ -382,7 +370,7 @@ const Balance = styled.div`
   justify-content: center;
   word-break: break-word;
   span {
-    font-family: 'IBM Plex Sans';
+    font-family: "IBM Plex Sans";
     font-size: 30px;
     font-weight: 500;
   }
@@ -410,7 +398,7 @@ const SubTitle = styled.div`
 `;
 
 const PriceChange = styled.div<{ negativeValue: boolean }>`
-  font-family: 'IBM Plex Sans';
+  font-family: "IBM Plex Sans";
   font-size: 14px;
   color: #606060;
   line-height: 19px;

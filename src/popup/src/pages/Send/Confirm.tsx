@@ -24,6 +24,9 @@ import browser from "webextension-polyfill";
 import { changeAccountsBalances } from "redux/actions";
 import { recodeAddress } from "utils/polkadot";
 import { sendMessagePromise } from "utils/chrome";
+import { IEVMBuildTransaction, IEVMToBeSignTransaction } from "utils/evm/interfaces";
+import { EVMNetwork } from "networks/evm";
+import { isEVMChain } from "utils/evm";
 
 type Props = {
   fee: string;
@@ -32,9 +35,18 @@ type Props = {
   recoded: string;
   setBlockHash: (blockHash: string) => void;
   flow: FlowValue | undefined;
+  toBeSignTransaction: IEVMToBeSignTransaction | undefined;
 };
 
-function Confirm({ fee, transfer, amountToSend, recoded, setBlockHash, flow }: Props) {
+function Confirm({
+  fee,
+  transfer,
+  amountToSend,
+  recoded,
+  setBlockHash,
+  flow,
+  toBeSignTransaction,
+}: Props) {
   const { nextStep, previousStep } = useWizard();
   const account = useAccount();
   const history = useHistory();
@@ -61,15 +73,22 @@ function Confirm({ fee, transfer, amountToSend, recoded, setBlockHash, flow }: P
   const name = account?.getActiveAccount()?.meta?.name;
 
   const handleClick = async () => {
-    browser.runtime.sendMessage({
-      type: Messages.SendTransaction,
-      payload: {
-        sendTo: recoded,
-        sendFrom: activeAccountAddress,
-        amount: amountToSend,
-        chain,
-      },
-    });
+    if (isEVMChain(chain)) {
+      browser.runtime.sendMessage({
+        type: Messages.SendTransaction,
+        payload: { chain, toBeSignTransaction },
+      });
+    } else {
+      browser.runtime.sendMessage({
+        type: Messages.SendTransaction,
+        payload: {
+          sendTo: recoded,
+          sendFrom: activeAccountAddress,
+          amount: amountToSend,
+          chain,
+        },
+      });
+    }
 
     setLoadingTransaction(true);
     // chrome.runtime.sendMessage({
@@ -85,14 +104,20 @@ function Confirm({ fee, transfer, amountToSend, recoded, setBlockHash, flow }: P
         setLoadingTransaction(false);
         setTransactionConfirmed(true);
         // const updatedBalances = await updateBallanceCache(chain, amount, fee);
-
         // dispatch(changeAccountsBalances(updatedBalances));
-
         // sendMessagePromise({ type: Messages.FreezeAccountBalanceUpdate });
-        history.push({
-          pathname: router.home,
-          state: { snackbar: { show: true, message: SnackbarMessages.TransactionSent } },
-        });
+
+        if (chain === EVMNetwork.ETHEREUM) {
+          history.push({
+            pathname: router.transactionSentEvm,
+            state: { amountToSend, block: msg?.payload?.block, to: address },
+          });
+        } else {
+          history.push({
+            pathname: router.home,
+            state: { snackbar: { show: true, message: SnackbarMessages.TransactionSent } },
+          });
+        }
       }
     });
   }, []);
@@ -156,7 +181,7 @@ function Confirm({ fee, transfer, amountToSend, recoded, setBlockHash, flow }: P
             <AddressesInfoItem>
               <span>Total</span>
               <span>
-                {new BigNumber(fee).plus(amount).toFormat(4)} {token.toUpperCase()}
+                {new BigNumber(fee).plus(amount).toString()} {token.toUpperCase()}
               </span>
             </AddressesInfoItem>
           </AddressesInfo>
@@ -174,8 +199,9 @@ function Confirm({ fee, transfer, amountToSend, recoded, setBlockHash, flow }: P
         <InfoItem>
           <span>Fee</span>
           <span>
-            {new BigNumber(fee).toString() + ` ${token.toUpperCase()}`}
-            (${new BigNumber(fee).times(price || 0).toFormat(4)})
+            {fee.toString() +
+              ` ${token.toUpperCase()} (${new BigNumber(fee).multipliedBy(price || 0).toFixed(18)}`}
+            $)
           </span>
         </InfoItem>
       </Info>
@@ -241,6 +267,7 @@ const TextContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: space-between;
   font-family: Inter;
   font-size: 18px;
   line-height: 1.35;
@@ -255,7 +282,7 @@ const Text = styled.div`
   }
 
   :nth-child(2) {
-    font-family: 'Work Sans';
+    font-family: "Work Sans";
     font-size: 27px;
     font-weight: 600;
     color: #18191a;
@@ -268,7 +295,7 @@ const Text = styled.div`
   }
 
   span {
-    margin-left: 5px;
+    display: flex;
   }
 `;
 
@@ -313,13 +340,15 @@ const BottomSection = styled.div`
 
 const Tag = styled.div`
   text-transform: capitalize;
-  width: 97px;
+  /* width: 97px; */
   height: 23px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 60px;
-  font-family: 'IBM Plex Sans';
+  padding: 0 10px;
+  box-sizing: border-box;
+  font-family: "IBM Plex Sans";
   font-size: 10px;
   color: #000;
   margin-left: 5px;
@@ -351,4 +380,10 @@ const InfoItem = styled.div`
   font-size: 14px;
   color: #18191a;
   margin-top: 5px;
+
+  :nth-child(2) {
+    span {
+      text-align: right;
+    }
+  }
 `;

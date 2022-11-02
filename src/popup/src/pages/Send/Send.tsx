@@ -11,9 +11,9 @@ import {
   recodeAddressForTransaction,
 } from "utils/polkadot";
 import { useEffect, useReducer, useState } from "react";
-import { AccountMeta, Asset, Network, SelectType } from "utils/types";
+import { AccountMeta, Asset, CurrencyType, Network, SelectType } from "utils/types";
 import { useWizard, Wizard } from "react-use-wizard";
-import TransactionSent from "./TransactionSent";
+import TransactionSent from "./SuccesPage/TransactionSentSubstrate";
 import SendToken from "./SendToken";
 import { useAccount } from "context/AccountContext";
 import { useFormik } from "formik";
@@ -24,12 +24,23 @@ import { PropsFromTokenDashboard } from "pages/Recieve/Receive";
 import { selectAsset } from "redux/actions";
 import { State } from "redux/store";
 import { useLocation } from "react-router-dom";
+import * as evmUtils from "utils/evm";
+
+import { EvmAssets } from "networks/evm/asset";
+import { ethers } from "ethers";
+import {
+  IEVMAssetERC20,
+  IEVMBuildTransaction,
+  IEVMToBeSignTransaction,
+} from "utils/evm/interfaces";
+import { EVMAssetId, EVMNetwork } from "networks/evm";
+import { handleCurrencyCorrection } from "utils";
 
 export enum SendAccountFlowEnum {
   SendToTrustedContact = "SendToTrustedContact",
   SendToAddress = "SendToAddress",
   SendToAccount = "SendToAccount",
-  ScanQR = "ScanQR"
+  ScanQR = "ScanQR",
 }
 
 export type FlowValue =
@@ -63,6 +74,8 @@ function Send({ initialIsContactsPopupOpen }: Props) {
 
   const balances = accountsBalances?.balances;
 
+  const activeAccount = account.getActiveAccount();
+
   // TODO REFETCH NETWORKS FROM STORAGE
   useEffect(() => {
     async function go() {
@@ -80,12 +93,19 @@ function Send({ initialIsContactsPopupOpen }: Props) {
   const [loading, setLoading] = useState<any>();
   const [abilityToTransfer, setAbilityToTransfer] = useState<boolean>(true);
   const [blockHash, setBlockHash] = useState<string>("");
+  const [toBeSignTransaction, setToBeSignTransaction] = useState<IEVMToBeSignTransaction>();
+  const [currencyType, setCurrencyType] = useState<CurrencyType>(CurrencyType.Crypto);
+
+  const [toBeSignTransactionParams, setToBeSignTransactionParams] =
+    useState<IEVMBuildTransaction>();
 
   const reduxSendTokenState = useSelector((state: any) => state.sendToken);
   const form = useSelector((state: any) => state?.form?.sendToken?.values);
+  const price =
+    reduxSendTokenState?.selectedAsset && prices[reduxSendTokenState?.selectedAsset?.symbol];
 
   useEffect(() => {
-    async function go() {
+    async function goPolkadot() {
       if (
         !reduxSendTokenState.selectedAsset ||
         !isValidPolkadotAddress(form?.address) ||
@@ -97,9 +117,12 @@ function Send({ initialIsContactsPopupOpen }: Props) {
       const api = await getApiInstance(reduxSendTokenState.selectedAsset.chain);
 
       const factor = new BigNumber(10).pow(new BigNumber(api.registry.chainDecimals[0]));
-      const amount = new BigNumber(form.amount).multipliedBy(factor);
 
-      const balance = await api.derive.balances.all(account.getActiveAccount().address);
+      const amount = new BigNumber(
+        handleCurrencyCorrection(form.amount, currencyType, price),
+      ).multipliedBy(factor);
+
+      const balance = await api.derive.balances.all(activeAccount?.address);
       const available = `${balance.availableBalance}`;
       const prefix = api.consts.system.ss58Prefix;
 
@@ -114,10 +137,10 @@ function Send({ initialIsContactsPopupOpen }: Props) {
       setRecoded(recoded);
 
       const transfer = await api.tx.balances.transfer(form.address, amount.toString());
-
+      console.log(1);
       const { partialFee, weight } = await transfer.paymentInfo(recoded);
       // const info = await transfer.paymentInfo(recoded);
-
+      console.log(2);
       const fees = new BigNumber(`${partialFee}`).multipliedBy(110).dividedBy(100);
 
       // todo check this
@@ -137,13 +160,103 @@ function Send({ initialIsContactsPopupOpen }: Props) {
       setLoading(false);
     }
 
-    go();
+    async function goEthereum() {
+      // todo not valid eth address error
+      if (
+        !reduxSendTokenState.selectedAsset ||
+        !evmUtils.isValidAddress(form?.address)?.success ||
+        !form?.amount
+      )
+        return;
+
+      setLoading(true);
+
+      const ethNetwork = reduxSendTokenState?.selectedAsset?.chain;
+      // todo revise with Evelyn
+      const ethAsset = EvmAssets[ethNetwork][
+        reduxSendTokenState?.selectedAsset?.symbol
+      ] as IEVMAssetERC20;
+
+      const { nonce, gasPriceInGwei, nativeCurrenyBalance, assetBalance } =
+        await evmUtils.getBuildTransactionOnChainParam(
+          ethNetwork,
+          activeAccount?.meta?.ethAddress,
+          ethAsset.assetId as EVMAssetId,
+        );
+
+      const buildTransactionParam: IEVMBuildTransaction = {
+        network: ethNetwork,
+        asset: ethAsset,
+        amount: new BigNumber(handleCurrencyCorrection(form.amount, currencyType, price)),
+        fromAddress: activeAccount?.meta?.ethAddress,
+        toAddress: form?.address,
+        nonce,
+        gasPriceInGwei,
+        gasLimit: new BigNumber(100000),
+      };
+
+      const estimatedGasLimit = await evmUtils.estimateGasLimit(ethNetwork, buildTransactionParam);
+
+      buildTransactionParam.gasLimit = estimatedGasLimit;
+      const toSignTransaction: IEVMToBeSignTransaction = await evmUtils.buildTransaction(
+        buildTransactionParam,
+      );
+
+      const transactionFee = estimatedGasLimit.multipliedBy(gasPriceInGwei).dividedBy("1E9");
+
+      setToBeSignTransactionParams(buildTransactionParam);
+
+      setToBeSignTransaction(toSignTransaction);
+      setFee(transactionFee.toString());
+      setRecoded(form?.address);
+      // todo check if balance is enough
+      setAbilityToTransfer(true);
+
+      setLoading(false);
+      setAmountToSend(handleCurrencyCorrection(form.amount, currencyType, price).toString());
+
+      setTransfer(transfer);
+    }
+
+    if (
+      reduxSendTokenState?.selectedAsset?.chain === EVMNetwork.ETHEREUM ||
+      reduxSendTokenState?.selectedAsset?.chain === EVMNetwork.AVALANCHE_TESTNET_FUJI
+    ) {
+      goEthereum();
+    } else {
+      goPolkadot();
+    }
   }, [reduxSendTokenState.selectedAsset, form?.address, form?.amount]);
 
   useEffect(() => {
     setLoading(true);
     setAbilityToTransfer(false);
   }, [form?.amount]);
+
+  const handleSaveEthSettings = async (values: Record<string, string>) => {
+    const gasLimit = new BigNumber(values.gasLimit);
+    const gasPriceInGwei = new BigNumber(values.gasPrice);
+    const nonce = new BigNumber(values.nonce);
+
+    const toSignTransaction: IEVMToBeSignTransaction = await evmUtils.buildTransaction({
+      ...toBeSignTransactionParams,
+      gasLimit,
+      gasPriceInGwei,
+      nonce,
+    } as IEVMBuildTransaction);
+
+    setToBeSignTransaction(toSignTransaction);
+    setToBeSignTransactionParams({
+      ...toBeSignTransactionParams,
+      gasLimit,
+      gasPriceInGwei,
+      nonce,
+    } as IEVMBuildTransaction);
+
+    const transactionFee = new BigNumber(gasLimit).multipliedBy(gasPriceInGwei).dividedBy("1E9");
+
+    setFee(transactionFee?.toString());
+  };
 
   return (
     <Container>
@@ -161,8 +274,14 @@ function Send({ initialIsContactsPopupOpen }: Props) {
           propsFromTokenDashboard={propsFromTokenDashboard}
           accountMeta={accountMeta}
           setAccountMeta={setAccountMeta}
+          setToBeSignTransaction={setToBeSignTransaction}
+          toBeSignTransactionParams={toBeSignTransactionParams}
+          handleSaveEthSettings={handleSaveEthSettings}
+          currencyType={currencyType}
+          setCurrencyType={setCurrencyType}
         />
 
+        {/* todo pass one payload prop for all the chains   */}
         <Confirm
           setBlockHash={setBlockHash}
           amountToSend={amountToSend}
@@ -170,6 +289,7 @@ function Send({ initialIsContactsPopupOpen }: Props) {
           fee={fee}
           transfer={transfer}
           flow={flow}
+          toBeSignTransaction={toBeSignTransaction}
         />
         <TransactionSent blockHash={blockHash} />
       </Wizard>

@@ -4,7 +4,6 @@ import EncodeAccount from "pages/AddImportAccount/EncodeAccount";
 import SetupComplete from "pages/AddImportAccount/SetupComplete";
 import { Wizard } from "react-use-wizard";
 import CreatePassword from "./CreatePassword/CreatePassword";
-import type { KeyringPair } from "@polkadot/keyring/types";
 import SecureWallet from "./SecureWallet/SecureWallet";
 import { useState } from "react";
 import { Messages, StorageKeys } from "utils/types";
@@ -18,6 +17,7 @@ import { RouteComponentProps, useHistory } from "react-router-dom";
 import { router } from "router/router";
 import browser from "webextension-polyfill";
 import { useLocation } from "react-router-dom";
+import { generateNewWalletAddress } from "utils/evm";
 
 type Props = {
   existingAccount?: boolean;
@@ -31,7 +31,7 @@ type LocationState = {
 
 export enum SecurityLevelEnum {
   Secured = "Secured",
-  Skipped = "Skipped"
+  Skipped = "Skipped",
 }
 
 export default function CreateAccount({
@@ -62,15 +62,16 @@ export default function CreateAccount({
       const mnemonicsStr = account?.mnemonics.join(" ");
       const encodedSeed = AES.encrypt(account?.mnemonics.join(" "), password).toString();
 
+      const ethAddress = generateNewWalletAddress(mnemonicsStr);
+
       const { pair } = keyring.addUri(mnemonicsStr, password, {
         encodedSeed,
         img: await generateRandomBase64Avatar(),
+        ethAddress,
       });
 
-
-
       const newPair = addAccountMeta(pair.address, {
-       name,
+        name,
       });
 
       if (!activeAccount || (activeAccount && isObjectEmpty(activeAccount))) {
@@ -92,14 +93,17 @@ export default function CreateAccount({
       const mnemonicsStr = account?.generateMnemonics().join(" ");
       const encodedSeed = AES.encrypt(mnemonicsStr, password).toString();
 
+      const ethAddress = generateNewWalletAddress(mnemonicsStr);
+
       const { pair } = keyring.addUri(mnemonicsStr, password, {
         encodedSeed,
         img: await generateRandomBase64Avatar(),
         notSecured: true,
+        ethAddress,
       });
 
       const newPair = addAccountMeta(pair.address, {
-        name,
+        name: pair.address,
       });
 
       if (!activeAccount || (activeAccount && isObjectEmpty(activeAccount))) {

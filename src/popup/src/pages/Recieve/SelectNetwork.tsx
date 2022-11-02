@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import styled from "styled-components";
+import styled from "styled-components/macro";
 
 import Header from "pages/Wallet/Header";
 import HumbleInput from "components/primitives/HumbleInput";
@@ -128,6 +128,7 @@ const Content = styled.div`
   background-color: #fff;
   border-top-left-radius: 15px;
   border-top-right-radius: 15px;
+  overflow: scroll;
 `;
 
 const List = styled.div`

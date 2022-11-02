@@ -1,13 +1,15 @@
-import keyring from "@polkadot/ui-keyring";
+import { BigNumber } from "bignumber.js";
 import axios from "axios";
-import { AES } from "crypto-js";
-import Utf8 from "crypto-js/enc-utf8";
 import { ethers } from "ethers";
 import { changeAccountsBalances, changeTokenReceived } from "redux/actions";
+import { AppDispatch } from "redux/store";
 import { checkBalanceChange, timer } from "utils";
 import { getFromStorage, saveToStorage } from "./chrome";
+import * as evmUtils from "utils/evm";
+import { EVMNetwork } from "networks/evm";
+import { EvmAssets } from "networks/evm/asset";
 import { recodeAddress } from "./polkadot";
-import { networks, StorageKeys } from "./types";
+import { Messages, networks, StorageKeys } from "./types";
 
 interface PriceConverter {
   symbol: string;
@@ -52,7 +54,6 @@ export async function fetchAccountsBalances(
 ) {
   try {
     // await timer(3000)
-
     const account = await getFromStorage(StorageKeys.ActiveAccount);
 
     const balances = await getFromStorage(StorageKeys.AccountBalances);
@@ -60,6 +61,8 @@ export async function fetchAccountsBalances(
 
     if (account) {
       const address = JSON.parse(account as string).address;
+      const ethAddress = JSON.parse(account as string)?.meta?.ethAddress;
+
       let result_obj: any = {};
       const temp_obj: Record<string, any> = {};
 
@@ -69,22 +72,49 @@ export async function fetchAccountsBalances(
         await timer(1000);
         const network = networks[i];
 
-        const resolved = await searchAccountBallance(
-          network.chain,
-          recodeAddress(address, network?.prefix, network?.encodeType),
-        );
-        // if (resolved.message !== "Success") return
-        if (resolved.message !== "Success") {
-          if (resolved.message === "Record Not Found" || resolved?.data?.account?.balance === 0) {
-            i++;
-          }
+        if (evmUtils.isEVMChain(network.chain) && !ethAddress) {
+          i++;
           continue;
         }
 
-        temp_obj[network.chain] = {
-          overall: Number(resolved.data.account.balance),
-          locked: Number(resolved.data.account.balance_lock),
-        };
+        if (
+          (network.chain === EVMNetwork.ETHEREUM ||
+            network.chain === EVMNetwork.AVALANCHE_TESTNET_FUJI) &&
+          ethAddress
+        ) {
+          const ethBalance = await evmUtils.getBalance(
+            network.chain,
+            ethAddress,
+            EvmAssets[network.chain][network.symbol],
+          );
+
+          if (new BigNumber(ethBalance.toString()).isEqualTo(0)) {
+            i++;
+            continue;
+          }
+
+          temp_obj[network.chain] = {
+            overall: ethers.utils.formatEther(ethBalance.toString()),
+            locked: Number(0), // todo change after eth 2.0 merge
+          };
+        } else {
+          const resolved = await searchAccountBallance(
+            network.chain,
+            recodeAddress(address, network?.prefix, network?.encodeType),
+          );
+          // if (resolved.message !== "Success") return
+          if (resolved.message !== "Success") {
+            if (resolved.message === "Record Not Found" || resolved?.data?.account?.balance === 0) {
+              i++;
+            }
+            continue;
+          }
+
+          temp_obj[network.chain] = {
+            overall: Number(resolved.data.account.balance),
+            locked: Number(resolved.data.account.balance_lock),
+          };
+        }
 
         if (parsedBalances.address === address) {
           const accountBalances = parsedBalances?.balances;
@@ -92,7 +122,6 @@ export async function fetchAccountsBalances(
         } else {
           result_obj = { ...temp_obj };
         }
-
         i++;
       }
 

@@ -2,10 +2,12 @@ import { KeypairType } from "@polkadot/util-crypto/types";
 import type { Signer as InjectedSigner } from "@polkadot/api/types";
 import type { ExtDef } from "@polkadot/types/extrinsic/signedExtensions/types";
 import type { ProviderInterface } from "@polkadot/rpc-provider/types";
+import { EVMAssetType } from "networks/evm/asset";
+import { EVMNetwork } from "networks/evm";
 
 export enum SecurityOptionsEnum {
   Secured = "Secured",
-  None = "None"
+  None = "None",
 }
 
 export type SecurityOptions = "Secured" | "None" | undefined;
@@ -13,7 +15,7 @@ export type SecurityOptions = "Secured" | "None" | undefined;
 export type MnemonicsTriple = [number, number, number];
 export enum ImportTypeEnum {
   SEED = "Seed",
-  JSON = "Json"
+  JSON = "Json",
 }
 
 export type ImportType = ImportTypeEnum.SEED | ImportTypeEnum.JSON;
@@ -35,7 +37,7 @@ export enum StorageKeys {
   UnlockedPairs = "unlocked-pairs",
   TokenDecimals = "token-decimals",
   DisabledTokens = "disabled-tokens",
-  OnBoarding = "onboarding"
+  OnBoarding = "onboarding",
 }
 
 // Array of contract addresses specific to ERC-20 tokens (ETH is a native token so it does not have an address)
@@ -51,12 +53,15 @@ export const contractAddresses = [
 export interface Network {
   name: string;
   symbol: Token;
-  chain: string;
-  node: string;
+  chain: EVMNetwork | "westend" | "polkadot" | "kusama";
+  node?: string;
   price_change_percentage_24h?: number;
   marketCap?: number;
   encodeType?: string;
   prefix?: number;
+  decimal?: number;
+  assetType?: EVMAssetType.NATIVE | EVMAssetType.ERC20;
+  contractAddress?: string;
 }
 
 export interface Asset {
@@ -81,7 +86,7 @@ export enum Prefixes {
   moonriver = 1285,
   moonbeam = 1284,
   shiden = 5,
-  astar = 5
+  astar = 5,
 }
 
 //==============================================================================
@@ -119,7 +124,7 @@ export enum Messages {
   ResetTimeout = "RESET_TIMEOUT",
   FreezeAccountBalanceUpdate = "FREEZE_ACCOUNT_BALANCE_UPDATE",
   OpenSupport = "OPEN_SUPPORT",
-  DisconnectAllSites = "DISCONNECT_ALL_SITES"
+  DisconnectAllSites = "DISCONNECT_ALL_SITES",
 }
 
 //==============================================================================
@@ -138,7 +143,12 @@ export enum TokenSymbols {
   moonbeam = "glmr",
   shiden = "sdn",
   astar = "astr",
-  ethereum = "eth"
+  ethereum = "ETH",
+  USDC = "USDC",
+  USDT = "USDT",
+  TBC = "TBC",
+  ALOT = "ALOT",
+  AVAX = "AVAX",
 }
 
 export type Token =
@@ -146,11 +156,33 @@ export type Token =
   | TokenSymbols.polkadot
   | TokenSymbols.kusama
   | TokenSymbols.astar
-  | TokenSymbols.ethereum;
+  | TokenSymbols.ethereum
+  | TokenSymbols.USDC
+  | TokenSymbols.USDT
+  | TokenSymbols.TBC
+  | TokenSymbols.ALOT
+  | TokenSymbols.AVAX;
+
+export const HardcodedAssetList: Record<string, boolean> = {
+  [TokenSymbols.polkadot]: true,
+  [TokenSymbols.kusama]: true,
+  [TokenSymbols.ethereum]: true,
+  [TokenSymbols.USDC]: true,
+  [TokenSymbols.USDT]: true,
+  //   wBTC
+};
 
 // todo move chain names to enum
 export interface Transaction {
-  chain: "westend" | "polkadot" | "kusama" | "moonriver" | "moonbeam" | "shiden" | "astar";
+  chain:
+    | "westend"
+    | "polkadot"
+    | "kusama"
+    | "moonriver"
+    | "moonbeam"
+    | "shiden"
+    | "astar"
+    | "ethereum";
   amount: string;
   fee: string;
   from: string;
@@ -170,7 +202,7 @@ export enum SnackbarMessages {
   WalletRemoved = "Account Removed",
   AccessRevoked = "Access Revoked",
   DepositReceived = "New Deposit Received",
-  PasswordChanged = "Password Changed"
+  PasswordChanged = "Password Changed",
 }
 
 //==============================================================================
@@ -287,7 +319,7 @@ export interface AccountMeta {
 
 export const networks: Network[] = [
   {
-    name: "Polkadot",
+    name: "Westend",
     symbol: TokenSymbols.westend,
     chain: "westend",
     node: "wss://westend-rpc.polkadot.io",
@@ -307,12 +339,72 @@ export const networks: Network[] = [
     node: "wss://kusama-rpc.polkadot.io",
     prefix: 2,
   },
+  {
+    name: "Ethereum",
+    symbol: TokenSymbols.ethereum,
+    chain: EVMNetwork.ETHEREUM,
+    decimal: 18,
+    assetType: EVMAssetType.NATIVE,
+  },
+  {
+    name: "USD Coin",
+    symbol: TokenSymbols.USDC,
+    chain: EVMNetwork.ETHEREUM,
+    decimal: 6,
+    assetType: EVMAssetType.ERC20,
+    contractAddress: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+  },
+  {
+    name: "Tether USD",
+    symbol: TokenSymbols.USDT,
+    chain: EVMNetwork.ETHEREUM,
+    decimal: 6,
+    assetType: EVMAssetType.ERC20,
+    contractAddress: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+  },
+  // {
+  //   name: "Ethereum",
+  //   symbol: TokenSymbols.ethereum,
+  //   chain: EVMNetwork.ETHEREUM_TESTNET_GOERLI,
+  //   decimal: 18,
+  //   assetType: EVMAssetType.NATIVE,
+  // },
+  // {
+  //   name: "TBC",
+  //   symbol: TokenSymbols.TBC,
+  //   chain: EVMNetwork.ETHEREUM_TESTNET_GOERLI,
+  //   decimal: 18,
+  //   assetType: EVMAssetType.ERC20,
+  //   contractAddress: "TBC",
+  // },
+  {
+    name: "Avalanche",
+    chain: EVMNetwork.AVALANCHE_TESTNET_FUJI,
+    symbol: TokenSymbols.AVAX,
+    decimal: 18,
+    assetType: EVMAssetType.NATIVE,
+  },
+  // {
+  //   name: "Dexalot Token",
+  //   symbol: TokenSymbols.ALOT,
+  //   chain: EVMNetwork.AVALANCHE_TESTNET_FUJI,
+  //   decimal: 18,
+  //   assetType: EVMAssetType.ERC20,
+  //   contractAddress: "0x9983F755Bbd60d1886CbfE103c98C272AA0F03d6",
+  // },
+
+  // {
+  //   name: 'Astar',
+  //   symbol: TokenSymbols.astar,
+  //   chain: 'astar',
+  //   node: 'wss://astar.api.onfinality.io/public-ws',
+  //   prefix: 5
+  // },
   // {
   //   name: 'Moonriver',
   //   symbol: 'movr',
   //   chain: 'moonriver',
   //   node: 'wss://moonriver-rpc.polkadot.io',
-  //   prefix: 1285,
   //   encodeType: 'ethereum'
   // },
   // {
@@ -321,28 +413,46 @@ export const networks: Network[] = [
   //   chain: 'moonbeam',
   //   // chain: ' moonbeam-alpha',
   //   node: 'wss://moonbeam-rpc.polkadot.io',
-  //   encodeType: 'ethereum',
-  //   prefix: 1284
+  //   encodeType: 'ethereum'
   // },
   // {
   //   name: 'Shiden',
   //   symbol: 'sdn',
   //   chain: 'shiden',
-  //   node: 'wss://shiden.api.onfinality.io/public-ws',
-  //   prefix: 5
+  //   node: 'wss://shiden.api.onfinality.io/public-ws'
   // },
-  {
-    name: "Astar",
-    symbol: TokenSymbols.astar,
-    chain: "astar",
-    node: "wss://astar.api.onfinality.io/public-ws",
-    prefix: 5,
-  },
+
+  // wss://rpc.astar.network
+
   // {
-  //   name: 'Astar',
-  //   symbol: TokenSymbols.astar,
-  //   chain: 'astar',
-  //   node: 'wss://astar.api.onfinality.io/public-ws',
-  //   prefix: 5
+  //   name: 'Acala',
+  //   symbol: 'ACA',
+  //   chain: 'acala-testnet' //todo revise test-net?
+  // },
+  // {
+  //   name: 'Karura',
+  //   symbol: 'KAR',
+  //   chain: 'karura'
+  // },
+  // {
+  //   name: 'Altair',
+  //   symbol: 'AIR',
+  //   chain: 'altair'
+  // },
+
+  // {
+  //   name: 'Bifrost',
+  //   symbol: 'BNC',
+  //   chain: 'bifrost-parachain'
+  // },
+  // {
+  //   name: 'Edgeware',
+  //   symbol: 'EDG',
+  //   chain: 'edgeware'
   // }
 ];
+
+export enum CurrencyType {
+  Fiat = "fiat",
+  Crypto = "crypto",
+}

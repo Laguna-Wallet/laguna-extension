@@ -88,7 +88,7 @@ const Title = styled.div`
   font-size: 38.1px;
   font-weight: 500;
   letter-spacing: -1.14px;
-  font-family: 'Work Sans';
+  font-family: "Work Sans";
   color: #18191a;
 `;
 
@@ -101,7 +101,7 @@ const Description = styled.div`
 `;
 
 const Text = styled.div`
-  font-family: 'IBM Plex Sans';
+  font-family: "IBM Plex Sans";
   margin-top: 20px;
   color: #777e90;
   font-size: 12px;

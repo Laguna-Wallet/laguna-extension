@@ -10,7 +10,9 @@ import {
 
 import {
   Asset,
+  HardcodedAssetList,
   Network,
+  networks,
   Prices,
   SEED_LENGTHS,
   StorageKeys,
@@ -28,8 +30,20 @@ import { decodeAddress, encodeAddress } from "@polkadot/keyring";
 import BigNumber from "bignumber.js";
 import * as AES from "crypto-js/aes";
 import Utf8 from "crypto-js/enc-utf8";
-import { fetchTransactions, transformTransfers } from "./fetchTransactions";
-import { generateRandomBase64Avatar } from "utils";
+import {
+  fetchSubstrateAccountTransactionsByChain,
+  fetchTransactions,
+  transformTransfers,
+} from "./fetchTransactions";
+import { generateRandomBase64Avatar, transformEVMHistoryToTransaction } from "utils";
+import {
+  generateNewWalletAddress,
+  getAssetIdBySmartContractAddress,
+  getHistoricalTransactions,
+  isEVMChain,
+} from "./evm";
+import { EVMAssetId, EVMNetwork } from "networks/evm";
+import { EvmAssets, EVMAssetType } from "networks/evm/asset";
 
 // TODO appropriate typing
 
@@ -111,11 +125,14 @@ export async function importFromMnemonic(seed: string, password: string) {
   const accounts = keyring.getPairs();
   const name = `Account ${accounts.length} (Import)`;
 
+  const ethAddress = generateNewWalletAddress(seed);
+
   const img = await generateRandomBase64Avatar();
   const newPair = addAccountMeta(pair.address, {
     encodedKey,
     encodedSeed,
-    name,
+    name: pair.address,
+    ethAddress,
     img,
   });
 
@@ -215,114 +232,26 @@ export function getNetworks(
 ): Network[] {
   if (!prices || !tokenInfos) return [];
 
-  const networks: Network[] = [
-    {
-      name: "Polkadot",
-      symbol: TokenSymbols.westend,
-      chain: "westend",
-      node: "wss://westend-rpc.polkadot.io",
-      prefix: 42,
-    },
-    {
-      name: "Polkadot",
-      symbol: TokenSymbols.polkadot,
-      chain: "polkadot",
-      node: "wss://rpc.polkadot.io",
-      prefix: 0,
-    },
-    {
-      name: "Kusama",
-      symbol: TokenSymbols.kusama,
-      chain: "kusama",
-      node: "wss://kusama-rpc.polkadot.io",
-      prefix: 2,
-    },
-    // {
-    //   name: 'Moonriver',
-    //   symbol: 'movr',
-    //   chain: 'moonriver',
-    //   node: 'wss://moonriver-rpc.polkadot.io',
-    //   encodeType: 'ethereum'
-    // },
-    // {
-    //   name: 'Moonbeam',
-    //   symbol: 'glmr',
-    //   chain: 'moonbeam',
-    //   // chain: ' moonbeam-alpha',
-    //   node: 'wss://moonbeam-rpc.polkadot.io',
-    //   encodeType: 'ethereum'
-    // },
-    // {
-    //   name: 'Shiden',
-    //   symbol: 'sdn',
-    //   chain: 'shiden',
-    //   node: 'wss://shiden.api.onfinality.io/public-ws'
-    // },
-    // {
-    //   name: 'Astar',
-    //   symbol: TokenSymbols.astar,
-    //   chain: 'astar',
-    //   node: 'wss://astar.api.onfinality.io/public-ws',
-    //   prefix: 5
-    // },
-    {
-      name: "Ethereum",
-      symbol: TokenSymbols.ethereum,
-      chain: "Ethereum",
-      node: "wss://eth-mainnet.g.alchemy.com/v2/IFip5pZqfpAsi50-O2a0ZEJoA82E8KR_",
-      prefix: 0,
-    },
-    // wss://rpc.astar.network
-
-    // {
-    //   name: 'Acala',
-    //   symbol: 'ACA',
-    //   chain: 'acala-testnet' //todo revise test-net?
-    // },
-    // {
-    //   name: 'Karura',
-    //   symbol: 'KAR',
-    //   chain: 'karura'
-    // },
-    // {
-    //   name: 'Altair',
-    //   symbol: 'AIR',
-    //   chain: 'altair'
-    // },
-
-    // {
-    //   name: 'Bifrost',
-    //   symbol: 'BNC',
-    //   chain: 'bifrost-parachain'
-    // },
-    // {
-    //   name: 'Edgeware',
-    //   symbol: 'EDG',
-    //   chain: 'edgeware'
-    // }
-    
-  ];
-
   const ht = tokenInfos.reduce((acc: any, item: any) => {
     acc[item.symbol] = item;
     return acc;
   }, {});
 
   // todo typing
-
   const filteredNetworks = disabledTokens
     ? networks.filter((network) => !disabledTokens.includes(network.symbol))
     : networks;
 
   const enhancedNetworks: Network[] = filteredNetworks.map((network) => {
-    if (!ht[network.symbol]) {
+    if (!ht[network?.symbol?.toLowerCase()]) {
       return network;
     }
 
     return {
       ...network,
-      price_change_percentage_24h: ht[network.symbol].price_change_percentage_24h as number,
-      marketCap: ht[network.symbol].market_cap as number,
+      price_change_percentage_24h:
+        (ht[network.symbol.toLowerCase()]?.price_change_percentage_24h as number) || 0,
+      marketCap: ht[network.symbol.toLowerCase()].market_cap as number,
     };
   });
 
@@ -365,14 +294,14 @@ export async function getAssets(
       if (showZeroBalanceAssets) {
         balance = !balance ? 0 : balance;
       }
-      const price = prices[chain]?.usd;
+      const price = prices[chain.toLowerCase()]?.usd;
 
       // todo rename calculatedBalance
-      const calculatedPrice = new BigNumber(balance.overall).multipliedBy(price || 0);
+      const calculatedPrice = new BigNumber(balance?.overall || 0).multipliedBy(price || 0);
 
       if (price) {
         overallBalance += calculatedPrice.toNumber();
-        overallPriceChange += Number(price_change_percentage_24h);
+        overallPriceChange += Number(price_change_percentage_24h) || 0;
       }
 
       assets.push({
@@ -396,10 +325,10 @@ export async function getAssets(
 // todo proper typing
 // todo refactor
 export function recodeAddress(address: string, prefix: any, type?: string): string {
-  if (type === "ethereum") {
-    const raw = decodeAddress(address);
-    return ethereumEncode(raw);
-  }
+  // if (type === "ethereum") {
+  //   const raw = decodeAddress(address);
+  //   return ethereumEncode(raw);
+  // }
 
   const raw = decodeAddress(address);
   return encodeAddress(raw, prefix);
@@ -481,20 +410,6 @@ export function encryptKeyringPairs(oldPassword: string, newPassword: string) {
     pair.decodePkcs8(oldPassword);
 
     keyring.encryptAccount(pair, newPassword);
-
-    // keyring.addPair(pair, newPassword);
-
-    // const json = pair.toJson(newPassword);
-    // console.log('~ json', json);
-    // keyring.restoreAccount(json, newPassword);
-
-    // pair.unlock(oldPassword);
-    // keyring.forgetAccount(pair.address);
-    // const { pair: newPair } = keyring.addPair(pair, newPassword);
-
-    // console.log('~ newPair', newPair);
-    // newPair.setMeta(pair.meta);
-    // keyring.saveAccountMeta(newPair, { ...pair.meta });
   }
 }
 
@@ -550,10 +465,30 @@ export function accountsChangePassword(address: string, oldPass: string, newPass
 export async function getLatestTransactionsForSingleChain(
   address: string,
   chain: string,
+  symbol: string,
   page: number,
   row: number,
 ): Promise<{ count: number; transactions: Transaction[] }> {
-  const data = await fetchTransactions(address, chain, row, page);
+  // TODO Token
+  let transactions = [];
+  if (isEVMChain(chain)) {
+    const ethAsset = EvmAssets[chain][symbol];
+
+    const ethHistory = await getHistoricalTransactions(
+      address,
+      EVMNetwork.ETHEREUM,
+      ethAsset.assetId as EVMAssetId,
+    );
+
+    transactions = transformEVMHistoryToTransaction(ethHistory);
+  } else {
+    transactions = (await fetchSubstrateAccountTransactionsByChain(
+      address,
+      chain,
+      symbol,
+    )) as Transaction[];
+  }
+  const data = await fetchTransactions(address, chain, "USDC", row, page);
   return {
     count: data?.data?.count,
     transactions: data?.data?.transfers ? transformTransfers(data?.data?.transfers, chain) : [],
