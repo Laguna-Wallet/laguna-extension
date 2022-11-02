@@ -25,4 +25,5 @@ export const router = {
   requestToConnect: "/request-to-connect",
   requestToSignRaw: "/request-to-sign-raw",
   addImportForBoardedUser: "/add-import-for-boarded-user",
+  transactionSentEvm: "/transaction-sent-evm",
 };

@@ -6,7 +6,7 @@ import Button from "components/primitives/Button";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import { reset } from "redux-form";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import { router } from "router/router";
 import browser from "webextension-polyfill";
 import EthSuccessIcon from "assets/svgComponents/EthSuccessIcon";
@@ -14,24 +14,28 @@ import CopyIcon from "assets/svgComponents/CopyIcon";
 import { copyToClipboard } from "utils";
 import Snackbar from "components/Snackbar/Snackbar";
 
-type Props = {
-  blockHash: string;
+type LocationState = {
+  block?: string;
+  amountToSend: string;
 };
-export default function TransactionSentEVM({ blockHash }: Props) {
+
+export default function TransactionSentEVM() {
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
 
-  // const history = useHistory();
+  const history = useHistory();
+  const location = useLocation<LocationState>();
+
   const sendToken = useSelector((state: any) => state.sendToken);
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
   // const chain = useSelector((state: any) => state.sendToken.selectedAsset.chain);
-  // const onClick = (hash: string, chain: string) => {
-  // browser.windows.create({ url: `https://${chain}.subscan.io/extrinsic/${hash}` });
-  // };
+  const onClick = (hash: string) => {
+    browser.windows.create({ url: `https://etherscan.io/tx/${hash}` });
+  };
 
   const handleClick = () => {
-    // dispatch(reset("sendToken"));
-    // history.push(router.home);
+    dispatch(reset("sendToken"));
+    history.push(router.home);
   };
 
   return (
@@ -41,12 +45,12 @@ export default function TransactionSentEVM({ blockHash }: Props) {
           <EthSuccessIcon />
         </IconContainer>
         <Text>TRANSACTION SENT</Text>
-        <Amount>{sendToken?.amount} ETH</Amount>
+        <Amount>{location?.state?.amountToSend} ETH</Amount>
         <Address>
           <span>[{sendToken?.to}]</span>
           <CopyBtnContainer
             onClick={() => {
-              copyToClipboard(sendToken?.amount);
+              copyToClipboard(location?.state?.amountToSend);
               setIsSnackbarOpen(true);
             }}>
             <CopyIcon fill="#11171D" />
@@ -64,7 +68,7 @@ export default function TransactionSentEVM({ blockHash }: Props) {
       </Content>
       <ButtonsContainer>
         <Button
-          // onClick={() => onClick(blockHash, chain)}
+          onClick={() => onClick(location?.state?.block as string)}
           text="Check on Etherscan"
           bgColor="#fff"
           color="#18191A"

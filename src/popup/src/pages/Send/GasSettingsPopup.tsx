@@ -26,6 +26,7 @@ type Props = {
   onClose: () => void;
   setToBeSignTransaction: (toBeSignTransaction: IEVMToBeSignTransaction) => void;
   toBeSignTransactionParams: IEVMBuildTransaction | undefined;
+  handleSaveEthSettings: (values: Record<string, string>) => void;
   handleSubmit?: any;
 };
 
@@ -34,21 +35,11 @@ function GasSettingsPopup({
   onClose,
   setToBeSignTransaction,
   toBeSignTransactionParams,
+  handleSaveEthSettings,
 }: Props) {
-  const submit = async (values: any) => {
-    const gasLimit = new BigNumber(values.gasLimit);
-    const gasPriceInGwei = new BigNumber(values.gasPrice);
-    const nonce = new BigNumber(values.nonce);
-
-    const toSignTransaction: IEVMToBeSignTransaction = await evmUtils.buildTransaction({
-      ...toBeSignTransactionParams,
-      gasLimit,
-      gasPriceInGwei,
-      nonce,
-    } as IEVMBuildTransaction);
-
-    setToBeSignTransaction(toSignTransaction);
-
+  console.log("toBeSignTransactionParams", toBeSignTransactionParams);
+  const submit = async (values: Record<string, string>) => {
+    handleSaveEthSettings(values);
     onClose();
   };
 

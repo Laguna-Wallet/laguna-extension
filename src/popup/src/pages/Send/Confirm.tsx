@@ -73,7 +73,6 @@ function Confirm({
   const name = account?.getActiveAccount()?.meta?.name;
 
   const handleClick = async () => {
-    console.log("onClick toBeSignTransaction", toBeSignTransaction);
     if (isEVMChain(chain)) {
       browser.runtime.sendMessage({
         type: Messages.SendTransaction,
@@ -107,10 +106,18 @@ function Confirm({
         // const updatedBalances = await updateBallanceCache(chain, amount, fee);
         // dispatch(changeAccountsBalances(updatedBalances));
         // sendMessagePromise({ type: Messages.FreezeAccountBalanceUpdate });
-        history.push({
-          pathname: router.home,
-          state: { snackbar: { show: true, message: SnackbarMessages.TransactionSent } },
-        });
+
+        if (chain === EVMNetwork.ETHEREUM) {
+          history.push({
+            pathname: router.transactionSentEvm,
+            state: { amountToSend, block: msg?.payload?.block, to: address },
+          });
+        } else {
+          history.push({
+            pathname: router.home,
+            state: { snackbar: { show: true, message: SnackbarMessages.TransactionSent } },
+          });
+        }
       }
     });
   }, []);
