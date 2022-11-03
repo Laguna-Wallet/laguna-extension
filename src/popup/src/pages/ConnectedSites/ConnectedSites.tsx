@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { CheckIcon } from "@heroicons/react/outline";
 import ShareIcon from "assets/svgComponents/ShareIcon";
 import MenuHeader from "components/MenuHeader/MenuHeader";
 import Snackbar from "components/Snackbar/Snackbar";
@@ -15,12 +14,12 @@ import Button from "components/primitives/Button";
 import { useDispatch } from "react-redux";
 import { changeConnectedApps } from "redux/actions";
 
-// todo proper typing
-type Props = {
-  handleSubmit?: any;
-};
+// // todo proper typing
+// type Props = {
+//   handleSubmit?: any;
+// };
 
-function ConnectedSites({ handleSubmit }: Props) {
+function ConnectedSites(/* { handleSubmit }: Props */) {
   const history = useHistory();
   const dispatch = useDispatch();
 

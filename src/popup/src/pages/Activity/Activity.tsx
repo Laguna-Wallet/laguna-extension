@@ -5,9 +5,7 @@ import Header from "pages/Wallet/Header";
 import Footer from "pages/Wallet/Footer";
 import { recodeAddress } from "utils/polkadot";
 import { ReactChild, useEffect, useState } from "react";
-import ThreeDotsIcon from "assets/svgComponents/ThreeDotsIcon";
 import ActivityInfo from "./ActivityInfo";
-import { useSelector } from "react-redux";
 import { transformEVMHistoryToTransaction, truncateString } from "utils";
 import { format } from "date-fns";
 import RightArrow from "assets/svgComponents/RightArrow";
@@ -25,8 +23,6 @@ import Select, { components } from "react-select";
 import NetworkIcons from "components/primitives/NetworkIcons";
 import { EVMAssetId, EVMNetwork } from "networks/evm";
 import { getHistoricalTransactions as getEVMHistoricalTransactions, isEVMChain } from "utils/evm";
-import EthIcon from "assets/svgComponents/EthIcon";
-import PolkadotIcon from "assets/svgComponents/PolkadotIcon";
 
 type Props = {
   isMenuOpen?: boolean;
@@ -187,7 +183,7 @@ export default function Activity() {
   );
 
   const styles = {
-    singleValue: (provided: any, state: any) => ({
+    singleValue: (provided: any) => ({
       ...provided,
       display: "flex",
     }),
@@ -448,10 +444,10 @@ const InfoBottom = styled.div`
   color: #777e90;
 `;
 
-const Actions = styled.div`
-  cursor: pointer;
-  margin-left: auto;
-`;
+// const Actions = styled.div`
+//   cursor: pointer;
+//   margin-left: auto;
+// `;
 
 const ActivityContainer = styled.div`
   width: 323px;

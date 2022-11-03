@@ -122,7 +122,3 @@ const ButtonContainer = styled.div`
   display: flex;
   margin-top: auto;
 `;
-
-const Gap = styled.div`
-  width: 20px;
-`;

@@ -1,4 +1,3 @@
-import ArrowSmRightIcon from "@heroicons/react/outline/ArrowSmRightIcon";
 import Button from "components/primitives/Button";
 import Checkbox from "components/primitives/Checkbox";
 import { SecurityLevelEnum } from "pages/AddImportAccount/CreateAccount/CreateAccount";
@@ -81,13 +80,13 @@ const Container = styled.div`
   z-index: 9999;
 `;
 
-const Indicator = styled.div`
-  width: 48px;
-  height: 6px;
-  flex-grow: 0;
-  border-radius: 100px;
-  background-color: #e6e8ec;
-`;
+// const Indicator = styled.div`
+//   width: 48px;
+//   height: 6px;
+//   flex-grow: 0;
+//   border-radius: 100px;
+//   background-color: #e6e8ec;
+// `;
 
 const MainContent = styled.div`
   width: 100%;

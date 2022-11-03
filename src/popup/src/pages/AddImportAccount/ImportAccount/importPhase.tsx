@@ -63,7 +63,7 @@ const ImportPhase = ({
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const formValues = useSelector((state: any) => state?.form?.ImportPhase?.values);
-  const { seedPhase, file, password }: any = { ...formValues };
+  const { seedPhase, file }: any = { ...formValues };
   const dispatch = useDispatch();
 
   const onDrop = useCallback(async (acceptedFile: any) => {

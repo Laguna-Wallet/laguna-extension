@@ -1,6 +1,6 @@
 import { useState } from "react";
 import styled from "styled-components/macro";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { router } from "router/router";
 
@@ -15,17 +15,15 @@ import TokenItem from "./TokenItem";
 import LoopIcon from "assets/svgComponents/loopIcon";
 
 export default function AddRemoveToken() {
-  const dispatch = useDispatch();
   const history = useHistory();
 
   const {
     prices,
     infos,
     accountsBalances: { balances },
-    disabledTokens,
   } = useSelector((state: any) => state.wallet);
 
-  const [networks, setNetworks] = useState<Network[]>(getNetworks(prices, infos));
+  const [networks] = useState<Network[]>(getNetworks(prices, infos));
 
   const [networksFilter, setNetworksFilter] = useState<string>("");
 

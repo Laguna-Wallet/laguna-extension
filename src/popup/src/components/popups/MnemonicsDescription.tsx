@@ -1,9 +1,5 @@
-import ArrowSmRightIcon from "@heroicons/react/outline/ArrowSmRightIcon";
 import Button from "components/primitives/Button";
-import Checkbox from "components/primitives/Checkbox";
-import { PageContainer } from "components/ui";
 import { useEnterClickListener } from "hooks/useEnterClickListener";
-import { useWizard } from "react-use-wizard";
 import styled from "styled-components/macro";
 
 type Props = {

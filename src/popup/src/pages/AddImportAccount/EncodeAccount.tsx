@@ -158,33 +158,33 @@ const IconContainer = styled.div`
   margin-top: 103px;
 `;
 
-const Circle = styled.div`
-  width: 180px;
-  height: 180px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(265.71deg, #1cc3ce -32.28%, #b9e260 104.04%);
-  border-radius: 100%;
-`;
+// const Circle = styled.div`
+//   width: 180px;
+//   height: 180px;
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+//   background: linear-gradient(265.71deg, #1cc3ce -32.28%, #b9e260 104.04%);
+//   border-radius: 100%;
+// `;
 
-const CircleInner = styled.div`
-  width: 94%;
-  height: 94%;
-  background-color: #f8f8f8;
-  border-radius: 100%;
-`;
+// const CircleInner = styled.div`
+//   width: 94%;
+//   height: 94%;
+//   background-color: #f8f8f8;
+//   border-radius: 100%;
+// `;
 
-const CheckMarkContainer = styled.div`
-  position: absolute;
-  top: -15px;
-  right: -20px;
-`;
+// const CheckMarkContainer = styled.div`
+//   position: absolute;
+//   top: -15px;
+//   right: -20px;
+// `;
 
-const LockContainer = styled.div`
-  position: absolute;
-  top: 70px;
-`;
+// const LockContainer = styled.div`
+//   position: absolute;
+//   top: 70px;
+// `;
 
 const Title = styled.div`
   font-size: 22px;

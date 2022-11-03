@@ -14,8 +14,6 @@ import { Provider } from "react-redux";
 import { AccountsStore } from "utils/stores";
 import generateStore from "redux/store";
 import IdleTimeoutWrapper from "pages/IdleTimeoutWrapper/IdleTimeoutWrapper";
-import { getHistoricalTransactions } from "utils/evm/api";
-import { EVMNetwork, EVMAssetId } from "networks/evm";
 
 generateStore().then((store) => {
   // load all available addresses and accounts

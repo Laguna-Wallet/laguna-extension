@@ -1,12 +1,9 @@
 import {
   createContext,
-  FunctionComponent,
-  memo,
   ReactNode,
   useCallback,
   useContext,
   useEffect,
-  useMemo,
   useState,
 } from "react";
 import { mnemonicGenerate } from "@polkadot/util-crypto/mnemonic";
@@ -41,7 +38,7 @@ const initialContextValue = {
   json: {},
   setJson: () => undefined,
   getActiveAccount: () => undefined,
-  saveActiveAccount: (account: any) => undefined,
+  saveActiveAccount: () => undefined,
 };
 
 const AccountContext = createContext<IAccountCtx>(initialContextValue);

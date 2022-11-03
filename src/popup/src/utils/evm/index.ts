@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import fs from "fs";
+// import fs from "fs";
 import BigNumber from "bignumber.js";
 import {
   IEVMAssetERC20,
@@ -247,7 +247,7 @@ export const getBalance = async (
 
 const initERC20SmartContract = (network: EVMNetwork, asset: IEVMAssetERC20): ethers.Contract => {
   const provider = getProvider(network);
-  const abiFileName = "ERC20";
+  // const abiFileName = "ERC20";
   // const ERC20ABI = JSON.parse(fs.readFileSync(`./abi/${abiFileName}.json`, "utf-8"));
   return new ethers.Contract((asset as IEVMAssetERC20).contractAddress, ERC20ABI, provider);
 };

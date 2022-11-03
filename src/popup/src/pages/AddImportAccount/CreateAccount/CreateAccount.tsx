@@ -13,16 +13,16 @@ import { useSelector } from "react-redux";
 import { State } from "redux/store";
 import AES from "crypto-js/aes";
 import { saveToStorage } from "utils/chrome";
-import { RouteComponentProps, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { router } from "router/router";
 import browser from "webextension-polyfill";
 import { useLocation } from "react-router-dom";
 import { generateNewWalletAddress } from "utils/evm";
 
-type Props = {
-  existingAccount?: boolean;
-  encodePhase?: boolean;
-};
+// type Props = {
+//   existingAccount?: boolean;
+//   encodePhase?: boolean;
+// };
 
 type LocationState = {
   redirectedFromSignUp?: boolean;
@@ -34,11 +34,11 @@ export enum SecurityLevelEnum {
   Skipped = "Skipped",
 }
 
-export default function CreateAccount({
+export default function CreateAccount( /*{
   // redirectedFromSignUp,
   // redirectedFromDashboard,
-  encodePhase,
-}: Props & Partial<RouteComponentProps>) {
+  // encodePhase,
+}: Props & Partial<RouteComponentProps> */) {
   const account = useAccount();
   const activeAccount = account.getActiveAccount();
   const encoded = account.encryptedPassword;

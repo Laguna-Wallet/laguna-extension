@@ -29,7 +29,7 @@ import { FlowValue, SendAccountFlowEnum } from "./Send";
 import HashtagIcon from "assets/svgComponents/HashtagIcon";
 import { useHistory } from "react-router-dom";
 import { router } from "router/router";
-import { EVMNetwork } from "networks/evm";
+// import { EVMNetwork } from "networks/evm";
 import EthSettingsIcon from "assets/svgComponents/EthSettingsIcon";
 import GasSettingsPopup from "./GasSettingsPopup";
 import { IEVMBuildTransaction, IEVMToBeSignTransaction } from "utils/evm/interfaces";
@@ -654,64 +654,64 @@ const InfoRow = styled.div`
   }
 `;
 
-const AccountsSection = styled.div`
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  z-index: 9999999999999999999;
-  bottom: 0;
-  box-sizing: border-box;
-  /* background-color: #f8f8f9; */
-  background-color: rgba(0, 0, 0, 0.6);
-  display: flex;
-  align-items: flex-end;
-  z-index: 10;
-`;
+// const AccountsSection = styled.div`
+//   width: 100%;
+//   height: 100%;
+//   position: absolute;
+//   z-index: 9999999999999999999;
+//   bottom: 0;
+//   box-sizing: border-box;
+//   /* background-color: #f8f8f9; */
+//   background-color: rgba(0, 0, 0, 0.6);
+//   display: flex;
+//   align-items: flex-end;
+//   z-index: 10;
+// `;
 
-const AccountsSectionContent = styled.div`
-  width: 100%;
-  min-height: 200px;
-  max-height: 80%;
-  background-color: #f8f8f9;
-  padding: 15px 20px;
-  border-top-right-radius: 5px;
-  border-top-left-radius: 5px;
-  overflow-y: scroll;
-`;
+// const AccountsSectionContent = styled.div`
+//   width: 100%;
+//   min-height: 200px;
+//   max-height: 80%;
+//   background-color: #f8f8f9;
+//   padding: 15px 20px;
+//   border-top-right-radius: 5px;
+//   border-top-left-radius: 5px;
+//   overflow-y: scroll;
+// `;
 
-const AccountsSectionContentHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  span {
-    font-family: Inter;
-    font-weight: 600;
-  }
-`;
+// const AccountsSectionContentHeader = styled.div`
+//   display: flex;
+//   justify-content: space-between;
+//   span {
+//     font-family: Inter;
+//     font-weight: 600;
+//   }
+// `;
 
-const CloseIconContainer = styled.div`
-  cursor: pointer;
-`;
+// const CloseIconContainer = styled.div`
+//   cursor: pointer;
+// `;
 
-const AccountsSectionList = styled.div`
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-`;
+// const AccountsSectionList = styled.div`
+//   width: 100%;
+//   display: flex;
+//   flex-direction: column;
+// `;
 
-const AccountsSectionItem = styled.div`
-  width: 100%;
-  height: 48px;
-  padding: 12.5px 71px 12.5px 9.3px;
-  box-sizing: border-box;
-  border-radius: 5px;
-  background-color: #f3f3f3;
-  margin-top: 10px;
-  cursor: pointer;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
+// const AccountsSectionItem = styled.div`
+//   width: 100%;
+//   height: 48px;
+//   padding: 12.5px 71px 12.5px 9.3px;
+//   box-sizing: border-box;
+//   border-radius: 5px;
+//   background-color: #f3f3f3;
+//   margin-top: 10px;
+//   cursor: pointer;
+//   text-overflow: ellipsis;
+//   white-space: nowrap;
+//   overflow: hidden;
 
-  :nth-child(1) {
-    margin-top: 20px;
-  }
-`;
+//   :nth-child(1) {
+//     margin-top: 20px;
+//   }
+// `;

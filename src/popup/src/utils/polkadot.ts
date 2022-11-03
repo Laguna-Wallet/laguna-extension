@@ -1,23 +1,23 @@
-import { assert, hexToU8a, u8aToHex, isHex, u8aToString } from "@polkadot/util";
+import { assert, hexToU8a, u8aToHex, isHex } from "@polkadot/util";
 import {
   keyExtractSuri,
   mnemonicValidate,
   randomAsHex,
   mnemonicToMiniSecret,
-  encodeAddress as toSS58,
-  ethereumEncode,
+  // encodeAddress as toSS58,
+  // ethereumEncode,
 } from "@polkadot/util-crypto";
 
 import {
   Asset,
-  HardcodedAssetList,
+  // HardcodedAssetList,
   Network,
   networks,
   Prices,
   SEED_LENGTHS,
   StorageKeys,
   Token,
-  TokenSymbols,
+  // TokenSymbols,
   Transaction,
 } from "./types";
 import { KeyringPair$Json } from "@polkadot/keyring/types";
@@ -38,12 +38,12 @@ import {
 import { generateRandomBase64Avatar, transformEVMHistoryToTransaction } from "utils";
 import {
   generateNewWalletAddress,
-  getAssetIdBySmartContractAddress,
+  // getAssetIdBySmartContractAddress,
   getHistoricalTransactions,
   isEVMChain,
 } from "./evm";
 import { EVMAssetId, EVMNetwork } from "networks/evm";
-import { EvmAssets, EVMAssetType } from "networks/evm/asset";
+import { EvmAssets } from "networks/evm/asset";
 
 // TODO appropriate typing
 
@@ -53,7 +53,7 @@ import { EvmAssets, EVMAssetType } from "networks/evm/asset";
 export function generateKeyPair(
   password: string,
   mnemonics?: string,
-  name?: "default name",
+  // name?: "default name",
 ): { pair: any; json: any } {
   if (mnemonics) {
     return keyring.addUri(mnemonics, password, { name: "mnemonic acc" });
@@ -284,7 +284,7 @@ export async function getAssets(
 
   for (let i = 0; i < networks.length; i++) {
     try {
-      const { name, symbol, chain, node, encodeType, prefix, price_change_percentage_24h } =
+      const { name, symbol, chain, encodeType, prefix, price_change_percentage_24h } =
         networks[i];
 
       let balance = balances[chain];

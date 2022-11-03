@@ -2,14 +2,13 @@ import { BigNumber } from "bignumber.js";
 import axios from "axios";
 import { ethers } from "ethers";
 import { changeAccountsBalances, changeTokenReceived } from "redux/actions";
-import { AppDispatch } from "redux/store";
 import { checkBalanceChange, timer } from "utils";
 import { getFromStorage, saveToStorage } from "./chrome";
 import * as evmUtils from "utils/evm";
 import { EVMNetwork } from "networks/evm";
 import { EvmAssets } from "networks/evm/asset";
 import { recodeAddress } from "./polkadot";
-import { Messages, networks, StorageKeys } from "./types";
+import { networks, StorageKeys } from "./types";
 
 interface PriceConverter {
   symbol: string;
@@ -28,7 +27,7 @@ export async function Account_Search(chain: string, address: string) {
     key: address,
   });
 }
-export async function Price_Converter({ chain, symbol, amount, fiat }: PriceConverter) {
+export async function Price_Converter({ fiat }: PriceConverter) {
   const data = await AXIOS_INSTANCE.get(
     `    https://api.coingecko.com/api/v3/simple/price?ids=${[
       "polkadot,kusama",

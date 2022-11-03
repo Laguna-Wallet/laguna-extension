@@ -1,9 +1,9 @@
-import { storage } from "googleapis/build/src/apis/storage";
+// import { storage } from "googleapis/build/src/apis/storage";
 import { createStore, Store } from "redux";
-import { getFromChromeStorage, getFromStorage } from "utils/chrome";
+import { getFromStorage } from "utils/chrome";
 import { TokenData } from "utils/evm/interfaces";
 import { Prices, StorageKeys, Token } from "utils/types";
-import { string } from "yup/lib/locale";
+// import { string } from "yup/lib/locale";
 import rootReducer from "./reducer";
 
 export interface State {

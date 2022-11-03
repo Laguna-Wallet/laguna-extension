@@ -1,7 +1,7 @@
-import { IEVMAssetERC20, IEVMAsset, IEVMHistoricalTransaction } from "../interfaces";
+import { IEVMHistoricalTransaction } from "../interfaces";
 import BigNumber from "bignumber.js";
-import { EVMNetwork, EVMAssetId, EVMAssetType, assets, networks } from "networks/evm";
-import { getProvider, toCheckSumAddress } from "..";
+import { EVMNetwork, EVMAssetId } from "networks/evm";
+// import { getProvider, toCheckSumAddress } from "..";
 
 export const getHistoricalTransactions = async (
   address: string,

@@ -1,4 +1,4 @@
-import { memo, ReactElement, useCallback, useEffect, useState, useMemo } from "react";
+import { memo, ReactElement, useEffect, useState } from "react";
 import styled from "styled-components/macro";
 import { truncateString } from "utils";
 import { AccountMeta } from "utils/types";
@@ -308,8 +308,6 @@ const AccountAvatar = styled.div<{ img: string }>`
   background-repeat: no-repeat;
   margin-right: 5px;
 `;
-
-const Paste = styled.div``;
 
 const Copy = styled.div`
   position: absolute;

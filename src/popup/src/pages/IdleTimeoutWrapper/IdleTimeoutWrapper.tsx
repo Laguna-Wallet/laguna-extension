@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useIdleTimer } from "react-idle-timer";
-import { sendMessagePromise } from "utils/chrome";
+// import { sendMessagePromise } from "utils/chrome";
 import { Messages } from "utils/types";
 import browser from "webextension-polyfill";
 
 export default function IdleTimeoutWrapper({ children }: { children: React.ReactChild }) {
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  // const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
   useEffect(() => {
     async function go() {

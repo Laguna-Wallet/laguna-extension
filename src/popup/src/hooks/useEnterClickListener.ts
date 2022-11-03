@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useEffect } from "react";
 
 export function useEnterClickListener(fn: () => void, deps: unknown[]) {
   useEffect(() => {

@@ -28,7 +28,7 @@ export default function AccountsPopup({ handleClickAccount, onBack }: Props) {
   const prefix = Prefixes[selectedAsset.chain];
 
   const currAccountAddress = account?.getActiveAccount()?.address;
-  const currAccountImage = account?.getActiveAccount()?.meta?.img;
+  // const currAccountImage = account?.getActiveAccount()?.meta?.img;
 
   useEffect(() => {
     // todo proper typing
@@ -195,12 +195,12 @@ const IconContainer = styled.div<{ img: string }>`
   background-color: #ccc;
 `;
 
-const AddAddressPopupContainer = styled.div`
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  top: 0;
-`;
+// const AddAddressPopupContainer = styled.div`
+//   width: 100%;
+//   height: 100%;
+//   position: absolute;
+//   top: 0;
+// `;
 
 const Text = styled.div`
   font-family: 'Inter';

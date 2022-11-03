@@ -5,29 +5,23 @@ import Confirm from "./Confirm";
 import {
   getApiInstance,
   getAssets,
-  getNetworks,
   isValidPolkadotAddress,
   recodeAddress,
-  recodeAddressForTransaction,
 } from "utils/polkadot";
-import { useEffect, useReducer, useState } from "react";
-import { AccountMeta, Asset, CurrencyType, Network, SelectType } from "utils/types";
-import { useWizard, Wizard } from "react-use-wizard";
+import { useEffect, useState } from "react";
+import { AccountMeta, Asset, CurrencyType } from "utils/types";
+import { Wizard } from "react-use-wizard";
 import TransactionSent from "./SuccesPage/TransactionSentSubstrate";
 import SendToken from "./SendToken";
 import { useAccount } from "context/AccountContext";
-import { useFormik } from "formik";
-import { isNumeric, sendTokenSchema } from "utils/validations";
 import BigNumber from "bignumber.js";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { PropsFromTokenDashboard } from "pages/Recieve/Receive";
-import { selectAsset } from "redux/actions";
 import { State } from "redux/store";
 import { useLocation } from "react-router-dom";
 import * as evmUtils from "utils/evm";
 
 import { EvmAssets } from "networks/evm/asset";
-import { ethers } from "ethers";
 import {
   IEVMAssetERC20,
   IEVMBuildTransaction,
@@ -57,9 +51,9 @@ type LocationState = {
   propsFromTokenDashboard?: PropsFromTokenDashboard;
 };
 
-function Send({ initialIsContactsPopupOpen }: Props) {
+function Send(/* { initialIsContactsPopupOpen }: Props */) {
   const account = useAccount();
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
   const [flow, setFlow] = useState<FlowValue | undefined>(undefined);
   const [assets, setAssets] = useState<Asset[] | undefined>(undefined);
@@ -137,10 +131,8 @@ function Send({ initialIsContactsPopupOpen }: Props) {
       setRecoded(recoded);
 
       const transfer = await api.tx.balances.transfer(form.address, amount.toString());
-      console.log(1);
-      const { partialFee, weight } = await transfer.paymentInfo(recoded);
+      const { partialFee } = await transfer.paymentInfo(recoded);
       // const info = await transfer.paymentInfo(recoded);
-      console.log(2);
       const fees = new BigNumber(`${partialFee}`).multipliedBy(110).dividedBy(100);
 
       // todo check this
@@ -177,7 +169,7 @@ function Send({ initialIsContactsPopupOpen }: Props) {
         reduxSendTokenState?.selectedAsset?.symbol
       ] as IEVMAssetERC20;
 
-      const { nonce, gasPriceInGwei, nativeCurrenyBalance, assetBalance } =
+      const { nonce, gasPriceInGwei } =
         await evmUtils.getBuildTransactionOnChainParam(
           ethNetwork,
           activeAccount?.meta?.ethAddress,

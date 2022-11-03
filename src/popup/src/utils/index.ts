@@ -53,7 +53,7 @@ export function generateNumberAbbreviation(num: number): string {
 }
 
 export function mnemonicsAreChecked(ht: Record<string, boolean>): boolean {
-  for (const [key, value] of Object.entries(ht)) {
+  for (const [, value] of Object.entries(ht)) {
     if (!value) return false;
   }
 

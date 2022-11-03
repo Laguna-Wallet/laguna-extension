@@ -8,9 +8,7 @@ import { memo, useEffect, useState } from "react";
 import {
   getAccountNameByAddress,
   getContactNameByAddress,
-  recodeToPolkadotAddress,
   truncateString,
-  updateBallanceCache,
 } from "utils";
 import BigNumber from "bignumber.js";
 import { useDispatch, useSelector } from "react-redux";
@@ -21,10 +19,8 @@ import Loader from "components/Loader/Loader";
 import { useHistory } from "react-router-dom";
 import { router } from "router/router";
 import browser from "webextension-polyfill";
-import { changeAccountsBalances } from "redux/actions";
 import { recodeAddress } from "utils/polkadot";
-import { sendMessagePromise } from "utils/chrome";
-import { IEVMBuildTransaction, IEVMToBeSignTransaction } from "utils/evm/interfaces";
+import { IEVMToBeSignTransaction } from "utils/evm/interfaces";
 import { EVMNetwork } from "networks/evm";
 import { isEVMChain } from "utils/evm";
 
@@ -40,20 +36,19 @@ type Props = {
 
 function Confirm({
   fee,
-  transfer,
   amountToSend,
   recoded,
   setBlockHash,
   flow,
   toBeSignTransaction,
 }: Props) {
-  const { nextStep, previousStep } = useWizard();
+  const { previousStep } = useWizard();
   const account = useAccount();
   const history = useHistory();
 
   const dispatch = useDispatch();
   const [loadingTransaction, setLoadingTransaction] = useState(false);
-  const [transactionConfirmed, setTransactionConfirmed] = useState(false);
+  const [, setTransactionConfirmed] = useState(false);
 
   const { address, amount, token } = useSelector((state: any) => state.form.sendToken.values);
   const selectedAsset = useSelector((state: any) => state.sendToken.selectedAsset);

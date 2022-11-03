@@ -1,6 +1,6 @@
-import { useRef, useState } from "react";
-import RightArrow from "assets/svgComponents/RightArrow";
-import SuccessfullySentIcon from "assets/svgComponents/SuccesfullySentIcon";
+import { useState } from "react";
+// import RightArrow from "assets/svgComponents/RightArrow";
+// import SuccessfullySentIcon from "assets/svgComponents/SuccesfullySentIcon";
 import bg from "assets/imgs/ethSendSuccessBg.png";
 import Button from "components/primitives/Button";
 import styled from "styled-components";

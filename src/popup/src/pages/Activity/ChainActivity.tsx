@@ -6,7 +6,6 @@ import Footer from "pages/Wallet/Footer";
 import { getLatestTransactionsForSingleChain } from "utils/polkadot";
 import { useEffect, useState } from "react";
 import ActivityInfo from "./ActivityInfo";
-import { useSelector } from "react-redux";
 import { Asset, Transaction } from "utils/types";
 import Popup from "components/Popup/Popup";
 import { ActivityItem } from "./Activity";
@@ -26,11 +25,11 @@ export default function ChainActivity() {
   const location = useLocation<LocationState>();
   const { chain, asset } = location.state || {};
 
-  const wallet = useSelector((state: any) => state.wallet);
+  // const wallet = useSelector((state: any) => state.wallet);
   // const transactions = wallet?.transactions[account.getActiveAccount().address];
   const [transactions, setTransactions] = useState<Transaction[] | []>([]);
   const [transaction, setTransaction] = useState<Transaction>();
-  const [loading, setLoading] = useState<boolean>(false);
+  const [, setLoading] = useState<boolean>(false);
   const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false);
 
   const address = account.getActiveAccount()?.address;
@@ -71,7 +70,7 @@ export default function ChainActivity() {
 
     setLoading(true);
     if (chain) {
-      const { transactions, count }: { count: number; transactions: Transaction[] } =
+      const { transactions }: { count: number; transactions: Transaction[] } =
         await getLatestTransactionsForSingleChain(
           address,
           chain,
@@ -168,86 +167,86 @@ const Content = styled.div`
   }
 `;
 
-const ActivityItemsContainer = styled.div`
-  width: 100%;
-  height: 100%;
-  overflow: scroll;
-  height: auto;
-  display: flex;
-  flex-direction: column;
-  margin-top: 75px;
-  padding-bottom: 20px;
-`;
+// const ActivityItemsContainer = styled.div`
+//   width: 100%;
+//   height: 100%;
+//   overflow: scroll;
+//   height: auto;
+//   display: flex;
+//   flex-direction: column;
+//   margin-top: 75px;
+//   padding-bottom: 20px;
+// `;
 
-const Loading = styled.div`
-  margin-top: 90px;
-`;
+// const Loading = styled.div`
+//   margin-top: 90px;
+// `;
 
-const ActivityItemContainer = styled.div<{ bgColor?: string }>`
-  width: 100%;
-  height: 60px;
-  margin-top: 10px;
-  display: flex;
-  align-items: center;
-  padding: 14px;
-  box-sizing: border-box;
-  text-decoration: none;
-  background-color: ${({ bgColor }) => bgColor || "#fff"};
-  border-radius: 4px;
-  cursor: pointer;
-`;
+// const ActivityItemContainer = styled.div<{ bgColor?: string }>`
+//   width: 100%;
+//   height: 60px;
+//   margin-top: 10px;
+//   display: flex;
+//   align-items: center;
+//   padding: 14px;
+//   box-sizing: border-box;
+//   text-decoration: none;
+//   background-color: ${({ bgColor }) => bgColor || "#fff"};
+//   border-radius: 4px;
+//   cursor: pointer;
+// `;
 
-const Icon = styled.div`
-  width: 36px;
-  height: 36px;
-  border-radius: 100%;
-  background-color: #eeeeee;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
+// const Icon = styled.div`
+//   width: 36px;
+//   height: 36px;
+//   border-radius: 100%;
+//   background-color: #eeeeee;
+//   position: relative;
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+// `;
 
-const IconContainer = styled.div<{ bgColor?: string }>`
-  width: 16px;
-  height: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 100%;
-  background-color: ${({ bgColor }) => bgColor};
-  position: absolute;
-  bottom: -4px;
-  right: -4px;
-`;
+// const IconContainer = styled.div<{ bgColor?: string }>`
+//   width: 16px;
+//   height: 16px;
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+//   border-radius: 100%;
+//   background-color: ${({ bgColor }) => bgColor};
+//   position: absolute;
+//   bottom: -4px;
+//   right: -4px;
+// `;
 
-const Info = styled.span`
-  display: flex;
-  flex-direction: column;
-  margin-left: 10px;
-`;
+// const Info = styled.span`
+//   display: flex;
+//   flex-direction: column;
+//   margin-left: 10px;
+// `;
 
-const InfoTop = styled.span`
-  font-family: "IBM Plex Sans";
-  font-size: 14px;
-  font-weight: 500;
-  color: #18191a;
+// const InfoTop = styled.span`
+//   font-family: "IBM Plex Sans";
+//   font-size: 14px;
+//   font-weight: 500;
+//   color: #18191a;
 
-  span {
-    text-transform: capitalize;
-  }
-`;
+//   span {
+//     text-transform: capitalize;
+//   }
+// `;
 
-const InfoBottom = styled.div`
-  font-family: "IBM Plex Sans";
-  font-size: 12px;
-  color: #777e90;
-`;
+// const InfoBottom = styled.div`
+//   font-family: "IBM Plex Sans";
+//   font-size: 12px;
+//   color: #777e90;
+// `;
 
-const Actions = styled.div`
-  cursor: pointer;
-  margin-left: auto;
-`;
+// const Actions = styled.div`
+//   cursor: pointer;
+//   margin-left: auto;
+// `;
 
 const ActivityContainer = styled.div`
   width: 323px;
