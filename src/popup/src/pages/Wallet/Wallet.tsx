@@ -166,6 +166,7 @@ function Wallet({ snackbar }: Props) {
       {activeTab === 1
         ? assets.length > 0 &&
           assets.map((asset: any) => {
+            // console.log("asset", asset);
             return (
               <ChainItem
                 key={asset.symbol}

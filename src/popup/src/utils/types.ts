@@ -2,8 +2,8 @@ import { KeypairType } from "@polkadot/util-crypto/types";
 import type { Signer as InjectedSigner } from "@polkadot/api/types";
 import type { ExtDef } from "@polkadot/types/extrinsic/signedExtensions/types";
 import type { ProviderInterface } from "@polkadot/rpc-provider/types";
-import { EVMAssetType } from "networks/evm/asset";
-import { EVMNetwork } from "networks/evm";
+import { EVMAssetType } from "../networks/evm/asset";
+import { EVMNetwork } from "../networks/evm";
 
 export enum SecurityOptionsEnum {
   Secured = "Secured",
@@ -62,6 +62,7 @@ export interface Network {
   decimal?: number;
   assetType?: EVMAssetType.NATIVE | EVMAssetType.ERC20;
   contractAddress?: string;
+  priceApiId?: string;
 }
 
 export interface Asset {
@@ -331,6 +332,7 @@ export const networks: Network[] = [
     chain: "polkadot",
     node: "wss://rpc.polkadot.io",
     prefix: 0,
+    priceApiId: "polkadot",
   },
   {
     name: "Kusama",
@@ -338,6 +340,7 @@ export const networks: Network[] = [
     chain: "kusama",
     node: "wss://kusama-rpc.polkadot.io",
     prefix: 2,
+    priceApiId: "kusama",
   },
   {
     name: "Ethereum",
@@ -345,6 +348,7 @@ export const networks: Network[] = [
     chain: EVMNetwork.ETHEREUM,
     decimal: 18,
     assetType: EVMAssetType.NATIVE,
+    priceApiId: "ethereum",
   },
   {
     name: "USD Coin",
@@ -353,6 +357,7 @@ export const networks: Network[] = [
     decimal: 6,
     assetType: EVMAssetType.ERC20,
     contractAddress: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+    priceApiId: "usd-coin",
   },
   {
     name: "Tether USD",
@@ -361,6 +366,7 @@ export const networks: Network[] = [
     decimal: 6,
     assetType: EVMAssetType.ERC20,
     contractAddress: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+    priceApiId: "tether",
   },
   // {
   //   name: "Ethereum",

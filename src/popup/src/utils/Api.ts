@@ -51,6 +51,7 @@ export async function fetchAccountsBalances(
   // dispatch: AppDispatch
   dispatch: any,
 ) {
+  // console.log("fetchAccountsBalances");
   try {
     // await timer(3000)
     const account = await getFromStorage(StorageKeys.ActiveAccount);
@@ -65,14 +66,11 @@ export async function fetchAccountsBalances(
       let result_obj: any = {};
       const temp_obj: Record<string, any> = {};
 
-      let i = 0;
-
-      while (i < networks.length) {
-        await timer(1000);
+      for (let i = 0; i < networks.length; i++) {
+        // await timer(1000);
         const network = networks[i];
 
         if (evmUtils.isEVMChain(network.chain) && !ethAddress) {
-          i++;
           continue;
         }
 
@@ -81,30 +79,35 @@ export async function fetchAccountsBalances(
             network.chain === EVMNetwork.AVALANCHE_TESTNET_FUJI) &&
           ethAddress
         ) {
+          const evmAsset = EvmAssets[network.chain][network.symbol];
           const ethBalance = await evmUtils.getBalance(
             network.chain,
             ethAddress,
-            EvmAssets[network.chain][network.symbol],
+            evmAsset,
           );
 
+          // console.log(evmAsset, ethBalance);
+
           if (new BigNumber(ethBalance.toString()).isEqualTo(0)) {
-            i++;
             continue;
           }
 
-          temp_obj[network.chain] = {
-            overall: ethers.utils.formatEther(ethBalance.toString()),
+          temp_obj[evmAsset.assetId] = {
+            overall: ethers.utils.formatUnits(ethBalance.toString(), evmAsset.decimal),
             locked: Number(0), // todo change after eth 2.0 merge
           };
         } else {
+          // wait one second between API calls
+          if (i > 0)
+            await timer(1000);
           const resolved = await searchAccountBallance(
             network.chain,
             recodeAddress(address, network?.prefix, network?.encodeType),
           );
           // if (resolved.message !== "Success") return
           if (resolved.message !== "Success") {
-            if (resolved.message === "Record Not Found" || resolved?.data?.account?.balance === 0) {
-              i++;
+            if (resolved.message !== "Record Not Found" && resolved?.data?.account?.balance !== 0) {
+              i--;
             }
             continue;
           }
@@ -121,12 +124,12 @@ export async function fetchAccountsBalances(
         } else {
           result_obj = { ...temp_obj };
         }
-        i++;
       }
 
-      i = 0;
 
       const hasReceived: boolean = await checkBalanceChange(result_obj, address);
+
+      // console.log("result_obj", result_obj);
 
       saveToStorage({
         key: StorageKeys.AccountBalances,
