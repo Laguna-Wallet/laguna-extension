@@ -258,22 +258,6 @@ export function getNetworks(
   return enhancedNetworks;
 }
 
-function getPriceApiIds () {
-  const priceApiIds = [];
-  for (let i = 0; i < networks.length; i++) {
-    if (networks[i].priceApiId)
-      priceApiIds.push(networks[i].priceApiId);
-  }
-  return priceApiIds;
-}
-
-// todo make chains dynamic
-export async function RetrieveCoinPrices() {
-  const data = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${getPriceApiIds().join(",")}&vs_currencies=usd`);
-  const json = await data.json();
-  return json;
-}
-
 // Todo refactor
 // Todo Appropriate Typing
 export async function getAssets(
@@ -296,13 +280,6 @@ export async function getAssets(
 
   let overallPriceChange = 0;
   let overallBalance = 0;
-
-  // Grab latest prices to calculate
-  try {
-    prices = await RetrieveCoinPrices();
-  } catch(err) {
-    console.error(err);
-  }
 
   for (let i = 0; i < networks.length; i++) {
     try {

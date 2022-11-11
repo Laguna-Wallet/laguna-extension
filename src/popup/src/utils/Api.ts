@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import axios from "axios";
 import { ethers } from "ethers";
-import { changeAccountsBalances, changeTokenReceived } from "redux/actions";
+import { changeAccountsBalances, changeTokenReceived, changePrices } from "redux/actions";
 import { checkBalanceChange, timer } from "utils";
 import { getFromStorage, saveToStorage } from "./chrome";
 import * as evmUtils from "utils/evm";
@@ -46,6 +46,32 @@ export async function getCoinInfo({ chains }: any) {
   return data;
 }
 
+function getPriceApiIds () {
+  const priceApiIds = [];
+  for (let i = 0; i < networks.length; i++) {
+    if (networks[i].priceApiId)
+      priceApiIds.push(networks[i].priceApiId);
+  }
+  return priceApiIds;
+}
+
+export async function fetchCoinPrices(dispatch: any) {
+  try {
+    const data = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${getPriceApiIds().join(",")}&vs_currencies=usd`);
+    const prices = await data.json();
+
+    dispatch(changePrices(prices));
+    saveToStorage({ 
+      key: StorageKeys.TokenPrices, 
+      value: JSON.stringify(prices),
+    });
+
+    return prices;
+  } catch (err) {
+    console.log("error while fetching prices:", err);
+  }
+}
+
 // todo proper typing
 export async function fetchAccountsBalances(
   // dispatch: AppDispatch
@@ -58,6 +84,9 @@ export async function fetchAccountsBalances(
 
     const balances = await getFromStorage(StorageKeys.AccountBalances);
     const parsedBalances = balances ? JSON.parse(balances) : {};
+
+    // Also trigger fetching of prices
+    fetchCoinPrices(dispatch);
 
     if (account) {
       const address = JSON.parse(account as string).address;
