@@ -319,7 +319,7 @@ function SendToken({
                 name="address"
                 type="text"
                 label="address"
-                placeholder="address"
+                placeholder="Address"
                 component={HumbleInput}
                 format={(value: string) => formatAddressValue(value, flow)}
                 props={{

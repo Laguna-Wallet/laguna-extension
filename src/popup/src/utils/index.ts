@@ -144,12 +144,12 @@ export function encryptPassword({ password }: { password: string }) {
   return bcrypt.hashSync(password, bcrypt.genSaltSync());
 }
 
-export function truncateString(string: string, length?: number): string {
+export function truncateString(string: string, length?: number, endEllipsis?: boolean): string {
   if (!string) return string;
   if (string.length <= (length || 4 * 2)) return string;
   const part1 = string.slice(0, length || 4).concat("...");
   const part2 = string.substring(string.length - ((length && length + 2) || 4), string.length);
-  return `${part1}${part2}`;
+  return endEllipsis ? `${part1}` : `${part1}${part2}`;
 }
 
 export function objectValuesToArray(obj: Record<string, string>): string[] {

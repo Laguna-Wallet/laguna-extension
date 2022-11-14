@@ -77,7 +77,7 @@ export function isNumeric(str: string | number) {
 }
 
 export function parseNumeric(str: string) {
-  if (str === '.') return '';
+  if (str === '.') return '0.';
   return str.replace(/[^.\d]/g, '').replace(/^(\d*\.?)|(\d*)\.?/g, '$1$2');
 }
 

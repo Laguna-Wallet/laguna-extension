@@ -149,7 +149,7 @@ function Confirm({
       <Content>
         <TextContainer>
           <Text>
-            <NetworkIcons chain={chain} /> <span>I want to send</span>
+            <NetworkIcons chain={chain} /><Spacer /><span>I want to send</span>
           </Text>{" "}
           <Text>
             {amount} {token}
@@ -161,7 +161,7 @@ function Confirm({
             <AddressesInfoItem>
               <span>From</span>
               <span>
-                {name?.length > 12 ? truncateString(name, 5) : name}(
+                {name?.length > 12 ? truncateString(name, 9, true) : name}(
                 {truncateString(activeAccountAddress, 5)})
               </span>
             </AddressesInfoItem>
@@ -188,15 +188,14 @@ function Confirm({
       <Info>
         <InfoItem>
           <span>USD AMOUNT</span>
-          <span> ${renderTotal(total)}</span>
+          <span> ${Number(renderTotal(total)).toFixed(2)}</span>
         </InfoItem>
 
         <InfoItem>
           <span>Fee</span>
           <span>
             {fee.toString() +
-              ` ${token.toUpperCase()} (${new BigNumber(fee).multipliedBy(price || 0).toFixed(18)}`}
-            $)
+              ` ${token.toUpperCase()} ($${new BigNumber(fee).multipliedBy(price || 0).toFixed(2)})`}
           </span>
         </InfoItem>
       </Info>
@@ -331,6 +330,10 @@ const BottomSection = styled.div`
   padding: 0 15px;
   box-sizing: border-box;
   margin-top: auto;
+`;
+
+const Spacer = styled.div`
+  margin-right: 5px;
 `;
 
 const Tag = styled.div`
