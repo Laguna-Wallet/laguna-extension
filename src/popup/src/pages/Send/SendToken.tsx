@@ -137,12 +137,18 @@ function SendToken({
     setFlow(SendAccountFlowEnum.SendToAccount);
   };
 
-  const handleClickAccount = (address: string) => {
-    dispatch(change("sendToken", "address", address));
+  const handleClickAccount = (account: { 
+    address: string;
+    ethAddress: string; 
+    name: string;
+    img: string;
+    isEth: boolean;
+  }) => {
+    const { name, img, address, ethAddress, isEth } = account;
+    dispatch(change("sendToken", "address", isEth ? ethAddress : address));
     setIsAccountsPopupOpen(false);
 
-    const pair = keyring.getPair(address);
-    setAccountMeta({ name: pair?.meta?.name as string, img: pair?.meta?.img as string });
+    setAccountMeta({ name, img });
   };
 
   // const handleCloseAccount = () => {

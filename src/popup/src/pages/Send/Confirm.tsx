@@ -64,7 +64,9 @@ function Confirm({
     .times(price || 0)
     .toFormat(4);
 
-  const activeAccountAddress = account?.getActiveAccount()?.address;
+  const activeAccountAddress = isEVMChain(chain) ? 
+    account?.getActiveAccount()?.meta?.ethAddress 
+    : account?.getActiveAccount()?.address;
   const name = account?.getActiveAccount()?.meta?.name;
 
   const handleClick = async () => {
@@ -124,11 +126,11 @@ function Confirm({
   };
 
   const handleGetName = (flow: FlowValue | undefined) => {
-    if (flow === SendAccountFlowEnum.SendToAccount) {
-      return getAccountNameByAddress(recoded);
-    } else if (flow === SendAccountFlowEnum.SendToTrustedContact) {
-      return getContactNameByAddress(recodeAddress(recoded, 42));
-    }
+    // if (flow === SendAccountFlowEnum.SendToAccount) {
+    //   return getAccountNameByAddress(recoded);
+    // } else if (flow === SendAccountFlowEnum.SendToTrustedContact) {
+    //   return getContactNameByAddress(recodeAddress(recoded, 42));
+    // }
 
     return "";
   };
