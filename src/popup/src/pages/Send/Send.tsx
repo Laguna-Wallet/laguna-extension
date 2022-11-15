@@ -95,8 +95,10 @@ function Send(/* { initialIsContactsPopupOpen }: Props */) {
 
   const reduxSendTokenState = useSelector((state: any) => state.sendToken);
   const form = useSelector((state: any) => state?.form?.sendToken?.values);
-  const price =
-    reduxSendTokenState?.selectedAsset && prices[reduxSendTokenState?.selectedAsset?.symbol];
+  const price = reduxSendTokenState?.selectedAsset?.price || 0;
+  console.log("form", form);
+  console.log("currencyType", currencyType);
+  console.log("price", price);
 
   useEffect(() => {
     async function goPolkadot() {

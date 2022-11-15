@@ -21,8 +21,9 @@ import { router } from "router/router";
 import browser from "webextension-polyfill";
 import { recodeAddress } from "utils/polkadot";
 import { IEVMToBeSignTransaction } from "utils/evm/interfaces";
-import { EVMNetwork } from "networks/evm";
+import { EVMAssetType, EVMNetwork } from "networks/evm";
 import { isEVMChain } from "utils/evm";
+import { networks } from "utils/types";
 
 type Props = {
   fee: string;
@@ -55,14 +56,32 @@ function Confirm({
 
   const { prices } = useSelector((state: any) => state.wallet);
 
-  const price = prices[selectedAsset.chain.toLowerCase()]?.usd;
+  const price = selectedAsset.price || 0;
+  let feeNetwork;
+  let feePrice;
+
+  console.log("given price", prices);
+  console.log("selectedAsset", selectedAsset);
+  // If this is an EVM asset, get price for native coin as fee
+  if (isEVMChain(selectedAsset.chain)) {
+    feeNetwork = networks.find(network => 
+      network.assetType === EVMAssetType.NATIVE && network.chain === selectedAsset.chain);
+    feePrice = prices[feeNetwork?.priceApiId || "zero"]?.usd || 0;
+    console.log("feePrice", feePrice);
+    console.log("feeNetwork", feeNetwork);
+  }
 
   const chain = selectedAsset?.chain;
 
   const total = new BigNumber(amount)
-    .plus(fee)
-    .times(price || 0)
+    .plus(feeNetwork ? 0 : fee)
+    .times(price)
     .toFormat(4);
+  
+  console.log("amount", amount);
+  console.log("fee", fee);
+  console.log("price", price);
+  console.log("total", total);
 
   const activeAccountAddress = isEVMChain(chain) ? 
     account?.getActiveAccount()?.meta?.ethAddress 
@@ -178,7 +197,8 @@ function Confirm({
             <AddressesInfoItem>
               <span>Total</span>
               <span>
-                {new BigNumber(fee).plus(amount).toString()} {token.toUpperCase()}
+                {new BigNumber(feeNetwork ? 0 : fee).plus(amount).toString()} {token.toUpperCase()}
+                {feeNetwork ? ` + ${fee} ${feeNetwork.symbol.toUpperCase()}` : ""}
               </span>
             </AddressesInfoItem>
           </AddressesInfo>
@@ -197,7 +217,8 @@ function Confirm({
           <span>Fee</span>
           <span>
             {fee.toString() +
-              ` ${token.toUpperCase()} ($${new BigNumber(fee).multipliedBy(price || 0).toFixed(2)})`}
+              ` ${feeNetwork ? feeNetwork.symbol.toUpperCase() : token.toUpperCase()} 
+              ($${new BigNumber(fee).multipliedBy(feeNetwork ? feePrice : price).toFixed(2)})`}
           </span>
         </InfoItem>
       </Info>

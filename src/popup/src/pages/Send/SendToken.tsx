@@ -34,6 +34,8 @@ import EthSettingsIcon from "assets/svgComponents/EthSettingsIcon";
 import GasSettingsPopup from "./GasSettingsPopup";
 import { IEVMBuildTransaction, IEVMToBeSignTransaction } from "utils/evm/interfaces";
 import { isEVMChain } from "utils/evm";
+import { networks } from "utils/types";
+import { EVMAssetType } from "networks/evm";
 
 const validate = (values: { address: string; amount: number }) => {
   const errors: any = {};
@@ -123,7 +125,18 @@ function SendToken({
   const chain = selectedAsset?.chain;
   const symbol = selectedAsset?.symbol;
 
-  const price = chain && prices[chain.toLowerCase()]?.usd;
+  const price = selectedAsset.price || 0;
+  let feeNetwork;
+  let feePrice;
+
+  // If this is an EVM asset, get price for native coin as fee
+  if (isEVMChain(selectedAsset.chain)) {
+    feeNetwork = networks.find(network => 
+      network.assetType === EVMAssetType.NATIVE && network.chain === selectedAsset.chain);
+    feePrice = prices[feeNetwork?.priceApiId || "zero"]?.usd || 0;
+    console.log("feePrice", feePrice);
+    console.log("feeNetwork", feeNetwork);
+  }
 
   // const handleClick = (isValid: boolean) => {
   //   if (!isValid) return;
@@ -250,14 +263,14 @@ function SendToken({
     setCurrencyType(CurrencyType.Crypto);
   };
 
-  const handleAmount = (amount: string, price: number, currencyType: CurrencyType) => {
-    if (!amount || !price) return "0.00";
+  const handleAmount = (amount: string, asset: any, currencyType: CurrencyType) => {
+    if (!amount || !asset?.price) return "0.00";
 
     if (currencyType === CurrencyType.Fiat) {
-      return fiatToCrypto(Number(amount), price).toFixed(8);
+      return fiatToCrypto(Number(amount), asset.price).toFixed(asset.decimals);
     }
 
-    return new BigNumber(amount).times(price).toFormat(2);
+    return new BigNumber(amount).times(asset.price).toFormat(2);
   };
 
   const handleMax = (balance: string) => {
@@ -303,12 +316,12 @@ function SendToken({
                 Balance:{" "}
                 {new BigNumber(selectedAsset.balance.overall)
                   .minus(selectedAsset.balance.locked)
-                  .toFixed(12)}{" "}
+                  .toFixed(selectedAsset.decimal)}{" "}
                 {symbol?.toUpperCase()}
               </span>
               <span>
-                {currencyType === CurrencyType.Crypto ? "$" : ""}{" "}
-                {handleAmount(amount, price, currencyType)}
+                {currencyType === CurrencyType.Crypto ? "$" : ""}
+                {handleAmount(amount, selectedAsset, currencyType)}{" "}
                 {currencyType === CurrencyType.Crypto ? "USD" : symbol.toUpperCase()}
                 <ExchangeIconContainer
                   onClick={() => handleCurrencyTypeChange(amount, currencyType, price)}>
@@ -389,7 +402,8 @@ function SendToken({
                 <span>Network Fee</span>
                 <InfoRowRIght>
                   <span>
-                    {loading ? "..." : fee} {selectedAsset?.symbol.toUpperCase()}
+                    {loading ? "..." : fee} 
+                    {feeNetwork?.symbol || selectedAsset?.symbol.toUpperCase()}
                   </span>{" "}
                   {isEVMChain(chain) && (
                     <EthSettingsIconContainer loading={loading} onClick={handleGasSettings}>
