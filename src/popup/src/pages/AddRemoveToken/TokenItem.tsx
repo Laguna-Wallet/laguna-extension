@@ -12,9 +12,6 @@ import { changeDisabledTokens } from "redux/actions";
 import NetworkIcons from "components/primitives/NetworkIcons";
 import { State } from "redux/store";
 
-import Bg from "assets/imgs/avatars/avatar-1.png";
-import { url } from "inspector";
-
 type Props = {
   network: Network;
   balance: string | undefined;

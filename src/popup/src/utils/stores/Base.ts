@@ -4,11 +4,11 @@ import browser from "webextension-polyfill";
 
 type StoreValue = Record<string, unknown>;
 
-const lastError = (type: string): void => {
+const lastError = ( type: string ): void => {
   const error = browser.runtime.lastError;
 
   if (error) {
-    return;
+    console.error(`BaseStore.${type}:: runtime.lastError:`, error);
   }
 };
 

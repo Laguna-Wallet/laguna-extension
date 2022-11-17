@@ -1,16 +1,16 @@
 import DownArrowIcon from "assets/svgComponents/DownArrowIcon";
 import styled from "styled-components/macro";
 import { Turn as Hamburger } from "hamburger-react";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import Popup from "components/Popup/Popup";
 import Accounts from "components/popups/Accounts";
 import { useAccount } from "context/AccountContext";
 import Menu from "components/Menu/Menu";
 import BackIcon from "assets/svgComponents/BackIcon";
 import CloseArrowIcon from "assets/svgComponents/CloseArrowIcon";
-import { truncateString } from "utils";
+// import { truncateString } from "utils";
 import CloseSmallIcon from "assets/svgComponents/CloseSmallIcon";
-import ExpandIcon from "assets/svgComponents/ExpandIcon";
+// import ExpandIcon from "assets/svgComponents/ExpandIcon";
 
 type Props = {
   title?: string;
@@ -26,7 +26,7 @@ type Props = {
 export default function Header({
   title,
   backAction,
-  iconStyle,
+  // iconStyle,
   closeAction,
   menuInitialOpenState,
   bgColor,
@@ -38,8 +38,8 @@ export default function Header({
 
   const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false);
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(menuInitialOpenState || false);
-  const [isHamburgerOpen, setOpen] = useState<boolean>(false);
-  const [userContainerWidth, setUserContainerWidth] = useState<number>(0);
+  const [isHamburgerOpen] = useState<boolean>(false);
+  // const [userContainerWidth, setUserContainerWidth] = useState<number>(0);
 
   const name = account?.getActiveAccount()?.meta?.name;
   const accountImg = account?.getActiveAccount()?.meta?.img;
@@ -83,7 +83,7 @@ export default function Header({
 
       {isPopupOpen && (
         <Popup onClose={() => setIsPopupOpen(false)}>
-          <Accounts userContainerWidth={userContainerWidth} />
+          <Accounts />
         </Popup>
       )}
     </Container>
@@ -150,9 +150,9 @@ const DownIconContainer = styled.div`
   cursor: pointer;
 `;
 
-const ButtonsIconContainer = styled.div`
-  margin-left: 8px;
-`;
+// const ButtonsIconContainer = styled.div`
+//   margin-left: 8px;
+// `;
 
 const BurgerMenu = styled.div`
   .hamburger-react {

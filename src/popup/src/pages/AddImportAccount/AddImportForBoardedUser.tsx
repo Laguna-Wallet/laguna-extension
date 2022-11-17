@@ -72,17 +72,17 @@ const PlusIconContainer = styled.div`
   background-color: #fff;
 `;
 
-const StepHeading = styled.div`
-  width: 100%;
-  height: 40px;
-`;
+// const StepHeading = styled.div`
+//   width: 100%;
+//   height: 40px;
+// `;
 
-const Title = styled.span`
-  font-size: 17px;
-  font-family: 'Sequel100Wide55Wide';
-  letter-spacing: 0.85px;
-  color: #000000;
-`;
+// const Title = styled.span`
+//   font-size: 17px;
+//   font-family: 'Sequel100Wide55Wide';
+//   letter-spacing: 0.85px;
+//   color: #000000;
+// `;
 
 const ButtonContainer = styled.div`
   width: 100%;

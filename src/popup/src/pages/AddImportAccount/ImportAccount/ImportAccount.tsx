@@ -2,22 +2,19 @@ import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import { reset } from "redux-form";
 import { Wizard } from "react-use-wizard";
-import { RouteComponentProps, useHistory, useLocation } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import { router } from "router/router";
 import browser from "webextension-polyfill";
 
 import { mnemonicValidate } from "@polkadot/util-crypto";
-import { isHex } from "@polkadot/util";
 import {
-  addAccountMeta,
   encryptKeyringPair,
   importFromMnemonic,
   importJson,
-  isValidPolkadotAddress,
 } from "utils/polkadot";
 import { KeyringPair$Json } from "@polkadot/keyring/types";
 import { KeyringPairs$Json } from "@polkadot/ui-keyring/types";
-import { Messages, SEED_LENGTHS, StorageKeys } from "utils/types";
+import { Messages, StorageKeys } from "utils/types";
 
 import { State } from "redux/store";
 import { useAccount } from "context/AccountContext";
@@ -30,32 +27,32 @@ import { saveToStorage } from "utils/chrome";
 import { clearAccountsFromStorage, isObjectEmpty } from "utils";
 import { toggleLoading } from "redux/actions";
 
-const validate = (values: any) => {
-  const errors: any = {};
+// const validate = (values: any) => {
+//   const errors: any = {};
 
-  if (values.seedPhase) {
-    if (
-      !isHex(values.seedPhase) &&
-      !isValidPolkadotAddress(values.seedPhase) &&
-      !mnemonicValidate(values.seedPhase)
-    ) {
-      errors.seedPhase = "Please enter mnemonic seed or valid public address or private key";
-    }
+//   if (values.seedPhase) {
+//     if (
+//       !isHex(values.seedPhase) &&
+//       !isValidPolkadotAddress(values.seedPhase) &&
+//       !mnemonicValidate(values.seedPhase)
+//     ) {
+//       errors.seedPhase = "Please enter mnemonic seed or valid public address or private key";
+//     }
 
-    if (/[!@#$%^&*(),.?":{}|<>]/g.test(values.seedPhase.toString())) {
-      errors.seedPhase = "Please remove special characters (!,#:*)";
-    }
+//     if (/[!@#$%^&*(),.?":{}|<>]/g.test(values.seedPhase.toString())) {
+//       errors.seedPhase = "Please remove special characters (!,#:*)";
+//     }
 
-    if (
-      values.seedPhase.split(" ").length > 2 &&
-      !SEED_LENGTHS.includes(values.seedPhase.split(" ").length)
-    ) {
-      errors.seedPhase = "Please enter 12 or 24 words";
-    }
-  }
+//     if (
+//       values.seedPhase.split(" ").length > 2 &&
+//       !SEED_LENGTHS.includes(values.seedPhase.split(" ").length)
+//     ) {
+//       errors.seedPhase = "Please enter 12 or 24 words";
+//     }
+//   }
 
-  return errors;
-};
+//   return errors;
+// };
 
 type LocationState = {
   redirectedFromSignUp?: boolean;

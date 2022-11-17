@@ -1,4 +1,4 @@
-import React, { MouseEventHandler } from "react";
+import React from "react";
 import styled from "styled-components/macro";
 
 type Props = {
@@ -10,12 +10,12 @@ type Props = {
 };
 
 export default function Popup({ children, onClose, ...rest }: Props) {
-  const handleClose = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleClose = () => {
     onClose && onClose();
   };
 
   return (
-    <Container {...rest} onClick={(e: React.MouseEvent<HTMLDivElement>) => handleClose(e)}>
+    <Container {...rest} onClick={() => handleClose()}>
       {children}{" "}
     </Container>
   );

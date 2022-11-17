@@ -201,11 +201,11 @@ const IconContainer = styled.div`
   margin-top: 57px;
 `;
 
-const StyledLink = styled.div`
-  width: 100%;
-  text-decoration: none;
-  margin-top: auto;
-`;
+// const StyledLink = styled.div`
+//   width: 100%;
+//   text-decoration: none;
+//   margin-top: auto;
+// `;
 
 const Form = styled.form`
   width: 100%;

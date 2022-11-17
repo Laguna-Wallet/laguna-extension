@@ -29,11 +29,13 @@ import { FlowValue, SendAccountFlowEnum } from "./Send";
 import HashtagIcon from "assets/svgComponents/HashtagIcon";
 import { useHistory } from "react-router-dom";
 import { router } from "router/router";
-import { EVMNetwork } from "networks/evm";
+// import { EVMNetwork } from "networks/evm";
 import EthSettingsIcon from "assets/svgComponents/EthSettingsIcon";
 import GasSettingsPopup from "./GasSettingsPopup";
 import { IEVMBuildTransaction, IEVMToBeSignTransaction } from "utils/evm/interfaces";
 import { isEVMChain } from "utils/evm";
+import { networks } from "utils/types";
+import { EVMAssetType } from "networks/evm";
 
 const validate = (values: { address: string; amount: number }) => {
   const errors: any = {};
@@ -123,7 +125,18 @@ function SendToken({
   const chain = selectedAsset?.chain;
   const symbol = selectedAsset?.symbol;
 
-  const price = chain && prices[chain.toLowerCase()]?.usd;
+  const price = selectedAsset.price || 0;
+  let feeNetwork;
+  let feePrice;
+
+  // If this is an EVM asset, get price for native coin as fee
+  if (isEVMChain(selectedAsset.chain)) {
+    feeNetwork = networks.find(network => 
+      network.assetType === EVMAssetType.NATIVE && network.chain === selectedAsset.chain);
+    feePrice = prices[feeNetwork?.priceApiId || "zero"]?.usd || 0;
+    console.log("feePrice", feePrice);
+    console.log("feeNetwork", feeNetwork);
+  }
 
   // const handleClick = (isValid: boolean) => {
   //   if (!isValid) return;
@@ -137,12 +150,18 @@ function SendToken({
     setFlow(SendAccountFlowEnum.SendToAccount);
   };
 
-  const handleClickAccount = (address: string) => {
-    dispatch(change("sendToken", "address", address));
+  const handleClickAccount = (account: { 
+    address: string;
+    ethAddress: string; 
+    name: string;
+    img: string;
+    isEth: boolean;
+  }) => {
+    const { name, img, address, ethAddress, isEth } = account;
+    dispatch(change("sendToken", "address", isEth ? ethAddress : address));
     setIsAccountsPopupOpen(false);
 
-    const pair = keyring.getPair(address);
-    setAccountMeta({ name: pair?.meta?.name as string, img: pair?.meta?.img as string });
+    setAccountMeta({ name, img });
   };
 
   // const handleCloseAccount = () => {
@@ -244,14 +263,14 @@ function SendToken({
     setCurrencyType(CurrencyType.Crypto);
   };
 
-  const handleAmount = (amount: string, price: number, currencyType: CurrencyType) => {
-    if (!amount || !price) return "0.00";
+  const handleAmount = (amount: string, asset: any, currencyType: CurrencyType) => {
+    if (!amount || !asset?.price) return "0.00";
 
     if (currencyType === CurrencyType.Fiat) {
-      return fiatToCrypto(Number(amount), price).toFixed(8);
+      return fiatToCrypto(Number(amount), asset.price).toFixed(asset.decimals);
     }
 
-    return new BigNumber(amount).times(price).toFormat(2);
+    return new BigNumber(amount).times(asset.price).toFormat(2);
   };
 
   const handleMax = (balance: string) => {
@@ -297,12 +316,12 @@ function SendToken({
                 Balance:{" "}
                 {new BigNumber(selectedAsset.balance.overall)
                   .minus(selectedAsset.balance.locked)
-                  .toFixed(12)}{" "}
+                  .toFixed(selectedAsset.decimal)}{" "}
                 {symbol?.toUpperCase()}
               </span>
               <span>
-                {currencyType === CurrencyType.Crypto ? "$" : ""}{" "}
-                {handleAmount(amount, price, currencyType)}
+                {currencyType === CurrencyType.Crypto ? "$" : ""}
+                {handleAmount(amount, selectedAsset, currencyType)}{" "}
                 {currencyType === CurrencyType.Crypto ? "USD" : symbol.toUpperCase()}
                 <ExchangeIconContainer
                   onClick={() => handleCurrencyTypeChange(amount, currencyType, price)}>
@@ -319,7 +338,7 @@ function SendToken({
                 name="address"
                 type="text"
                 label="address"
-                placeholder="address"
+                placeholder="Address"
                 component={HumbleInput}
                 format={(value: string) => formatAddressValue(value, flow)}
                 props={{
@@ -383,7 +402,8 @@ function SendToken({
                 <span>Network Fee</span>
                 <InfoRowRIght>
                   <span>
-                    {loading ? "..." : fee} {selectedAsset?.symbol.toUpperCase()}
+                    {loading ? "..." : fee} 
+                    {feeNetwork?.symbol || selectedAsset?.symbol.toUpperCase()}
                   </span>{" "}
                   {isEVMChain(chain) && (
                     <EthSettingsIconContainer loading={loading} onClick={handleGasSettings}>
@@ -654,64 +674,64 @@ const InfoRow = styled.div`
   }
 `;
 
-const AccountsSection = styled.div`
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  z-index: 9999999999999999999;
-  bottom: 0;
-  box-sizing: border-box;
-  /* background-color: #f8f8f9; */
-  background-color: rgba(0, 0, 0, 0.6);
-  display: flex;
-  align-items: flex-end;
-  z-index: 10;
-`;
+// const AccountsSection = styled.div`
+//   width: 100%;
+//   height: 100%;
+//   position: absolute;
+//   z-index: 9999999999999999999;
+//   bottom: 0;
+//   box-sizing: border-box;
+//   /* background-color: #f8f8f9; */
+//   background-color: rgba(0, 0, 0, 0.6);
+//   display: flex;
+//   align-items: flex-end;
+//   z-index: 10;
+// `;
 
-const AccountsSectionContent = styled.div`
-  width: 100%;
-  min-height: 200px;
-  max-height: 80%;
-  background-color: #f8f8f9;
-  padding: 15px 20px;
-  border-top-right-radius: 5px;
-  border-top-left-radius: 5px;
-  overflow-y: scroll;
-`;
+// const AccountsSectionContent = styled.div`
+//   width: 100%;
+//   min-height: 200px;
+//   max-height: 80%;
+//   background-color: #f8f8f9;
+//   padding: 15px 20px;
+//   border-top-right-radius: 5px;
+//   border-top-left-radius: 5px;
+//   overflow-y: scroll;
+// `;
 
-const AccountsSectionContentHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  span {
-    font-family: Inter;
-    font-weight: 600;
-  }
-`;
+// const AccountsSectionContentHeader = styled.div`
+//   display: flex;
+//   justify-content: space-between;
+//   span {
+//     font-family: Inter;
+//     font-weight: 600;
+//   }
+// `;
 
-const CloseIconContainer = styled.div`
-  cursor: pointer;
-`;
+// const CloseIconContainer = styled.div`
+//   cursor: pointer;
+// `;
 
-const AccountsSectionList = styled.div`
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-`;
+// const AccountsSectionList = styled.div`
+//   width: 100%;
+//   display: flex;
+//   flex-direction: column;
+// `;
 
-const AccountsSectionItem = styled.div`
-  width: 100%;
-  height: 48px;
-  padding: 12.5px 71px 12.5px 9.3px;
-  box-sizing: border-box;
-  border-radius: 5px;
-  background-color: #f3f3f3;
-  margin-top: 10px;
-  cursor: pointer;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
+// const AccountsSectionItem = styled.div`
+//   width: 100%;
+//   height: 48px;
+//   padding: 12.5px 71px 12.5px 9.3px;
+//   box-sizing: border-box;
+//   border-radius: 5px;
+//   background-color: #f3f3f3;
+//   margin-top: 10px;
+//   cursor: pointer;
+//   text-overflow: ellipsis;
+//   white-space: nowrap;
+//   overflow: hidden;
 
-  :nth-child(1) {
-    margin-top: 20px;
-  }
-`;
+//   :nth-child(1) {
+//     margin-top: 20px;
+//   }
+// `;

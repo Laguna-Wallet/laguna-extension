@@ -166,12 +166,12 @@ const LeftIconContainer = styled.div`
   justify-content: center;
 `;
 
-const StepNumber = styled.div`
-  font-family: Inter;
-  font-size: 12px;
-  font-weight: 600;
-  color: #353945;
-`;
+// const StepNumber = styled.div`
+//   font-family: Inter;
+//   font-size: 12px;
+//   font-weight: 600;
+//   color: #353945;
+// `;
 
 const Title = styled.div`
   text-align: center;

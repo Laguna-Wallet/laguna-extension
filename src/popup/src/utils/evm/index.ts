@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import fs from "fs";
+// import fs from "fs";
 import BigNumber from "bignumber.js";
 import {
   IEVMAssetERC20,
@@ -166,11 +166,15 @@ export const buildTransaction = async (
   console.log("gasPriceInGwei", gasPriceInGwei.toString());
   console.log("gasLimit", gasLimit?.toString());
 
+  const roundedBN = amount
+    .multipliedBy(`1E${asset.decimal}`)
+    .integerValue(BigNumber.ROUND_CEIL);
+
   if (asset.assetType === EVMAssetType.NATIVE) {
     const toBeSignTransaction: IEVMToBeSignTransaction = {
       to: toAddress,
       from: fromAddress,
-      value: `0x${amount.multipliedBy(`1E${asset.decimal}`).toString(16)}`,
+      value: `0x${roundedBN.toString(16)}`,
       gasPrice: `0x${gasPriceInGwei.multipliedBy("1E9").toString(16)}`,
       gasLimit: gasLimit ? `0x${gasLimit.toString(16)}` : "",
       nonce: `0x${nonce.toString(16)}`,
@@ -193,7 +197,7 @@ export const buildTransaction = async (
       data: (
         await contract.populateTransaction.transfer(
           toCheckSumAddress(toAddress),
-          amount.multipliedBy(`1E${asset.decimal}`).toString(10),
+          roundedBN.toString(10),
         )
       ).data,
     } as IEVMToBeSignTransaction;
@@ -247,7 +251,7 @@ export const getBalance = async (
 
 const initERC20SmartContract = (network: EVMNetwork, asset: IEVMAssetERC20): ethers.Contract => {
   const provider = getProvider(network);
-  const abiFileName = "ERC20";
+  // const abiFileName = "ERC20";
   // const ERC20ABI = JSON.parse(fs.readFileSync(`./abi/${abiFileName}.json`, "utf-8"));
   return new ethers.Contract((asset as IEVMAssetERC20).contractAddress, ERC20ABI, provider);
 };

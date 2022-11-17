@@ -416,17 +416,17 @@ browser.runtime.onMessage.addListener(async (msg, _sender) => {
 })
 
 browser.runtime.onInstalled.addListener(async (port) => {
-  const prices = await Retrieve_Coin_Prices()
-  console.log("~ prices", prices)
-  browser.runtime.sendMessage({
-    type: Messages.PriceUpdated,
-    payload: JSON.stringify(prices),
-  })
+  // const prices = await Retrieve_Coin_Prices()
+  // console.log("~ prices", prices)
+  // browser.runtime.sendMessage({
+  //   type: Messages.PriceUpdated,
+  //   payload: JSON.stringify(prices),
+  // })
 
-  saveToStorage({
-    key: StorageKeys.TokenPrices,
-    value: JSON.stringify(prices),
-  })
+  // saveToStorage({
+  //   key: StorageKeys.TokenPrices,
+  //   value: JSON.stringify(prices),
+  // })
 
   const Infos = await Retrieve_Coin_Infos()
   browser.runtime.sendMessage({
@@ -450,15 +450,15 @@ browser.runtime.onInstalled.addListener(async (port) => {
 })
 
 browser.runtime.onStartup.addListener(async () => {
-  const prices = await Retrieve_Coin_Prices()
-  browser.runtime.sendMessage({
-    type: Messages.PriceUpdated,
-    payload: JSON.stringify(prices),
-  })
-  saveToStorage({
-    key: StorageKeys.TokenPrices,
-    value: JSON.stringify(prices),
-  })
+  // const prices = await Retrieve_Coin_Prices()
+  // browser.runtime.sendMessage({
+  //   type: Messages.PriceUpdated,
+  //   payload: JSON.stringify(prices),
+  // })
+  // saveToStorage({
+  //   key: StorageKeys.TokenPrices,
+  //   value: JSON.stringify(prices),
+  // })
 
   const Infos = await Retrieve_Coin_Infos()
   browser.runtime.sendMessage({
@@ -488,9 +488,9 @@ browser.alarms.onAlarm.addListener(async (alarm) => {
   // fetchAccountsBalances()
   // } else {
 
-  const prices = await Retrieve_Coin_Prices()
-  chrome.runtime.sendMessage({ type: Messages.PriceUpdated, payload: JSON.stringify(prices) })
-  saveToStorage({ key: StorageKeys.TokenPrices, value: JSON.stringify(prices) })
+  // const prices = await Retrieve_Coin_Prices()
+  // chrome.runtime.sendMessage({ type: Messages.PriceUpdated, payload: JSON.stringify(prices) })
+  // saveToStorage({ key: StorageKeys.TokenPrices, value: JSON.stringify(prices) })
 
   // coin info
   const Infos = await Retrieve_Coin_Infos()

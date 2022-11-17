@@ -241,19 +241,19 @@ const LengthIndicator = styled.div<{ color: string }>`
   color: ${({ color }) => color};
 `;
 
-const ErrorMessage = styled.div`
-  color: #fff;
-  font-size: 13px;
-  font-weight: 600;
-  margin-left: 5px;
-`;
+// const ErrorMessage = styled.div`
+//   color: #fff;
+//   font-size: 13px;
+//   font-weight: 600;
+//   margin-left: 5px;
+// `;
 
-const CloseIconContainer = styled.div`
-  width: 24px;
-  height: 24px;
-  background-color: #fff;
-  border-radius: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
+// const CloseIconContainer = styled.div`
+//   width: 24px;
+//   height: 24px;
+//   background-color: #fff;
+//   border-radius: 100%;
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+// `;

@@ -42,9 +42,9 @@ export default function ChainItem({ asset, handleClick, iconSize }: Props) {
   );
 }
 
-const StyledLink = styled(Link)`
-  text-decoration: none;
-`;
+// const StyledLink = styled(Link)`
+//   text-decoration: none;
+// `;
 
 const Container = styled.div`
   width: 323px;

@@ -1,10 +1,7 @@
 import styled from "styled-components";
-import walletBG from "assets/imgs/walletBG.jpg";
 import Button from "components/primitives/Button";
 import { useDispatch, useSelector } from "react-redux";
-import { changeDappAuthorization, changePendingToSign } from "redux/actions";
-import CheckMarkIcon from "assets/svgComponents/CheckMarkIcon";
-import { CheckIcon } from "@heroicons/react/outline";
+import { changePendingToSign } from "redux/actions";
 import { Messages } from "utils/types";
 import browser from "webextension-polyfill";
 
@@ -106,25 +103,25 @@ const Title = styled.div`
   color: #18191a;
 `;
 
-const Icons = styled.div`
-  display: flex;
-  justify-content: center;
-  margin-top: 15px;
-`;
+// const Icons = styled.div`
+//   display: flex;
+//   justify-content: center;
+//   margin-top: 15px;
+// `;
 
-const IconContainer = styled.div`
-  width: 115px;
-  height: 115px;
-  border-radius: 100%;
-  background: #fff;
-  &:nth-child(1) {
-    margin-right: 30px;
-  }
-`;
+// const IconContainer = styled.div`
+//   width: 115px;
+//   height: 115px;
+//   border-radius: 100%;
+//   background: #fff;
+//   &:nth-child(1) {
+//     margin-right: 30px;
+//   }
+// `;
 
-const CheckContainer = styled.div`
-  margin-right: 5px;
-`;
+// const CheckContainer = styled.div`
+//   margin-right: 5px;
+// `;
 
 const Content = styled.div`
   display: flex;

@@ -4,7 +4,7 @@ import Header from "./Header";
 import Footer from "./Footer";
 import { useAccount } from "context/AccountContext";
 import ChainItem from "./ChainItem";
-import { getAssets, recodeAddress } from "utils/polkadot";
+import { getAssets } from "utils/polkadot";
 import NetworkItem from "./NetworkItem";
 import dashboardBG from "assets/imgs/dashboard-bg.jpg";
 import BigNumber from "bignumber.js";
@@ -18,13 +18,13 @@ import SecureNowIcon from "assets/svgComponents/SecureNowIcon";
 import RightArrowMenuIcon from "assets/svgComponents/MenuIcons/RightArrowMenuIcon";
 import { toggleLoading } from "redux/actions";
 import { Asset } from "utils/types";
-import { emptyAssets } from "utils/emptyAssets";
+// import { emptyAssets } from "utils/emptyAssets";
 import { useHistory, Link } from "react-router-dom";
 import { router } from "router/router";
 import { isInPopup } from "utils/chrome";
-import { isObjectEmpty } from "utils";
-import keyring from "@polkadot/ui-keyring";
-import { ethereumEncode } from "@polkadot/util-crypto";
+// import { isObjectEmpty } from "utils";
+// import keyring from "@polkadot/ui-keyring";
+// import { ethereumEncode } from "@polkadot/util-crypto";
 
 export interface ShowSnackbar {
   message: string;
@@ -166,6 +166,7 @@ function Wallet({ snackbar }: Props) {
       {activeTab === 1
         ? assets.length > 0 &&
           assets.map((asset: any) => {
+            // console.log("asset", asset);
             return (
               <ChainItem
                 key={asset.symbol}
@@ -331,27 +332,27 @@ const SecureNowMessage = styled.div`
   }
 `;
 
-const FirstTimeUserBalance = styled.div`
-  width: 100%;
-  margin-top: 59px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  h6 {
-    font-family: Inter;
-    font-size: 11px;
-    margin-bottom: 10px;
-    font-weight: 500;
-  }
+// const FirstTimeUserBalance = styled.div`
+//   width: 100%;
+//   margin-top: 59px;
+//   display: flex;
+//   flex-direction: column;
+//   align-items: center;
+//   justify-content: center;
+//   h6 {
+//     font-family: Inter;
+//     font-size: 11px;
+//     margin-bottom: 10px;
+//     font-weight: 500;
+//   }
 
-  h2 {
-    font-family: "IBM Plex Sans";
-    font-size: 22px;
-    margin-bottom: 10px;
-    font-weight: 500;
-  }
-`;
+//   h2 {
+//     font-family: "IBM Plex Sans";
+//     font-size: 22px;
+//     margin-bottom: 10px;
+//     font-weight: 500;
+//   }
+// `;
 
 const BalanceContainer = styled.div<{ isEmpty: boolean }>`
   display: flex;

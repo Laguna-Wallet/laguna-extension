@@ -9,12 +9,19 @@ import { useSelector } from "react-redux";
 import { truncateString } from "utils";
 import { recodeAddress } from "utils/polkadot";
 import { Prefixes } from "utils/types";
+import { isEVMChain } from "utils/evm";
 import LoopIcon from "assets/svgComponents/loopIcon";
 import { useHistory } from "react-router-dom";
 import { router } from "router/router";
 
 type Props = {
-  handleClickAccount: (address: string) => void;
+  handleClickAccount: (account: { 
+    address: string;
+    ethAddress: string; 
+    name: string;
+    img: string;
+    isEth: boolean;
+  }) => void;
   onBack: () => void;
 };
 
@@ -26,18 +33,25 @@ export default function AccountsPopup({ handleClickAccount, onBack }: Props) {
   const [filter, setFilter] = useState<string>("");
   const { selectedAsset } = useSelector((state: any) => state.sendToken);
   const prefix = Prefixes[selectedAsset.chain];
+  const isEth = isEVMChain(selectedAsset.chain);
 
   const currAccountAddress = account?.getActiveAccount()?.address;
-  const currAccountImage = account?.getActiveAccount()?.meta?.img;
+  // const currAccountImage = account?.getActiveAccount()?.meta?.img;
 
   useEffect(() => {
     // todo proper typing
     const accounts: any[] = [];
 
     keyring.getPairs().forEach((pair) => {
-      if (recodeAddress(pair.address, 0) !== recodeAddress(currAccountAddress, 0)) {
-        const { name, img } = pair.meta;
-        accounts.push({ address: pair.address, name, img });
+      if (pair.address !== currAccountAddress) {
+        const { name, img, ethAddress } = pair.meta;
+        accounts.push({ 
+          address: pair.address,
+          ethAddress, 
+          name, 
+          img,
+          isEth,
+        });
       }
     });
 
@@ -91,11 +105,11 @@ export default function AccountsPopup({ handleClickAccount, onBack }: Props) {
                 handleRenderAccounts(accounts, filter).map((account) => (
                   <AddressComponent
                     key={account.address}
-                    onClick={() => handleClickAccount(account.address)}>
+                    onClick={() => handleClickAccount(account)}>
                     <IconContainer img={account?.img} />
                     <Text>
                       {truncateString(account.name, 8)}(
-                      {truncateString(recodeAddress(account.address, prefix))})
+                      {truncateString(isEth ? account.ethAddress : recodeAddress(account.address, prefix))})
                     </Text>
                     {/* <AlternateEmail stroke="#111" /> */}
                   </AddressComponent>
@@ -195,12 +209,12 @@ const IconContainer = styled.div<{ img: string }>`
   background-color: #ccc;
 `;
 
-const AddAddressPopupContainer = styled.div`
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  top: 0;
-`;
+// const AddAddressPopupContainer = styled.div`
+//   width: 100%;
+//   height: 100%;
+//   position: absolute;
+//   top: 0;
+// `;
 
 const Text = styled.div`
   font-family: 'Inter';

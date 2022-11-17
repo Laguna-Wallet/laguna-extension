@@ -1,7 +1,7 @@
 import { timer } from "utils";
-import { getHistoricalTransactions } from "./evm";
-import { EVMAssetId, EVMNetwork } from "networks/evm";
-import { chains, Transaction } from "./types";
+// import { getHistoricalTransactions } from "./evm";
+// import { EVMAssetId, EVMNetwork } from "networks/evm";
+import { Transaction } from "./types";
 
 // export async function fetchAllAccountsTransactions(address: string) {
 //   try {

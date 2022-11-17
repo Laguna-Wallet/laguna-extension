@@ -28,7 +28,7 @@ export default function Receive() {
   const location = useLocation<LocationState>();
   const { propsFromTokenDashboard } = location?.state || {};
 
-  const [networks, setNetworks] = useState<any>(getNetworks(prices, infos, disabledTokens));
+  const [networks] = useState<any>(getNetworks(prices, infos, disabledTokens));
   const [selectedNetwork, setSelectedNetwork] = useState<Network & Asset>();
 
   const [recoded, setRecoded] = useState<string>("");
@@ -96,37 +96,37 @@ const Container = styled.div<{ bg?: string }>`
   background-size: cover;
 `;
 
-const Content = styled.div`
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  padding: 0 35px;
-  box-sizing: border-box;
-`;
+// const Content = styled.div`
+//   width: 100%;
+//   height: 100%;
+//   display: flex;
+//   align-items: center;
+//   flex-direction: column;
+//   padding: 0 35px;
+//   box-sizing: border-box;
+// `;
 
-const QRContainer = styled.div`
-  width: 226px;
-  height: 227.23px;
-`;
+// const QRContainer = styled.div`
+//   width: 226px;
+//   height: 227.23px;
+// `;
 
-const ContentItem = styled.div`
-  width: 100%;
-  margin-top: 15px;
-`;
+// const ContentItem = styled.div`
+//   width: 100%;
+//   margin-top: 15px;
+// `;
 
-const Text = styled.div`
-  font-size: 14px;
-  color: #8c8c8c;
-  font-family: "Sequel100Wide55Wide";
-`;
+// const Text = styled.div`
+//   font-size: 14px;
+//   color: #8c8c8c;
+//   font-family: "Sequel100Wide55Wide";
+// `;
 
-const BottomText = styled.div`
-  font-family: "Inter";
-  font-weight: 400;
-  font-size: 14px;
-  color: #000000;
-  margin-top: auto;
-  text-align: center;
-`;
+// const BottomText = styled.div`
+//   font-family: "Inter";
+//   font-weight: 400;
+//   font-size: 14px;
+//   color: #000000;
+//   margin-top: auto;
+//   text-align: center;
+// `;

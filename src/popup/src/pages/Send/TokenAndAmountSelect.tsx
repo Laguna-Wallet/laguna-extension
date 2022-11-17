@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import styled from "styled-components";
 import { Field } from "redux-form";
 import { parseNumeric } from "utils/validations";
@@ -6,9 +6,9 @@ import SelectSmallIcon from "assets/svgComponents/SelectSmallIcon";
 import useOnClickOutside from "hooks/useOnClickOutside";
 // import debounce from 'lodash.debounce';
 import { useEffect } from "react";
-import debounce from "lodash.debounce";
+// import debounce from "lodash.debounce";
 import { CurrencyType } from "utils/types";
-import { cryptoToFiat } from "utils";
+// import { cryptoToFiat } from "utils";
 
 type Props = {
   Icon: any;
@@ -24,9 +24,9 @@ export default function TokenAndAmountSelect({
   tokens,
   fiatList,
   Icon,
-  value,
+  // value,
   currencyType,
-  price,
+  // price,
   onChangeCallback,
 }: Props) {
   const optionContainerRef = useRef<HTMLDivElement | null>(null);

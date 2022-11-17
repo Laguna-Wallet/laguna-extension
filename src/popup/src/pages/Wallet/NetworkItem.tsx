@@ -88,8 +88,8 @@ const Tag = styled.div`
   margin-top: 3px;
 `;
 
-const Value = styled.div`
-  font-size: 14px;
-  font-weight: 500;
-  font-family: "IBM Plex Sans";
-`;
+// const Value = styled.div`
+//   font-size: 14px;
+//   font-weight: 500;
+//   font-family: "IBM Plex Sans";
+// `;

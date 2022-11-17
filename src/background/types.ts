@@ -60,6 +60,7 @@ export interface Network {
   marketCap?: number
   encodeType?: string
   prefix: number
+  priceApiId?: string
 }
 
 export interface TokenInfo {

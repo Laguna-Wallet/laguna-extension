@@ -1,15 +1,14 @@
 import { BigNumber } from "bignumber.js";
 import axios from "axios";
 import { ethers } from "ethers";
-import { changeAccountsBalances, changeTokenReceived } from "redux/actions";
-import { AppDispatch } from "redux/store";
+import { changeAccountsBalances, changeTokenReceived, changePrices } from "redux/actions";
 import { checkBalanceChange, timer } from "utils";
 import { getFromStorage, saveToStorage } from "./chrome";
 import * as evmUtils from "utils/evm";
 import { EVMNetwork } from "networks/evm";
 import { EvmAssets } from "networks/evm/asset";
 import { recodeAddress } from "./polkadot";
-import { Messages, networks, StorageKeys } from "./types";
+import { networks, StorageKeys } from "./types";
 
 interface PriceConverter {
   symbol: string;
@@ -28,7 +27,7 @@ export async function Account_Search(chain: string, address: string) {
     key: address,
   });
 }
-export async function Price_Converter({ chain, symbol, amount, fiat }: PriceConverter) {
+export async function Price_Converter({ fiat }: PriceConverter) {
   const data = await AXIOS_INSTANCE.get(
     `    https://api.coingecko.com/api/v3/simple/price?ids=${[
       "polkadot,kusama",
@@ -47,17 +46,47 @@ export async function getCoinInfo({ chains }: any) {
   return data;
 }
 
+function getPriceApiIds () {
+  const priceApiIds = [];
+  for (let i = 0; i < networks.length; i++) {
+    if (networks[i].priceApiId)
+      priceApiIds.push(networks[i].priceApiId);
+  }
+  return priceApiIds;
+}
+
+export async function fetchCoinPrices(dispatch: any) {
+  try {
+    const data = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${getPriceApiIds().join(",")}&vs_currencies=usd`);
+    const prices = await data.json();
+
+    dispatch(changePrices(prices));
+    saveToStorage({ 
+      key: StorageKeys.TokenPrices, 
+      value: JSON.stringify(prices),
+    });
+
+    return prices;
+  } catch (err) {
+    console.log("error while fetching prices:", err);
+  }
+}
+
 // todo proper typing
 export async function fetchAccountsBalances(
   // dispatch: AppDispatch
   dispatch: any,
 ) {
+  // console.log("fetchAccountsBalances");
   try {
     // await timer(3000)
     const account = await getFromStorage(StorageKeys.ActiveAccount);
 
     const balances = await getFromStorage(StorageKeys.AccountBalances);
     const parsedBalances = balances ? JSON.parse(balances) : {};
+
+    // Also trigger fetching of prices
+    fetchCoinPrices(dispatch);
 
     if (account) {
       const address = JSON.parse(account as string).address;
@@ -66,14 +95,11 @@ export async function fetchAccountsBalances(
       let result_obj: any = {};
       const temp_obj: Record<string, any> = {};
 
-      let i = 0;
-
-      while (i < networks.length) {
-        await timer(1000);
+      for (let i = 0; i < networks.length; i++) {
+        // await timer(1000);
         const network = networks[i];
 
         if (evmUtils.isEVMChain(network.chain) && !ethAddress) {
-          i++;
           continue;
         }
 
@@ -82,30 +108,35 @@ export async function fetchAccountsBalances(
             network.chain === EVMNetwork.AVALANCHE_TESTNET_FUJI) &&
           ethAddress
         ) {
+          const evmAsset = EvmAssets[network.chain][network.symbol];
           const ethBalance = await evmUtils.getBalance(
             network.chain,
             ethAddress,
-            EvmAssets[network.chain][network.symbol],
+            evmAsset,
           );
 
+          // console.log(evmAsset, ethBalance);
+
           if (new BigNumber(ethBalance.toString()).isEqualTo(0)) {
-            i++;
             continue;
           }
 
-          temp_obj[network.chain] = {
-            overall: ethers.utils.formatEther(ethBalance.toString()),
+          temp_obj[evmAsset.assetId] = {
+            overall: ethers.utils.formatUnits(ethBalance.toString(), evmAsset.decimal),
             locked: Number(0), // todo change after eth 2.0 merge
           };
         } else {
+          // wait one second between API calls
+          if (i > 0)
+            await timer(1000);
           const resolved = await searchAccountBallance(
             network.chain,
             recodeAddress(address, network?.prefix, network?.encodeType),
           );
           // if (resolved.message !== "Success") return
           if (resolved.message !== "Success") {
-            if (resolved.message === "Record Not Found" || resolved?.data?.account?.balance === 0) {
-              i++;
+            if (resolved.message !== "Record Not Found" && resolved?.data?.account?.balance !== 0) {
+              i--;
             }
             continue;
           }
@@ -122,12 +153,12 @@ export async function fetchAccountsBalances(
         } else {
           result_obj = { ...temp_obj };
         }
-        i++;
       }
 
-      i = 0;
 
       const hasReceived: boolean = await checkBalanceChange(result_obj, address);
+
+      // console.log("result_obj", result_obj);
 
       saveToStorage({
         key: StorageKeys.AccountBalances,

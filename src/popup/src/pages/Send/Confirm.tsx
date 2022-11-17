@@ -8,9 +8,7 @@ import { memo, useEffect, useState } from "react";
 import {
   getAccountNameByAddress,
   getContactNameByAddress,
-  recodeToPolkadotAddress,
   truncateString,
-  updateBallanceCache,
 } from "utils";
 import BigNumber from "bignumber.js";
 import { useDispatch, useSelector } from "react-redux";
@@ -21,12 +19,11 @@ import Loader from "components/Loader/Loader";
 import { useHistory } from "react-router-dom";
 import { router } from "router/router";
 import browser from "webextension-polyfill";
-import { changeAccountsBalances } from "redux/actions";
 import { recodeAddress } from "utils/polkadot";
-import { sendMessagePromise } from "utils/chrome";
-import { IEVMBuildTransaction, IEVMToBeSignTransaction } from "utils/evm/interfaces";
-import { EVMNetwork } from "networks/evm";
+import { IEVMToBeSignTransaction } from "utils/evm/interfaces";
+import { EVMAssetType, EVMNetwork } from "networks/evm";
 import { isEVMChain } from "utils/evm";
+import { networks } from "utils/types";
 
 type Props = {
   fee: string;
@@ -40,36 +37,55 @@ type Props = {
 
 function Confirm({
   fee,
-  transfer,
   amountToSend,
   recoded,
   setBlockHash,
   flow,
   toBeSignTransaction,
 }: Props) {
-  const { nextStep, previousStep } = useWizard();
+  const { previousStep } = useWizard();
   const account = useAccount();
   const history = useHistory();
 
   const dispatch = useDispatch();
   const [loadingTransaction, setLoadingTransaction] = useState(false);
-  const [transactionConfirmed, setTransactionConfirmed] = useState(false);
+  const [, setTransactionConfirmed] = useState(false);
 
   const { address, amount, token } = useSelector((state: any) => state.form.sendToken.values);
   const selectedAsset = useSelector((state: any) => state.sendToken.selectedAsset);
 
   const { prices } = useSelector((state: any) => state.wallet);
 
-  const price = prices[selectedAsset.chain.toLowerCase()]?.usd;
+  const price = selectedAsset.price || 0;
+  let feeNetwork;
+  let feePrice;
+
+  console.log("given price", prices);
+  console.log("selectedAsset", selectedAsset);
+  // If this is an EVM asset, get price for native coin as fee
+  if (isEVMChain(selectedAsset.chain)) {
+    feeNetwork = networks.find(network => 
+      network.assetType === EVMAssetType.NATIVE && network.chain === selectedAsset.chain);
+    feePrice = prices[feeNetwork?.priceApiId || "zero"]?.usd || 0;
+    console.log("feePrice", feePrice);
+    console.log("feeNetwork", feeNetwork);
+  }
 
   const chain = selectedAsset?.chain;
 
   const total = new BigNumber(amount)
-    .plus(fee)
-    .times(price || 0)
+    .plus(feeNetwork ? 0 : fee)
+    .times(price)
     .toFormat(4);
+  
+  console.log("amount", amount);
+  console.log("fee", fee);
+  console.log("price", price);
+  console.log("total", total);
 
-  const activeAccountAddress = account?.getActiveAccount()?.address;
+  const activeAccountAddress = isEVMChain(chain) ? 
+    account?.getActiveAccount()?.meta?.ethAddress 
+    : account?.getActiveAccount()?.address;
   const name = account?.getActiveAccount()?.meta?.name;
 
   const handleClick = async () => {
@@ -129,11 +145,11 @@ function Confirm({
   };
 
   const handleGetName = (flow: FlowValue | undefined) => {
-    if (flow === SendAccountFlowEnum.SendToAccount) {
-      return getAccountNameByAddress(recoded);
-    } else if (flow === SendAccountFlowEnum.SendToTrustedContact) {
-      return getContactNameByAddress(recodeAddress(recoded, 42));
-    }
+    // if (flow === SendAccountFlowEnum.SendToAccount) {
+    //   return getAccountNameByAddress(recoded);
+    // } else if (flow === SendAccountFlowEnum.SendToTrustedContact) {
+    //   return getContactNameByAddress(recodeAddress(recoded, 42));
+    // }
 
     return "";
   };
@@ -154,7 +170,7 @@ function Confirm({
       <Content>
         <TextContainer>
           <Text>
-            <NetworkIcons chain={chain} /> <span>I want to send</span>
+            <NetworkIcons chain={chain} /><Spacer /><span>I want to send</span>
           </Text>{" "}
           <Text>
             {amount} {token}
@@ -166,7 +182,7 @@ function Confirm({
             <AddressesInfoItem>
               <span>From</span>
               <span>
-                {name?.length > 12 ? truncateString(name, 5) : name}(
+                {name?.length > 12 ? truncateString(name, 9, true) : name}(
                 {truncateString(activeAccountAddress, 5)})
               </span>
             </AddressesInfoItem>
@@ -181,7 +197,8 @@ function Confirm({
             <AddressesInfoItem>
               <span>Total</span>
               <span>
-                {new BigNumber(fee).plus(amount).toString()} {token.toUpperCase()}
+                {new BigNumber(feeNetwork ? 0 : fee).plus(amount).toString()} {token.toUpperCase()}
+                {feeNetwork ? ` + ${fee} ${feeNetwork.symbol.toUpperCase()}` : ""}
               </span>
             </AddressesInfoItem>
           </AddressesInfo>
@@ -193,15 +210,15 @@ function Confirm({
       <Info>
         <InfoItem>
           <span>USD AMOUNT</span>
-          <span> ${renderTotal(total)}</span>
+          <span> ${Number(renderTotal(total)).toFixed(2)}</span>
         </InfoItem>
 
         <InfoItem>
           <span>Fee</span>
           <span>
             {fee.toString() +
-              ` ${token.toUpperCase()} (${new BigNumber(fee).multipliedBy(price || 0).toFixed(18)}`}
-            $)
+              ` ${feeNetwork ? feeNetwork.symbol.toUpperCase() : token.toUpperCase()} 
+              ($${new BigNumber(fee).multipliedBy(feeNetwork ? feePrice : price).toFixed(2)})`}
           </span>
         </InfoItem>
       </Info>
@@ -336,6 +353,10 @@ const BottomSection = styled.div`
   padding: 0 15px;
   box-sizing: border-box;
   margin-top: auto;
+`;
+
+const Spacer = styled.div`
+  margin-right: 5px;
 `;
 
 const Tag = styled.div`

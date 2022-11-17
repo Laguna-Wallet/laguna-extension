@@ -38,15 +38,11 @@ import ChainActivity from "pages/Activity/ChainActivity";
 import Receive from "pages/Recieve/Receive";
 import AddRemoveToken from "pages/AddRemoveToken/AddRemoveToken";
 import { fetchAccountsBalances } from "utils/Api";
-import { useAccount } from "context/AccountContext";
-import keyring from "@polkadot/ui-keyring";
 import TransactionSentEVM from "pages/Send/SuccesPage/TransactionSentEVM";
 
 function App() {
   const dispatch = useDispatch();
   const history = useHistory();
-  const account = useAccount();
-  const activeAccount = account.getActiveAccount();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const { tokenReceived } = useSelector((state: State) => state.wallet);
 

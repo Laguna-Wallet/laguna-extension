@@ -136,7 +136,7 @@ export default function ConfirmSeed({
         </SelectWords>
 
         <MnemonicsContainer>
-          {shuffledMnemonics?.map((name, index) => (
+          {shuffledMnemonics?.map((name) => (
             <Mnemonic
               active={chosenMnemonics.includes(name as never)}
               key={name}

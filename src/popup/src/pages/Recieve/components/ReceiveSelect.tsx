@@ -11,7 +11,7 @@ type Props = {
 };
 
 export default function Select({ options, selectedToken, selectedNetwork }: Props) {
-  const handleChange = async (e: any) => {
+  const handleChange = async () => {
     // todo implement
   };
 
@@ -26,7 +26,7 @@ export default function Select({ options, selectedToken, selectedNetwork }: Prop
       />
       <StyledSelect
         defaultValue={selectedToken}
-        onChange={(e) => handleChange(e)}
+        onChange={() => handleChange()}
         value={selectedToken}
         name="dots"
         id="dots">

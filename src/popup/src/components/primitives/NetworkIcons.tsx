@@ -31,7 +31,6 @@ export default function NetworkIcons({
   chain,
   token,
   isSmallIcon = false,
-  fill,
   iconType,
 }: Props) {
   if ((chain === "polkadot" || chain === "westend") && iconType === "thin") {

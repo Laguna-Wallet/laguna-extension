@@ -1,25 +1,13 @@
 import styled from "styled-components/macro";
-import { PlusIcon } from "@heroicons/react/outline";
-import keyring from "@polkadot/ui-keyring";
-import AddressBookIcon from "assets/svgComponents/AdressBookIcon";
-import ContactsIcon from "assets/svgComponents/ContactsIcon";
-import LoopIcon from "assets/svgComponents/loopIcon";
 import Button from "components/primitives/Button";
 import HumbleInput from "components/primitives/HumbleInput";
-import AddAddress from "pages/AddressBook/AddAddress";
-import Header from "pages/Wallet/Header";
-import { useEffect, useState } from "react";
-import { truncateString } from "utils";
-import BackIcon from "assets/svgComponents/CopyIcon";
 import LeftArrowIcon from "assets/svgComponents/LeftArrowIcon";
 import CloseIcon from "assets/svgComponents/CloseIcon";
 import HintIcon from "assets/svgComponents/HintIcon";
 import HintIconSmall from "assets/svgComponents/HintIconSmall";
-import { Field, InjectedFormProps, reduxForm } from "redux-form";
+import { Field, reduxForm } from "redux-form";
 import { IEVMBuildTransaction, IEVMToBeSignTransaction } from "utils/evm/interfaces";
 import { connect } from "react-redux";
-import BigNumber from "bignumber.js";
-import * as evmUtils from "utils/evm";
 
 // todo proper handleSubmit Typing
 type Props = {
@@ -33,7 +21,6 @@ type Props = {
 function GasSettingsPopup({
   handleSubmit,
   onClose,
-  setToBeSignTransaction,
   toBeSignTransactionParams,
   handleSaveEthSettings,
 }: Props) {
@@ -190,15 +177,15 @@ const InnerContainer = styled.div`
   border-radius: 10px 10px 0px 0px;
 `;
 
-const Content = styled.div`
-  width: 100%;
-  height: 100%;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  box-sizing: border-box;
-`;
+// const Content = styled.div`
+//   width: 100%;
+//   height: 100%;
+//   box-sizing: border-box;
+//   display: flex;
+//   flex-direction: column;
+//   align-items: center;
+//   box-sizing: border-box;
+// `;
 
 const Heading = styled.div`
   display: flex;

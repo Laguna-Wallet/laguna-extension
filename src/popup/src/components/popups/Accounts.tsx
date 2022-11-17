@@ -1,29 +1,22 @@
 import { useState } from "react";
 import { PlusIcon } from "@heroicons/react/outline";
 import CheckedIcon from "assets/svgComponents/CheckedIcon";
-import TriangleIcon from "assets/svgComponents/TriangleIcon";
 import Button from "components/primitives/Button";
 import { useAccount } from "context/AccountContext";
 import type { KeyringPair } from "@polkadot/keyring/types";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import AddImportForBoardedUser from "pages/AddImportAccount/AddImportForBoardedUser";
-import { getAccountImage, truncateString } from "utils";
+import { getAccountImage } from "utils";
 import { useDispatch } from "react-redux";
 import { toggleLoading } from "redux/actions";
 import keyring from "@polkadot/ui-keyring";
 import { router } from "router/router";
 
-type Props = {
-  userContainerWidth: number;
-};
-
-export default function Accounts({ userContainerWidth }: Props) {
+export default function Accounts() {
   const accountCtx = useAccount();
   const dispatch = useDispatch();
   // todo save in storage
-  const [accounts, setAccounts] = useState<KeyringPair[]>(keyring.getPairs());
-  const [isConnected, setIsConnected] = useState<boolean>(true);
+  const [accounts] = useState<KeyringPair[]>(keyring.getPairs());
 
   const handleSetActiveAccount = (e: React.MouseEvent<HTMLDivElement>, account: unknown) => {
     e.stopPropagation();
@@ -109,12 +102,12 @@ const Container = styled.div`
   margin: 46px 24px 0;
 `;
 
-const TriangleContainer = styled.div<{ userContainerWidth: number }>`
-  position: absolute;
-  top: -8px;
-  left: ${({ userContainerWidth }) => `${userContainerWidth - 13}px`};
-  transform: translate(-50%);
-`;
+// const TriangleContainer = styled.div<{ userContainerWidth: number }>`
+//   position: absolute;
+//   top: -8px;
+//   left: ${({ userContainerWidth }) => `${userContainerWidth - 13}px`};
+//   transform: translate(-50%);
+// `;
 
 const Header = styled.div`
   display: flex;
@@ -137,36 +130,36 @@ const HeaderItem = styled.div`
   cursor: default;
 `;
 
-const MouseOverText = styled.p<{ width?: string }>`
-  justify-content: center;
-  align-items: center;
-  padding: 3px 12px;
-  border-radius: 5px;
-  background-color: #f2f2f2;
-  color: #18191a;
-  font-family: IBM Plex Sans;
-  font-size: 10px;
-  display: none;
-  position: absolute;
-  min-width: ${({ width }) => width || "171px"};
-  top: 24px;
-  right: 0;
+// const MouseOverText = styled.p<{ width?: string }>`
+//   justify-content: center;
+//   align-items: center;
+//   padding: 3px 12px;
+//   border-radius: 5px;
+//   background-color: #f2f2f2;
+//   color: #18191a;
+//   font-family: IBM Plex Sans;
+//   font-size: 10px;
+//   display: none;
+//   position: absolute;
+//   min-width: ${({ width }) => width || "171px"};
+//   top: 24px;
+//   right: 0;
 
-  /* ${HeaderItem}: hover ~& {
-    display: flex;
-  } */
-`;
+//   /* ${HeaderItem}: hover ~& {
+//     display: flex;
+//   } */
+// `;
 
-const Connected = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 3px 8px;
-  border-radius: 50px;
-  background-color: #f2f2f2;
-  height: 22px;
-  position: relative;
-`;
+// const Connected = styled.div`
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+//   padding: 3px 8px;
+//   border-radius: 50px;
+//   background-color: #f2f2f2;
+//   height: 22px;
+//   position: relative;
+// `;
 
 const Avatar = styled.div<{ img: string }>`
   width: 24px;
@@ -179,13 +172,13 @@ const Avatar = styled.div<{ img: string }>`
   background-repeat: no-repeat;
 `;
 
-const ConnectedRibbon = styled.div<{ isConnected?: boolean }>`
-  width: 7.5px;
-  height: 7.5px;
-  background-color: ${({ isConnected }) => (!isConnected ? "#e6e8ec" : "#68dd65")};
-  border-radius: 100%;
-  margin-right: 6px;
-`;
+// const ConnectedRibbon = styled.div<{ isConnected?: boolean }>`
+//   width: 7.5px;
+//   height: 7.5px;
+//   background-color: ${({ isConnected }) => (!isConnected ? "#e6e8ec" : "#68dd65")};
+//   border-radius: 100%;
+//   margin-right: 6px;
+// `;
 
 const AccountsContainer = styled.div`
   display: flex;
@@ -228,14 +221,14 @@ const Account = styled.div`
   
 `;
 
-const AccountIcon = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 25px;
-  height: 25px;
-  background-color: #ccc;
-  border-radius: 100%;
-`;
+// const AccountIcon = styled.div`
+//   display: flex;
+//   flex-direction: column;
+//   width: 25px;
+//   height: 25px;
+//   background-color: #ccc;
+//   border-radius: 100%;
+// `;
 
 const Icons = styled.div`
   display: flex;

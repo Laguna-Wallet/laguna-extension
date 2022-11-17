@@ -36,13 +36,13 @@ export default function TokenDashboard() {
   const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [transaction, setTransaction] = useState<Transaction>();
-  const [showTooltip, setShowTooltip] = useState<boolean>(false);
+  // const [showTooltip, setShowTooltip] = useState<boolean>(false);
 
   const {
-    prices,
+    // prices,
     infos,
     accountsBalances,
-    loading: accountsChanging,
+    // loading: accountsChanging,
   } = useSelector((state: any) => state.wallet);
 
   const chain = asset?.chain;
